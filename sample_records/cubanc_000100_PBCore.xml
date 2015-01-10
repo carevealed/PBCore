@@ -1,0 +1,1348 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pbcoreCollection xmlns="http://www.pbcore.org/PBCore/PBCoreNamespace.html"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.pbcore.org/PBCore/PBCoreNamespace.html http://pbcore.org/xsd/pbcore-2.0.xsd"
+   collectionDate="for institutional reference" collectionTitle=""
+   collectionSource="The Bancroft Library, University of California, Berkeley" collectionRef="">
+   <pbcoreDescriptionDocument>
+      <pbcoreAssetType>Media Object</pbcoreAssetType>
+      <pbcoreAssetDate dateType="Created">[19--]</pbcoreAssetDate>
+      <pbcoreIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100</pbcoreIdentifier>
+      <pbcoreIdentifier source="CAVPP" annotation="Project Identifier">cavpp002360</pbcoreIdentifier>
+      <pbcoreIdentifier source="CDL" annotation="Object ARK">ark:/13030/c8p270zm</pbcoreIdentifier>
+      <pbcoreIdentifier source="CDL" annotation="Institution ARK">ark:/13030/tf7r29p8s0</pbcoreIdentifier>
+      <pbcoreIdentifier source="CDL" annotation="Institution URL">http://bancroft.berkeley.edu/ROHO</pbcoreIdentifier>
+      <pbcoreTitle titleType="Main">Interviews with and about Vincent Hallinan</pbcoreTitle>
+      <pbcoreDescription descriptionType="Content Summary">Reel 1, 3-10, 12-13, 16-18, 21, 23-24: Vincent Hallinan -- Reel 2: Patricia Hallinan (sister) -- Reel 11: Joel Mitchell and Evonne Golden -- Reel 14-15: Vivian Hallinan (wife) -- Reel 19: Charles B. Lorgon, S.J. -- Reel 20: William J. Dunne, S.J. -- Reel 22: Catherline Sullivan Healy -- Reel 25: Annie Irene Mansfeldt -- Reel 26: Norman Elkington.</pbcoreDescription>
+      <pbcoreRelation>
+         <pbcoreRelationType>Has Part</pbcoreRelationType>
+         <pbcoreRelationIdentifier>cubanc_000100_t1</pbcoreRelationIdentifier>
+      </pbcoreRelation>
+      <pbcoreRelation>
+         <pbcoreRelationType>Has Part</pbcoreRelationType>
+         <pbcoreRelationIdentifier>cubanc_000100_t2</pbcoreRelationIdentifier>
+      </pbcoreRelation>
+      <pbcoreRelation>
+         <pbcoreRelationType>Has Part</pbcoreRelationType>
+         <pbcoreRelationIdentifier>cubanc_000100_t3</pbcoreRelationIdentifier>
+      </pbcoreRelation>
+      <pbcoreRelation>
+         <pbcoreRelationType>Has Part</pbcoreRelationType>
+         <pbcoreRelationIdentifier>cubanc_000100_t4</pbcoreRelationIdentifier>
+      </pbcoreRelation>
+      <pbcoreRelation>
+         <pbcoreRelationType>Has Part</pbcoreRelationType>
+         <pbcoreRelationIdentifier>cubanc_000100_t5</pbcoreRelationIdentifier>
+      </pbcoreRelation>
+      <pbcoreRelation>
+         <pbcoreRelationType>Has Part</pbcoreRelationType>
+         <pbcoreRelationIdentifier>cubanc_000100_t6</pbcoreRelationIdentifier>
+      </pbcoreRelation>
+      <pbcoreRelation>
+         <pbcoreRelationType>Has Part</pbcoreRelationType>
+         <pbcoreRelationIdentifier>cubanc_000100_t7</pbcoreRelationIdentifier>
+      </pbcoreRelation>
+      <pbcoreRelation>
+         <pbcoreRelationType>Has Part</pbcoreRelationType>
+         <pbcoreRelationIdentifier>cubanc_000100_t8</pbcoreRelationIdentifier>
+      </pbcoreRelation>
+      <pbcoreRelation>
+         <pbcoreRelationType>Has Part</pbcoreRelationType>
+         <pbcoreRelationIdentifier>cubanc_000100_t9</pbcoreRelationIdentifier>
+      </pbcoreRelation>
+      <pbcoreRelation>
+         <pbcoreRelationType>Has Part</pbcoreRelationType>
+         <pbcoreRelationIdentifier>cubanc_000100_t10</pbcoreRelationIdentifier>
+      </pbcoreRelation>
+      <pbcoreCreator>
+         <creator>Unknown</creator>
+         <creatorRole>Producer</creatorRole>
+      </pbcoreCreator>
+      <pbcoreCreator>
+         <creator>Walsh, James P.</creator>
+         <creatorRole>Interviewer</creatorRole>
+      </pbcoreCreator>
+      <pbcoreRightsSummary>
+         <rightsSummary annotation="Copyright Statement">Copyright status unknown. This work may be protected by the U.S. Copyright Law (Title 17, U.S.C.). In addition, its reproduction may be restricted by terms of gift or purchase agreements, donor restrictions, privacy and publicity rights, licensing and trademarks. This work is accessible for purposes of education and research. Transmission or reproduction of works protected by copyright beyond that allowed by fair use requires the written permission of the copyright owners. Works not in the public domain cannot be commercially exploited without permission of the copyright owner. Responsibility for any use rests exclusively with the user. The Bancroft Library, UC Berkeley attempted to find rights owners without success but is eager to hear from them so that we may obtain permission, if needed. Upon request to bancref@library.berkeley.edu, digitized works can be removed from public view if there are rights issues that need to be resolved. </rightsSummary>
+      </pbcoreRightsSummary>
+      <pbcorePart>
+         <pbcoreIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t1</pbcoreIdentifier>
+         <pbcoreIdentifier source="CAVPP" annotation="Call Number">Phonotape 1838 C:1 - 26</pbcoreIdentifier>
+         <pbcoreTitle titleType="Main">Interviews with and about Vincent Hallinan</pbcoreTitle>
+         <pbcoreDescription>Reel 1, 3-10, 12-13, 16-18, 21, 23-24: Vincent Hallinan -- Reel 2: Patricia Hallinan (sister) -- Reel 11: Joel Mitchell and Evonne Golden -- Reel 14-15: Vivian Hallinan (wife) -- Reel 19: Charles B. Lorgon, S.J. -- Reel 20: William J. Dunne, S.J. -- Reel 22: Catherline Sullivan Healy -- Reel 25: Annie Irene Mansfeldt -- Reel 26: Norman Elkington.</pbcoreDescription>
+         <pbcoreInstantiation>
+            <!--Physical Asset-->
+            <instantiationIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t1</instantiationIdentifier>
+            <instantiationDate>[19--]</instantiationDate>
+            <instantiationDimensions unitsOfMeasure="inches">1/8</instantiationDimensions>
+            <instantiationPhysical>1/8 inch audio cassette</instantiationPhysical>
+            <instantiationStandard>NAB</instantiationStandard>
+            <instantiationLocation>The Bancroft Library, University of California, Berkeley</instantiationLocation>
+            <instantiationMediaType>Sound</instantiationMediaType>
+            <instantiationGenerations>Original</instantiationGenerations>
+            <instantiationDuration>00:50:23</instantiationDuration>
+            <instantiationTracks>Quarter-Track</instantiationTracks>
+            <instantiationChannelConfiguration>Stereo</instantiationChannelConfiguration>
+            <instantiationLanguage source="IS0 639.2">eng</instantiationLanguage>
+            <instantiationAnnotation annotationType="Extent">10 Tapes of 10</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Stock Manufacturer">Comcast Cassette</instantiationAnnotation>
+            <instantiationAnnotation annotationType="CAVPP Quality Control"/>
+            <instantiationAnnotation annotationType="Cataloger Notes">CAVPP agreed to transfer a sample of 10 reels from the 26 reels total that are all titled Interviews with and about Vincent Hallinan.</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Transfer Comments">High Amount of Hiss on Tape; High Amount of Buzz on Tape; Program Recorded at a Very Low Level; </instantiationAnnotation>
+            <instantiationPart>
+               <instantiationIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t1_a</instantiationIdentifier>
+               <instantiationLocation>The Bancroft Library, University of California, Berkeley</instantiationLocation>
+               <instantiationDuration>00:46:58</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackPlaybackSpeed unitsOfMeasure="ips">1.875</essenceTrackPlaybackSpeed>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+            <instantiationPart>
+               <instantiationIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t1_b</instantiationIdentifier>
+               <instantiationLocation>The Bancroft Library, University of California, Berkeley</instantiationLocation>
+               <instantiationDuration>00:03:25</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackPlaybackSpeed unitsOfMeasure="ips">1.875</essenceTrackPlaybackSpeed>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+         </pbcoreInstantiation>
+         <pbcoreInstantiation>
+            <!--Preservation Master-->
+            <instantiationIdentifier source="The MediaPreserve" annotation="Object Identifier">cubanc_000100_t1_prsv</instantiationIdentifier>
+            <instantiationDate>UTC 2014-09-23 13:30:48</instantiationDate>
+            <instantiationDigital source="PRONOM Technical Registry">audio/x-wav</instantiationDigital>
+            <instantiationStandard>Linear PCM Audio</instantiationStandard>
+            <instantiationLocation><!--Required Field--></instantiationLocation>
+            <instantiationMediaType>Sound</instantiationMediaType>
+            <instantiationGenerations>Preservation Master</instantiationGenerations>
+            <instantiationRelation>
+               <instantiationRelationType source="PBCore relationType">Derived from</instantiationRelationType>
+               <instantiationRelationIdentifier annotation="Object Identifier">cubanc_000100_t1</instantiationRelationIdentifier>
+            </instantiationRelation>
+            <instantiationAnnotation annotationType="Creating Application">WaveLab</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Source Deck">Tascam 122mkIII; Audio Cassette Deck</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Digitizer">Mytek; 8X192ADDA; Analog to Digital Converter</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Quality Control">Quality Control was performed by MediaPreserve engineers, with Cube-Tec Dobbin Audio File Inspector and engineer spot-check.</instantiationAnnotation>
+            <instantiationPart>
+               <instantiationIdentifier source="The MediaPreserve" annotation="File Name">cubanc_000100_t1_a_prsv.wav</instantiationIdentifier>
+               <instantiationIdentifier source="The MediaPreserve" annotation="checksum">4F468CC129966C4A14BA00E76A658796</instantiationIdentifier>
+               <instantiationLocation><!--Required Field--></instantiationLocation>
+               <instantiationFileSize unitsOfMeasure="KB">1585314</instantiationFileSize>
+               <instantiationDuration>00:46:58</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackEncoding>WAV</essenceTrackEncoding>
+                  <essenceTrackSamplingRate unitsOfMeasure="kHz">96.0</essenceTrackSamplingRate>
+                  <essenceTrackBitDepth>24</essenceTrackBitDepth>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+            <instantiationPart>
+               <instantiationIdentifier source="The MediaPreserve" annotation="File Name">cubanc_000100_t1_b_prsv.wav</instantiationIdentifier>
+               <instantiationIdentifier source="The MediaPreserve" annotation="checksum">9DA97B2EABACE089ED20C9AD5DF851FE</instantiationIdentifier>
+               <instantiationLocation><!--Required Field--></instantiationLocation>
+               <instantiationFileSize unitsOfMeasure="KB">115482</instantiationFileSize>
+               <instantiationDuration>00:03:25</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackEncoding>WAV</essenceTrackEncoding>
+                  <essenceTrackSamplingRate unitsOfMeasure="kHz">96.0</essenceTrackSamplingRate>
+                  <essenceTrackBitDepth>24</essenceTrackBitDepth>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+         </pbcoreInstantiation>
+         <pbcoreInstantiation>
+            <!--Access Copy-->
+            <instantiationIdentifier source="The MediaPreserve" annotation="Object Identifier">cubanc_000100_t1_access</instantiationIdentifier>
+            <instantiationDate>UTC 2014-09-23 13:30:48</instantiationDate>
+            <instantiationDigital source="PRONOM Technical Registry">audio/mpeg</instantiationDigital>
+            <instantiationStandard>MP3</instantiationStandard>
+            <instantiationLocation><!--Required Field--></instantiationLocation>
+            <instantiationMediaType>Sound</instantiationMediaType>
+            <instantiationGenerations>Access Copy</instantiationGenerations>
+            <instantiationRelation>
+               <instantiationRelationType source="PBCore relationType">Derived from</instantiationRelationType>
+               <instantiationRelationIdentifier annotation="Object Identifier">cubanc_000100_t1_prsv</instantiationRelationIdentifier>
+            </instantiationRelation>
+            <instantiationAnnotation annotationType="Creating Application">WaveLab</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Quality Control">Quality Control was performed by MediaPreserve engineers, with Cube-Tec Dobbin Audio File Inspector and engineer spot-check.</instantiationAnnotation>
+            <instantiationPart>
+               <instantiationIdentifier source="The MediaPreserve" annotation="File Name">cubanc_000100_t1_a_access.mp3</instantiationIdentifier>
+               <instantiationIdentifier source="The MediaPreserve" annotation="checksum">E6B30ABC2780A19C37658CE5E6D055D0</instantiationIdentifier>
+               <instantiationLocation><!--Required Field--></instantiationLocation>
+               <instantiationFileSize unitsOfMeasure="KB">110094</instantiationFileSize>
+               <instantiationDuration>00:46:58</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackEncoding>MP3</essenceTrackEncoding>
+                  <essenceTrackDataRate>160</essenceTrackDataRate>
+                  <essenceTrackBitDepth>24</essenceTrackBitDepth>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+            <instantiationPart>
+               <instantiationIdentifier source="The MediaPreserve" annotation="File Name">cubanc_000100_t1_b_access.mp3</instantiationIdentifier>
+               <instantiationIdentifier source="The MediaPreserve" annotation="checksum">93F346365BB898C832210203A03170D0</instantiationIdentifier>
+               <instantiationLocation><!--Required Field--></instantiationLocation>
+               <instantiationFileSize unitsOfMeasure="KB">8022</instantiationFileSize>
+               <instantiationDuration>00:03:25</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackEncoding>MP3</essenceTrackEncoding>
+                  <essenceTrackDataRate>160</essenceTrackDataRate>
+                  <essenceTrackBitDepth>24</essenceTrackBitDepth>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+         </pbcoreInstantiation>
+      </pbcorePart>
+      <pbcorePart>
+         <pbcoreIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t2</pbcoreIdentifier>
+         <pbcoreIdentifier source="CAVPP" annotation="Call Number">Phonotape 1838 C:1 - 26</pbcoreIdentifier>
+         <pbcoreTitle titleType="Main">Interviews with and about Vincent Hallinan</pbcoreTitle>
+         <pbcoreDescription>Reel 1, 3-10, 12-13, 16-18, 21, 23-24: Vincent Hallinan -- Reel 2: Patricia Hallinan (sister) -- Reel 11: Joel Mitchell and Evonne Golden -- Reel 14-15: Vivian Hallinan (wife) -- Reel 19: Charles B. Lorgon, S.J. -- Reel 20: William J. Dunne, S.J. -- Reel 22: Catherline Sullivan Healy -- Reel 25: Annie Irene Mansfeldt -- Reel 26: Norman Elkington.</pbcoreDescription>
+         <pbcoreInstantiation>
+            <!--Physical Asset-->
+            <instantiationIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t2</instantiationIdentifier>
+            <instantiationDate>[19--]</instantiationDate>
+            <instantiationDimensions unitsOfMeasure="inches">1/8</instantiationDimensions>
+            <instantiationPhysical>1/8 inch audio cassette</instantiationPhysical>
+            <instantiationStandard>NAB</instantiationStandard>
+            <instantiationLocation>The Bancroft Library, University of California, Berkeley</instantiationLocation>
+            <instantiationMediaType>Sound</instantiationMediaType>
+            <instantiationGenerations>Original</instantiationGenerations>
+            <instantiationDuration>00:42:39</instantiationDuration>
+            <instantiationTracks>Quarter-Track</instantiationTracks>
+            <instantiationChannelConfiguration>Stereo</instantiationChannelConfiguration>
+            <instantiationLanguage source="IS0 639.2">eng</instantiationLanguage>
+            <instantiationAnnotation annotationType="Extent">10 Tapes of 10</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Stock Manufacturer">Comcast Cassette</instantiationAnnotation>
+            <instantiationAnnotation annotationType="CAVPP Quality Control"/>
+            <instantiationAnnotation annotationType="Cataloger Notes">CAVPP agreed to transfer a sample of 10 reels from the 26 reels total that are all titled Interviews with and about Vincent Hallinan.</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Transfer Comments">Tape Re-Shelled; </instantiationAnnotation>
+            <instantiationPart>
+               <instantiationIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t2_a</instantiationIdentifier>
+               <instantiationLocation>The Bancroft Library, University of California, Berkeley</instantiationLocation>
+               <instantiationDuration>00:30:50</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackPlaybackSpeed unitsOfMeasure="ips">1.875</essenceTrackPlaybackSpeed>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+            <instantiationPart>
+               <instantiationIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t2_b</instantiationIdentifier>
+               <instantiationLocation>The Bancroft Library, University of California, Berkeley</instantiationLocation>
+               <instantiationDuration>00:11:49</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackPlaybackSpeed unitsOfMeasure="ips">1.875</essenceTrackPlaybackSpeed>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+         </pbcoreInstantiation>
+         <pbcoreInstantiation>
+            <!--Preservation Master-->
+            <instantiationIdentifier source="The MediaPreserve" annotation="Object Identifier">cubanc_000100_t2_prsv</instantiationIdentifier>
+            <instantiationDate>UTC 2014-09-23 13:32:13</instantiationDate>
+            <instantiationDigital source="PRONOM Technical Registry">audio/x-wav</instantiationDigital>
+            <instantiationStandard>Linear PCM Audio</instantiationStandard>
+            <instantiationLocation><!--Required Field--></instantiationLocation>
+            <instantiationMediaType>Sound</instantiationMediaType>
+            <instantiationGenerations>Preservation Master</instantiationGenerations>
+            <instantiationRelation>
+               <instantiationRelationType source="PBCore relationType">Derived from</instantiationRelationType>
+               <instantiationRelationIdentifier annotation="Object Identifier">cubanc_000100_t2</instantiationRelationIdentifier>
+            </instantiationRelation>
+            <instantiationAnnotation annotationType="Creating Application">WaveLab</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Source Deck">Tascam 122mkIII; Audio Cassette Deck</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Digitizer">Mytek; 8X192ADDA; Analog to Digital Converter</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Quality Control">Quality Control was performed by MediaPreserve engineers, with Cube-Tec Dobbin Audio File Inspector and engineer spot-check.</instantiationAnnotation>
+            <instantiationPart>
+               <instantiationIdentifier source="The MediaPreserve" annotation="File Name">cubanc_000100_t2_a_prsv.wav</instantiationIdentifier>
+               <instantiationIdentifier source="The MediaPreserve" annotation="checksum">11495079FFCF873B14233139D0AB504A</instantiationIdentifier>
+               <instantiationLocation><!--Required Field--></instantiationLocation>
+               <instantiationFileSize unitsOfMeasure="KB">1040996</instantiationFileSize>
+               <instantiationDuration>00:30:50</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackEncoding>WAV</essenceTrackEncoding>
+                  <essenceTrackSamplingRate unitsOfMeasure="kHz">96.0</essenceTrackSamplingRate>
+                  <essenceTrackBitDepth>24</essenceTrackBitDepth>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+            <instantiationPart>
+               <instantiationIdentifier source="The MediaPreserve" annotation="File Name">cubanc_000100_t2_b_prsv.wav</instantiationIdentifier>
+               <instantiationIdentifier source="The MediaPreserve" annotation="checksum">A4DDC7DA639515E842CDEA34665022B6</instantiationIdentifier>
+               <instantiationLocation><!--Required Field--></instantiationLocation>
+               <instantiationFileSize unitsOfMeasure="KB">398957</instantiationFileSize>
+               <instantiationDuration>00:11:49</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackEncoding>WAV</essenceTrackEncoding>
+                  <essenceTrackSamplingRate unitsOfMeasure="kHz">96.0</essenceTrackSamplingRate>
+                  <essenceTrackBitDepth>24</essenceTrackBitDepth>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+         </pbcoreInstantiation>
+         <pbcoreInstantiation>
+            <!--Access Copy-->
+            <instantiationIdentifier source="The MediaPreserve" annotation="Object Identifier">cubanc_000100_t2_access</instantiationIdentifier>
+            <instantiationDate>UTC 2014-09-23 13:32:13</instantiationDate>
+            <instantiationDigital source="PRONOM Technical Registry">audio/mpeg</instantiationDigital>
+            <instantiationStandard>MP3</instantiationStandard>
+            <instantiationLocation><!--Required Field--></instantiationLocation>
+            <instantiationMediaType>Sound</instantiationMediaType>
+            <instantiationGenerations>Access Copy</instantiationGenerations>
+            <instantiationRelation>
+               <instantiationRelationType source="PBCore relationType">Derived from</instantiationRelationType>
+               <instantiationRelationIdentifier annotation="Object Identifier">cubanc_000100_t2_prsv</instantiationRelationIdentifier>
+            </instantiationRelation>
+            <instantiationAnnotation annotationType="Creating Application">WaveLab</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Quality Control">Quality Control was performed by MediaPreserve engineers, with Cube-Tec Dobbin Audio File Inspector and engineer spot-check.</instantiationAnnotation>
+            <instantiationPart>
+               <instantiationIdentifier source="The MediaPreserve" annotation="File Name">cubanc_000100_t2_a_access.mp3</instantiationIdentifier>
+               <instantiationIdentifier source="The MediaPreserve" annotation="checksum">B0E8203B63AB48B792BDC87C984FC3A2</instantiationIdentifier>
+               <instantiationLocation><!--Required Field--></instantiationLocation>
+               <instantiationFileSize unitsOfMeasure="KB">72294</instantiationFileSize>
+               <instantiationDuration>00:30:50</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackEncoding>MP3</essenceTrackEncoding>
+                  <essenceTrackDataRate>160</essenceTrackDataRate>
+                  <essenceTrackBitDepth>24</essenceTrackBitDepth>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+            <instantiationPart>
+               <instantiationIdentifier source="The MediaPreserve" annotation="File Name">cubanc_000100_t2_b_access.mp3</instantiationIdentifier>
+               <instantiationIdentifier source="The MediaPreserve" annotation="checksum">4D398E0B731307D75733389835BECA21</instantiationIdentifier>
+               <instantiationLocation><!--Required Field--></instantiationLocation>
+               <instantiationFileSize unitsOfMeasure="KB">27708</instantiationFileSize>
+               <instantiationDuration>00:11:49</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackEncoding>MP3</essenceTrackEncoding>
+                  <essenceTrackDataRate>160</essenceTrackDataRate>
+                  <essenceTrackBitDepth>24</essenceTrackBitDepth>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+         </pbcoreInstantiation>
+      </pbcorePart>
+      <pbcorePart>
+         <pbcoreIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t3</pbcoreIdentifier>
+         <pbcoreIdentifier source="CAVPP" annotation="Call Number">Phonotape 1838 C:1 - 26</pbcoreIdentifier>
+         <pbcoreTitle titleType="Main">Interviews with and about Vincent Hallinan</pbcoreTitle>
+         <pbcoreDescription>Reel 1, 3-10, 12-13, 16-18, 21, 23-24: Vincent Hallinan -- Reel 2: Patricia Hallinan (sister) -- Reel 11: Joel Mitchell and Evonne Golden -- Reel 14-15: Vivian Hallinan (wife) -- Reel 19: Charles B. Lorgon, S.J. -- Reel 20: William J. Dunne, S.J. -- Reel 22: Catherline Sullivan Healy -- Reel 25: Annie Irene Mansfeldt -- Reel 26: Norman Elkington.</pbcoreDescription>
+         <pbcoreInstantiation>
+            <!--Physical Asset-->
+            <instantiationIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t3</instantiationIdentifier>
+            <instantiationDate>[19--]</instantiationDate>
+            <instantiationDimensions unitsOfMeasure="inches">1/8</instantiationDimensions>
+            <instantiationPhysical>1/8 inch audio cassette</instantiationPhysical>
+            <instantiationStandard>NAB</instantiationStandard>
+            <instantiationLocation>The Bancroft Library, University of California, Berkeley</instantiationLocation>
+            <instantiationMediaType>Sound</instantiationMediaType>
+            <instantiationGenerations>Original</instantiationGenerations>
+            <instantiationDuration>01:02:13</instantiationDuration>
+            <instantiationTracks>Quarter-Track</instantiationTracks>
+            <instantiationChannelConfiguration>Stereo</instantiationChannelConfiguration>
+            <instantiationLanguage source="IS0 639.2">eng</instantiationLanguage>
+            <instantiationAnnotation annotationType="Extent">10 Tapes of 10</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Stock Manufacturer">Comcast Cassette</instantiationAnnotation>
+            <instantiationAnnotation annotationType="CAVPP Quality Control">.</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Cataloger Notes">CAVPP agreed to transfer a sample of 10 reels from the 26 reels total that are all titled Interviews with and about Vincent Hallinan.</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Transfer Comments">High Background Noise on Tape; Program Distorted at Times; </instantiationAnnotation>
+            <instantiationPart>
+               <instantiationIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t3_a</instantiationIdentifier>
+               <instantiationLocation>The Bancroft Library, University of California, Berkeley</instantiationLocation>
+               <instantiationDuration>00:31:01</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackPlaybackSpeed unitsOfMeasure="ips">1.875</essenceTrackPlaybackSpeed>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+            <instantiationPart>
+               <instantiationIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t3_b</instantiationIdentifier>
+               <instantiationLocation>The Bancroft Library, University of California, Berkeley</instantiationLocation>
+               <instantiationDuration>00:31:12</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackPlaybackSpeed unitsOfMeasure="ips">1.875</essenceTrackPlaybackSpeed>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+         </pbcoreInstantiation>
+         <pbcoreInstantiation>
+            <!--Preservation Master-->
+            <instantiationIdentifier source="The MediaPreserve" annotation="Object Identifier">cubanc_000100_t3_prsv</instantiationIdentifier>
+            <instantiationDate>UTC 2014-09-23 13:33:57</instantiationDate>
+            <instantiationDigital source="PRONOM Technical Registry">audio/x-wav</instantiationDigital>
+            <instantiationStandard>Linear PCM Audio</instantiationStandard>
+            <instantiationLocation><!--Required Field--></instantiationLocation>
+            <instantiationMediaType>Sound</instantiationMediaType>
+            <instantiationGenerations>Preservation Master</instantiationGenerations>
+            <instantiationRelation>
+               <instantiationRelationType source="PBCore relationType">Derived from</instantiationRelationType>
+               <instantiationRelationIdentifier annotation="Object Identifier">cubanc_000100_t3</instantiationRelationIdentifier>
+            </instantiationRelation>
+            <instantiationAnnotation annotationType="Creating Application">WaveLab</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Source Deck">Tascam 122mkIII; Audio Cassette Deck</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Digitizer">Mytek; 8X192ADDA; Analog to Digital Converter</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Quality Control">Quality Control was performed by MediaPreserve engineers, with Cube-Tec Dobbin Audio File Inspector and engineer spot-check.</instantiationAnnotation>
+            <instantiationPart>
+               <instantiationIdentifier source="The MediaPreserve" annotation="File Name">cubanc_000100_t3_a_prsv.wav</instantiationIdentifier>
+               <instantiationIdentifier source="The MediaPreserve" annotation="checksum">D78328D1C0B8395A2E5032F9288A8C2A</instantiationIdentifier>
+               <instantiationLocation><!--Required Field--></instantiationLocation>
+               <instantiationFileSize unitsOfMeasure="KB">1047177</instantiationFileSize>
+               <instantiationDuration>00:31:01</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackEncoding>WAV</essenceTrackEncoding>
+                  <essenceTrackSamplingRate unitsOfMeasure="kHz">96.0</essenceTrackSamplingRate>
+                  <essenceTrackBitDepth>24</essenceTrackBitDepth>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+            <instantiationPart>
+               <instantiationIdentifier source="The MediaPreserve" annotation="File Name">cubanc_000100_t3_b_prsv.wav</instantiationIdentifier>
+               <instantiationIdentifier source="The MediaPreserve" annotation="checksum">7E4CE6811A223EBED6D47BAC21025F98</instantiationIdentifier>
+               <instantiationLocation><!--Required Field--></instantiationLocation>
+               <instantiationFileSize unitsOfMeasure="KB">1053405</instantiationFileSize>
+               <instantiationDuration>00:31:12</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackEncoding>WAV</essenceTrackEncoding>
+                  <essenceTrackSamplingRate unitsOfMeasure="kHz">96.0</essenceTrackSamplingRate>
+                  <essenceTrackBitDepth>24</essenceTrackBitDepth>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+         </pbcoreInstantiation>
+         <pbcoreInstantiation>
+            <!--Access Copy-->
+            <instantiationIdentifier source="The MediaPreserve" annotation="Object Identifier">cubanc_000100_t3_access</instantiationIdentifier>
+            <instantiationDate>UTC 2014-09-23 13:33:57</instantiationDate>
+            <instantiationDigital source="PRONOM Technical Registry">audio/mpeg</instantiationDigital>
+            <instantiationStandard>MP3</instantiationStandard>
+            <instantiationLocation><!--Required Field--></instantiationLocation>
+            <instantiationMediaType>Sound</instantiationMediaType>
+            <instantiationGenerations>Access Copy</instantiationGenerations>
+            <instantiationRelation>
+               <instantiationRelationType source="PBCore relationType">Derived from</instantiationRelationType>
+               <instantiationRelationIdentifier annotation="Object Identifier">cubanc_000100_t3_prsv</instantiationRelationIdentifier>
+            </instantiationRelation>
+            <instantiationAnnotation annotationType="Creating Application">WaveLab</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Quality Control">Quality Control was performed by MediaPreserve engineers, with Cube-Tec Dobbin Audio File Inspector and engineer spot-check.</instantiationAnnotation>
+            <instantiationPart>
+               <instantiationIdentifier source="The MediaPreserve" annotation="File Name">cubanc_000100_t3_a_access.mp3</instantiationIdentifier>
+               <instantiationIdentifier source="The MediaPreserve" annotation="checksum">761EDD28852F4819E1BE7D9196F64513</instantiationIdentifier>
+               <instantiationLocation><!--Required Field--></instantiationLocation>
+               <instantiationFileSize unitsOfMeasure="KB">72723</instantiationFileSize>
+               <instantiationDuration>00:31:01</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackEncoding>MP3</essenceTrackEncoding>
+                  <essenceTrackDataRate>160</essenceTrackDataRate>
+                  <essenceTrackBitDepth>24</essenceTrackBitDepth>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+            <instantiationPart>
+               <instantiationIdentifier source="The MediaPreserve" annotation="File Name">cubanc_000100_t3_b_access.mp3</instantiationIdentifier>
+               <instantiationIdentifier source="The MediaPreserve" annotation="checksum">AD1B9329E800429D2A30980535AE7BA3</instantiationIdentifier>
+               <instantiationLocation><!--Required Field--></instantiationLocation>
+               <instantiationFileSize unitsOfMeasure="KB">73155</instantiationFileSize>
+               <instantiationDuration>00:31:12</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackEncoding>MP3</essenceTrackEncoding>
+                  <essenceTrackDataRate>160</essenceTrackDataRate>
+                  <essenceTrackBitDepth>24</essenceTrackBitDepth>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+         </pbcoreInstantiation>
+      </pbcorePart>
+      <pbcorePart>
+         <pbcoreIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t4</pbcoreIdentifier>
+         <pbcoreIdentifier source="CAVPP" annotation="Call Number">Phonotape 1838 C:1 - 26</pbcoreIdentifier>
+         <pbcoreTitle titleType="Main">Interviews with and about Vincent Hallinan</pbcoreTitle>
+         <pbcoreDescription>Reel 1, 3-10, 12-13, 16-18, 21, 23-24: Vincent Hallinan -- Reel 2: Patricia Hallinan (sister) -- Reel 11: Joel Mitchell and Evonne Golden -- Reel 14-15: Vivian Hallinan (wife) -- Reel 19: Charles B. Lorgon, S.J. -- Reel 20: William J. Dunne, S.J. -- Reel 22: Catherline Sullivan Healy -- Reel 25: Annie Irene Mansfeldt -- Reel 26: Norman Elkington.</pbcoreDescription>
+         <pbcoreInstantiation>
+            <!--Physical Asset-->
+            <instantiationIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t4</instantiationIdentifier>
+            <instantiationDate>[19--]</instantiationDate>
+            <instantiationDimensions unitsOfMeasure="inches">1/8</instantiationDimensions>
+            <instantiationPhysical>1/8 inch audio cassette</instantiationPhysical>
+            <instantiationStandard>NAB</instantiationStandard>
+            <instantiationLocation>The Bancroft Library, University of California, Berkeley</instantiationLocation>
+            <instantiationMediaType>Sound</instantiationMediaType>
+            <instantiationGenerations>Original</instantiationGenerations>
+            <instantiationDuration>00:22:36</instantiationDuration>
+            <instantiationTracks>Quarter-Track</instantiationTracks>
+            <instantiationChannelConfiguration>Stereo</instantiationChannelConfiguration>
+            <instantiationLanguage source="IS0 639.2">eng</instantiationLanguage>
+            <instantiationAnnotation annotationType="Extent">10 Tapes of 10</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Stock Manufacturer">Comcast Cassette</instantiationAnnotation>
+            <instantiationAnnotation annotationType="CAVPP Quality Control">.</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Cataloger Notes">CAVPP agreed to transfer a sample of 10 reels from the 26 reels total that are all titled Interviews with and about Vincent Hallinan.</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Transfer Comments">High Background Noise on Tape; High Amount of Hiss on Tape; Side b contains what sounds like testing of machine; speed on side b doubles fom 00:00:44 until 00:00:54 </instantiationAnnotation>
+            <instantiationPart>
+               <instantiationIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t4_a</instantiationIdentifier>
+               <instantiationLocation>The Bancroft Library, University of California, Berkeley</instantiationLocation>
+               <instantiationDuration>00:21:29</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackPlaybackSpeed unitsOfMeasure="ips">1.875</essenceTrackPlaybackSpeed>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+            <instantiationPart>
+               <instantiationIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t4_b</instantiationIdentifier>
+               <instantiationLocation>The Bancroft Library, University of California, Berkeley</instantiationLocation>
+               <instantiationDuration>00:01:07</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackPlaybackSpeed unitsOfMeasure="ips">1.875</essenceTrackPlaybackSpeed>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+         </pbcoreInstantiation>
+         <pbcoreInstantiation>
+            <!--Preservation Master-->
+            <instantiationIdentifier source="The MediaPreserve" annotation="Object Identifier">cubanc_000100_t4_prsv</instantiationIdentifier>
+            <instantiationDate>UTC 2014-09-23 13:35:00</instantiationDate>
+            <instantiationDigital source="PRONOM Technical Registry">audio/x-wav</instantiationDigital>
+            <instantiationStandard>Linear PCM Audio</instantiationStandard>
+            <instantiationLocation><!--Required Field--></instantiationLocation>
+            <instantiationMediaType>Sound</instantiationMediaType>
+            <instantiationGenerations>Preservation Master</instantiationGenerations>
+            <instantiationRelation>
+               <instantiationRelationType source="PBCore relationType">Derived from</instantiationRelationType>
+               <instantiationRelationIdentifier annotation="Object Identifier">cubanc_000100_t4</instantiationRelationIdentifier>
+            </instantiationRelation>
+            <instantiationAnnotation annotationType="Creating Application">WaveLab</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Source Deck">Tascam 122mkIII; Audio Cassette Deck</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Digitizer">Mytek; 8X192ADDA; Analog to Digital Converter</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Quality Control">Quality Control was performed by MediaPreserve engineers, with Cube-Tec Dobbin Audio File Inspector and engineer spot-check.</instantiationAnnotation>
+            <instantiationPart>
+               <instantiationIdentifier source="The MediaPreserve" annotation="File Name">cubanc_000100_t4_a_prsv.wav</instantiationIdentifier>
+               <instantiationIdentifier source="The MediaPreserve" annotation="checksum">F21B5C9AD0910D367C29FD46E205922C</instantiationIdentifier>
+               <instantiationLocation><!--Required Field--></instantiationLocation>
+               <instantiationFileSize unitsOfMeasure="KB">725368</instantiationFileSize>
+               <instantiationDuration>00:21:29</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackEncoding>WAV</essenceTrackEncoding>
+                  <essenceTrackSamplingRate unitsOfMeasure="kHz">96.0</essenceTrackSamplingRate>
+                  <essenceTrackBitDepth>24</essenceTrackBitDepth>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+            <instantiationPart>
+               <instantiationIdentifier source="The MediaPreserve" annotation="File Name">cubanc_000100_t4_b_prsv.wav</instantiationIdentifier>
+               <instantiationIdentifier source="The MediaPreserve" annotation="checksum">2C8F58276BB2225722532C76E8C98D58</instantiationIdentifier>
+               <instantiationLocation><!--Required Field--></instantiationLocation>
+               <instantiationFileSize unitsOfMeasure="KB">37937</instantiationFileSize>
+               <instantiationDuration>00:01:07</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackEncoding>WAV</essenceTrackEncoding>
+                  <essenceTrackSamplingRate unitsOfMeasure="kHz">96.0</essenceTrackSamplingRate>
+                  <essenceTrackBitDepth>24</essenceTrackBitDepth>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+         </pbcoreInstantiation>
+         <pbcoreInstantiation>
+            <!--Access Copy-->
+            <instantiationIdentifier source="The MediaPreserve" annotation="Object Identifier">cubanc_000100_t4_access</instantiationIdentifier>
+            <instantiationDate>UTC 2014-09-23 13:35:00</instantiationDate>
+            <instantiationDigital source="PRONOM Technical Registry">audio/mpeg</instantiationDigital>
+            <instantiationStandard>MP3</instantiationStandard>
+            <instantiationLocation><!--Required Field--></instantiationLocation>
+            <instantiationMediaType>Sound</instantiationMediaType>
+            <instantiationGenerations>Access Copy</instantiationGenerations>
+            <instantiationRelation>
+               <instantiationRelationType source="PBCore relationType">Derived from</instantiationRelationType>
+               <instantiationRelationIdentifier annotation="Object Identifier">cubanc_000100_t4_prsv</instantiationRelationIdentifier>
+            </instantiationRelation>
+            <instantiationAnnotation annotationType="Creating Application">WaveLab</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Quality Control">Quality Control was performed by MediaPreserve engineers, with Cube-Tec Dobbin Audio File Inspector and engineer spot-check.</instantiationAnnotation>
+            <instantiationPart>
+               <instantiationIdentifier source="The MediaPreserve" annotation="File Name">cubanc_000100_t4_a_access.mp3</instantiationIdentifier>
+               <instantiationIdentifier source="The MediaPreserve" annotation="checksum">390333B96CF128B1DE6E2F95E8E9686D</instantiationIdentifier>
+               <instantiationLocation><!--Required Field--></instantiationLocation>
+               <instantiationFileSize unitsOfMeasure="KB">50375</instantiationFileSize>
+               <instantiationDuration>00:21:29</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackEncoding>MP3</essenceTrackEncoding>
+                  <essenceTrackDataRate>160</essenceTrackDataRate>
+                  <essenceTrackBitDepth>24</essenceTrackBitDepth>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+            <instantiationPart>
+               <instantiationIdentifier source="The MediaPreserve" annotation="File Name">cubanc_000100_t4_b_access.mp3</instantiationIdentifier>
+               <instantiationIdentifier source="The MediaPreserve" annotation="checksum">C31D3CE83091AC249E830074CBB01F4E</instantiationIdentifier>
+               <instantiationLocation><!--Required Field--></instantiationLocation>
+               <instantiationFileSize unitsOfMeasure="KB">2636</instantiationFileSize>
+               <instantiationDuration>00:01:07</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackEncoding>MP3</essenceTrackEncoding>
+                  <essenceTrackDataRate>160</essenceTrackDataRate>
+                  <essenceTrackBitDepth>24</essenceTrackBitDepth>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+         </pbcoreInstantiation>
+      </pbcorePart>
+      <pbcorePart>
+         <pbcoreIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t5</pbcoreIdentifier>
+         <pbcoreIdentifier source="CAVPP" annotation="Call Number">Phonotape 1838 C:1 - 26</pbcoreIdentifier>
+         <pbcoreTitle titleType="Main">Interviews with and about Vincent Hallinan</pbcoreTitle>
+         <pbcoreDescription>Reel 1, 3-10, 12-13, 16-18, 21, 23-24: Vincent Hallinan -- Reel
+            2: Patricia Hallinan (sister) -- Reel 11: Joel Mitchell and Evonne Golden -- Reel 14-15:
+            Vivian Hallinan (wife) -- Reel 19: Charles B. Lorgon, S.J. -- Reel 20: William J. Dunne,
+            S.J. -- Reel 22: Catherline Sullivan Healy -- Reel 25: Annie Irene Mansfeldt -- Reel 26:
+            Norman Elkington.</pbcoreDescription>
+         <pbcoreInstantiation>
+            <!--Physical Asset-->
+            <instantiationIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t5</instantiationIdentifier>
+            <instantiationDate>[19--]</instantiationDate>
+            <instantiationDimensions unitsOfMeasure="inches">1/8</instantiationDimensions>
+            <instantiationPhysical>1/8 inch audio cassette</instantiationPhysical>
+            <instantiationStandard>NAB</instantiationStandard>
+            <instantiationLocation>The Bancroft Library, University of California, Berkeley</instantiationLocation>
+            <instantiationMediaType>Sound</instantiationMediaType>
+            <instantiationGenerations>Original</instantiationGenerations>
+            <instantiationDuration>01:04:22</instantiationDuration>
+            <instantiationTracks>Quarter-Track</instantiationTracks>
+            <instantiationChannelConfiguration>Stereo</instantiationChannelConfiguration>
+            <instantiationLanguage source="IS0 639.2">eng</instantiationLanguage>
+            <instantiationAnnotation annotationType="Extent">10 Tapes of 10</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Stock Manufacturer">BASF</instantiationAnnotation>
+            <instantiationAnnotation annotationType="CAVPP Quality Control">CAVPP agreed to transfer a sample of 10 reels from the 26 reels total
+               that are all titled Interviews with and about Vincent Hallinan.</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Cataloger Notes">CAVPP agreed to transfer a sample of 10 reels from the 26 reels total that
+               are all titled Interviews with and about Vincent Hallinan.</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Transfer Comments">High Background Noise on Tape; High Amount of Hiss on Tape; </instantiationAnnotation>
+            <instantiationPart>
+               <instantiationIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t5_a</instantiationIdentifier>
+               <instantiationLocation>The Bancroft Library, University of California, Berkeley</instantiationLocation>
+               <instantiationDuration>00:32:12</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackPlaybackSpeed unitsOfMeasure="ips">1.875</essenceTrackPlaybackSpeed>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+            <instantiationPart>
+               <instantiationIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t5_b</instantiationIdentifier>
+               <instantiationLocation>The Bancroft Library, University of California, Berkeley</instantiationLocation>
+               <instantiationDuration>00:32:10</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackPlaybackSpeed unitsOfMeasure="ips">1.875</essenceTrackPlaybackSpeed>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+         </pbcoreInstantiation>
+         <pbcoreInstantiation>
+            <!--Preservation Master-->
+            <instantiationIdentifier source="The MediaPreserve" annotation="Object Identifier">cubanc_000100_t5_prsv</instantiationIdentifier>
+            <instantiationDate>UTC 2014-09-23 15:50:35</instantiationDate>
+            <instantiationDigital source="PRONOM Technical Registry">audio/x-wav</instantiationDigital>
+            <instantiationStandard>Linear PCM Audio</instantiationStandard>
+            <instantiationLocation><!--Required Field--></instantiationLocation>
+            <instantiationMediaType>Sound</instantiationMediaType>
+            <instantiationGenerations>Preservation Master</instantiationGenerations>
+            <instantiationRelation>
+               <instantiationRelationType source="PBCore relationType">Derived from</instantiationRelationType>
+               <instantiationRelationIdentifier annotation="Object Identifier">cubanc_000100_t5</instantiationRelationIdentifier>
+            </instantiationRelation>
+            <instantiationAnnotation annotationType="Creating Application">WaveLab</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Source Deck">Tascam 122mkIII; Audio Cassette Deck</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Digitizer">Mytek; 8X192ADDA; Analog to Digital Converter</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Quality Control">Quality Control was performed by MediaPreserve engineers, with Cube-Tec Dobbin Audio File Inspector and engineer spot-check.</instantiationAnnotation>
+            <instantiationPart>
+               <instantiationIdentifier source="The MediaPreserve" annotation="File Name">cubanc_000100_t5_a_prsv.wav</instantiationIdentifier>
+               <instantiationIdentifier source="The MediaPreserve" annotation="checksum">7834FC48BE5FEAA504F1D362287796FE</instantiationIdentifier>
+               <instantiationLocation><!--Required Field--></instantiationLocation>
+               <instantiationFileSize unitsOfMeasure="KB">1086783</instantiationFileSize>
+               <instantiationDuration>00:32:12</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackEncoding>WAV</essenceTrackEncoding>
+                  <essenceTrackSamplingRate unitsOfMeasure="kHz">96.0</essenceTrackSamplingRate>
+                  <essenceTrackBitDepth>24</essenceTrackBitDepth>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+            <instantiationPart>
+               <instantiationIdentifier source="The MediaPreserve" annotation="File Name">cubanc_000100_t5_b_prsv.wav</instantiationIdentifier>
+               <instantiationIdentifier source="The MediaPreserve" annotation="checksum">F261638A42D82F8EE55459D50177E9EE</instantiationIdentifier>
+               <instantiationLocation><!--Required Field--></instantiationLocation>
+               <instantiationFileSize unitsOfMeasure="KB">1085684</instantiationFileSize>
+               <instantiationDuration>00:32:10</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackEncoding>WAV</essenceTrackEncoding>
+                  <essenceTrackSamplingRate unitsOfMeasure="kHz">96.0</essenceTrackSamplingRate>
+                  <essenceTrackBitDepth>24</essenceTrackBitDepth>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+         </pbcoreInstantiation>
+         <pbcoreInstantiation>
+            <!--Access Copy-->
+            <instantiationIdentifier source="The MediaPreserve" annotation="Object Identifier">cubanc_000100_t5_access</instantiationIdentifier>
+            <instantiationDate>UTC 2014-09-23 15:50:35</instantiationDate>
+            <instantiationDigital source="PRONOM Technical Registry">audio/mpeg</instantiationDigital>
+            <instantiationStandard>MP3</instantiationStandard>
+            <instantiationLocation><!--Required Field--></instantiationLocation>
+            <instantiationMediaType>Sound</instantiationMediaType>
+            <instantiationGenerations>Access Copy</instantiationGenerations>
+            <instantiationRelation>
+               <instantiationRelationType source="PBCore relationType">Derived from</instantiationRelationType>
+               <instantiationRelationIdentifier annotation="Object Identifier">cubanc_000100_t5_prsv</instantiationRelationIdentifier>
+            </instantiationRelation>
+            <instantiationAnnotation annotationType="Creating Application">WaveLab</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Quality Control">Quality Control was performed by MediaPreserve engineers, with Cube-Tec Dobbin Audio File Inspector and engineer spot-check.</instantiationAnnotation>
+            <instantiationPart>
+               <instantiationIdentifier source="The MediaPreserve" annotation="File Name">cubanc_000100_t5_a_access.mp3</instantiationIdentifier>
+               <instantiationIdentifier source="The MediaPreserve" annotation="checksum">90D59371D8A9BACF22BB81850A94971A</instantiationIdentifier>
+               <instantiationLocation><!--Required Field--></instantiationLocation>
+               <instantiationFileSize unitsOfMeasure="KB">75473</instantiationFileSize>
+               <instantiationDuration>00:32:12</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackEncoding>MP3</essenceTrackEncoding>
+                  <essenceTrackDataRate>160</essenceTrackDataRate>
+                  <essenceTrackBitDepth>24</essenceTrackBitDepth>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+            <instantiationPart>
+               <instantiationIdentifier source="The MediaPreserve" annotation="File Name">cubanc_000100_t5_b_access.mp3</instantiationIdentifier>
+               <instantiationIdentifier source="The MediaPreserve" annotation="checksum">8A76AAF478C083C03A01C38E9B7BA43E</instantiationIdentifier>
+               <instantiationLocation><!--Required Field--></instantiationLocation>
+               <instantiationFileSize unitsOfMeasure="KB">75397</instantiationFileSize>
+               <instantiationDuration>00:32:10</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackEncoding>MP3</essenceTrackEncoding>
+                  <essenceTrackDataRate>160</essenceTrackDataRate>
+                  <essenceTrackBitDepth>24</essenceTrackBitDepth>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+         </pbcoreInstantiation>
+      </pbcorePart>
+      <pbcorePart>
+         <pbcoreIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t6</pbcoreIdentifier>
+         <pbcoreIdentifier source="CAVPP" annotation="Call Number">Phonotape 1838 C:1 - 26</pbcoreIdentifier>
+         <pbcoreTitle titleType="Main">Interviews with and about Vincent Hallinan</pbcoreTitle>
+         <pbcoreDescription>Reel 1, 3-10, 12-13, 16-18, 21, 23-24: Vincent Hallinan -- Reel
+            2: Patricia Hallinan (sister) -- Reel 11: Joel Mitchell and Evonne Golden -- Reel 14-15:
+            Vivian Hallinan (wife) -- Reel 19: Charles B. Lorgon, S.J. -- Reel 20: William J. Dunne,
+            S.J. -- Reel 22: Catherline Sullivan Healy -- Reel 25: Annie Irene Mansfeldt -- Reel 26:
+            Norman Elkington.</pbcoreDescription>
+         <pbcoreInstantiation>
+            <!--Physical Asset-->
+            <instantiationIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t6</instantiationIdentifier>
+            <instantiationDate>[19--]</instantiationDate>
+            <instantiationDimensions unitsOfMeasure="inches">1/8</instantiationDimensions>
+            <instantiationPhysical>1/8 inch audio cassette</instantiationPhysical>
+            <instantiationStandard>NAB</instantiationStandard>
+            <instantiationLocation>The Bancroft Library, University of California, Berkeley</instantiationLocation>
+            <instantiationMediaType>Sound</instantiationMediaType>
+            <instantiationGenerations>Original</instantiationGenerations>
+            <instantiationDuration>00:15:50</instantiationDuration>
+            <instantiationTracks>Quarter-Track</instantiationTracks>
+            <instantiationChannelConfiguration>Stereo</instantiationChannelConfiguration>
+            <instantiationLanguage source="IS0 639.2">eng</instantiationLanguage>
+            <instantiationAnnotation annotationType="Extent">10 Tapes of 10</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Stock Manufacturer">BASF</instantiationAnnotation>
+            <instantiationAnnotation annotationType="CAVPP Quality Control">CAVPP agreed to transfer a sample of 10 reels from the 26 reels total
+               that are all titled Interviews with and about Vincent Hallinan.</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Cataloger Notes">CAVPP agreed to transfer a sample of 10 reels from the 26 reels total that
+               are all titled Interviews with and about Vincent Hallinan.</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Transfer Comments">Tape Re-Shelled; Side B is Blank; </instantiationAnnotation>
+            <instantiationPart>
+               <instantiationIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t6</instantiationIdentifier>
+               <instantiationLocation>The Bancroft Library, University of California, Berkeley</instantiationLocation>
+               <instantiationDuration>00:15:50</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackPlaybackSpeed unitsOfMeasure="ips">1.875</essenceTrackPlaybackSpeed>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+         </pbcoreInstantiation>
+         <pbcoreInstantiation>
+            <!--Preservation Master-->
+            <instantiationIdentifier source="The MediaPreserve" annotation="Object Identifier">cubanc_000100_t6_prsv</instantiationIdentifier>
+            <instantiationDate>UTC 2014-09-23 13:35:47</instantiationDate>
+            <instantiationDigital source="PRONOM Technical Registry">audio/x-wav</instantiationDigital>
+            <instantiationStandard>Linear PCM Audio</instantiationStandard>
+            <instantiationLocation><!--Required Field--></instantiationLocation>
+            <instantiationMediaType>Sound</instantiationMediaType>
+            <instantiationGenerations>Preservation Master</instantiationGenerations>
+            <instantiationRelation>
+               <instantiationRelationType source="PBCore relationType">Derived from</instantiationRelationType>
+               <instantiationRelationIdentifier annotation="Object Identifier">cubanc_000100_t6</instantiationRelationIdentifier>
+            </instantiationRelation>
+            <instantiationAnnotation annotationType="Creating Application">WaveLab</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Source Deck">Tascam 122mkIII; Audio Cassette Deck</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Digitizer">Mytek; 8X192ADDA; Analog to Digital Converter</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Quality Control">Quality Control was performed by MediaPreserve engineers, with Cube-Tec Dobbin Audio File Inspector and engineer spot-check.</instantiationAnnotation>
+            <instantiationPart>
+               <instantiationIdentifier source="The MediaPreserve" annotation="File Name">cubanc_000100_t6_prsv.wav</instantiationIdentifier>
+               <instantiationIdentifier source="The MediaPreserve" annotation="checksum">6F0239916AC33BAA09B62AF4B57A7F00</instantiationIdentifier>
+               <instantiationLocation><!--Required Field--></instantiationLocation>
+               <instantiationFileSize unitsOfMeasure="KB">534473</instantiationFileSize>
+               <instantiationDuration>00:15:50</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackEncoding>WAV</essenceTrackEncoding>
+                  <essenceTrackSamplingRate unitsOfMeasure="kHz">96.0</essenceTrackSamplingRate>
+                  <essenceTrackBitDepth>24</essenceTrackBitDepth>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+         </pbcoreInstantiation>
+         <pbcoreInstantiation>
+            <!--Access Copy-->
+            <instantiationIdentifier source="The MediaPreserve" annotation="Object Identifier">cubanc_000100_t6_access</instantiationIdentifier>
+            <instantiationDate>UTC 2014-09-23 13:35:47</instantiationDate>
+            <instantiationDigital source="PRONOM Technical Registry">audio/mpeg</instantiationDigital>
+            <instantiationStandard>MP3</instantiationStandard>
+            <instantiationLocation><!--Required Field--></instantiationLocation>
+            <instantiationMediaType>Sound</instantiationMediaType>
+            <instantiationGenerations>Access Copy</instantiationGenerations>
+            <instantiationRelation>
+               <instantiationRelationType source="PBCore relationType">Derived from</instantiationRelationType>
+               <instantiationRelationIdentifier annotation="Object Identifier">cubanc_000100_t6_prsv</instantiationRelationIdentifier>
+            </instantiationRelation>
+            <instantiationAnnotation annotationType="Creating Application">WaveLab</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Quality Control">Quality Control was performed by MediaPreserve engineers, with Cube-Tec Dobbin Audio File Inspector and engineer spot-check.</instantiationAnnotation>
+            <instantiationPart>
+               <instantiationIdentifier source="The MediaPreserve" annotation="File Name">cubanc_000100_t6_access.mp3</instantiationIdentifier>
+               <instantiationIdentifier source="The MediaPreserve" annotation="checksum">9CE1539F0B197292A70EEEE1FF8458DA</instantiationIdentifier>
+               <instantiationLocation><!--Required Field--></instantiationLocation>
+               <instantiationFileSize unitsOfMeasure="KB">37118</instantiationFileSize>
+               <instantiationDuration>00:15:50</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackEncoding>MP3</essenceTrackEncoding>
+                  <essenceTrackDataRate>160</essenceTrackDataRate>
+                  <essenceTrackBitDepth>24</essenceTrackBitDepth>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+         </pbcoreInstantiation>
+      </pbcorePart>
+      <pbcorePart>
+         <pbcoreIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t7</pbcoreIdentifier>
+         <pbcoreIdentifier source="CAVPP" annotation="Call Number">Phonotape 1838 C:1 - 26</pbcoreIdentifier>
+         <pbcoreTitle titleType="Main">Interviews with and about Vincent Hallinan</pbcoreTitle>
+         <pbcoreDescription>Reel 1, 3-10, 12-13, 16-18, 21, 23-24: Vincent Hallinan -- Reel
+            2: Patricia Hallinan (sister) -- Reel 11: Joel Mitchell and Evonne Golden -- Reel 14-15:
+            Vivian Hallinan (wife) -- Reel 19: Charles B. Lorgon, S.J. -- Reel 20: William J. Dunne,
+            S.J. -- Reel 22: Catherline Sullivan Healy -- Reel 25: Annie Irene Mansfeldt -- Reel 26:
+            Norman Elkington.</pbcoreDescription>
+         <pbcoreInstantiation>
+            <!--Physical Asset-->
+            <instantiationIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t7</instantiationIdentifier>
+            <instantiationDate>[19--]</instantiationDate>
+            <instantiationDimensions unitsOfMeasure="inches">1/8</instantiationDimensions>
+            <instantiationPhysical>1/8 inch audio cassette</instantiationPhysical>
+            <instantiationStandard>NAB</instantiationStandard>
+            <instantiationLocation>The Bancroft Library, University of California, Berkeley</instantiationLocation>
+            <instantiationMediaType>Sound</instantiationMediaType>
+            <instantiationGenerations>Original</instantiationGenerations>
+            <instantiationDuration>01:01:24</instantiationDuration>
+            <instantiationTracks>Quarter-Track</instantiationTracks>
+            <instantiationChannelConfiguration>Stereo</instantiationChannelConfiguration>
+            <instantiationLanguage source="IS0 639.2">eng</instantiationLanguage>
+            <instantiationAnnotation annotationType="Extent">10 Tapes of 10</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Stock Manufacturer">BASF</instantiationAnnotation>
+            <instantiationAnnotation annotationType="CAVPP Quality Control">CAVPP agreed to transfer a sample of 10 reels from the 26 reels total
+               that are all titled Interviews with and about Vincent Hallinan.</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Cataloger Notes">CAVPP agreed to transfer a sample of 10 reels from the 26 reels total that
+               are all titled Interviews with and about Vincent Hallinan.</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Transfer Comments">High Amount of Hiss on Tape; High Background Noise on Tape; General Poor
+               Recording Quality; Side B is extremely muffled sounding </instantiationAnnotation>
+            <instantiationPart>
+               <instantiationIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t7_a</instantiationIdentifier>
+               <instantiationLocation>The Bancroft Library, University of California, Berkeley</instantiationLocation>
+               <instantiationDuration>00:30:24</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackPlaybackSpeed unitsOfMeasure="ips">1.875</essenceTrackPlaybackSpeed>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+            <instantiationPart>
+               <instantiationIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t7_b</instantiationIdentifier>
+               <instantiationLocation>The Bancroft Library, University of California, Berkeley</instantiationLocation>
+               <instantiationDuration>00:31:00</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackPlaybackSpeed unitsOfMeasure="ips">1.875</essenceTrackPlaybackSpeed>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+         </pbcoreInstantiation>
+         <pbcoreInstantiation>
+            <!--Preservation Master-->
+            <instantiationIdentifier source="The MediaPreserve" annotation="Object Identifier">cubanc_000100_t7_prsv</instantiationIdentifier>
+            <instantiationDate>UTC 2014-09-23 13:37:44</instantiationDate>
+            <instantiationDigital source="PRONOM Technical Registry">audio/x-wav</instantiationDigital>
+            <instantiationStandard>Linear PCM Audio</instantiationStandard>
+            <instantiationLocation><!--Required Field--></instantiationLocation>
+            <instantiationMediaType>Sound</instantiationMediaType>
+            <instantiationGenerations>Preservation Master</instantiationGenerations>
+            <instantiationRelation>
+               <instantiationRelationType source="PBCore relationType">Derived from</instantiationRelationType>
+               <instantiationRelationIdentifier annotation="Object Identifier">cubanc_000100_t7</instantiationRelationIdentifier>
+            </instantiationRelation>
+            <instantiationAnnotation annotationType="Creating Application">WaveLab</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Source Deck">Tascam 122mkIII; Audio Cassette Deck</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Digitizer">Mytek; 8X192ADDA; Analog to Digital Converter</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Quality Control">Quality Control was performed by MediaPreserve engineers, with Cube-Tec Dobbin Audio File Inspector and engineer spot-check.</instantiationAnnotation>
+            <instantiationPart>
+               <instantiationIdentifier source="The MediaPreserve" annotation="File Name">cubanc_000100_t7_a_prsv.wav</instantiationIdentifier>
+               <instantiationIdentifier source="The MediaPreserve" annotation="checksum">81EFA5055E4E227EE505BFCB2D376B76</instantiationIdentifier>
+               <instantiationLocation><!--Required Field--></instantiationLocation>
+               <instantiationFileSize unitsOfMeasure="KB">1026502</instantiationFileSize>
+               <instantiationDuration>00:30:24</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackEncoding>WAV</essenceTrackEncoding>
+                  <essenceTrackSamplingRate unitsOfMeasure="kHz">96.0</essenceTrackSamplingRate>
+                  <essenceTrackBitDepth>24</essenceTrackBitDepth>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+            <instantiationPart>
+               <instantiationIdentifier source="The MediaPreserve" annotation="File Name">cubanc_000100_t7_b_prsv.wav</instantiationIdentifier>
+               <instantiationIdentifier source="The MediaPreserve" annotation="checksum">88A23DD3EDF37AE177351D8229B65CCA</instantiationIdentifier>
+               <instantiationLocation><!--Required Field--></instantiationLocation>
+               <instantiationFileSize unitsOfMeasure="KB">1046572</instantiationFileSize>
+               <instantiationDuration>00:31:00</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackEncoding>WAV</essenceTrackEncoding>
+                  <essenceTrackSamplingRate unitsOfMeasure="kHz">96.0</essenceTrackSamplingRate>
+                  <essenceTrackBitDepth>24</essenceTrackBitDepth>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+         </pbcoreInstantiation>
+         <pbcoreInstantiation>
+            <!--Access Copy-->
+            <instantiationIdentifier source="The MediaPreserve" annotation="Object Identifier">cubanc_000100_t7_access</instantiationIdentifier>
+            <instantiationDate>UTC 2014-09-23 13:37:44</instantiationDate>
+            <instantiationDigital source="PRONOM Technical Registry">audio/mpeg</instantiationDigital>
+            <instantiationStandard>MP3</instantiationStandard>
+            <instantiationLocation><!--Required Field--></instantiationLocation>
+            <instantiationMediaType>Sound</instantiationMediaType>
+            <instantiationGenerations>Access Copy</instantiationGenerations>
+            <instantiationRelation>
+               <instantiationRelationType source="PBCore relationType">Derived from</instantiationRelationType>
+               <instantiationRelationIdentifier annotation="Object Identifier">cubanc_000100_t7_prsv</instantiationRelationIdentifier>
+            </instantiationRelation>
+            <instantiationAnnotation annotationType="Creating Application">WaveLab</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Quality Control">Quality Control was performed by MediaPreserve engineers, with Cube-Tec Dobbin Audio File Inspector and engineer spot-check.</instantiationAnnotation>
+            <instantiationPart>
+               <instantiationIdentifier source="The MediaPreserve" annotation="File Name">cubanc_000100_t7_a_access.mp3</instantiationIdentifier>
+               <instantiationIdentifier source="The MediaPreserve" annotation="checksum">64D062B3712D24AD1A437E130A7DD5D4</instantiationIdentifier>
+               <instantiationLocation><!--Required Field--></instantiationLocation>
+               <instantiationFileSize unitsOfMeasure="KB">71286</instantiationFileSize>
+               <instantiationDuration>00:30:24</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackEncoding>MP3</essenceTrackEncoding>
+                  <essenceTrackDataRate>160</essenceTrackDataRate>
+                  <essenceTrackBitDepth>24</essenceTrackBitDepth>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+            <instantiationPart>
+               <instantiationIdentifier source="The MediaPreserve" annotation="File Name">cubanc_000100_t7_b_access.mp3</instantiationIdentifier>
+               <instantiationIdentifier source="The MediaPreserve" annotation="checksum">C1BE6F27ACD843F4904BB3174CF0BE7A</instantiationIdentifier>
+               <instantiationLocation><!--Required Field--></instantiationLocation>
+               <instantiationFileSize unitsOfMeasure="KB">72680</instantiationFileSize>
+               <instantiationDuration>00:31:00</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackEncoding>MP3</essenceTrackEncoding>
+                  <essenceTrackDataRate>160</essenceTrackDataRate>
+                  <essenceTrackBitDepth>24</essenceTrackBitDepth>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+         </pbcoreInstantiation>
+      </pbcorePart>
+      <pbcorePart>
+         <pbcoreIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t8</pbcoreIdentifier>
+         <pbcoreIdentifier source="CAVPP" annotation="Call Number">Phonotape 1838 C:1 - 26</pbcoreIdentifier>
+         <pbcoreTitle titleType="Main">Interviews with and about Vincent Hallinan</pbcoreTitle>
+         <pbcoreDescription>Reel 1, 3-10, 12-13, 16-18, 21, 23-24: Vincent Hallinan -- Reel
+            2: Patricia Hallinan (sister) -- Reel 11: Joel Mitchell and Evonne Golden -- Reel 14-15:
+            Vivian Hallinan (wife) -- Reel 19: Charles B. Lorgon, S.J. -- Reel 20: William J. Dunne,
+            S.J. -- Reel 22: Catherline Sullivan Healy -- Reel 25: Annie Irene Mansfeldt -- Reel 26:
+            Norman Elkington.</pbcoreDescription>
+         <pbcoreInstantiation>
+            <!--Physical Asset-->
+            <instantiationIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t8</instantiationIdentifier>
+            <instantiationDate>[19--]</instantiationDate>
+            <instantiationDimensions unitsOfMeasure="inches">1/8</instantiationDimensions>
+            <instantiationPhysical>1/8 inch audio cassette</instantiationPhysical>
+            <instantiationStandard>NAB</instantiationStandard>
+            <instantiationLocation>The Bancroft Library, University of California, Berkeley</instantiationLocation>
+            <instantiationMediaType>Sound</instantiationMediaType>
+            <instantiationGenerations>Original</instantiationGenerations>
+            <instantiationDuration>01:34:31</instantiationDuration>
+            <instantiationTracks>Quarter-Track</instantiationTracks>
+            <instantiationChannelConfiguration>Stereo</instantiationChannelConfiguration>
+            <instantiationLanguage source="IS0 639.2">eng</instantiationLanguage>
+            <instantiationAnnotation annotationType="Extent">10 Tapes of 10</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Stock Manufacturer">Intermagnetics</instantiationAnnotation>
+            <instantiationAnnotation annotationType="CAVPP Quality Control"/>
+            <instantiationAnnotation annotationType="Cataloger Notes">CAVPP agreed to transfer a sample of 10 reels from the 26 reels total that
+               are all titled Interviews with and about Vincent Hallinan.</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Transfer Comments">High Amount of Hiss on Tape; High Background Noise on Tape; Stereo image
+               on tape skewed heavily to left channel </instantiationAnnotation>
+            <instantiationPart>
+               <instantiationIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t8_a</instantiationIdentifier>
+               <instantiationLocation>The Bancroft Library, University of California, Berkeley</instantiationLocation>
+               <instantiationDuration>00:47:16</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackPlaybackSpeed unitsOfMeasure="ips">1.875</essenceTrackPlaybackSpeed>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+            <instantiationPart>
+               <instantiationIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t8_b</instantiationIdentifier>
+               <instantiationLocation>The Bancroft Library, University of California, Berkeley</instantiationLocation>
+               <instantiationDuration>00:47:15</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackPlaybackSpeed unitsOfMeasure="ips">1.875</essenceTrackPlaybackSpeed>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+         </pbcoreInstantiation>
+         <pbcoreInstantiation>
+            <!--Preservation Master-->
+            <instantiationIdentifier source="The MediaPreserve" annotation="Object Identifier">cubanc_000100_t8_prsv</instantiationIdentifier>
+            <instantiationDate>UTC 2014-09-23 13:40:26</instantiationDate>
+            <instantiationDigital source="PRONOM Technical Registry">audio/x-wav</instantiationDigital>
+            <instantiationStandard>Linear PCM Audio</instantiationStandard>
+            <instantiationLocation><!--Required Field--></instantiationLocation>
+            <instantiationMediaType>Sound</instantiationMediaType>
+            <instantiationGenerations>Preservation Master</instantiationGenerations>
+            <instantiationRelation>
+               <instantiationRelationType source="PBCore relationType">Derived from</instantiationRelationType>
+               <instantiationRelationIdentifier annotation="Object Identifier">cubanc_000100_t8</instantiationRelationIdentifier>
+            </instantiationRelation>
+            <instantiationAnnotation annotationType="Creating Application">WaveLab</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Source Deck">Tascam 122mkIII; Audio Cassette Deck</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Digitizer">Mytek; 8X192ADDA; Analog to Digital Converter</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Quality Control">Quality Control was performed by MediaPreserve engineers, with Cube-Tec Dobbin Audio File Inspector and engineer spot-check.</instantiationAnnotation>
+            <instantiationPart>
+               <instantiationIdentifier source="The MediaPreserve" annotation="File Name">cubanc_000100_t8_a_prsv.wav</instantiationIdentifier>
+               <instantiationIdentifier source="The MediaPreserve" annotation="checksum">7FC310A7B29E707B49226684633EF9BC</instantiationIdentifier>
+               <instantiationLocation><!--Required Field--></instantiationLocation>
+               <instantiationFileSize unitsOfMeasure="KB">1595604</instantiationFileSize>
+               <instantiationDuration>00:47:16</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackEncoding>WAV</essenceTrackEncoding>
+                  <essenceTrackSamplingRate unitsOfMeasure="kHz">96.0</essenceTrackSamplingRate>
+                  <essenceTrackBitDepth>24</essenceTrackBitDepth>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+            <instantiationPart>
+               <instantiationIdentifier source="The MediaPreserve" annotation="File Name">cubanc_000100_t8_b_prsv.wav</instantiationIdentifier>
+               <instantiationIdentifier source="The MediaPreserve" annotation="checksum">AB235B39639C860119849D7B4798A1D5</instantiationIdentifier>
+               <instantiationLocation><!--Required Field--></instantiationLocation>
+               <instantiationFileSize unitsOfMeasure="KB">1594850</instantiationFileSize>
+               <instantiationDuration>00:47:15</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackEncoding>WAV</essenceTrackEncoding>
+                  <essenceTrackSamplingRate unitsOfMeasure="kHz">96.0</essenceTrackSamplingRate>
+                  <essenceTrackBitDepth>24</essenceTrackBitDepth>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+         </pbcoreInstantiation>
+         <pbcoreInstantiation>
+            <!--Access Copy-->
+            <instantiationIdentifier source="The MediaPreserve" annotation="Object Identifier">cubanc_000100_t8_access</instantiationIdentifier>
+            <instantiationDate>UTC 2014-09-23 13:40:26</instantiationDate>
+            <instantiationDigital source="PRONOM Technical Registry">audio/mpeg</instantiationDigital>
+            <instantiationStandard>MP3</instantiationStandard>
+            <instantiationLocation><!--Required Field--></instantiationLocation>
+            <instantiationMediaType>Sound</instantiationMediaType>
+            <instantiationGenerations>Access Copy</instantiationGenerations>
+            <instantiationRelation>
+               <instantiationRelationType source="PBCore relationType">Derived from</instantiationRelationType>
+               <instantiationRelationIdentifier annotation="Object Identifier">cubanc_000100_t8_prsv</instantiationRelationIdentifier>
+            </instantiationRelation>
+            <instantiationAnnotation annotationType="Creating Application">WaveLab</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Quality Control">Quality Control was performed by MediaPreserve engineers, with Cube-Tec Dobbin Audio File Inspector and engineer spot-check.</instantiationAnnotation>
+            <instantiationPart>
+               <instantiationIdentifier source="The MediaPreserve" annotation="File Name">cubanc_000100_t8_a_access.mp3</instantiationIdentifier>
+               <instantiationIdentifier source="The MediaPreserve" annotation="checksum">DDCEFC2E7185011DE09339C6D4472B31</instantiationIdentifier>
+               <instantiationLocation><!--Required Field--></instantiationLocation>
+               <instantiationFileSize unitsOfMeasure="KB">110808</instantiationFileSize>
+               <instantiationDuration>00:47:16</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackEncoding>MP3</essenceTrackEncoding>
+                  <essenceTrackDataRate>160</essenceTrackDataRate>
+                  <essenceTrackBitDepth>24</essenceTrackBitDepth>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+            <instantiationPart>
+               <instantiationIdentifier source="The MediaPreserve" annotation="File Name">cubanc_000100_t8_b_access.mp3</instantiationIdentifier>
+               <instantiationIdentifier source="The MediaPreserve" annotation="checksum">DA1EDFEE3CC278DA7281F1171718BECA</instantiationIdentifier>
+               <instantiationLocation><!--Required Field--></instantiationLocation>
+               <instantiationFileSize unitsOfMeasure="KB">110756</instantiationFileSize>
+               <instantiationDuration>00:47:15</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackEncoding>MP3</essenceTrackEncoding>
+                  <essenceTrackDataRate>160</essenceTrackDataRate>
+                  <essenceTrackBitDepth>24</essenceTrackBitDepth>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+         </pbcoreInstantiation>
+      </pbcorePart>
+      <pbcorePart>
+         <pbcoreIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t9</pbcoreIdentifier>
+         <pbcoreIdentifier source="CAVPP" annotation="Call Number">Phonotape 1838 C:1 - 26</pbcoreIdentifier>
+         <pbcoreTitle titleType="Main">Interviews with and about Vincent Hallinan</pbcoreTitle>
+         <pbcoreDescription>Reel 1, 3-10, 12-13, 16-18, 21, 23-24: Vincent Hallinan -- Reel 2:
+            Patricia Hallinan (sister) -- Reel 11: Joel Mitchell and Evonne Golden -- Reel 14-15: Vivian
+            Hallinan (wife) -- Reel 19: Charles B. Lorgon, S.J. -- Reel 20: William J. Dunne, S.J. -- Reel
+            22: Catherline Sullivan Healy -- Reel 25: Annie Irene Mansfeldt -- Reel 26: Norman
+            Elkington.</pbcoreDescription>
+         <pbcoreInstantiation>
+            <!--Physical Asset-->
+            <instantiationIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t9</instantiationIdentifier>
+            <instantiationDate>[19--]</instantiationDate>
+            <instantiationDimensions unitsOfMeasure="inches">1/8</instantiationDimensions>
+            <instantiationPhysical>1/8 inch audio cassette</instantiationPhysical>
+            <instantiationStandard>NAB</instantiationStandard>
+            <instantiationLocation>The Bancroft Library, University of California, Berkeley</instantiationLocation>
+            <instantiationMediaType>Sound</instantiationMediaType>
+            <instantiationGenerations>Original</instantiationGenerations>
+            <instantiationDuration>00:45:07</instantiationDuration>
+            <instantiationTracks>Quarter-Track</instantiationTracks>
+            <instantiationChannelConfiguration>Stereo</instantiationChannelConfiguration>
+            <instantiationLanguage source="IS0 639.2">eng</instantiationLanguage>
+            <instantiationAnnotation annotationType="Extent">10 Tapes of 10</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Stock Manufacturer">Intermagnetics</instantiationAnnotation>
+            <instantiationAnnotation annotationType="CAVPP Quality Control"/>
+            <instantiationAnnotation annotationType="Cataloger Notes">CAVPP agreed to transfer a sample of 10 reels from the 26 reels total that are
+               all titled Interviews with and about Vincent Hallinan.</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Transfer Comments">High Background Noise on Tape; Program Distorted at Times; Side B is Blank; </instantiationAnnotation>
+            <instantiationPart>
+               <instantiationIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t9</instantiationIdentifier>
+               <instantiationLocation>The Bancroft Library, University of California, Berkeley</instantiationLocation>
+               <instantiationDuration>00:45:07</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackPlaybackSpeed unitsOfMeasure="ips">1.875</essenceTrackPlaybackSpeed>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+         </pbcoreInstantiation>
+         <pbcoreInstantiation>
+            <!--Preservation Master-->
+            <instantiationIdentifier source="The MediaPreserve" annotation="Object Identifier">cubanc_000100_t9_prsv</instantiationIdentifier>
+            <instantiationDate>UTC 2014-09-23 13:41:34</instantiationDate>
+            <instantiationDigital source="PRONOM Technical Registry">audio/x-wav</instantiationDigital>
+            <instantiationStandard>Linear PCM Audio</instantiationStandard>
+            <instantiationLocation><!--Required Field--></instantiationLocation>
+            <instantiationMediaType>Sound</instantiationMediaType>
+            <instantiationGenerations>Preservation Master</instantiationGenerations>
+            <instantiationRelation>
+               <instantiationRelationType source="PBCore relationType">Derived from</instantiationRelationType>
+               <instantiationRelationIdentifier annotation="Object Identifier">cubanc_000100_t9</instantiationRelationIdentifier>
+            </instantiationRelation>
+            <instantiationAnnotation annotationType="Creating Application">WaveLab</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Source Deck">Tascam  122mkIII; Audio Cassette Deck</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Digitizer">Mytek; 8X192ADDA; Analog to Digital Converter</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Quality Control">Quality Control was performed by MediaPreserve engineers, with Cube-Tec Dobbin Audio File Inspector and engineer spot-check.</instantiationAnnotation>
+            <instantiationPart>
+               <instantiationIdentifier source="The MediaPreserve" annotation="File Name">cubanc_000100_t9_prsv.wav</instantiationIdentifier>
+               <instantiationIdentifier source="The MediaPreserve" annotation="checksum">46C2052BCC9E0F115B373DDE92493945</instantiationIdentifier>
+               <instantiationLocation><!--Required Field--></instantiationLocation>
+               <instantiationFileSize unitsOfMeasure="KB">1523000</instantiationFileSize>
+               <instantiationDuration>00:45:07</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackEncoding>WAV</essenceTrackEncoding>
+                  <essenceTrackSamplingRate unitsOfMeasure="kHz">96.0</essenceTrackSamplingRate>
+                  <essenceTrackBitDepth>24</essenceTrackBitDepth>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+         </pbcoreInstantiation>
+         <pbcoreInstantiation>
+            <!--Access Copy-->
+            <instantiationIdentifier source="The MediaPreserve" annotation="Object Identifier">cubanc_000100_t9_access</instantiationIdentifier>
+            <instantiationDate>UTC 2014-09-23 13:41:34</instantiationDate>
+            <instantiationDigital source="PRONOM Technical Registry">audio/mpeg</instantiationDigital>
+            <instantiationStandard>MP3</instantiationStandard>
+            <instantiationLocation><!--Required Field--></instantiationLocation>
+            <instantiationMediaType>Sound</instantiationMediaType>
+            <instantiationGenerations>Access Copy</instantiationGenerations>
+            <instantiationRelation>
+               <instantiationRelationType source="PBCore relationType">Derived from</instantiationRelationType>
+               <instantiationRelationIdentifier annotation="Object Identifier">cubanc_000100_t9_prsv</instantiationRelationIdentifier>
+            </instantiationRelation>
+            <instantiationAnnotation annotationType="Creating Application">WaveLab</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Quality Control">Quality Control was performed by MediaPreserve engineers, with Cube-Tec Dobbin Audio File Inspector and engineer spot-check.</instantiationAnnotation>
+            <instantiationPart>
+               <instantiationIdentifier source="The MediaPreserve" annotation="File Name">cubanc_000100_t9_access.mp3</instantiationIdentifier>
+               <instantiationIdentifier source="The MediaPreserve" annotation="checksum">1CB466F4B1AF2CD2BDE3123F612BC711</instantiationIdentifier>
+               <instantiationLocation><!--Required Field--></instantiationLocation>
+               <instantiationFileSize unitsOfMeasure="KB">105766</instantiationFileSize>
+               <instantiationDuration>00:45:07</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackEncoding>MP3</essenceTrackEncoding>
+                  <essenceTrackDataRate>160</essenceTrackDataRate>
+                  <essenceTrackBitDepth>24</essenceTrackBitDepth>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+         </pbcoreInstantiation>
+      </pbcorePart>
+      <pbcorePart>
+         <pbcoreIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t10</pbcoreIdentifier>
+         <pbcoreIdentifier source="CAVPP" annotation="Call Number">Phonotape 1838 C:1 - 26</pbcoreIdentifier>
+         <pbcoreTitle titleType="Main">Interviews with and about Vincent Hallinan</pbcoreTitle>
+         <pbcoreDescription>Reel 1, 3-10, 12-13, 16-18, 21, 23-24: Vincent Hallinan -- Reel
+            2: Patricia Hallinan (sister) -- Reel 11: Joel Mitchell and Evonne Golden -- Reel 14-15:
+            Vivian Hallinan (wife) -- Reel 19: Charles B. Lorgon, S.J. -- Reel 20: William J. Dunne,
+            S.J. -- Reel 22: Catherline Sullivan Healy -- Reel 25: Annie Irene Mansfeldt -- Reel 26:
+            Norman Elkington.</pbcoreDescription>
+         <pbcoreInstantiation>
+            <!--Physical Asset-->
+            <instantiationIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t10</instantiationIdentifier>
+            <instantiationDate>[19--]</instantiationDate>
+            <instantiationDimensions unitsOfMeasure="inches">1/8</instantiationDimensions>
+            <instantiationPhysical>1/8 inch audio cassette</instantiationPhysical>
+            <instantiationStandard>NAB</instantiationStandard>
+            <instantiationLocation>The Bancroft Library, University of California, Berkeley</instantiationLocation>
+            <instantiationMediaType>Sound</instantiationMediaType>
+            <instantiationGenerations>Original</instantiationGenerations>
+            <instantiationDuration>01:21:09</instantiationDuration>
+            <instantiationTracks>Quarter-Track</instantiationTracks>
+            <instantiationChannelConfiguration>Stereo</instantiationChannelConfiguration>
+            <instantiationLanguage source="IS0 639.2">eng</instantiationLanguage>
+            <instantiationAnnotation annotationType="Extent">10 Tapes of 10</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Stock Manufacturer">Intermagnetics</instantiationAnnotation>
+            <instantiationAnnotation annotationType="CAVPP Quality Control"/>
+            <instantiationAnnotation annotationType="Cataloger Notes">CAVPP agreed to transfer a sample of 10 reels from the 26 reels total that
+               are all titled Interviews with and about Vincent Hallinan.</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Transfer Comments">High Amount of Hiss on Tape; High Background Noise on Tape; </instantiationAnnotation>
+            <instantiationPart>
+               <instantiationIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t10_a</instantiationIdentifier>
+               <instantiationLocation>The Bancroft Library, University of California, Berkeley</instantiationLocation>
+               <instantiationDuration>00:45:58</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackPlaybackSpeed unitsOfMeasure="ips">1.875</essenceTrackPlaybackSpeed>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+            <instantiationPart>
+               <instantiationIdentifier source="CAVPP" annotation="Object Identifier">cubanc_000100_t10_b</instantiationIdentifier>
+               <instantiationLocation>The Bancroft Library, University of California, Berkeley</instantiationLocation>
+               <instantiationDuration>00:35:11</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackPlaybackSpeed unitsOfMeasure="ips">1.875</essenceTrackPlaybackSpeed>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+         </pbcoreInstantiation>
+         <pbcoreInstantiation>
+            <!--Preservation Master-->
+            <instantiationIdentifier source="The MediaPreserve" annotation="Object Identifier">cubanc_000100_t10_prsv</instantiationIdentifier>
+            <instantiationDate>UTC 2014-09-23 13:43:39</instantiationDate>
+            <instantiationDigital source="PRONOM Technical Registry">audio/x-wav</instantiationDigital>
+            <instantiationStandard>Linear PCM Audio</instantiationStandard>
+            <instantiationLocation><!--Required Field--></instantiationLocation>
+            <instantiationMediaType>Sound</instantiationMediaType>
+            <instantiationGenerations>Preservation Master</instantiationGenerations>
+            <instantiationRelation>
+               <instantiationRelationType source="PBCore relationType">Derived from</instantiationRelationType>
+               <instantiationRelationIdentifier annotation="Object Identifier">cubanc_000100_t10</instantiationRelationIdentifier>
+            </instantiationRelation>
+            <instantiationAnnotation annotationType="Creating Application">WaveLab</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Source Deck">Tascam 122mkIII; Audio Cassette Deck</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Digitizer">Mytek; 8X192ADDA; Analog to Digital Converter</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Quality Control">Quality Control was performed by MediaPreserve engineers, with Cube-Tec Dobbin Audio File Inspector and engineer spot-check.</instantiationAnnotation>
+            <instantiationPart>
+               <instantiationIdentifier source="The MediaPreserve" annotation="File Name">cubanc_000100_t10_a_prsv.wav</instantiationIdentifier>
+               <instantiationIdentifier source="The MediaPreserve" annotation="checksum">D7333E5B78F2B306AD08731F7A5527E1</instantiationIdentifier>
+               <instantiationLocation><!--Required Field--></instantiationLocation>
+               <instantiationFileSize unitsOfMeasure="KB">1551438</instantiationFileSize>
+               <instantiationDuration>00:45:58</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackEncoding>WAV</essenceTrackEncoding>
+                  <essenceTrackSamplingRate unitsOfMeasure="kHz">96.0</essenceTrackSamplingRate>
+                  <essenceTrackBitDepth>24</essenceTrackBitDepth>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+            <instantiationPart>
+               <instantiationIdentifier source="The MediaPreserve" annotation="File Name">cubanc_000100_t10_b_prsv.wav</instantiationIdentifier>
+               <instantiationIdentifier source="The MediaPreserve" annotation="checksum">965B46BD04974C09CB48A27A650B8D82</instantiationIdentifier>
+               <instantiationLocation><!--Required Field--></instantiationLocation>
+               <instantiationFileSize unitsOfMeasure="KB">1187802</instantiationFileSize>
+               <instantiationDuration>00:35:11</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackEncoding>WAV</essenceTrackEncoding>
+                  <essenceTrackSamplingRate unitsOfMeasure="kHz">96.0</essenceTrackSamplingRate>
+                  <essenceTrackBitDepth>24</essenceTrackBitDepth>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+         </pbcoreInstantiation>
+         <pbcoreInstantiation>
+            <!--Access Copy-->
+            <instantiationIdentifier source="The MediaPreserve" annotation="Object Identifier">cubanc_000100_t10_access</instantiationIdentifier>
+            <instantiationDate>UTC 2014-09-23 13:43:39</instantiationDate>
+            <instantiationDigital source="PRONOM Technical Registry">audio/mpeg</instantiationDigital>
+            <instantiationStandard>MP3</instantiationStandard>
+            <instantiationLocation><!--Required Field--></instantiationLocation>
+            <instantiationMediaType>Sound</instantiationMediaType>
+            <instantiationGenerations>Access Copy</instantiationGenerations>
+            <instantiationRelation>
+               <instantiationRelationType source="PBCore relationType">Derived from</instantiationRelationType>
+               <instantiationRelationIdentifier annotation="Object Identifier">cubanc_000100_t10_prsv</instantiationRelationIdentifier>
+            </instantiationRelation>
+            <instantiationAnnotation annotationType="Creating Application">WaveLab</instantiationAnnotation>
+            <instantiationAnnotation annotationType="Quality Control">Quality Control was performed by MediaPreserve engineers, with Cube-Tec Dobbin Audio File Inspector and engineer spot-check.</instantiationAnnotation>
+            <instantiationPart>
+               <instantiationIdentifier source="The MediaPreserve" annotation="File Name">cubanc_000100_t10_a_access.mp3</instantiationIdentifier>
+               <instantiationIdentifier source="The MediaPreserve" annotation="checksum">2BAD7B2D37FAC1BA359DEC6B645A3D4C</instantiationIdentifier>
+               <instantiationLocation><!--Required Field--></instantiationLocation>
+               <instantiationFileSize unitsOfMeasure="KB">107740</instantiationFileSize>
+               <instantiationDuration>00:45:58</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackEncoding>MP3</essenceTrackEncoding>
+                  <essenceTrackDataRate>160</essenceTrackDataRate>
+                  <essenceTrackBitDepth>24</essenceTrackBitDepth>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+            <instantiationPart>
+               <instantiationIdentifier source="The MediaPreserve" annotation="File Name">cubanc_000100_t10_b_access.mp3</instantiationIdentifier>
+               <instantiationIdentifier source="The MediaPreserve" annotation="checksum">A0026DD26DAF6551ED5B5D72CE1CF22A</instantiationIdentifier>
+               <instantiationLocation><!--Required Field--></instantiationLocation>
+               <instantiationFileSize unitsOfMeasure="KB">82488</instantiationFileSize>
+               <instantiationDuration>00:35:11</instantiationDuration>
+               <instantiationEssenceTrack>
+                  <essenceTrackType>Audio</essenceTrackType>
+                  <essenceTrackEncoding>MP3</essenceTrackEncoding>
+                  <essenceTrackDataRate>160</essenceTrackDataRate>
+                  <essenceTrackBitDepth>24</essenceTrackBitDepth>
+               </instantiationEssenceTrack>
+            </instantiationPart>
+         </pbcoreInstantiation>
+      </pbcorePart>
+      <pbcoreExtension>
+         <extensionWrap>
+            <extensionElement>countryOfCreation</extensionElement>
+            <extensionValue>US</extensionValue>
+            <extensionAuthorityUsed>ISO 3166.1</extensionAuthorityUsed>
+         </extensionWrap>
+      </pbcoreExtension>
+      <pbcoreExtension>
+         <extensionWrap>
+            <extensionElement>projectNote</extensionElement>
+            <extensionValue>California Audiovisual Preservation Project</extensionValue>
+            <extensionAuthorityUsed>CAVPP</extensionAuthorityUsed>
+         </extensionWrap>
+      </pbcoreExtension>
+   </pbcoreDescriptionDocument>
+</pbcoreCollection>
