@@ -25,9 +25,6 @@ class IntellectualContent():
     def addpbcoreAssetType(self, key, value):
         self.pbcoreAssetType[key] = value
 
-    def deletepbcoreAssetType(self, key):
-        del self.pbcoreAssetType[key]
-
     def getpbcoreAssetDate(self):
         return self.pbcoreAssetDate
 
@@ -111,45 +108,116 @@ class pbcoreRelation():
     def setpbcoreRelationIdentifier(self, newpbcoreRelationIdentifier):
         self.pbcoreRelationIdentifier = newpbcoreRelationIdentifier
 
-class element():
-    def __init__(self):
-        self.tag
-        self.value
-        self.attribute = dict()
-
-    def __init__(self, tag):
-        self.tag = tag
-        self.value
-        self.attribute = dict()
-
-    def __init__(self, tag, value):
-        self.tag = tag
-        self.value = value
-        self.attribute = dict()
-
-    def getAttribute(self):
-        return self.attribute
-
-    def addAttribute(self, key, value):
-        self.attribute[key] = value
-
-    def deleteAttribute(self, key):
-        del self.attribute[key]
-
-    def getTag(self):
-        return self.tag
-
-    def setTag(self):
-
-
-    def getValue(self):
-        return self.getvalue()
-
-    def setValue(self):
-
-
 
 # intellectual Property classes
+class IntellectualProperty():
+    def __init__(self):
+        self.pbcoreCreator = []
+        self.pbcoreContributor = []
+        self.pbcorePublisher = []
+        self.pbcoreRightsSummary = []
+
+    def getpbcoreCreator(self):
+        return self.pbcoreCreator
+
+    def addpbcoreCreator(self, newpbcoreCreator):
+        self.pbcoreCreator.append(newpbcoreCreator)
+
+    def getpbcoreContributor(self):
+        return self.pbcoreContributor
+
+    def addpbcoreContributor(self, newpbcoreContributor):
+        self.pbcoreContributor.append(newpbcoreContributor)
+
+    def getpbcorePublisher(self):
+        return self.pbcorePublisher
+
+    def addpbcorePublisher(self, newpbcorePublisher):
+        self.pbcorePublisher.append(newpbcorePublisher)
+
+    def getpbcoreRightsSummary(self):
+        return self.pbcoreRightsSummary
+
+    def addpbcoreRightsSummary(self, newpbcoreRightsSummary):
+        self.pbcoreRightsSummary.append(newpbcoreRightsSummary)
+
+class pbcoreCreator():
+    def __init__(self):
+        self.creator = None
+        self.creatorRole = None
+
+    def getCreator(self):
+        return self.creator
+
+    def setCreator(self, newCreator):
+        self.creator = newCreator
+
+    def getCreatorRole(self):
+        return self.creatorRole
+
+    def setCreatorRole(self, newCreatorRole):
+        self.creatorRole = newCreatorRole
+
+class pbcoreContributor:
+    def __init__(self):
+        self.contributor = None
+        self.contributorRole = None
+
+    def setContributor(self,newContributor):
+        self.contributor = newContributor
+
+    def getContributor(self):
+        return self.contributor
+
+    def setContributoRoler(self,newContributoRole):
+        self.contributorRole = newContributoRole
+
+    def getContributoRoler(self):
+        return self.contributorRole
+
+
+class pbcorePublisher():
+    def __init__(self):
+        self.publisher = None
+        self.publisherRole = None
+
+        def getPublisher(self):
+            return self.publisher
+
+        def setPublisher(self, newPublisher):
+            self.publisher = newPublisher
+
+        def getPublisherRole(self):
+            return self.publisherRole
+
+        def setPublisherRole(self, newPublisherRole):
+            self.publisherRole = newPublisherRole
+
+
+class pbcoreRightsSummary():
+    def __init__(self):
+        self.rightsSummary = None
+        self.rightsLink = None
+        self.rightsEmbedded = None
+
+    def getRightsSummary(self):
+        return self.rightsSummary
+
+    def setRightsSummary(self, newRightsSummary):
+        self.rightsSummary = newRightsSummary
+
+    def getRightsLink(self):
+        return self.rightsLink
+
+    def setRightsLink(self, newRightsLink):
+        self.rightsLink = newRightsLink
+
+    def getRightsEmbedded(self):
+        return self.rightsEmbedded
+
+    def setRightsEmbedded(self, newRightsEmbedded):
+        self.rightsEmbedded = newRightsEmbedded
+
 
 # instantiation classes
 
@@ -176,7 +244,7 @@ class pbcoreInstantiation():
         self.instantiationAlternativeModes = None
         self.instantiationEssenceTrack = []
         self.instantiationRelation = []
-        self.instantiationAnnotation = dict()
+        self.instantiationAnnotation = []
         self.instantiationPart = None
         self.instantiationExtension = None
 
@@ -305,11 +373,8 @@ class pbcoreInstantiation():
     def getInstantiationAnnotation(self):
         return self.instantiationAnnotation
 
-    def addInstantiationAnnotation(self, annotationType, value):
-        self.instantiationAnnotation[annotationType] = value
-
-    def deleteInstantiationAnnotation(self, key):
-        del self.instantiationAnnotation[key]
+    def addInstantiationAnnotation(self, newAnnotation):
+        self.instantiationAnnotation.append(newAnnotation)
 
     def getInstantiationPart(self):
         return self.instantiationPart
@@ -459,3 +524,87 @@ class instantiationRelation():
 
 
 # Extensions classes
+class extensions():
+    def __init__(self):
+        self.pbcoreExtension = []
+        self.pbcorePart = None
+
+    def addpbcoreExtension(self, newpbcoreExtension):
+        self.pbcoreExtension.append(newpbcoreExtension)
+
+    def getpbcoreExtension(self):
+        return self.pbcoreExtension
+
+    def setpbcorePart(self, newpbcorePart):
+        self.pbcorePart = newpbcorePart
+
+    def getpbcorePart(self):
+        return self.pbcorePart
+
+
+class pbcoreExtension():
+    def __init__(self):
+        self.extensionWrap = None
+        self.extensionElement = None
+        self.extensionValue = None
+        self.extensionAuthorityUsed = None
+        self.extensionEmbedded = None
+
+    def setExtensionWrap(self, newExtensionWrap):
+        self.extensionWrap = newExtensionWrap
+
+    def getExtensionWrap(self):
+        return self.extensionWrap
+
+    def setExtensionElement(self, newExtensionElement):
+        self.extensionElement = newExtensionElement
+
+    def getExtensionElement(self):
+        return self.extensionElement
+
+    def setExtensionValue(self, newExtensionValue):
+        self.extensionValue = newExtensionValue
+
+    def getExtensionValue(self):
+        return self.extensionValue
+
+    def setExtensionAuthorityUsed(self, newExtensionAuthorityUsed):
+        self.extensionAuthorityUsed = newExtensionAuthorityUsed
+
+    def getExtensionAuthorityUsed(self):
+        return self.extensionAuthorityUsed
+
+    def setExtensionEmbedded(self, newExtensionEmbedded):
+        self.extensionEmbedded = newExtensionEmbedded
+
+    def getExtensionEmbedded(self):
+        return self.extensionEmbedded
+
+
+# Other classes
+class Element():
+    def __init__(self, tag=None, value=None):
+        self.tag = tag
+        self.value = value
+        self.attribute = dict()
+
+    def getAttribute(self):
+        return self.attribute
+
+    def addAttribute(self, key, value):
+        self.attribute[key] = value
+
+    def deleteAttribute(self, key):
+        del self.attribute[key]
+
+    def getTag(self):
+        return self.tag
+
+    def setTag(self, tag):
+        self.tag = tag
+
+    def getValue(self):
+        return self.getvalue()
+
+    def setValue(self, value):
+        self.value = value
