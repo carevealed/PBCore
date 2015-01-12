@@ -7,11 +7,11 @@ class IntellectualContent():
     def __init__(self):
 
         self.pbcoreAssetType = None
-        self.pbcoreAssetDate = None
-        self.pbcoreIdentifier = None
-        self.pbcoreTitle = None
+        self.pbcoreAssetDate = []
+        self.pbcoreIdentifier = []
+        self.pbcoreTitle = []
         self.pbcoreSubject = None
-        self.pbcoreDescription = None
+        self.pbcoreDescription = []
         self.pbcoreGenre = None
         self.pbcoreRelation = []
         self.pbcoreCoverage = []
@@ -22,8 +22,11 @@ class IntellectualContent():
     def getpbcoreAssetType(self):
         return self.pbcoreAssetType
 
-    def setpbcoreAssetType(self, newpbcoreAssetType):
-        self.pbcoreAssetType = newpbcoreAssetType
+    def addpbcoreAssetType(self, key, value):
+        self.pbcoreAssetType[key] = value
+
+    def deletepbcoreAssetType(self, key):
+        del self.pbcoreAssetType[key]
 
     def getpbcoreAssetDate(self):
         return self.pbcoreAssetDate
@@ -34,14 +37,14 @@ class IntellectualContent():
     def getpbcoreIdentifier(self):
         return self.pbcoreIdentifier
 
-    def setpbcoreIdentifier(self, newpbcoreIdentifier):
-        self.pbcoreIdentifier = newpbcoreIdentifier
+    def addpbcoreIdentifier(self, newIdentifier):
+        self.pbcoreIdentifier.append(newIdentifier)
 
     def getpbcoreTitle(self):
         return self.pbcoreTitle
 
-    def setpbcoreTitle(self, newpbcoreTitle):
-        self.pbcoreTitle = newpbcoreTitle
+    def addpbcoreTitle(self, newTitle):
+        self.pbcoreTitle.append(newTitle)
 
     def getpbcoreSubject(self):
         return self.pbcoreSubject
@@ -52,8 +55,8 @@ class IntellectualContent():
     def getpbcoreDescription(self):
         return self.pbcoreDescription
 
-    def setpbcoreDescription(self, newpbcoreDescription):
-        self.pbcoreDescription = newpbcoreDescription
+    def addpbcoreDescription(self, newDescription):
+        self.pbcoreDescription.append(newDescription)
 
     def getpbcoreGenre(self):
         return self.pbcoreGenre
@@ -64,14 +67,14 @@ class IntellectualContent():
     def getpbcoreRelation(self):
         return self.pbcoreRelation
 
-    def setpbcoreRelation(self, newpbcoreRelation):
-        self.pbcoreRelation = newpbcoreRelation
+    def addpbcoreRelation(self, newpbcoreRelation):
+        self.pbcoreRelation.append(newpbcoreRelation)
 
     def getpbcoreCoverage(self):
         return self.pbcoreCoverage
 
-    def setpbcoreCoverage(self, newpbcoreCoverage):
-        self.pbcoreCoverage = newpbcoreCoverage
+    def addpbcoreCoverage(self, newpbcoreCoverage):
+        self.pbcoreCoverage.append(newpbcoreCoverage)
 
     def getpbcoreAudienceLevel(self):
         return self.pbcoreAudienceLevel
@@ -108,6 +111,44 @@ class pbcoreRelation():
     def setpbcoreRelationIdentifier(self, newpbcoreRelationIdentifier):
         self.pbcoreRelationIdentifier = newpbcoreRelationIdentifier
 
+class element():
+    def __init__(self):
+        self.tag
+        self.value
+        self.attribute = dict()
+
+    def __init__(self, tag):
+        self.tag = tag
+        self.value
+        self.attribute = dict()
+
+    def __init__(self, tag, value):
+        self.tag = tag
+        self.value = value
+        self.attribute = dict()
+
+    def getAttribute(self):
+        return self.attribute
+
+    def addAttribute(self, key, value):
+        self.attribute[key] = value
+
+    def deleteAttribute(self, key):
+        del self.attribute[key]
+
+    def getTag(self):
+        return self.tag
+
+    def setTag(self):
+
+
+    def getValue(self):
+        return self.getvalue()
+
+    def setValue(self):
+
+
+
 # intellectual Property classes
 
 # instantiation classes
@@ -135,7 +176,7 @@ class pbcoreInstantiation():
         self.instantiationAlternativeModes = None
         self.instantiationEssenceTrack = []
         self.instantiationRelation = []
-        self.instantiationAnnotation = None
+        self.instantiationAnnotation = dict()
         self.instantiationPart = None
         self.instantiationExtension = None
 
@@ -248,11 +289,27 @@ class pbcoreInstantiation():
     def setInstantiationAlternativeModes(self, newInstantiationAlternativeModes):
         self.instantiationAlternativeModes = newInstantiationAlternativeModes
 
+    def addinstantiationRelation(self, newinstantiationEssenceTrack):
+        self.instantiationEssenceTrack.append(newinstantiationEssenceTrack)
+
+    def getinstantiationEssenceTrack(self):
+        return instantiationEssenceTrack
+
+    def addinstantiationEssenceTrack(self, newinstantiationRelation):
+        self.instantiationRelation.append(newinstantiationRelation)
+
+    def getinstantiationRelation(self):
+        return instantiationRelation
+
+
     def getInstantiationAnnotation(self):
         return self.instantiationAnnotation
 
-    def setInstantiationAnnotation(self, newInstantiationAnnotation):
-        self.instantiationAnnotation = newInstantiationAnnotation
+    def addInstantiationAnnotation(self, annotationType, value):
+        self.instantiationAnnotation[annotationType] = value
+
+    def deleteInstantiationAnnotation(self, key):
+        del self.instantiationAnnotation[key]
 
     def getInstantiationPart(self):
         return self.instantiationPart
