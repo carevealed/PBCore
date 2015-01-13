@@ -7,6 +7,7 @@ __author__ = 'California Audiovisual Preservation Project'
 ##################################
 
 class IntellectualContent():
+    # TODO: Create Docstring for IntellectualContent
     def __init__(self):
 
         self.pbcoreAssetType = None
@@ -140,6 +141,7 @@ class IntellectualContent():
 
 
 class pbcoreRelation():
+    # TODO: Create Docstring for pbcoreRelation
     def __init__(self):
         self.pbcoreRelationType = None
         # For example: "Has Part"
@@ -170,6 +172,7 @@ class pbcoreRelation():
 
 
 class IntellectualProperty():
+    # TODO: Create Docstring for IntellectualProperty
     def __init__(self):
         self.pbcoreCreator = []
         # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecreator/
@@ -215,6 +218,7 @@ class IntellectualProperty():
 
 
 class pbcoreCreator():
+    # TODO: Create Docstring for pbcoreCreator
     def __init__(self):
         self.creator = None
         # For example: "Unknown"
@@ -241,6 +245,7 @@ class pbcoreCreator():
 
 
 class pbcoreContributor:
+    # TODO: Create Docstring for pbcoreContributor
     def __init__(self):
         self.contributor = None
         # For example: "" TODO: Give example of contributor
@@ -267,6 +272,7 @@ class pbcoreContributor:
 
 
 class pbcorePublisher():
+    # TODO: Create Docstring for pbcorePublisher
     def __init__(self):
         self.publisher = None
         # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorepublisher/publisher/
@@ -293,6 +299,7 @@ class pbcorePublisher():
 
 
 class pbcoreRightsSummary():
+    # TODO: Create Docstring for pbcoreRightsSummary
     def __init__(self):
         self.rightsSummary = []
         # TODO: Add URI link to rightsSummary
@@ -334,6 +341,7 @@ class pbcoreRightsSummary():
 ##################################
 
 class pbcoreInstantiation():
+    # TODO: Create Docstring for pbcoreInstantiation
     def __init__(self, instantiationType=None):
         self.instantiationAssetType = instantiationType
         # For example: "Physical Asset" instantiationAssetType
@@ -615,6 +623,7 @@ class pbcoreInstantiation():
 
 
 class instantiationEssenceTrack():
+    # TODO: Create Docstring for instantiationEssenceTrack
     def __init__(self):
         self.essenceTrackType = None
         # For example "Video"
@@ -806,6 +815,7 @@ class instantiationEssenceTrack():
 
 
 class instantiationRelation():
+    # TODO: Create Docstring for instantiationRelation
     def __init__(self):
         self.instantiationRelationType = None
         # For example: "" TODO: Add example of instantiationRelationType
@@ -840,6 +850,7 @@ class instantiationRelation():
 ##################################
 
 class extensions():
+    # TODO: Create Docstring for extensions
     def __init__(self):
         self.pbcoreExtension = []
         # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreextension/
@@ -862,6 +873,7 @@ class extensions():
 
 
 class pbcoreExtension():
+    # TODO: Create Docstring for pbcoreExtension
     def __init__(self):
         self.extensionWrap = []
         # URIL http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreextension/extensionWrap/
@@ -924,6 +936,7 @@ class pbcoreExtension():
 ##################################
 
 class Element():
+    # TODO: Create Docstring for Element
     def __init__(self, tag=None, value=None):
         self.tag = tag
         self.value = value
