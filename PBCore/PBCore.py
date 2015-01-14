@@ -1,169 +1,564 @@
+# from xml.dom.minidom import parse, Element as elmt, Document, Node
+from xml.etree.ElementTree import Element as Elmt
+import xml.etree.ElementTree as etree
+
 __author__ = 'California Audiovisual Preservation Project'
 # PBCore metadata
+from xml.dom import minidom
 
+class PBCore():
+    """
+
+    :Description: This is the main class for creating PBCore objects
+    :PBCore Homepage: http://pbcore.org/
+    """
+    def __init__(self):
+        """
+
+        :return: None
+        """
+        # self.root = None
+        self.intellectualContent = None
+        self.intellectualProperty = None
+        self.extensions = None
+        self.instantiation = None
+
+    def getIntellectualContent(self):
+        """
+
+        :return:
+        """
+        return self.intellectualContent
+
+    def setIntellectualContent(self, newIntellectualContent):
+        """
+
+        :param          newIntellectualContent:
+        :type           newIntellectualContent: IntellectualContent
+        :Example Value: ""
+        :return:        None
+        """
+        
+        if isinstance(newIntellectualContent, IntellectualContent):
+            self.intellectualContent = newIntellectualContent
+        else:
+            raise TypeError
+
+    def getIntellectualProperty(self):
+        """
+
+        :return:
+        """
+        return self.intellectualProperty
+
+    def setIntellectualProperty(self, newIntellectualProperty):
+        """
+
+        :param          newIntellectualProperty:
+        :type           newIntellectualProperty: IntellectualProperty
+        :Example Value: ""
+        :return:        None
+        """
+        
+        if isinstance(newIntellectualProperty, IntellectualProperty):
+            self.intellectualProperty = newIntellectualProperty
+        else:
+            raise TypeError
+
+    def getextensions(self):
+        """
+
+        :return:
+        """
+        return self.extensions
+
+    def setextensions(self, newextensions):
+        """
+
+        :param          newextensions:
+        :type           newextensions: Extensions
+        :Example Value: ""
+        :return:        None
+        """
+        
+        if isinstance(newextensions, Extensions):
+            self.extensions = newextensions
+        else:
+            raise TypeError
+
+    def getinstantiation(self):
+        """
+
+        :return:
+        """
+        return self.instantiation
+
+    def setinstantiation(self,newinstantiation):
+        """
+
+        :param          newinstantiation:
+        :type           newinstantiation: pbcoreInstantiation
+        :Example Value: ""
+        :return:        None
+        """
+        
+        if isinstance(newinstantiation, pbcoreInstantiation):
+            self.instantiation = newinstantiation
+        else:
+            raise TypeError
+
+
+
+
+##################################
+# root Elements
+##################################
+
+# Unsure if this is needed!
+
+# class RootElements():
+#     def __init__(self):
+#         self.pbcoreDescriptionDocument = None
+#         # URI: http://pbcore.org/v2/elements/pbcoreDescriptionDocument
+#
+#         self.pbcoreCollection = None
+#         # URI: http://pbcore.org/v2/elements/pbcoreCollection
+#
+#         self.pbcoreInstantiationDocument = None
+#         # URI: http://pbcore.org/v2/elements/pbcoreInstantiationDocument
+#
+#
+#     def getpbcoreDescriptionDocument(self):
+#         return self.pbcoreDescriptionDocument
+#
+#     def setpbcoreDescriptionDocument(self, newpbcoreDescriptionDocument):
+#         # TODO: create Docstring for setpbcoreDescriptionDocument
+#         self.pbcoreDescriptionDocument = newpbcoreDescriptionDocument
+#
+#     def getpbcoreCollection(self):
+#         return self.pbcoreCollection
+#
+#     def setpbcoreCollection(self, newpbcoreCollection):
+#         # TODO: create Docstring for setpbcoreCollection
+#         self.pbcoreCollection = newpbcoreCollection
+#
+#     def getpbcoreInstantiationDocument(self):
+#         return self.pbcoreInstantiationDocument
+#
+#     def setpbcoreInstantiationDocument(self, newpbcoreInstantiationDocument):
+#         # TODO: create Docstring for setpbcoreInstantiationDocument
+#         self.pbcoreInstantiationDocument = newpbcoreInstantiationDocument
 
 ##################################
 # Intellectual Content
 ##################################
 
 class IntellectualContent():
+    """
+    :Description:
+    :URL: http://pbcore.org/elements/
+    """
     # TODO: Create Docstring for IntellectualContent
+
     def __init__(self):
+        """
 
+        :return: None
+        """
         self.pbcoreAssetType = None
-        # For example: "Media Object"
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreassettype/
-
         self.pbcoreAssetDate = []
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreassetdate/
-
         self.pbcoreIdentifier = []
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreidentifier/
-
         self.pbcoreTitle = []
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoretitle/
-
         self.pbcoreSubject = None
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreSubject/
-
         self.pbcoreDescription = []
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreDescription
-
         self.pbcoreGenre = None
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreGenre
-
         self.pbcoreRelation = []
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreRelation
-
         self.pbcoreCoverage = []
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreCoverage
-
         self.pbcoreAudienceLevel = None
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreAudienceLevel
-
         self.pbcoreAudienceRating = None
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreAudienceRating
-
         self.pbcoreAnnotation = None
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreAnnotation
-
 
     def getpbcoreAssetType(self):
         return self.pbcoreAssetType
 
-    def addpbcoreAssetType(self, key, value):
-        """Adds an Asset type
-
-        Args:
-          key (str): The type of attribute to be added
-          value (str): The value of the attribute added
-
-        Example from http://sphinxcontrib-napoleon.readthedocs.org/en/latest/example_google.html
+    def setpbcoreAssetType(self, newpbcoreAssetType):
         """
-        self.pbcoreAssetType[key] = value
+
+        :param          newpbcoreAssetType:
+        :type           newpbcoreAssetType: str
+        :Example Value: Media Object
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreassettype/
+        :return:        None
+        """
+        # TODO: Give example value for addpbcoreAssetType
+        if isinstance(newpbcoreAssetType, Element):
+            self.pbcoreAssetType = newpbcoreAssetType
+        else:
+            raise TypeError
 
     def getpbcoreAssetDate(self):
+        """
+
+        :return: str
+        """
         return self.pbcoreAssetDate
 
-    def setpbcoreAssetDate(self, newpbcoreAssetDate):
-        # TODO: Create Docstring for setpbcoreAssetDate
-        self.pbcoreAssetDate = newpbcoreAssetDate
+    def addpbcoreAssetDate(self, newpbcoreAssetDate):
+        """
+
+        :param          newpbcoreAssetDate:
+        :type           newpbcoreAssetDate: Element
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreassetdate/
+        :return:        None
+        """
+        # TODO: Give example value for addpbcoreAssetDate
+
+        if isinstance(newpbcoreAssetDate, Element):
+            self.pbcoreAssetDate.append(newpbcoreAssetDate)
+        else:
+            raise TypeError
 
     def getpbcoreIdentifier(self):
+        """
+
+        :return:
+        """
         return self.pbcoreIdentifier
 
     def addpbcoreIdentifier(self, newIdentifier):
-        # TODO: Create Docstring for addpbcoreIdentifier
-        self.pbcoreIdentifier.append(newIdentifier)
+        """
+
+        :param          newIdentifier:
+        :type           newIdentifier: Element
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreidentifier/
+        :return:        None
+        """
+        # TODO: Give example value for addpbcoreIdentifier
+
+        if isinstance(newIdentifier, Element):
+            self.pbcoreIdentifier.append(newIdentifier)
+        else:
+            raise TypeError
 
     def getpbcoreTitle(self):
+        """
+
+        :return: None
+        """
         return self.pbcoreTitle
 
     def addpbcoreTitle(self, newTitle):
-        # TODO: Create Docstring for addpbcoreTitle
-        self.pbcoreTitle.append(newTitle)
+        """
+
+        :param          newTitle:
+        :type           newTitle: Element
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoretitle/
+        :return:        None
+        """
+        # TODO: Give example value for addpbcoreTitle
+
+        if isinstance(newTitle, Element):
+            self.pbcoreTitle.append(newTitle)
+        else:
+            raise TypeError
 
     def getpbcoreSubject(self):
+        """
+
+        :return: None
+        """
         return self.pbcoreSubject
 
     def setpbcoreSubject(self, newpbcoreSubject):
+        """
+
+        :param          newpbcoreSubject:
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreSubject/
+        :return:        None
+        """
+        # TODO: Give example value for setpbcoreSubject
         # TODO: Create Docstring for setpbcoreSubject
-        self.pbcoreSubject = newpbcoreSubject
+        if isinstance(newpbcoreSubject, Element):
+            self.pbcoreSubject = newpbcoreSubject
+        else:
+            raise TypeError
 
     def getpbcoreDescription(self):
+        """
+
+        :return:
+        """
         return self.pbcoreDescription
 
     def addpbcoreDescription(self, newDescription):
-        # TODO: Create Docstring for addpbcoreDescription
-        self.pbcoreDescription.append(newDescription)
+        """
+
+        :param          newDescription:
+        :type           newDescription: Element
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreDescription
+        :return:        None
+        """
+        # TODO: Give example value for addpbcoreDescription
+        if isinstance(newDescription, Element):
+            self.pbcoreDescription.append(newDescription)
+        else:
+            raise TypeError
 
     def getpbcoreGenre(self):
+        """
+
+        :return:    None
+        """
         return self.pbcoreGenre
 
     def setpbcoreGenre(self, newpbcoreGenre):
+        """
+
+        :param          newpbcoreGenre:
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreGenre
+        :return:        None
+        """
+        # TODO: Give example value for setpbcoreGenre
         # TODO: Create Docstring for setpbcoreGenre
-        self.pbcoreGenre = newpbcoreGenre
+        if isinstance(newpbcoreGenre, Element):
+            self.pbcoreGenre = newpbcoreGenre
+        else:
+            raise TypeError
 
     def getpbcoreRelation(self):
+        """
+
+        :return:
+        """
         return self.pbcoreRelation
 
     def addpbcoreRelation(self, newpbcoreRelation):
-        # TODO: Create Docstring for addpbcoreRelation
-        self.pbcoreRelation.append(newpbcoreRelation)
+        """
+
+        :param          newpbcoreRelation:
+        :type           newpbcoreRelation: Element
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreRelation
+        :return:        None
+        """
+        # TODO: Give example value for addpbcoreRelation
+
+        if isinstance(newpbcoreRelation, pbcoreRelation):
+            self.pbcoreRelation.append(newpbcoreRelation)
+        else:
+            raise TypeError
 
     def getpbcoreCoverage(self):
+        """
+
+        :return:
+        """
         return self.pbcoreCoverage
 
     def addpbcoreCoverage(self, newpbcoreCoverage):
-        # TODO: Create Docstring for addpbcoreCoverage
-        self.pbcoreCoverage.append(newpbcoreCoverage)
+        """
+
+        :param          newpbcoreCoverage:
+        :type           newpbcoreCoverage: pbcoreCoverage
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreCoverage
+        :return:        None
+        """
+        # TODO: Give example value for addpbcoreCoverage
+
+        if isinstance(newpbcoreCoverage, pbcoreCoverage):
+            self.pbcoreCoverage.append(newpbcoreCoverage)
+        else:
+            raise TypeError
 
     def getpbcoreAudienceLevel(self):
+        """
+
+        :return:
+        """
         return self.pbcoreAudienceLevel
 
     def setpbcoreAudienceLevel(self, newpbcoreAudienceLevel):
+        """
+
+        :param          newpbcoreAudienceLevel:
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreAudienceLevel
+        :return:        None
+        """
+        # TODO: Give example value for setpbcoreAudienceLevel
         # TODO: Create Docstring for setpbcoreAudienceLevel
-        self.pbcoreAudienceLevel = newpbcoreAudienceLevel
+        if isinstance(newpbcoreAudienceLevel, Element):
+            self.pbcoreAudienceLevel = newpbcoreAudienceLevel
+        else:
+            raise TypeError
 
     def getpbcoreAudienceRating(self):
+        """
+
+        :return:    None
+        """
         return self.pbcoreAudienceRating
 
     def setpbcoreAudienceRating(self, newpbcoreAudienceRating):
+        """
+
+        :param          newpbcoreAudienceRating:
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreAudienceRating
+        :return:        None
+        """
+        # TODO: Give example value for setpbcoreAudienceRating
         # TODO: Create Docstring for setpbcoreAudienceRating
-        self.pbcoreAudienceRating = newpbcoreAudienceRating
+        if isinstance(newpbcoreAudienceRating, Element):
+            self.pbcoreAudienceRating = newpbcoreAudienceRating
+        else:
+            raise TypeError
 
     def getpbcoreAnnotation(self):
+        """
+
+        :return:
+        """
         return self.pbcoreAnnotation
 
     def setpbcoreAnnotation(self, newpbcoreAnnotation):
+        """
+
+        :param          newpbcoreAnnotation:
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreAnnotation
+        :return:        None
+        """
+        # TODO: Give example value for setpbcoreAnnotation
         # TODO: Create Docstring for setpbcoreAnnotation
-        self.pbcoreAnnotation = newpbcoreAnnotation
+        if isinstance(newpbcoreAnnotation, Element):
+            self.pbcoreAnnotation = newpbcoreAnnotation
+        else:
+            raise TypeError
 
 
 class pbcoreRelation():
+    """
+    :Description:
+    :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerelation/
+    """
     # TODO: Create Docstring for pbcoreRelation
     def __init__(self):
-        self.pbcoreRelationType = None
-        # For example: "Has Part"
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerelation/pbcorerelationtype/
+        """
 
+        :return:    None
+        """
+        self.pbcoreRelationType = None
         self.pbcoreRelationIdentifier = None
-        # For example: "cscrm_000012_r3"
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerelation/pbcoreRelationIdentifier/
 
     def getpbcoreRelationType(self):
+        """
+
+        :return:
+        """
         return self.pbcoreRelationType
 
     def setpbcoreRelationType(self, newpbcoreRelationType):
+        """
+
+        :param          newpbcoreRelationType:
+        :Example Value: Has Part
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerelation/pbcorerelationtype/
+        :return:        None
+        """
         # TODO: Create Docstring for setpbcoreRelationType
-        self.pbcoreRelationType = newpbcoreRelationType
+        if isinstance(newpbcoreRelationType, Element):
+            self.pbcoreRelationType = newpbcoreRelationType
+        else:
+            raise TypeError
 
     def getpbcoreRelationIdentifier(self):
+        """
+
+        :return:
+        """
         return self.pbcoreRelationIdentifier
 
     def setpbcoreRelationIdentifier(self, newpbcoreRelationIdentifier):
+        """
+
+        :param          newpbcoreRelationIdentifier:
+        :Example Value: cscrm_000012_r3
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerelation/pbcoreRelationIdentifier/
+        :return:        None
+        """
         # TODO: Create Docstring for setpbcoreRelationIdentifier
-        self.pbcoreRelationIdentifier = newpbcoreRelationIdentifier
+        if isinstance(newpbcoreRelationIdentifier, Element):
+            self.pbcoreRelationIdentifier = newpbcoreRelationIdentifier
+        else:
+            raise TypeError
+
+
+class pbcoreCoverage():
+    """
+    :Description:
+    :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecoverage/
+    """
+    # TODO: Create Docstring for pbcoreCoverage
+    def __init__(self):
+        """
+
+        :return:        None
+        """
+        self.coverage = None
+        self.coverageType = None
+
+    def getCoverage(self):
+        """
+
+        :return:
+        """
+        return self.coverage
+
+    def setCoverage(self, newCoverage):
+
+        """
+
+        :param          newCoverage:
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecoverage/coverage/
+        :return:        None
+        """
+        # TODO: Give example value for setCoverage
+        # TODO: Create Docstring for setCoverage
+        if isinstance(newCoverage, Element):
+            self.coverage = newCoverage
+        else:
+            raise TypeError
+
+    def getCoverageType(self):
+        """
+
+        :return:
+        """
+        return self.coverageType
+
+    def setCoverageType(self, newCoverageType):
+        """
+
+        :param          newCoverageType:
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecoverage/coveragetype/
+        :return:        None
+        """
+        # TODO: Give example value for setCoverageType
+        # TODO: Create Docstring for setCoverageType
+        if isinstance(newCoverageType, Element):
+            self.coverageType = newCoverageType
+        else:
+            raise TypeError
 
 
 ##################################
@@ -172,168 +567,379 @@ class pbcoreRelation():
 
 
 class IntellectualProperty():
+    """
+    :Description:
+    :URL: http://pbcore.org/elements/
+    """
     # TODO: Create Docstring for IntellectualProperty
     def __init__(self):
+        """
+
+        :return:        None
+        """
         self.pbcoreCreator = []
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecreator/
-
         self.pbcoreContributor = []
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreContributor
-
         self.pbcorePublisher = []
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorePublisher
-
         self.pbcoreRightsSummary = []
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreRightsSummary
 
 
     def getpbcoreCreator(self):
+        """
+
+        :return:
+        """
         return self.pbcoreCreator
 
     def addpbcoreCreator(self, newpbcoreCreator):
-        # TODO: Create Docstring for addpbcoreCreator
-        self.pbcoreCreator.append(newpbcoreCreator)
+        """
+
+        :param          newpbcoreCreator:
+        :type           newpbcoreCreator: pbcoreCreator
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecreator/
+        :return:        None
+        """
+
+        if isinstance(newpbcoreCreator, pbcoreCreator):
+            self.pbcoreCreator.append(newpbcoreCreator)
+        else:
+            raise TypeError
 
     def getpbcoreContributor(self):
+        """
+
+        :return:
+        """
         return self.pbcoreContributor
 
     def addpbcoreContributor(self, newpbcoreContributor):
-        # TODO: Create Docstring for addpbcoreContributor
-        self.pbcoreContributor.append(newpbcoreContributor)
+        """
+
+        :param          newpbcoreContributor:
+        :type           newpbcoreContributor: pbcoreContributor
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreContributor
+        :return:        None
+        """
+        # TODO: Give example value for addpbcoreContributor
+        if isinstance(newpbcoreContributor, pbcoreContributor):
+            self.pbcoreContributor.append(newpbcoreContributor)
+        else:
+            raise TypeError
 
     def getpbcorePublisher(self):
+        """
+
+        :return:
+        """
         # TODO: Create Docstring for getpbcorePublisher
         return self.pbcorePublisher
 
     def addpbcorePublisher(self, newpbcorePublisher):
-        self.pbcorePublisher.append(newpbcorePublisher)
+        """
+
+        :param          newpbcorePublisher:
+        :type           newpbcorePublisher: pbcorePublisher
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorePublisher
+        :return:        None
+        """
+        # TODO: Give example value for addpbcorePublisher
+        if isinstance(newpbcorePublisher, pbcorePublisher):
+            self.pbcorePublisher.append(newpbcorePublisher)
+        else:
+            raise TypeError
 
     def getpbcoreRightsSummary(self):
+        """
+
+        :return:
+        """
         # TODO: Create Docstring for getpbcoreRightsSummary
         return self.pbcoreRightsSummary
 
     def addpbcoreRightsSummary(self, newpbcoreRightsSummary):
-        # TODO: Create Docstring for addpbcoreRightsSummary
-        self.pbcoreRightsSummary.append(newpbcoreRightsSummary)
+        """
+
+        :param          newpbcoreRightsSummary:
+        :type           newpbcoreRightsSummary: pbcoreRightsSummary
+        :Example Value: ""
+        :return:        None
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreRightsSummary
+        """
+        # TODO: Give example value for addpbcoreRightsSummary
+        # TODO: Create an example Value for addpbcoreRightsSummary
+
+        if isinstance(newpbcoreRightsSummary, pbcoreRightsSummary):
+            self.pbcoreRightsSummary.append(newpbcoreRightsSummary)
+        else:
+            raise TypeError
 
 
+# __________________________________
 class pbcoreCreator():
+    """
+    :Description:
+    :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecreator/
+    """
     # TODO: Create Docstring for pbcoreCreator
     def __init__(self):
-        self.creator = None
-        # For example: "Unknown"
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecreator/creator/
+        """
 
+        :return:
+        """
+        self.creator = None
         self.creatorRole = None
-        # For example: "Producer"
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecreator/creatorRole/
+
 
 
     def getCreator(self):
+        """
+
+        :return:
+        """
         return self.creator
 
     def setCreator(self, newCreator):
+        """
+
+        :param          newCreator:
+        :return:        None
+        :Example Value: Unknown
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecreator/creator/
+        """
         # TODO: Create Docstring for setCreator
-        self.creator = newCreator
+        if isinstance(newCreator, Element):
+            self.creator = newCreator
+        else:
+            raise TypeError
 
     def getCreatorRole(self):
+        """
+
+        :return:
+        """
         return self.creatorRole
 
     def setCreatorRole(self, newCreatorRole):
+        """
+
+        :param          newCreatorRole:
+        :return:        None
+        :Example Value: Producer
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecreator/creatorRole/
+        """
         # TODO: Create Docstring for setCreatorRole
-        self.creatorRole = newCreatorRole
+        if isinstance(newCreatorRole, Element):
+            self.creatorRole = newCreatorRole
+        else:
+            raise TypeError
 
 
+# __________________________________
 class pbcoreContributor:
+    """
+    :Description:
+    :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecontributor/
+    """
     # TODO: Create Docstring for pbcoreContributor
     def __init__(self):
+        """
+
+        :return:
+        """
         self.contributor = None
-        # For example: "" TODO: Give example of contributor
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecontributor/contributor/
-
         self.contributorRole = None
-        # For example: "" TODO: Give example of contributorRole
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecontributor/contributorrole/
 
+    def setContributor(self, newContributor):
+        """
 
-    def setContributor(self,newContributor):
+        :param          newContributor:
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecontributor/contributor/
+        :return:        None
+        """
+        # TODO: Give example of contributor
         # TODO: Create Docstring for setContributor
-        self.contributor = newContributor
+        if isinstance(newContributor, Element):
+            self.contributor = newContributor
+        else:
+            raise TypeError
 
     def getContributor(self):
+        """
+
+        :return:
+        """
         return self.contributor
 
-    def setContributoRoler(self,newContributoRole):
+    def setContributoRoler(self, newContributoRole):
+        """
+
+        :param          newContributoRole:
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecontributor/contributorrole/
+        :return:        None
+        """
+        # TODO: Give example of contributorRole
         # TODO: Create Docstring for setContributoRoler
-        self.contributorRole = newContributoRole
+        if isinstance(newContributoRole, Element):
+            self.contributorRole = newContributoRole
+        else:
+            raise TypeError
 
     def getContributoRoler(self):
+        """
+
+        :return:
+        """
         return self.contributorRole
 
 
+# __________________________________
 class pbcorePublisher():
+    """
+    :Description:
+    :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorepublisher/
+    """
     # TODO: Create Docstring for pbcorePublisher
     def __init__(self):
+        """
+
+        :return:        None
+        """
         self.publisher = None
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorepublisher/publisher/
-        # For example: "" TODO: Give example of publisher
-
         self.publisherRole = None
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorepublisher/publisherRole/
-        # For example: "" TODO: Give example of publisherRole
 
+    def getPublisher(self):
+        """
+        :return:
+        """
 
-        def getPublisher(self):
-            return self.publisher
+        return self.publisher
 
-        def setPublisher(self, newPublisher):
-            # TODO: Create Docstring for setPublisher
+    def setPublisher(self, newPublisher):
+        """
+        :param          newPublisher:
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorepublisher/publisher/
+        :return:        None
+        """
+
+        # TODO: Give example of publisher
+        # TODO: Create Docstring for setPublisher
+        if isinstance(newPublisher, Element):
             self.publisher = newPublisher
+        else:
+            raise TypeError
 
-        def getPublisherRole(self):
-            return self.publisherRole
+    def getPublisherRole(self):
+        """
+        :return:
+        """
+        return self.publisherRole
 
-        def setPublisherRole(self, newPublisherRole):
-            # TODO: Create Docstring for setPublisherRole
+    def setPublisherRole(self, newPublisherRole):
+        """
+        :param          newPublisherRole:
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorepublisher/publisherRole/http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorepublisher/publisherRole/
+        :return:        None
+        """
+        # For example: "" TODO: Give example of publisherRole
+        # TODO: Create Docstring for setPublisherRole
+        if isinstance(newPublisherRole, Element):
             self.publisherRole = newPublisherRole
+        else:
+            raise TypeError
 
 
+# __________________________________
 class pbcoreRightsSummary():
+    """
+    :Description:
+    :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerightssummary/
+    """
     # TODO: Create Docstring for pbcoreRightsSummary
     def __init__(self):
+        """
+
+        :return:        None
+        """
         self.rightsSummary = []
-        # TODO: Add URI link to rightsSummary
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerightssummary/rightssummary/
-
         self.rightsLink = None
-        # For example: "" TODO: Give example of rightsLink
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerightssummary/rightsLink/
-
         self.rightsEmbedded = None
-        # For example: "" TODO: Give example of rightsEmbedded
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerightssummary/rightsEmbedded/
+
 
 
     def getRightsSummary(self):
+        """
+
+        :return:
+        """
         return self.rightsSummary
 
     def addRightsSummary(self, newRightsSummary):
-        #TODO: Create Docstring for addRightsSummary
-        self.rightsSummary.append(newRightsSummary)
+        """
+
+        :param          newRightsSummary:
+        :type           newRightsSummary:       Element
+        :Example Value: ""
+        :return:        None
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerightssummary/rightssummary/
+        """
+        # TODO: Give example of addRightsSummary
+        # TODO: Create Docstring for addRightsSummary
+
+        if isinstance(newRightsSummary, Element):
+            self.rightsSummary.append(newRightsSummary)
+        else:
+            raise TypeError
 
     def getRightsLink(self):
+        """
+
+        :return:
+        """
         return self.rightsLink
 
     def setRightsLink(self, newRightsLink):
-        #TODO: Create Docstring for setRightsLink
-        self.rightsLink = newRightsLink
+        """
+
+        :param          newRightsLink:
+        :Example Value: ""
+        :return:        None
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerightssummary/rightsLink/
+        """
+        # TODO: Give example of rightsLink
+        # TODO: Create Docstring for setRightsLink
+
+        if isinstance(newRightsLink, Element):
+            self.rightsLink = newRightsLink
+        else:
+            raise TypeError
 
     def getRightsEmbedded(self):
+        """
+
+        :return:
+        """
         return self.rightsEmbedded
 
     def setRightsEmbedded(self, newRightsEmbedded):
-        #TODO: Create Docstring for setRightsEmbedded
-        self.rightsEmbedded = newRightsEmbedded
+        """
+
+        :param          newRightsEmbedded:
+        :Example Value: ""
+        :return:        None
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerightssummary/rightsEmbedded/
+        """
+        # TODO: Give example of rightsEmbedded
+        # TODO: Create Docstring for setRightsEmbedded
+        if isinstance(newRightsEmbedded, Element):
+            self.rightsEmbedded = newRightsEmbedded
+        else:
+            raise TypeError
 
 
 ##################################
@@ -342,592 +948,1187 @@ class pbcoreRightsSummary():
 
 class pbcoreInstantiation():
     # TODO: Create Docstring for pbcoreInstantiation
+    """
+    :Description:
+    :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/
+    """
     def __init__(self, instantiationType=None):
         self.instantiationAssetType = instantiationType
         # For example: "Physical Asset" instantiationAssetType
 
         self.instantiationIdentifier = []
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationIdentifier/
-        # Use ONLY Element objects
-
         self.instantiationDate = None
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationDate/
-        # For example: "UTC 2014-10-24 21:37:34"
-
         self.instantiationDimensions = None
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationDimensions/
-        # For example: "" TODO: Give example instantiationDimensions
-
         self.instantiationPhysical = None
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationPhysical/
-        # For example: "Film: 16mm"
-
         self.instantiationDigital = None
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationDigital/
-        # Use ONLY Element objects
-
         self.instantiationStandard = None
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationStandard/
-        # For example: "Blackmagic v210 YUV"
-
         self.instantiationLocation = None
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationLocation/
-        # For example: "California State Railroad Museum Library"
-
         self.instantiationMediaType = None
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationMediaType/
-        # For example: "Moving Image"
-
         self.instantiationGenerations = None
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationGenerations/
-        # For example: "Unknown"
-
         self.instantiationFileSize = None
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationFileSize/
-        # Use ONLY Element objects
-
         self.instantiationTimeStart = None
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationTimeStart/
-        # For example: "00:00:00"
-
         self.instantiationDuration = None
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationDuration/
-        # For example: "00:10:52"
-
         self.instantiationDataRate = None
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationDataRate/
-        # For example: "" TODO: Give example instantiationDataRate
-
         self.instantiationColors = None
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationColors/
-        # For example: "Color"
-
         self.instantiationTracks = None
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationTracks/
-        # For example: "Silent"
-
         self.instantiationChannelConfiguration = None
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationChannelConfiguration/
-        # For example: "No Audio"
-
         self.instantiationLanguage = None
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationLanguage/
-        # For example: "" TODO: Give example instantiationLanguage
-
         self.instantiationAlternativeModes = None
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationAlternativeModes/
-        # For example: "" TODO: Give example instantiationAlternativeModes
-
         self.instantiationEssenceTrack = []
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationEssenceTrack/
-
         self.instantiationRelation = []
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationRelation/
-
         self.instantiationAnnotation = []
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationAnnotation/
-
         self.instantiationPart = None
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationPart/
-        # For example: "" TODO: Give example instantiationPart
-
         self.instantiationExtension = None
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationExtension/
-        # For example: "" TODO: Give example instantiationExtension
 
     def getInstantiationIdentifier(self):
         return self.instantiationIdentifier
 
-    def setInstantiationIdentifier(self, newInstantiationIdentifier):
-        # TODO: Create Docstring for setInstantiationIdentifier
-        # Must be an Element object!
-        checkIfElement(newInstantiationIdentifier)
-        self.instantiationIdentifier = newInstantiationIdentifier
+    def addInstantiationIdentifier(self, newInstantiationIdentifier):
+        """
+
+        :param          newInstantiationIdentifier:
+        :type           newInstantiationIdentifier:     Element
+        :Example Value: ""
+        :return:        None
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationIdentifier/
+        """
+
+        if isinstance(newInstantiationIdentifier, Element):
+            self.instantiationIdentifier.append(newInstantiationIdentifier)
+        else:
+            raise TypeError
 
     def getInstantiationDate(self):
+        """
+
+        :return:
+        """
         return self.instantiationDate
 
     def setInstantiationDate(self, newInstantiationDate):
+        """
+
+        :param          newInstantiationDate:
+        :Example Value: UTC 2014-10-24 21:37:34
+        :return:        None
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationDate/
+        """
         # TODO: Create Docstring for setInstantiationDate
-        self.instantiationDate = newInstantiationDate
+        if isinstance(newInstantiationDate, Element):
+            self.instantiationDate = newInstantiationDate
+        else:
+            raise TypeError
 
     def getInstantiationDimensions(self):
+        """
+
+        :return:
+        """
         return self.instantiationDimensions
 
     def setInstantiationDimensions(self, newInstantiationDimensions):
+        """
+
+        :param          newInstantiationDimensions:
+        :Example Value: ""
+        :return:        None
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationDimensions/
+        """
+        # TODO: Give example instantiationDimensions
         # TODO: Create Docstring for setInstantiationDimensions
-        self.instantiationDimensions = newInstantiationDimensions
+        if isinstance(newInstantiationDimensions, Element):
+            self.instantiationDimensions = newInstantiationDimensions
+        else:
+            raise TypeError
 
     def getInstantiationPhysical(self):
+        """
+
+        :return:
+        """
         return self.instantiationPhysical
 
     def setInstantiationPhysical(self, newInstantiationPhysical):
+        """
+
+        :param          newInstantiationPhysical:
+        :Example Value: Film: 16mm
+        :return:        None
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationPhysical/
+        """
         # TODO: Create Docstring for setInstantiationPhysical
-        self.instantiationPhysical = newInstantiationPhysical
+        if isinstance(newInstantiationPhysical, Element):
+            self.instantiationPhysical = newInstantiationPhysical
+        else:
+            raise TypeError
 
     def getInstantiationDigital(self):
+        """
+
+        :return:
+        """
         return self.instantiationDigital
 
     def setInstantiationDigital(self, newInstantiationDigital):
-        # TODO: Create Docstring for setInstantiationDigital
-        # Must be an Element object!
-        checkIfElement(newInstantiationDigital)
-        self.instantiationDigital = newInstantiationDigital
+        """
+
+        :param          newInstantiationDigital:
+        :type           newInstantiationDigital: Element
+        :Example Value: ""
+        :return:        None
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationDigital/
+        """
+
+        if isinstance(newInstantiationDigital, Element):
+            self.instantiationDigital = newInstantiationDigital
+        else:
+            raise TypeError
 
     def getInstantiationStandard(self):
+        """
+
+        :return:
+        """
         return self.instantiationStandard
 
     def setInstantiationStandard(self, newInstantiationStandard):
+        """
+
+        :param          newInstantiationStandard:
+        :Example Value: Blackmagic v210 YUV
+        :return:        None
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationStandard/
+        """
         # TODO: Create Docstring for setInstantiationStandard
 
-        self.instantiationStandard = newInstantiationStandard
+        if isinstance(newInstantiationStandard, Element):
+            self.instantiationStandard = newInstantiationStandard
+        else:
+            raise TypeError
 
     def getInstantiationLocation(self):
+        """
+
+        :return:
+        """
         return self.instantiationLocation
 
     def setInstantiationLocation(self, newInstantiationLocation):
+        """
+
+        :param          newInstantiationLocation:
+        :Example Value: California State Railroad Museum Library
+        :return:        None
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationLocation/
+        """
         # TODO: Create Docstring for setInstantiationLocation
 
-        self.instantiationLocation = newInstantiationLocation
+        if isinstance(newInstantiationLocation, Element):
+            self.instantiationLocation = newInstantiationLocation
+        else:
+            raise TypeError
 
     def getInstantiationMediaType(self):
+        """
+
+        :return:
+        """
         return self.instantiationMediaType
 
     def setInstantiationMediaType(self, newInstantiationMediaType):
+        """
+
+        :param          newInstantiationMediaType:
+        :Example Value: Moving Image
+        :return:        None
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationMediaType/
+        """
         # TODO: Create Docstring for setInstantiationMediaType
 
-        self.instantiationMediaType = newInstantiationMediaType
+        if isinstance(newInstantiationMediaType, Element):
+            self.instantiationMediaType = newInstantiationMediaType
+        else:
+            raise TypeError
 
     def getInstantiationGenerations(self):
+        """
+
+        :return:
+        """
         return self.instantiationGenerations
 
     def setInstantiationGenerations(self, newInstantiationGenerations):
-        # TODO: Create Docstring for setInstantiationGenerations
+        """
 
-        self.instantiationGenerations = newInstantiationGenerations
+        :param          newInstantiationGenerations:
+        :Example Value: Unknown
+        :return:        None
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationGenerations/
+        """
+        # TODO: Create Docstring for setInstantiationGenerations
+        if isinstance(newInstantiationGenerations, Element):
+            self.instantiationGenerations = newInstantiationGenerations
+        else:
+            raise TypeError
 
     def getInstantiationFileSize(self):
+        """
+
+        :return:
+        """
         return self.instantiationFileSize
 
     def setInstantiationFileSize(self, newInstantiationFileSize):
-        # TODO: Create Docstring for setInstantiationFileSize
+        """
 
-        # Must be an Element object!
-        checkIfElement(newInstantiationFileSize)
-        self.instantiationFileSize = newInstantiationFileSize
+        :param          newInstantiationFileSize:
+        :type           newInstantiationFileSize:   Element
+        :Example Value: ""
+        :return:        None
+        :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationFileSize/
+        """
+
+        if isinstance(newInstantiationFileSize, Element):
+            self.instantiationFileSize = newInstantiationFileSize
+        else:
+            raise TypeError
 
     def getInstantiationTimeStart(self):
+        """
+
+        :return:
+        """
         return self.instantiationTimeStart
 
     def setInstantiationTimeStart(self, newInstantiationTimeStart):
-        # TODO: Create Docstring for setInstantiationTimeStart
+        """
 
-        # Must be an Element object!
-        checkIfElement(newInstantiationTimeStart)
-        self.instantiationTimeStart = newInstantiationTimeStart
+        :param          newInstantiationTimeStart:
+        :type           newInstantiationTimeStart: Element
+        :Example Value: 00:00:00
+        :return:        None
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationTimeStart/
+
+        """
+
+        if isinstance(newInstantiationTimeStart, Element):
+            self.instantiationTimeStart = newInstantiationTimeStart
+        else:
+            raise TypeError
 
     def getInstantiationDuration(self):
+        """
+
+        :return:
+        """
         return self.instantiationDuration
 
     def setInstantiationDuration(self, newInstantiationDuration):
+        """
+
+        :param          newInstantiationDuration:
+        :Example Value: 00:10:52
+        :return:        None
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationDuration/
+        """
         # TODO: Create Docstring for setInstantiationDuration
 
-        self.instantiationDuration = newInstantiationDuration
+        if isinstance(newInstantiationDuration, Element):
+            self.instantiationDuration = newInstantiationDuration
+        else:
+            raise TypeError
 
     def getInstantiationDataRate(self):
+        """
+
+        :return:
+        """
         return self.instantiationDataRate
 
     def setInstantiationDataRate(self, newInstantiationDataRate):
+        """
+
+        :param          newInstantiationDataRate:
+        :Example Value: ""
+        :return:        None
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationDataRate/
+        """
+        # TODO: Give example instantiationDataRate
         # TODO: Create Docstring for setInstantiationDataRate
 
-        self.instantiationDataRate = newInstantiationDataRate
+        if isinstance(newInstantiationDataRate, Element):
+            self.instantiationDataRate = newInstantiationDataRate
+        else:
+            raise TypeError
 
     def getInstantiationColors(self):
+        """
+
+        :return:
+        """
         return self.instantiationColors
 
     def setInstantiationColors(self, newInstantiationColors):
+        """
+
+        :param          newInstantiationColors:
+        :Example Value: Color
+        :return:        None
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationColors/
+        """
         # TODO: Create Docstring for setInstantiationColors
 
-        self.instantiationColors = newInstantiationColors
+        if isinstance(newInstantiationColors, Element):
+            self.instantiationColors = newInstantiationColors
+        else:
+            raise TypeError
 
     def getInstantiationTracks(self):
+        """
+
+        :return:
+        """
         return self.instantiationTracks
 
     def setInstantiationTracks(self, newInstantiationTracks):
+        """
+
+        :param          newInstantiationTracks:
+        :For example:   Silent
+        :return:        None
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationTracks/
+        """
         # TODO: Create Docstring for setInstantiationTracks
 
-        self.instantiationTracks = newInstantiationTracks
+        if isinstance(newInstantiationTracks, Element):
+            self.instantiationTracks = newInstantiationTracks
+        else:
+            raise TypeError
 
     def getInstantiationChannelConfiguration(self):
+        """
+
+        :return:
+        """
         return self.instantiationChannelConfiguration
 
     def setInstantiationChannelConfiguration(self, newInstantiationChannelConfiguration):
+        """
+
+        :param          newInstantiationChannelConfiguration:
+        :Example Value: No Audio
+        :return:        None
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationChannelConfiguration/
+        """
         # TODO: Create Docstring for setInstantiationChannelConfiguration
 
-        self.instantiationChannelConfiguration = newInstantiationChannelConfiguration
+        if isinstance(newInstantiationChannelConfiguration, Element):
+            self.instantiationChannelConfiguration = newInstantiationChannelConfiguration
+        else:
+            raise TypeError
 
     def getInstantiationLanguage(self):
+        """
+
+        :return:
+        """
         return self.instantiationLanguage
 
     def setInstantiationLanguage(self, newInstantiationLanguage):
+        """
+
+        :param          newInstantiationLanguage:
+        :Example Value: ""
+        :return:        None
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationLanguage/
+        """
+        # TODO: Give example instantiationLanguage
         # TODO: Create Docstring for setInstantiationLanguage
 
-        self.instantiationLanguage = newInstantiationLanguage
+        if isinstance(newInstantiationLanguage, Element):
+            self.instantiationLanguage = newInstantiationLanguage
+        else:
+            raise TypeError
 
     def getInstantiationAlternativeModes(self):
+        """
+
+        :return:
+        """
         return self.instantiationAlternativeModes
 
     def setInstantiationAlternativeModes(self, newInstantiationAlternativeModes):
+        """
+
+        :param          newInstantiationAlternativeModes:
+        :Example Value: ""
+        :return:        None
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationAlternativeModes/
+        """
+        # TODO: Give example instantiationAlternativeModes
         # TODO: Create Docstring for setInstantiationAlternativeModes
-
-
         self.instantiationAlternativeModes = newInstantiationAlternativeModes
 
     def addInstantiationRelation(self, newinstantiationRelation):
+        """
+
+        :param          newinstantiationRelation:
+        :type           newinstantiationRelation: instantiationRelation
+        :Example Value: ""
+        :return:        None
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationRelation/
+        """
+        # TODO: Give example for addInstantiationRelation
         # TODO: Create Docstring for addInstantiationRelation
-        self.instantiationRelation.append(newinstantiationRelation)
+
+        if isinstance(newinstantiationRelation, instantiationRelation):
+            self.instantiationRelation.append(newinstantiationRelation)
+        else:
+            raise TypeError
 
     def getInstantiationEssenceTrack(self):
+        """
+
+        :return:
+        """
         return instantiationEssenceTrack
 
     def addInstantiationEssenceTrack(self, newInstantiationEssenceTrack):
-        # TODO: Create Docstring for addInstantiationEssenceTrack
-        self.instantiationEssenceTrack.append(newInstantiationEssenceTrack)
+        """
+
+        :param          newInstantiationEssenceTrack:
+        :type           newInstantiationEssenceTrack: instantiationEssenceTrack
+        :Example Value: ""
+        :return:        None
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationEssenceTrack/
+
+        """
+
+        if isinstance(newInstantiationEssenceTrack, instantiationEssenceTrack):
+            self.instantiationEssenceTrack.append(newInstantiationEssenceTrack)
+        else:
+            raise TypeError
+
 
     def getInstantiationRelation(self):
+        """
+
+        :return:
+        """
         return instantiationRelation
 
+    def setInstantiationRelation(self, newInstantiationRelation):
+        """
+        :param          newInstantiationRelation:
+        :Example Value: ""
+        :return:        None
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationrelation/
+        """
+
+        if isinstance(newInstantiationRelation, Element):
+            self.instantiationRelation = newInstantiationRelation
+        else:
+            raise TypeError
+
+
     def getInstantiationAnnotation(self):
+        """
+
+        :return:
+        """
         return self.instantiationAnnotation
 
     def addInstantiationAnnotation(self, newAnnotation):
+        """
+
+        :param          newAnnotation:
+        :type           newAnnotation:      Element
+        :Example Value: ""
+        :return:        None
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationAnnotation/
+        """
+        # TODO: Give example for addInstantiationAnnotation
         # TODO: Create Docstring for addInstantiationAnnotation
 
-        self.instantiationAnnotation.append(newAnnotation)
+        if isinstance(newAnnotation, Element):
+            self.instantiationAnnotation.append(newAnnotation)
+        else:
+            raise TypeError
 
     def getInstantiationPart(self):
+        """
+        :return:
+        """
+
         return self.instantiationPart
 
     def setInstantiationPart(self, newInstantiationPart):
-        # TODO: Create Docstring for setInstantiationPart
+        """
 
-        self.instantiationPart = newInstantiationPart
+        :param          newInstantiationPart:
+        :Example Value: ""
+        :return:        None
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationPart/
+        """
+        # TODO: Give example instantiationPart
+        # TODO: Create Docstring for setInstantiationPart
+        if isinstance(newInstantiationPart, Element):
+            self.instantiationPart = newInstantiationPart
+        else:
+            raise TypeError
 
     def getInstantiationExtension(self):
+        """
+        :return:
+        """
         return self.instantiationExtension
 
     def setInstantiationExtension(self, newnstantiationExtension):
+        """
+        :param          newnstantiationExtension:
+        :Example Value: ""
+        :return:        None
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationExtension/
+        """
+        # TODO: Give example instantiationExtension
         # TODO: Create Docstring for setInstantiationExtension
 
-        self.instantiationExtension = newnstantiationExtension
+        if isinstance(newnstantiationExtension, Element):
+            self.instantiationExtension = newnstantiationExtension
+        else:
+            raise TypeError
 
 
 class instantiationEssenceTrack():
+    """
+    :Description:
+    :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/
+    """
     # TODO: Create Docstring for instantiationEssenceTrack
     def __init__(self):
         self.essenceTrackType = None
-        # For example "Video"
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essencetracktype/
-
         self.essenceTrackIdentifier = None
-        # For example "" TODO: add example of essenceTrackIdentifier
-        # URI # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackIdentifier/
-
         self.essenceTrackStandard = None
-        # For example "" TODO: add example of essenceTrackStandard
-        # URI # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackStandard/
-
         self.essenceTrackEncoding = None
-        # For example "" TODO: add example of essenceTrackEncoding
-        # URI # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackEncoding/
-
         self.essenceTrackDataRate = None
-        # Use ONLY Element objects
-        # URI # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackDataRate/
-
         self.essenceTrackFrameRate = None
-        # Use ONLY Element objects
-        # URI # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackFrameRate/
-
         self.essenceTrackPlaybackSpeed = None
-        # Use ONLY Element objects
-        # URI # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackPlaybackSpeed/
-
-
         self.essenceTrackSamplingRate = None
-        # Use ONLY Element objects
-        # URI # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackSamplingRate/
-
         self.essenceTrackBitDepth = None
-        # For example "10"
-        # URI # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackBitDepth/
-
         self.essenceTrackFrameSize = None
-        # For example "" TODO: add example of essenceTrackFrameSize
-        # URI # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackFrameSize/
-
         self.essenceTrackAspectRatio = None
-        # For example "4:3"
-        # URI # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackAspectRatio/
-
         self.essenceTrackTimeStart = None
-        # For example "00:00:00"
-        # URI # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackTimeStart/
-
         self.essenceTrackDuration = None
-        # For example "00:10:52"
-        # URI # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackDuration/
-
         self.essenceTrackLanguage = None
-        # For example "" TODO: add example of essenceTrackLanguage
-        # URI # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackLanguage/
-
         self.essenceTrackAnnotation = None
-        # Use ONLY Element objects
-        # URI # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackAnnotation/
-
         self.essenceTrackExtension = None
-        # For example "" TODO: add example of essenceTrackExtension
-        # URI # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackExtension/
-
 
     def getEssenceTrackType(self):
+
+        """
+
+        :return:
+        """
+
         return self.essenceTrackType
 
     def setEssenceTrackType(self, newEssenceTrackType):
-        # TODO: Create Docstring for setEssenceTrackType
-        self.essenceTrackType = newEssenceTrackType
+
+        """
+
+        :param          newEssenceTrackType:
+        :Example Value: Video
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essencetracktype/
+        :return:        None
+        """
+
+        if isinstance(newEssenceTrackType, Element):
+            self.essenceTrackType = newEssenceTrackType
+        else:
+            raise TypeError
 
     def getEssenceTrackIdentifier(self):
-        # TODO: Create Docstring for getEssenceTrackIdentifier
+        """
+
+        :return:
+        """
+
         return self.essenceTrackIdentifier
 
     def setEssenceTrackIdentifier(self, newEssenceTrackIdentifier):
-        # TODO: Create Docstring for setEssenceTrackIdentifier
-        self.essenceTrackIdentifier = newEssenceTrackIdentifier
+        """
+
+        :param          newEssenceTrackIdentifier:
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackIdentifier/
+        :return:        None
+        """
+        #TODO: add example of essenceTrackIdentifier
+
+        if isinstance(newEssenceTrackIdentifier, Element):
+            self.essenceTrackIdentifier = newEssenceTrackIdentifier
+        else:
+            raise TypeError
 
     def getEssenceTrackStandard(self):
+        """
+
+        :return:
+        """
         return self.essenceTrackStandard
 
     def setEssenceTrackStandard(self, newEssenceTrackStandard):
-        # TODO: Create Docstring for setEssenceTrackStandard
-        self.essenceTrackStandard = newEssenceTrackStandard
+
+        """
+
+        :param          newEssenceTrackStandard:
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackStandard/
+        :return:        None
+        """
+        # TODO: add example of essenceTrackStandard
+
+        if isinstance(newEssenceTrackStandard, Element):
+            self.essenceTrackStandard = newEssenceTrackStandard
+        else:
+            raise TypeError
 
     def getEssenceTrackEncoding(self):
+        """
+
+        :return:
+        """
         return self.essenceTrackEncoding
 
     def setEssenceTrackEncoding(self, newEssenceTrackEncoding):
-        # TODO: Create Docstring for setEssenceTrackEncoding
-        self.essenceTrackEncoding = newEssenceTrackEncoding
+        """
+
+        :param          newEssenceTrackEncoding:
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackEncoding/
+        :return:        None
+        """
+        # TODO: add example of essenceTrackEncoding
+
+        if isinstance(newEssenceTrackEncoding, Element):
+            self.essenceTrackEncoding = newEssenceTrackEncoding
+        else:
+            raise TypeError
 
     def getEssenceTrackDataRate(self):
+        """
+
+        :return:
+        """
         return self.essenceTrackDataRate
 
     def setEssenceTrackDataRate(self, newEssenceTrackDataRate):
-        # TODO: Create Docstring for setEssenceTrackDataRate
-        # Must be an Element object!
-        checkIfElement(newEssenceTrackDataRate)
-        self.essenceTrackDataRate = newEssenceTrackDataRate
+        """
+
+        :param          newEssenceTrackDataRate:
+        :type           newEssenceTrackDataRate: Element
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackDataRate/
+        :return:        None
+
+        """
+
+        if isinstance(newEssenceTrackDataRate, Element):
+            self.essenceTrackDataRate = newEssenceTrackDataRate
+        else:
+            raise TypeError
 
     def getEssenceTrackFrameRate(self):
+        """
+
+        :return:
+        """
         return self.essenceTrackFrameRate
 
     def setEssenceTrackFrameRate(self, newEssenceTrackFrameRate):
-        # TODO: Create Docstring for setEssenceTrackFrameRate
-        # Must be an Element object!
-        checkIfElement(newEssenceTrackFrameRate)
-        self.essenceTrackFrameRate = newEssenceTrackFrameRate
+
+        """
+
+        :param          newEssenceTrackFrameRate:
+        :type           newEssenceTrackFrameRate: Element
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackFrameRate/
+        :return:        None
+        """
+        # TODO: Add example of setEssenceTrackFrameRate
+        if isinstance(newEssenceTrackFrameRate, Element):
+            self.essenceTrackFrameRate = newEssenceTrackFrameRate
+        else:
+            raise TypeError
 
     def getEssenceTrackPlaybackSpeed(self):
+        """
+
+        :return:
+        """
+
         return self.essenceTrackPlaybackSpeed
 
     def setEssenceTrackPlaybackSpeed(self, newEssenceTrackPlaybackSpeed):
-        # TODO: Create Docstring for setEssenceTrackPlaybackSpeed
-        # Must be an Element object!
-        checkIfElement(newEssenceTrackPlaybackSpeed)
-        self.essenceTrackPlaybackSpeed = newEssenceTrackPlaybackSpeed
+        """
+
+        :param          newEssenceTrackPlaybackSpeed:
+        :type           newEssenceTrackPlaybackSpeed: Element
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackPlaybackSpeed/
+        :return:        None
+        """
+        # TODO: Add example of setEssenceTrackPlaybackSpeed
+        if isinstance(newEssenceTrackPlaybackSpeed, Element):
+            self.essenceTrackPlaybackSpeed = newEssenceTrackPlaybackSpeed
+        else:
+            raise TypeError
 
     def getEssenceTrackSamplingRate(self):
+        """
+
+        :return:
+        """
         return self.essenceTrackSamplingRate
 
     def setEssenceTrackSamplingRate(self, newEssenceTrackSamplingRate):
-        # TODO: Create Docstring for setEssenceTrackSamplingRate
-        # Must be an Element object!
-        checkIfElement(newEssenceTrackSamplingRate)
-        self.essenceTrackSamplingRate = newEssenceTrackSamplingRate
+
+        """
+
+        :param          newEssenceTrackSamplingRate:
+        :type           newEssenceTrackSamplingRate: Element
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackSamplingRate/
+        :return:        None
+        """
+        # TODO: Add example of setEssenceTrackSamplingRate
+        if isinstance(newEssenceTrackSamplingRate, Element):
+            self.essenceTrackSamplingRate = newEssenceTrackSamplingRate
+        else:
+            raise TypeError
 
     def getEssenceTrackBitDepth(self):
+        """
+
+        :return:
+        """
+
         return self.essenceTrackBitDepth
 
     def setEssenceTrackBitDepth(self, newEssenceTrackBitDepth):
-        # TODO: Create Docstring for setEssenceTrackBitDepth
-        self.essenceTrackBitDepth = newEssenceTrackBitDepth
+        """
+
+        :param          newEssenceTrackBitDepth:
+        :Example Value: 10
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackBitDepth/
+        :return:        None
+        """
+
+        if isinstance(newEssenceTrackBitDepth, Element):
+            self.essenceTrackBitDepth = newEssenceTrackBitDepth
+        else:
+            raise TypeError
 
     def getEssenceTrackFrameSize(self):
+        """
+
+        :return:
+        """
         return self.essenceTrackFrameSize
 
     def setEssenceTrackFrameSize(self, newEssenceTrackFrameSize):
+        """
+
+        :param          newEssenceTrackFrameSize:
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackFrameSize/
+        :return:        None
+        """
+        # TODO: Add example of essenceTrackFrameSize
         # TODO: Create Docstring for setEssenceTrackFrameSize
-        self.essenceTrackFrameSize = newEssenceTrackFrameSize
+        if isinstance(newEssenceTrackFrameSize, Element):
+            self.essenceTrackFrameSize = newEssenceTrackFrameSize
+        else:
+            raise TypeError
 
     def getEssenceTrackAspectRatio(self):
+        """
+
+        :return:
+        """
+
         return self.essenceTrackAspectRatio
 
     def setEssenceTrackAspectRatio(self, newEssenceTrackAspectRatio):
-        self.essenceTrackAspectRatio = newEssenceTrackAspectRatio
+        """
+
+        :param          newEssenceTrackAspectRatio:
+        :Example Value: 4:3
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackAspectRatio/
+        :return:        None
+        """
+
+        if isinstance(newEssenceTrackAspectRatio, Element):
+            self.essenceTrackAspectRatio = newEssenceTrackAspectRatio
+        else:
+            raise TypeError
 
     def getEssenceTrackTimeStart(self):
+        """
+
+        :return:
+        """
+
         return self.essenceTrackTimeStart
 
     def setEssenceTrackTimeStart(self, newEssenceTrackTimeStart):
+        """
+
+        :param          newEssenceTrackTimeStart:
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackTimeStart/
+        :Example Value: 00:00:00
+        :return:        None
+        """
         # TODO: Create Docstring for setEssenceTrackTimeStart
-        self.essenceTrackTimeStart = newEssenceTrackTimeStart
+        if isinstance(newEssenceTrackTimeStart, Element):
+            self.essenceTrackTimeStart = newEssenceTrackTimeStart
+        else:
+            raise TypeError
 
     def getEssenceTrackDuration(self):
+        """
+
+        :return:
+        """
         return self.essenceTrackDuration
 
     def setEssenceTrackDuration(self, newEssenceTrackDuration):
+        """
+
+        :param          newEssenceTrackDuration:
+        :Example Value: 00:10:52
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackDuration/
+        :return:        None
+        """
         # TODO: Create Docstring for setEssenceTrackDuration
-        self.essenceTrackDuration = newEssenceTrackDuration
+        if isinstance(newEssenceTrackDuration, Element):
+            self.essenceTrackDuration = newEssenceTrackDuration
+        else:
+            raise TypeError
 
     def getEssenceTrackLanguage(self):
+        """
+
+        :return:
+        """
+
         return self.essenceTrackLanguage
 
     def setEssenceTrackLanguage(self, newEssenceTrackLanguage):
+        """
+
+        :param          newEssenceTrackLanguage:
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackLanguage/
+        :return:        None
+        """
+        # TODO: Add example of essenceTrackLanguage
         # TODO: Create Docstring for setEssenceTrackLanguage
-        self.essenceTrackLanguage = newEssenceTrackLanguage
+        if isinstance(newEssenceTrackLanguage, Element):
+            self.essenceTrackLanguage = newEssenceTrackLanguage
+        else:
+            raise TypeError
 
     def getEssenceTrackAnnotation(self):
+        """
+
+        :return:
+        """
         return self.essenceTrackAnnotation
 
     def setEssenceTrackAnnotation(self, newEssenceTrackAnnotation):
-        # TODO: Create Docstring for setEssenceTrackAnnotation
-        # Must be an Element object!
-        checkIfElement(newEssenceTrackAnnotation)
-        self.essenceTrackAnnotation = newEssenceTrackAnnotation
+
+        """
+
+        :param          newEssenceTrackAnnotation:
+        :type           newEssenceTrackAnnotation: Element
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackAnnotation/
+        :return:        None
+        """
+        # TODO: add example of setEssenceTrackAnnotation
+
+        if isinstance(newEssenceTrackAnnotation, Element):
+            self.essenceTrackAnnotation = newEssenceTrackAnnotation
+        else:
+            raise TypeError
 
     def getEssenceTrackExtension(self):
+        """
+
+        :return:
+        """
+
         return self.essenceTrackExtension
 
     def setEssenceTrackExtension(self, newEssenceTrackExtension):
+        """
+
+        :param          newEssenceTrackExtension:
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackExtension/
+        :return:        None
+        """
+        # TODO: add example of essenceTrackExtension
         # TODO: Create Docstring for setEssenceTrackExtension
-        self.essenceTrackExtension = newEssenceTrackExtension
+        if isinstance(newEssenceTrackExtension, Element):
+            self.essenceTrackExtension = newEssenceTrackExtension
+        else:
+            raise TypeError
 
 
 class instantiationRelation():
+    """
+    :Description:
+    :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationrelation/
+    """
     # TODO: Create Docstring for instantiationRelation
-    def __init__(self):
-        self.instantiationRelationType = None
-        # For example: "" TODO: Add example of instantiationRelationType
-        # Use ONLY Element objects
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationrelation/instantiationrelationtype/
 
+    def __init__(self):
+        """
+
+        :return:
+        """
+        self.instantiationRelationType = None
         self.instantiationRelationIdentifier = None
-        # For example: "" TODO: Add example of instantiationRelationIdentifier
-        # Use ONLY Element objects
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationRelationIdentifier/
 
 
     def getInstantiationRelationType(self):
+        """
+
+        :return:
+        """
         return self.instantiationRelationType
 
     def setInstantiationRelationType(self, newInstantiationRelationType):
-        # # Must be an Element object!
-        checkIfElement(newInstantiationRelationType)
-        self.instantiationRelationType = newInstantiationRelationType
+
+        """
+
+        :param          newInstantiationRelationType:
+        :type           newInstantiationRelationType: Element
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationrelation/instantiationrelationtype/
+        :return:        None
+        """
+        # TODO: Add example of instantiationRelationType
+
+        if isinstance(newInstantiationRelationType, Element):
+            self.instantiationRelationType = newInstantiationRelationType
+        else:
+            raise TypeError
 
     def getInstantiationRelationIdentifier(self):
+        """
+
+        :return:
+        """
         return self.instantiationRelationIdentifier
 
     def setInstantiationRelationIdentifier(self, newInstantiationRelationIdentifier):
-        # Must be an Element object!
-        checkIfElement(newInstantiationRelationIdentifier)
-        self.instantiationRelationIdentifier = newInstantiationRelationIdentifier
+        """
+
+        :param          newInstantiationRelationIdentifier:
+        :type           newInstantiationRelationIdentifier: Element
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationRelationIdentifier/
+        :return:        None
+        """
+        # TODO: Add example of instantiationRelationIdentifier
+
+        if isinstance(newInstantiationRelationIdentifier, Element):
+            self.instantiationRelationIdentifier = newInstantiationRelationIdentifier
+        else:
+            raise TypeError
 
 
 ##################################
 # Extensions classes
 ##################################
 
-class extensions():
+class Extensions():
+    """
+    :Description:
+    :URL: http://pbcore.org/elements/
+    """
     # TODO: Create Docstring for extensions
     def __init__(self):
+        """
+        :URL:           http://pbcore.org/elements/
+        :return:        None
+        """
         self.pbcoreExtension = []
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreextension/
-
         self.pbcorePart = None
-        # For example: "" TODO: Add example of pbcorePart
-        # URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreextension/
 
     def addpbcoreExtension(self, newpbcoreExtension):
-        self.pbcoreExtension.append(newpbcoreExtension)
+        """
+
+        :param          newpbcoreExtension:
+        :type           newpbcoreExtension: Element
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreextension/
+        :return:        None
+        """
+
+        if isinstance(newpbcoreExtension, pbcoreExtension):
+            self.pbcoreExtension.append(newpbcoreExtension)
+        else:
+            raise TypeError
 
     def getpbcoreExtension(self):
+        """
+
+        :return:
+        """
+
         return self.pbcoreExtension
 
     def setpbcorePart(self, newpbcorePart):
-        self.pbcorePart = newpbcorePart
+        """
+
+        :param          newpbcorePart:
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorepart/
+        :return:        None
+        """
+        # TODO: Add example of pbcorePart
+
+        if isinstance(newpbcorePart, Element):
+            self.pbcorePart = newpbcorePart
+        else:
+            raise TypeError
 
     def getpbcorePart(self):
+        """
+
+        :return:
+        """
         return self.pbcorePart
 
 
 class pbcoreExtension():
+    """
+    :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreextension/
+    """
     # TODO: Create Docstring for pbcoreExtension
     def __init__(self):
         self.extensionWrap = []
-        # URIL http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreextension/extensionWrap/
-
         self.extensionElement = None
-        # For example: "countryOfCreation"
-        # URIL http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreextension/extensionElement/
-
         self.extensionValue = None
-        # For example: "US"
-        # URIL http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreextension/extensionValue/
-
         self.extensionAuthorityUsed = None
-        # For example: "ISO 3166.1"
-        # URIL http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreextension/extensionAuthorityUsed/
-
         self.extensionEmbedded = None
-        # For example: "" TODO: Add example of extensionEmbedded
-        # URIL http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreextension/extensionEmbedded/
-
 
     def addExtensionWrap(self, newExtensionWrap):
+        """
+
+        :param          newExtensionWrap:
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreextension/extensionWrap/
+        :return:        None
+        """
         # TODO: Create Docstring for addExtensionWrap
+        # TODO: Create Example value for addExtensionWrap
         self.extensionWrap.append(newExtensionWrap)
 
     def getExtensionWrap(self):
+        """
+
+        :return:
+        """
         return self.extensionWrap
 
     def setExtensionElement(self, newExtensionElement):
+        """
+
+        :param          newExtensionElement:
+        :Example Value: countryOfCreation
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreextension/extensionElement/
+        :return:        None
+        """
         # TODO: Create Docstring for setExtensionElement
-        self.extensionElement = newExtensionElement
+        if isinstance(newExtensionElement, Element):
+            self.extensionElement = newExtensionElement
+        else:
+            raise TypeError
 
     def getExtensionElement(self):
+        """
+
+        :return:
+        """
         return self.extensionElement
 
     def setExtensionValue(self, newExtensionValue):
+        """
+
+        :param          newExtensionValue:
+        :Example Value: US
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreextension/extensionValue/
+        :return:        None
+        """
         # TODO: Create Docstring for setExtensionValue
-        self.extensionValue = newExtensionValue
+        if isinstance(newExtensionValue, Element):
+            self.extensionValue = newExtensionValue
+        else:
+            raise TypeError
 
     def getExtensionValue(self):
+        """
+
+        :return:
+        """
         return self.extensionValue
 
     def setExtensionAuthorityUsed(self, newExtensionAuthorityUsed):
+        """
+
+        :param          newExtensionAuthorityUsed:
+        :Example Value: ISO 3166.1
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreextension/extensionAuthorityUsed/
+        :return:        None
+        """
         # TODO: Create Docstring for setExtensionAuthorityUsed
-        self.extensionAuthorityUsed = newExtensionAuthorityUsed
+        if isinstance(newExtensionAuthorityUsed, Element):
+            self.extensionAuthorityUsed = newExtensionAuthorityUsed
+        else:
+            raise TypeError
 
     def getExtensionAuthorityUsed(self):
+        """
+
+        :return:
+        """
         return self.extensionAuthorityUsed
 
     def setExtensionEmbedded(self, newExtensionEmbedded):
+        """
+
+        :param          newExtensionEmbedded:
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreextension/extensionEmbedded/
+        :return:        None
+        """
+        # TODO: Add example of extensionEmbedded
         # TODO: Create Docstring for setExtensionEmbedded
-        self.extensionEmbedded = newExtensionEmbedded
+        if isinstance(newExtensionEmbedded, Element):
+            self.extensionEmbedded = newExtensionEmbedded
+        else:
+            raise TypeError
 
     def getExtensionEmbedded(self):
+        """
+
+        :return:
+        """
         return self.extensionEmbedded
 
 
@@ -936,41 +2137,104 @@ class pbcoreExtension():
 ##################################
 
 class Element():
+    """
+    :Description: Basic element tag
+    """
     # TODO: Create Docstring for Element
     def __init__(self, tag=None, value=None):
+        """
+
+        :param          tag:
+        :param          value:
+        :return:        None
+        """
+
         self.tag = tag
         self.value = value
         self.attribute = dict()
 
     def getAttribute(self):
+        """
+
+        :return:
+        """
         return self.attribute
 
     def addAttribute(self, key, value):
+        """
+
+        :param          key:
+        :param          value:
+        :return:        None
+        """
         # TODO: Create Docstring for addAttribute
         self.attribute[key] = value
 
     def deleteAttribute(self, key):
+        """
+
+        :param          key:
+        :return:        None
+        """
         # TODO: Create Docstring for deleteAttribute
         del self.attribute[key]
 
     def getTag(self):
+        """
+
+        :return:
+        """
         return self.tag
 
     def setTag(self, tag):
+        """
+
+        :param          tag:
+        :return:        None
+        """
         # TODO: Create Docstring for setTag
         self.tag = tag
 
     def getValue(self):
-        return self.getvalue()
+        """
+
+        :return:
+        """
+        return self.value
 
     def setValue(self, value):
+        """
+
+        :param          value:
+        :return:        None
+        """
         # TODO: Create Docstring for setValue
         self.value = value
 
+    def xml(self):
+        """
+        :Description:   Gets a single element as an XML element to be passed down.
+        :return:        xml.etree.ElementTree.Element
+        """
 
-##################################
-# Utility functions
-##################################
-def checkIfElement(objectInQuestion):
-    if not isinstance(objectInQuestion, Element):
-        raise TypeError
+        element = Elmt(self.tag)
+        element.text = self.value
+        if self.attribute:
+            for key in self.attribute:
+                element.set(key, self.attribute[key])
+            # print self.attribute
+        return element
+        #
+
+    def xmlprint(self):
+        """
+        :Description:   For debugging. Prints the XML.
+        :return:        None
+        """
+        element = Elmt(self.tag)
+        element.text = self.value
+        if self.attribute:
+            for key in self.attribute:
+                element.set(key, self.attribute[key])
+        print etree.tostring(element)
+
