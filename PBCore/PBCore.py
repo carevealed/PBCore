@@ -1,5 +1,5 @@
 # from xml.dom.minidom import parse, Element as elmt, Document, Node
-from xml.etree.ElementTree import Element as Elmt
+from xml.etree.ElementTree import Element
 import xml.etree.ElementTree as etree
 
 __author__ = 'California Audiovisual Preservation Project'
@@ -185,13 +185,13 @@ class IntellectualContent():
         """
 
         :param          newpbcoreAssetType:
-        :type           newpbcoreAssetType: str
+        :type           newpbcoreAssetType: PB_Element
         :Example Value: Media Object
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreassettype/
         :return:        None
         """
         # TODO: Give example value for addpbcoreAssetType
-        if isinstance(newpbcoreAssetType, Element):
+        if isinstance(newpbcoreAssetType, PB_Element):
             self.pbcoreAssetType = newpbcoreAssetType
         else:
             raise TypeError
@@ -207,14 +207,14 @@ class IntellectualContent():
         """
 
         :param          newpbcoreAssetDate:
-        :type           newpbcoreAssetDate: Element
+        :type           newpbcoreAssetDate: PB_Element
         :Example Value: ""
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreassetdate/
         :return:        None
         """
         # TODO: Give example value for addpbcoreAssetDate
 
-        if isinstance(newpbcoreAssetDate, Element):
+        if isinstance(newpbcoreAssetDate, PB_Element):
             self.pbcoreAssetDate.append(newpbcoreAssetDate)
         else:
             raise TypeError
@@ -230,14 +230,14 @@ class IntellectualContent():
         """
 
         :param          newIdentifier:
-        :type           newIdentifier: Element
+        :type           newIdentifier: PB_Element
         :Example Value: ""
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreidentifier/
         :return:        None
         """
         # TODO: Give example value for addpbcoreIdentifier
 
-        if isinstance(newIdentifier, Element):
+        if isinstance(newIdentifier, PB_Element):
             self.pbcoreIdentifier.append(newIdentifier)
         else:
             raise TypeError
@@ -253,14 +253,14 @@ class IntellectualContent():
         """
 
         :param          newTitle:
-        :type           newTitle: Element
+        :type           newTitle: PB_Element
         :Example Value: ""
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoretitle/
         :return:        None
         """
         # TODO: Give example value for addpbcoreTitle
 
-        if isinstance(newTitle, Element):
+        if isinstance(newTitle, PB_Element):
             self.pbcoreTitle.append(newTitle)
         else:
             raise TypeError
@@ -276,13 +276,14 @@ class IntellectualContent():
         """
 
         :param          newpbcoreSubject:
+        :type           newpbcoreSubject: PB_Element
         :Example Value: ""
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreSubject/
         :return:        None
         """
         # TODO: Give example value for setpbcoreSubject
         # TODO: Create Docstring for setpbcoreSubject
-        if isinstance(newpbcoreSubject, Element):
+        if isinstance(newpbcoreSubject, PB_Element):
             self.pbcoreSubject = newpbcoreSubject
         else:
             raise TypeError
@@ -298,13 +299,13 @@ class IntellectualContent():
         """
 
         :param          newDescription:
-        :type           newDescription: Element
+        :type           newDescription: PB_Element
         :Example Value: ""
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreDescription
         :return:        None
         """
         # TODO: Give example value for addpbcoreDescription
-        if isinstance(newDescription, Element):
+        if isinstance(newDescription, PB_Element):
             self.pbcoreDescription.append(newDescription)
         else:
             raise TypeError
@@ -320,13 +321,14 @@ class IntellectualContent():
         """
 
         :param          newpbcoreGenre:
+        :type           newpbcoreGenre: PB_Element
         :Example Value: ""
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreGenre
         :return:        None
         """
         # TODO: Give example value for setpbcoreGenre
         # TODO: Create Docstring for setpbcoreGenre
-        if isinstance(newpbcoreGenre, Element):
+        if isinstance(newpbcoreGenre, PB_Element):
             self.pbcoreGenre = newpbcoreGenre
         else:
             raise TypeError
@@ -342,7 +344,7 @@ class IntellectualContent():
         """
 
         :param          newpbcoreRelation:
-        :type           newpbcoreRelation: Element
+        :type           newpbcoreRelation: PB_Element
         :Example Value: ""
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreRelation
         :return:        None
@@ -388,13 +390,14 @@ class IntellectualContent():
         """
 
         :param          newpbcoreAudienceLevel:
+        :type           newpbcoreAudienceLevel: PB_Element
         :Example Value: ""
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreAudienceLevel
         :return:        None
         """
         # TODO: Give example value for setpbcoreAudienceLevel
         # TODO: Create Docstring for setpbcoreAudienceLevel
-        if isinstance(newpbcoreAudienceLevel, Element):
+        if isinstance(newpbcoreAudienceLevel, PB_Element):
             self.pbcoreAudienceLevel = newpbcoreAudienceLevel
         else:
             raise TypeError
@@ -410,13 +413,14 @@ class IntellectualContent():
         """
 
         :param          newpbcoreAudienceRating:
+        :type           newpbcoreAudienceRating: PB_Element
         :Example Value: ""
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreAudienceRating
         :return:        None
         """
         # TODO: Give example value for setpbcoreAudienceRating
         # TODO: Create Docstring for setpbcoreAudienceRating
-        if isinstance(newpbcoreAudienceRating, Element):
+        if isinstance(newpbcoreAudienceRating, PB_Element):
             self.pbcoreAudienceRating = newpbcoreAudienceRating
         else:
             raise TypeError
@@ -432,13 +436,14 @@ class IntellectualContent():
         """
 
         :param          newpbcoreAnnotation:
+        :type           newpbcoreAnnotation:    PB_Element
         :Example Value: ""
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreAnnotation
         :return:        None
         """
         # TODO: Give example value for setpbcoreAnnotation
         # TODO: Create Docstring for setpbcoreAnnotation
-        if isinstance(newpbcoreAnnotation, Element):
+        if isinstance(newpbcoreAnnotation, PB_Element):
             self.pbcoreAnnotation = newpbcoreAnnotation
         else:
             raise TypeError
@@ -469,12 +474,15 @@ class pbcoreRelation():
         """
 
         :param          newpbcoreRelationType:
+        :type           newpbcoreRelationType: PB_Element
         :Example Value: Has Part
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerelation/pbcorerelationtype/
         :return:        None
         """
         # TODO: Create Docstring for setpbcoreRelationType
-        if isinstance(newpbcoreRelationType, Element):
+        # etree.tostring(newpbcoreRelationType)
+
+        if isinstance(newpbcoreRelationType, PB_Element):
             self.pbcoreRelationType = newpbcoreRelationType
         else:
             raise TypeError
@@ -490,15 +498,28 @@ class pbcoreRelation():
         """
 
         :param          newpbcoreRelationIdentifier:
+        :type           newpbcoreRelationIdentifier: PB_Element
         :Example Value: cscrm_000012_r3
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerelation/pbcoreRelationIdentifier/
         :return:        None
         """
         # TODO: Create Docstring for setpbcoreRelationIdentifier
-        if isinstance(newpbcoreRelationIdentifier, Element):
+        if isinstance(newpbcoreRelationIdentifier, PB_Element):
             self.pbcoreRelationIdentifier = newpbcoreRelationIdentifier
         else:
             raise TypeError
+    def xml(self):
+        branch = Element("pbcoreRelation")
+        # branch = etree.ElementTree(self.pbcoreRelationType)
+        branch.append(etree.tostring(self.pbcoreRelationType))
+
+    def xmlprint(self):
+        branch = Element("pbcoreRelation")
+        # print etree.tostring(branch)
+        # print etree.tostring(self.pbcoreRelationType)
+        # branch.insert(0, self.pbcoreRelationType)
+        branch.append(self.pbcoreRelationType.xml())
+        print etree.tostring(branch)
 
 
 class pbcoreCoverage():
@@ -527,13 +548,14 @@ class pbcoreCoverage():
         """
 
         :param          newCoverage:
+        :type           newCoverage:    PB_Element
         :Example Value: ""
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecoverage/coverage/
         :return:        None
         """
         # TODO: Give example value for setCoverage
         # TODO: Create Docstring for setCoverage
-        if isinstance(newCoverage, Element):
+        if isinstance(newCoverage, PB_Element):
             self.coverage = newCoverage
         else:
             raise TypeError
@@ -549,13 +571,14 @@ class pbcoreCoverage():
         """
 
         :param          newCoverageType:
+        :type           newCoverageType:    PB_Element
         :Example Value: ""
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecoverage/coveragetype/
         :return:        None
         """
         # TODO: Give example value for setCoverageType
         # TODO: Create Docstring for setCoverageType
-        if isinstance(newCoverageType, Element):
+        if isinstance(newCoverageType, PB_Element):
             self.coverageType = newCoverageType
         else:
             raise TypeError
@@ -704,12 +727,13 @@ class pbcoreCreator():
         """
 
         :param          newCreator:
+        :type           newCreator: PB_Element
         :return:        None
         :Example Value: Unknown
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecreator/creator/
         """
         # TODO: Create Docstring for setCreator
-        if isinstance(newCreator, Element):
+        if isinstance(newCreator, PB_Element):
             self.creator = newCreator
         else:
             raise TypeError
@@ -725,12 +749,13 @@ class pbcoreCreator():
         """
 
         :param          newCreatorRole:
+        :type           newCreatorRole: PB_Element
         :return:        None
         :Example Value: Producer
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecreator/creatorRole/
         """
         # TODO: Create Docstring for setCreatorRole
-        if isinstance(newCreatorRole, Element):
+        if isinstance(newCreatorRole, PB_Element):
             self.creatorRole = newCreatorRole
         else:
             raise TypeError
@@ -755,13 +780,14 @@ class pbcoreContributor:
         """
 
         :param          newContributor:
+        :type           newContributor: PB_Element
         :Example Value: ""
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecontributor/contributor/
         :return:        None
         """
         # TODO: Give example of contributor
         # TODO: Create Docstring for setContributor
-        if isinstance(newContributor, Element):
+        if isinstance(newContributor, PB_Element):
             self.contributor = newContributor
         else:
             raise TypeError
@@ -777,13 +803,14 @@ class pbcoreContributor:
         """
 
         :param          newContributoRole:
+        :type           newContributoRole:  PB_Element
         :Example Value: ""
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecontributor/contributorrole/
         :return:        None
         """
         # TODO: Give example of contributorRole
         # TODO: Create Docstring for setContributoRoler
-        if isinstance(newContributoRole, Element):
+        if isinstance(newContributoRole, PB_Element):
             self.contributorRole = newContributoRole
         else:
             raise TypeError
@@ -821,6 +848,7 @@ class pbcorePublisher():
     def setPublisher(self, newPublisher):
         """
         :param          newPublisher:
+        :type           newPublisher:   PB_Element
         :Example Value: ""
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorepublisher/publisher/
         :return:        None
@@ -828,7 +856,7 @@ class pbcorePublisher():
 
         # TODO: Give example of publisher
         # TODO: Create Docstring for setPublisher
-        if isinstance(newPublisher, Element):
+        if isinstance(newPublisher, PB_Element):
             self.publisher = newPublisher
         else:
             raise TypeError
@@ -842,13 +870,14 @@ class pbcorePublisher():
     def setPublisherRole(self, newPublisherRole):
         """
         :param          newPublisherRole:
+        :type           newPublisherRole:   PB_Element
         :Example Value: ""
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorepublisher/publisherRole/http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorepublisher/publisherRole/
         :return:        None
         """
         # For example: "" TODO: Give example of publisherRole
         # TODO: Create Docstring for setPublisherRole
-        if isinstance(newPublisherRole, Element):
+        if isinstance(newPublisherRole, PB_Element):
             self.publisherRole = newPublisherRole
         else:
             raise TypeError
@@ -883,7 +912,7 @@ class pbcoreRightsSummary():
         """
 
         :param          newRightsSummary:
-        :type           newRightsSummary:       Element
+        :type           newRightsSummary:       PB_Element
         :Example Value: ""
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerightssummary/rightssummary/
@@ -891,7 +920,7 @@ class pbcoreRightsSummary():
         # TODO: Give example of addRightsSummary
         # TODO: Create Docstring for addRightsSummary
 
-        if isinstance(newRightsSummary, Element):
+        if isinstance(newRightsSummary, PB_Element):
             self.rightsSummary.append(newRightsSummary)
         else:
             raise TypeError
@@ -907,6 +936,7 @@ class pbcoreRightsSummary():
         """
 
         :param          newRightsLink:
+        :type           newRightsLink:  PB_Element
         :Example Value: ""
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerightssummary/rightsLink/
@@ -914,7 +944,7 @@ class pbcoreRightsSummary():
         # TODO: Give example of rightsLink
         # TODO: Create Docstring for setRightsLink
 
-        if isinstance(newRightsLink, Element):
+        if isinstance(newRightsLink, PB_Element):
             self.rightsLink = newRightsLink
         else:
             raise TypeError
@@ -930,13 +960,14 @@ class pbcoreRightsSummary():
         """
 
         :param          newRightsEmbedded:
+        :type           newRightsEmbedded:  PB_Element
         :Example Value: ""
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerightssummary/rightsEmbedded/
         """
         # TODO: Give example of rightsEmbedded
         # TODO: Create Docstring for setRightsEmbedded
-        if isinstance(newRightsEmbedded, Element):
+        if isinstance(newRightsEmbedded, PB_Element):
             self.rightsEmbedded = newRightsEmbedded
         else:
             raise TypeError
@@ -987,13 +1018,13 @@ class pbcoreInstantiation():
         """
 
         :param          newInstantiationIdentifier:
-        :type           newInstantiationIdentifier:     Element
+        :type           newInstantiationIdentifier:     PB_Element
         :Example Value: ""
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationIdentifier/
         """
 
-        if isinstance(newInstantiationIdentifier, Element):
+        if isinstance(newInstantiationIdentifier, PB_Element):
             self.instantiationIdentifier.append(newInstantiationIdentifier)
         else:
             raise TypeError
@@ -1009,12 +1040,13 @@ class pbcoreInstantiation():
         """
 
         :param          newInstantiationDate:
+        :type           newInstantiationDate:   PB_Element
         :Example Value: UTC 2014-10-24 21:37:34
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationDate/
         """
         # TODO: Create Docstring for setInstantiationDate
-        if isinstance(newInstantiationDate, Element):
+        if isinstance(newInstantiationDate, PB_Element):
             self.instantiationDate = newInstantiationDate
         else:
             raise TypeError
@@ -1030,13 +1062,14 @@ class pbcoreInstantiation():
         """
 
         :param          newInstantiationDimensions:
+        :type           newInstantiationDimensions: PB_Element
         :Example Value: ""
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationDimensions/
         """
         # TODO: Give example instantiationDimensions
         # TODO: Create Docstring for setInstantiationDimensions
-        if isinstance(newInstantiationDimensions, Element):
+        if isinstance(newInstantiationDimensions, PB_Element):
             self.instantiationDimensions = newInstantiationDimensions
         else:
             raise TypeError
@@ -1052,12 +1085,13 @@ class pbcoreInstantiation():
         """
 
         :param          newInstantiationPhysical:
+        :type           newInstantiationPhysical:   PB_Element
         :Example Value: Film: 16mm
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationPhysical/
         """
         # TODO: Create Docstring for setInstantiationPhysical
-        if isinstance(newInstantiationPhysical, Element):
+        if isinstance(newInstantiationPhysical, PB_Element):
             self.instantiationPhysical = newInstantiationPhysical
         else:
             raise TypeError
@@ -1073,13 +1107,13 @@ class pbcoreInstantiation():
         """
 
         :param          newInstantiationDigital:
-        :type           newInstantiationDigital: Element
+        :type           newInstantiationDigital: PB_Element
         :Example Value: ""
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationDigital/
         """
 
-        if isinstance(newInstantiationDigital, Element):
+        if isinstance(newInstantiationDigital, PB_Element):
             self.instantiationDigital = newInstantiationDigital
         else:
             raise TypeError
@@ -1095,13 +1129,14 @@ class pbcoreInstantiation():
         """
 
         :param          newInstantiationStandard:
+        :type           newInstantiationStandard:   PB_Element
         :Example Value: Blackmagic v210 YUV
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationStandard/
         """
         # TODO: Create Docstring for setInstantiationStandard
 
-        if isinstance(newInstantiationStandard, Element):
+        if isinstance(newInstantiationStandard, PB_Element):
             self.instantiationStandard = newInstantiationStandard
         else:
             raise TypeError
@@ -1117,13 +1152,14 @@ class pbcoreInstantiation():
         """
 
         :param          newInstantiationLocation:
+        :type           newInstantiationLocation:   PB_Element
         :Example Value: California State Railroad Museum Library
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationLocation/
         """
         # TODO: Create Docstring for setInstantiationLocation
 
-        if isinstance(newInstantiationLocation, Element):
+        if isinstance(newInstantiationLocation, PB_Element):
             self.instantiationLocation = newInstantiationLocation
         else:
             raise TypeError
@@ -1139,13 +1175,14 @@ class pbcoreInstantiation():
         """
 
         :param          newInstantiationMediaType:
+        :type           newInstantiationMediaType:  PB_Element
         :Example Value: Moving Image
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationMediaType/
         """
         # TODO: Create Docstring for setInstantiationMediaType
 
-        if isinstance(newInstantiationMediaType, Element):
+        if isinstance(newInstantiationMediaType, PB_Element):
             self.instantiationMediaType = newInstantiationMediaType
         else:
             raise TypeError
@@ -1161,12 +1198,13 @@ class pbcoreInstantiation():
         """
 
         :param          newInstantiationGenerations:
+        :type           newInstantiationGenerations:    PB_Element
         :Example Value: Unknown
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationGenerations/
         """
         # TODO: Create Docstring for setInstantiationGenerations
-        if isinstance(newInstantiationGenerations, Element):
+        if isinstance(newInstantiationGenerations, PB_Element):
             self.instantiationGenerations = newInstantiationGenerations
         else:
             raise TypeError
@@ -1182,13 +1220,13 @@ class pbcoreInstantiation():
         """
 
         :param          newInstantiationFileSize:
-        :type           newInstantiationFileSize:   Element
+        :type           newInstantiationFileSize:   PB_Element
         :Example Value: ""
         :return:        None
         :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationFileSize/
         """
 
-        if isinstance(newInstantiationFileSize, Element):
+        if isinstance(newInstantiationFileSize, PB_Element):
             self.instantiationFileSize = newInstantiationFileSize
         else:
             raise TypeError
@@ -1204,14 +1242,14 @@ class pbcoreInstantiation():
         """
 
         :param          newInstantiationTimeStart:
-        :type           newInstantiationTimeStart: Element
+        :type           newInstantiationTimeStart: PB_Element
         :Example Value: 00:00:00
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationTimeStart/
 
         """
 
-        if isinstance(newInstantiationTimeStart, Element):
+        if isinstance(newInstantiationTimeStart, PB_Element):
             self.instantiationTimeStart = newInstantiationTimeStart
         else:
             raise TypeError
@@ -1227,13 +1265,14 @@ class pbcoreInstantiation():
         """
 
         :param          newInstantiationDuration:
+        :type           newInstantiationDuration:   PB_Element
         :Example Value: 00:10:52
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationDuration/
         """
         # TODO: Create Docstring for setInstantiationDuration
 
-        if isinstance(newInstantiationDuration, Element):
+        if isinstance(newInstantiationDuration, PB_Element):
             self.instantiationDuration = newInstantiationDuration
         else:
             raise TypeError
@@ -1249,6 +1288,7 @@ class pbcoreInstantiation():
         """
 
         :param          newInstantiationDataRate:
+        :type           newInstantiationDataRate:   PB_Element
         :Example Value: ""
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationDataRate/
@@ -1256,7 +1296,7 @@ class pbcoreInstantiation():
         # TODO: Give example instantiationDataRate
         # TODO: Create Docstring for setInstantiationDataRate
 
-        if isinstance(newInstantiationDataRate, Element):
+        if isinstance(newInstantiationDataRate, PB_Element):
             self.instantiationDataRate = newInstantiationDataRate
         else:
             raise TypeError
@@ -1272,13 +1312,14 @@ class pbcoreInstantiation():
         """
 
         :param          newInstantiationColors:
+        :type           newInstantiationColors: PB_Element
         :Example Value: Color
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationColors/
         """
         # TODO: Create Docstring for setInstantiationColors
 
-        if isinstance(newInstantiationColors, Element):
+        if isinstance(newInstantiationColors, PB_Element):
             self.instantiationColors = newInstantiationColors
         else:
             raise TypeError
@@ -1294,13 +1335,14 @@ class pbcoreInstantiation():
         """
 
         :param          newInstantiationTracks:
+        :type           newInstantiationTracks: PB_Element
         :For example:   Silent
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationTracks/
         """
         # TODO: Create Docstring for setInstantiationTracks
 
-        if isinstance(newInstantiationTracks, Element):
+        if isinstance(newInstantiationTracks, PB_Element):
             self.instantiationTracks = newInstantiationTracks
         else:
             raise TypeError
@@ -1316,13 +1358,14 @@ class pbcoreInstantiation():
         """
 
         :param          newInstantiationChannelConfiguration:
+        :type           newInstantiationChannelConfiguration:   PB_Element
         :Example Value: No Audio
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationChannelConfiguration/
         """
         # TODO: Create Docstring for setInstantiationChannelConfiguration
 
-        if isinstance(newInstantiationChannelConfiguration, Element):
+        if isinstance(newInstantiationChannelConfiguration, PB_Element):
             self.instantiationChannelConfiguration = newInstantiationChannelConfiguration
         else:
             raise TypeError
@@ -1338,6 +1381,7 @@ class pbcoreInstantiation():
         """
 
         :param          newInstantiationLanguage:
+        :type           newInstantiationLanguage:   PB_Element
         :Example Value: ""
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationLanguage/
@@ -1345,7 +1389,7 @@ class pbcoreInstantiation():
         # TODO: Give example instantiationLanguage
         # TODO: Create Docstring for setInstantiationLanguage
 
-        if isinstance(newInstantiationLanguage, Element):
+        if isinstance(newInstantiationLanguage, PB_Element):
             self.instantiationLanguage = newInstantiationLanguage
         else:
             raise TypeError
@@ -1361,6 +1405,7 @@ class pbcoreInstantiation():
         """
 
         :param          newInstantiationAlternativeModes:
+        :type           newInstantiationAlternativeModes:   PB_Element
         :Example Value: ""
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationAlternativeModes/
@@ -1420,12 +1465,13 @@ class pbcoreInstantiation():
     def setInstantiationRelation(self, newInstantiationRelation):
         """
         :param          newInstantiationRelation:
+        :type           newInstantiationRelation:   PB_Element
         :Example Value: ""
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationrelation/
         """
 
-        if isinstance(newInstantiationRelation, Element):
+        if isinstance(newInstantiationRelation, PB_Element):
             self.instantiationRelation = newInstantiationRelation
         else:
             raise TypeError
@@ -1442,7 +1488,7 @@ class pbcoreInstantiation():
         """
 
         :param          newAnnotation:
-        :type           newAnnotation:      Element
+        :type           newAnnotation:      PB_Element
         :Example Value: ""
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationAnnotation/
@@ -1450,7 +1496,7 @@ class pbcoreInstantiation():
         # TODO: Give example for addInstantiationAnnotation
         # TODO: Create Docstring for addInstantiationAnnotation
 
-        if isinstance(newAnnotation, Element):
+        if isinstance(newAnnotation, PB_Element):
             self.instantiationAnnotation.append(newAnnotation)
         else:
             raise TypeError
@@ -1466,13 +1512,14 @@ class pbcoreInstantiation():
         """
 
         :param          newInstantiationPart:
+        :type           newInstantiationPart:   PB_Element
         :Example Value: ""
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationPart/
         """
         # TODO: Give example instantiationPart
         # TODO: Create Docstring for setInstantiationPart
-        if isinstance(newInstantiationPart, Element):
+        if isinstance(newInstantiationPart, PB_Element):
             self.instantiationPart = newInstantiationPart
         else:
             raise TypeError
@@ -1486,6 +1533,7 @@ class pbcoreInstantiation():
     def setInstantiationExtension(self, newnstantiationExtension):
         """
         :param          newnstantiationExtension:
+        :type           newnstantiationExtension:   PB_Element
         :Example Value: ""
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationExtension/
@@ -1493,7 +1541,7 @@ class pbcoreInstantiation():
         # TODO: Give example instantiationExtension
         # TODO: Create Docstring for setInstantiationExtension
 
-        if isinstance(newnstantiationExtension, Element):
+        if isinstance(newnstantiationExtension, PB_Element):
             self.instantiationExtension = newnstantiationExtension
         else:
             raise TypeError
@@ -1537,12 +1585,13 @@ class instantiationEssenceTrack():
         """
 
         :param          newEssenceTrackType:
+        :type           newEssenceTrackType:    PB_Element
         :Example Value: Video
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essencetracktype/
         :return:        None
         """
 
-        if isinstance(newEssenceTrackType, Element):
+        if isinstance(newEssenceTrackType, PB_Element):
             self.essenceTrackType = newEssenceTrackType
         else:
             raise TypeError
@@ -1559,13 +1608,14 @@ class instantiationEssenceTrack():
         """
 
         :param          newEssenceTrackIdentifier:
+        :type           newEssenceTrackIdentifier:  PB_Element
         :Example Value: ""
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackIdentifier/
         :return:        None
         """
         #TODO: add example of essenceTrackIdentifier
 
-        if isinstance(newEssenceTrackIdentifier, Element):
+        if isinstance(newEssenceTrackIdentifier, PB_Element):
             self.essenceTrackIdentifier = newEssenceTrackIdentifier
         else:
             raise TypeError
@@ -1582,13 +1632,14 @@ class instantiationEssenceTrack():
         """
 
         :param          newEssenceTrackStandard:
+        :type           newEssenceTrackStandard:    PB_Element
         :Example Value: ""
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackStandard/
         :return:        None
         """
         # TODO: add example of essenceTrackStandard
 
-        if isinstance(newEssenceTrackStandard, Element):
+        if isinstance(newEssenceTrackStandard, PB_Element):
             self.essenceTrackStandard = newEssenceTrackStandard
         else:
             raise TypeError
@@ -1604,13 +1655,14 @@ class instantiationEssenceTrack():
         """
 
         :param          newEssenceTrackEncoding:
+        :type           newEssenceTrackEncoding:    PB_Element
         :Example Value: ""
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackEncoding/
         :return:        None
         """
         # TODO: add example of essenceTrackEncoding
 
-        if isinstance(newEssenceTrackEncoding, Element):
+        if isinstance(newEssenceTrackEncoding, PB_Element):
             self.essenceTrackEncoding = newEssenceTrackEncoding
         else:
             raise TypeError
@@ -1626,14 +1678,14 @@ class instantiationEssenceTrack():
         """
 
         :param          newEssenceTrackDataRate:
-        :type           newEssenceTrackDataRate: Element
+        :type           newEssenceTrackDataRate: PB_Element
         :Example Value: ""
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackDataRate/
         :return:        None
 
         """
 
-        if isinstance(newEssenceTrackDataRate, Element):
+        if isinstance(newEssenceTrackDataRate, PB_Element):
             self.essenceTrackDataRate = newEssenceTrackDataRate
         else:
             raise TypeError
@@ -1650,13 +1702,13 @@ class instantiationEssenceTrack():
         """
 
         :param          newEssenceTrackFrameRate:
-        :type           newEssenceTrackFrameRate: Element
+        :type           newEssenceTrackFrameRate: PB_Element
         :Example Value: ""
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackFrameRate/
         :return:        None
         """
         # TODO: Add example of setEssenceTrackFrameRate
-        if isinstance(newEssenceTrackFrameRate, Element):
+        if isinstance(newEssenceTrackFrameRate, PB_Element):
             self.essenceTrackFrameRate = newEssenceTrackFrameRate
         else:
             raise TypeError
@@ -1673,13 +1725,13 @@ class instantiationEssenceTrack():
         """
 
         :param          newEssenceTrackPlaybackSpeed:
-        :type           newEssenceTrackPlaybackSpeed: Element
+        :type           newEssenceTrackPlaybackSpeed: PB_Element
         :Example Value: ""
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackPlaybackSpeed/
         :return:        None
         """
         # TODO: Add example of setEssenceTrackPlaybackSpeed
-        if isinstance(newEssenceTrackPlaybackSpeed, Element):
+        if isinstance(newEssenceTrackPlaybackSpeed, PB_Element):
             self.essenceTrackPlaybackSpeed = newEssenceTrackPlaybackSpeed
         else:
             raise TypeError
@@ -1696,13 +1748,13 @@ class instantiationEssenceTrack():
         """
 
         :param          newEssenceTrackSamplingRate:
-        :type           newEssenceTrackSamplingRate: Element
+        :type           newEssenceTrackSamplingRate: PB_Element
         :Example Value: ""
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackSamplingRate/
         :return:        None
         """
         # TODO: Add example of setEssenceTrackSamplingRate
-        if isinstance(newEssenceTrackSamplingRate, Element):
+        if isinstance(newEssenceTrackSamplingRate, PB_Element):
             self.essenceTrackSamplingRate = newEssenceTrackSamplingRate
         else:
             raise TypeError
@@ -1719,12 +1771,13 @@ class instantiationEssenceTrack():
         """
 
         :param          newEssenceTrackBitDepth:
+        :type           newEssenceTrackBitDepth:    PB_Element
         :Example Value: 10
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackBitDepth/
         :return:        None
         """
 
-        if isinstance(newEssenceTrackBitDepth, Element):
+        if isinstance(newEssenceTrackBitDepth, PB_Element):
             self.essenceTrackBitDepth = newEssenceTrackBitDepth
         else:
             raise TypeError
@@ -1740,13 +1793,14 @@ class instantiationEssenceTrack():
         """
 
         :param          newEssenceTrackFrameSize:
+        :type           newEssenceTrackFrameSize:   PB_Element
         :Example Value: ""
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackFrameSize/
         :return:        None
         """
         # TODO: Add example of essenceTrackFrameSize
         # TODO: Create Docstring for setEssenceTrackFrameSize
-        if isinstance(newEssenceTrackFrameSize, Element):
+        if isinstance(newEssenceTrackFrameSize, PB_Element):
             self.essenceTrackFrameSize = newEssenceTrackFrameSize
         else:
             raise TypeError
@@ -1763,12 +1817,13 @@ class instantiationEssenceTrack():
         """
 
         :param          newEssenceTrackAspectRatio:
+        :type           newEssenceTrackAspectRatio: PB_Element
         :Example Value: 4:3
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackAspectRatio/
         :return:        None
         """
 
-        if isinstance(newEssenceTrackAspectRatio, Element):
+        if isinstance(newEssenceTrackAspectRatio, PB_Element):
             self.essenceTrackAspectRatio = newEssenceTrackAspectRatio
         else:
             raise TypeError
@@ -1785,12 +1840,13 @@ class instantiationEssenceTrack():
         """
 
         :param          newEssenceTrackTimeStart:
+        :type           newEssenceTrackTimeStart:   PB_Element
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackTimeStart/
         :Example Value: 00:00:00
         :return:        None
         """
         # TODO: Create Docstring for setEssenceTrackTimeStart
-        if isinstance(newEssenceTrackTimeStart, Element):
+        if isinstance(newEssenceTrackTimeStart, PB_Element):
             self.essenceTrackTimeStart = newEssenceTrackTimeStart
         else:
             raise TypeError
@@ -1806,12 +1862,13 @@ class instantiationEssenceTrack():
         """
 
         :param          newEssenceTrackDuration:
+        :type           newEssenceTrackDuration:    PB_Element
         :Example Value: 00:10:52
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackDuration/
         :return:        None
         """
         # TODO: Create Docstring for setEssenceTrackDuration
-        if isinstance(newEssenceTrackDuration, Element):
+        if isinstance(newEssenceTrackDuration, PB_Element):
             self.essenceTrackDuration = newEssenceTrackDuration
         else:
             raise TypeError
@@ -1828,13 +1885,14 @@ class instantiationEssenceTrack():
         """
 
         :param          newEssenceTrackLanguage:
+        :type           newEssenceTrackLanguage:    PB_Element
         :Example Value: ""
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackLanguage/
         :return:        None
         """
         # TODO: Add example of essenceTrackLanguage
         # TODO: Create Docstring for setEssenceTrackLanguage
-        if isinstance(newEssenceTrackLanguage, Element):
+        if isinstance(newEssenceTrackLanguage, PB_Element):
             self.essenceTrackLanguage = newEssenceTrackLanguage
         else:
             raise TypeError
@@ -1851,14 +1909,14 @@ class instantiationEssenceTrack():
         """
 
         :param          newEssenceTrackAnnotation:
-        :type           newEssenceTrackAnnotation: Element
+        :type           newEssenceTrackAnnotation: PB_Element
         :Example Value: ""
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackAnnotation/
         :return:        None
         """
         # TODO: add example of setEssenceTrackAnnotation
 
-        if isinstance(newEssenceTrackAnnotation, Element):
+        if isinstance(newEssenceTrackAnnotation, PB_Element):
             self.essenceTrackAnnotation = newEssenceTrackAnnotation
         else:
             raise TypeError
@@ -1875,13 +1933,14 @@ class instantiationEssenceTrack():
         """
 
         :param          newEssenceTrackExtension:
+        :type           newEssenceTrackExtension:   PB_Element
         :Example Value: ""
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackExtension/
         :return:        None
         """
         # TODO: add example of essenceTrackExtension
         # TODO: Create Docstring for setEssenceTrackExtension
-        if isinstance(newEssenceTrackExtension, Element):
+        if isinstance(newEssenceTrackExtension, PB_Element):
             self.essenceTrackExtension = newEssenceTrackExtension
         else:
             raise TypeError
@@ -1915,14 +1974,14 @@ class instantiationRelation():
         """
 
         :param          newInstantiationRelationType:
-        :type           newInstantiationRelationType: Element
+        :type           newInstantiationRelationType: PB_Element
         :Example Value: ""
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationrelation/instantiationrelationtype/
         :return:        None
         """
         # TODO: Add example of instantiationRelationType
 
-        if isinstance(newInstantiationRelationType, Element):
+        if isinstance(newInstantiationRelationType, PB_Element):
             self.instantiationRelationType = newInstantiationRelationType
         else:
             raise TypeError
@@ -1938,14 +1997,14 @@ class instantiationRelation():
         """
 
         :param          newInstantiationRelationIdentifier:
-        :type           newInstantiationRelationIdentifier: Element
+        :type           newInstantiationRelationIdentifier: PB_Element
         :Example Value: ""
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationRelationIdentifier/
         :return:        None
         """
         # TODO: Add example of instantiationRelationIdentifier
 
-        if isinstance(newInstantiationRelationIdentifier, Element):
+        if isinstance(newInstantiationRelationIdentifier, PB_Element):
             self.instantiationRelationIdentifier = newInstantiationRelationIdentifier
         else:
             raise TypeError
@@ -1973,7 +2032,7 @@ class Extensions():
         """
 
         :param          newpbcoreExtension:
-        :type           newpbcoreExtension: Element
+        :type           newpbcoreExtension: PB_Element
         :Example Value: ""
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreextension/
         :return:        None
@@ -1996,13 +2055,14 @@ class Extensions():
         """
 
         :param          newpbcorePart:
+        :type           newpbcorePart:  PB_Element
         :Example Value: ""
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorepart/
         :return:        None
         """
         # TODO: Add example of pbcorePart
 
-        if isinstance(newpbcorePart, Element):
+        if isinstance(newpbcorePart, PB_Element):
             self.pbcorePart = newpbcorePart
         else:
             raise TypeError
@@ -2031,6 +2091,7 @@ class pbcoreExtension():
         """
 
         :param          newExtensionWrap:
+        :type           newExtensionWrap:   PB_Element
         :Example Value: ""
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreextension/extensionWrap/
         :return:        None
@@ -2050,12 +2111,13 @@ class pbcoreExtension():
         """
 
         :param          newExtensionElement:
+        :type           newExtensionElement:    PB_Element
         :Example Value: countryOfCreation
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreextension/extensionElement/
         :return:        None
         """
         # TODO: Create Docstring for setExtensionElement
-        if isinstance(newExtensionElement, Element):
+        if isinstance(newExtensionElement, PB_Element):
             self.extensionElement = newExtensionElement
         else:
             raise TypeError
@@ -2071,12 +2133,13 @@ class pbcoreExtension():
         """
 
         :param          newExtensionValue:
+        :type           newExtensionValue:  PB_Element
         :Example Value: US
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreextension/extensionValue/
         :return:        None
         """
         # TODO: Create Docstring for setExtensionValue
-        if isinstance(newExtensionValue, Element):
+        if isinstance(newExtensionValue, PB_Element):
             self.extensionValue = newExtensionValue
         else:
             raise TypeError
@@ -2092,12 +2155,13 @@ class pbcoreExtension():
         """
 
         :param          newExtensionAuthorityUsed:
+        :type           newExtensionAuthorityUsed:  PB_Element
         :Example Value: ISO 3166.1
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreextension/extensionAuthorityUsed/
         :return:        None
         """
         # TODO: Create Docstring for setExtensionAuthorityUsed
-        if isinstance(newExtensionAuthorityUsed, Element):
+        if isinstance(newExtensionAuthorityUsed, PB_Element):
             self.extensionAuthorityUsed = newExtensionAuthorityUsed
         else:
             raise TypeError
@@ -2119,7 +2183,7 @@ class pbcoreExtension():
         """
         # TODO: Add example of extensionEmbedded
         # TODO: Create Docstring for setExtensionEmbedded
-        if isinstance(newExtensionEmbedded, Element):
+        if isinstance(newExtensionEmbedded, PB_Element):
             self.extensionEmbedded = newExtensionEmbedded
         else:
             raise TypeError
@@ -2136,11 +2200,11 @@ class pbcoreExtension():
 # Other classes
 ##################################
 
-class Element():
+class PB_Element():
     """
     :Description: Basic element tag
     """
-    # TODO: Create Docstring for Element
+    # TODO: Create Docstring for PB_Element
     def __init__(self, tag=None, value=None):
         """
 
@@ -2217,7 +2281,7 @@ class Element():
         :return:        xml.etree.ElementTree.Element
         """
 
-        element = Elmt(self.tag)
+        element = Element(self.tag)
         element.text = self.value
         if self.attribute:
             for key in self.attribute:
@@ -2231,7 +2295,7 @@ class Element():
         :Description:   For debugging. Prints the XML.
         :return:        None
         """
-        element = Elmt(self.tag)
+        element = Element(self.tag)
         element.text = self.value
         if self.attribute:
             for key in self.attribute:
