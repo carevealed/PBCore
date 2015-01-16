@@ -508,18 +508,25 @@ class pbcoreRelation():
             self.pbcoreRelationIdentifier = newpbcoreRelationIdentifier
         else:
             raise TypeError
-    def xml(self):
-        branch = Element("pbcoreRelation")
-        # branch = etree.ElementTree(self.pbcoreRelationType)
-        branch.append(etree.tostring(self.pbcoreRelationType))
 
-    def xmlprint(self):
+    def _makeXML(self):
         branch = Element("pbcoreRelation")
-        # print etree.tostring(branch)
-        # print etree.tostring(self.pbcoreRelationType)
-        # branch.insert(0, self.pbcoreRelationType)
-        branch.append(self.pbcoreRelationType.xml())
-        print etree.tostring(branch)
+        # branch.append(etree.tostring(self.pbcoreRelationType))
+        branch.append(self.pbcoreRelationIdentifier.getETreeElement())
+        branch.append(self.pbcoreRelationType.getETreeElement())
+        return branch
+
+    def xml(self):
+
+        # branch = etree.ElementTree(self.pbcoreRelationType)
+        XML = self._makeXML()
+        return XML
+
+
+
+    def xmlString(self):
+        XML = self._makeXML()
+        return etree.tostring(XML)
 
 
 class pbcoreCoverage():
@@ -2275,7 +2282,9 @@ class PB_Element():
         # TODO: Create Docstring for setValue
         self.value = value
 
-    def xml(self):
+
+
+    def getETreeElement(self):
         """
         :Description:   Gets a single element as an XML element to be passed down.
         :return:        xml.etree.ElementTree.Element
