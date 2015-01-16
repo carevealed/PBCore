@@ -6,6 +6,34 @@ __author__ = 'California Audiovisual Preservation Project'
 # PBCore metadata
 from xml.dom import minidom
 
+
+class PBData():
+    def __init__(self):
+        self.elements = []
+        self.addData("dafsd")
+        pass
+
+    def printData(self):
+        if self.elements:
+            for element in self.elements:
+                print element
+
+    def addData(self, newDataMember):
+        self.elements.append(newDataMember)
+
+    def xml(self):
+
+        # branch = etree.ElementTree(self.pbcoreRelationType)
+        XML = self._makeXML()
+        return XML
+
+    def xmlString(self):
+        XML = self._makeXML()
+        return etree.tostring(XML)
+
+
+
+
 class PBCore():
     """
 
@@ -34,12 +62,12 @@ class PBCore():
         """
 
         :param          newIntellectualContent:
-        :type           newIntellectualContent: IntellectualContent
+        :type           newIntellectualContent: pbcoreDescriptionDocument
         :Example Value: ""
         :return:        None
         """
         
-        if isinstance(newIntellectualContent, IntellectualContent):
+        if isinstance(newIntellectualContent, pbcoreDescriptionDocument):
             self.intellectualContent = newIntellectualContent
         else:
             raise TypeError
@@ -81,7 +109,7 @@ class PBCore():
         :return:        None
         """
         
-        if isinstance(newextensions, Extensions):
+        if isinstance(newextensions, pbcoreExtension):
             self.extensions = newextensions
         else:
             raise TypeError
@@ -153,12 +181,12 @@ class PBCore():
 # Intellectual Content
 ##################################
 
-class IntellectualContent():
+class pbcoreDescriptionDocument(PBData):
     """
     :Description:
     :URL: http://pbcore.org/elements/
     """
-    # TODO: Create Docstring for IntellectualContent
+    # TODO: Create Docstring for pbcoreDescriptionDocument
 
     def __init__(self):
         """
@@ -177,6 +205,12 @@ class IntellectualContent():
         self.pbcoreAudienceLevel = None
         self.pbcoreAudienceRating = None
         self.pbcoreAnnotation = None
+        self.pbcoreCreator = []
+        self.pbcoreContributor = []
+        self.pbcorePublisher = []
+        self.pbcoreRightsSummary = []
+        self.pbcoreExtension = []
+        self.pbcorePart = None
 
     def getpbcoreAssetType(self):
         return self.pbcoreAssetType
@@ -448,171 +482,6 @@ class IntellectualContent():
         else:
             raise TypeError
 
-
-class pbcoreRelation():
-    """
-    :Description:
-    :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerelation/
-    """
-    # TODO: Create Docstring for pbcoreRelation
-    def __init__(self):
-        """
-
-        :return:    None
-        """
-        self.pbcoreRelationType = None
-        self.pbcoreRelationIdentifier = None
-
-    def getpbcoreRelationType(self):
-        """
-
-        :return:
-        """
-        return self.pbcoreRelationType
-
-    def setpbcoreRelationType(self, newpbcoreRelationType):
-        """
-
-        :param          newpbcoreRelationType:
-        :type           newpbcoreRelationType: PB_Element
-        :Example Value: Has Part
-        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerelation/pbcorerelationtype/
-        :return:        None
-        """
-        # TODO: Create Docstring for setpbcoreRelationType
-        # etree.tostring(newpbcoreRelationType)
-
-        if isinstance(newpbcoreRelationType, PB_Element):
-            self.pbcoreRelationType = newpbcoreRelationType
-        else:
-            raise TypeError
-
-    def getpbcoreRelationIdentifier(self):
-        """
-
-        :return:
-        """
-        return self.pbcoreRelationIdentifier
-
-    def setpbcoreRelationIdentifier(self, newpbcoreRelationIdentifier):
-        """
-
-        :param          newpbcoreRelationIdentifier:
-        :type           newpbcoreRelationIdentifier: PB_Element
-        :Example Value: cscrm_000012_r3
-        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerelation/pbcoreRelationIdentifier/
-        :return:        None
-        """
-        # TODO: Create Docstring for setpbcoreRelationIdentifier
-        if isinstance(newpbcoreRelationIdentifier, PB_Element):
-            self.pbcoreRelationIdentifier = newpbcoreRelationIdentifier
-        else:
-            raise TypeError
-
-    def _makeXML(self):
-        branch = Element("pbcoreRelation")
-        # branch.append(etree.tostring(self.pbcoreRelationType))
-        branch.append(self.pbcoreRelationIdentifier.getETreeElement())
-        branch.append(self.pbcoreRelationType.getETreeElement())
-        return branch
-
-    def xml(self):
-
-        # branch = etree.ElementTree(self.pbcoreRelationType)
-        XML = self._makeXML()
-        return XML
-
-
-
-    def xmlString(self):
-        XML = self._makeXML()
-        return etree.tostring(XML)
-
-
-class pbcoreCoverage():
-    """
-    :Description:
-    :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecoverage/
-    """
-    # TODO: Create Docstring for pbcoreCoverage
-    def __init__(self):
-        """
-
-        :return:        None
-        """
-        self.coverage = None
-        self.coverageType = None
-
-    def getCoverage(self):
-        """
-
-        :return:
-        """
-        return self.coverage
-
-    def setCoverage(self, newCoverage):
-
-        """
-
-        :param          newCoverage:
-        :type           newCoverage:    PB_Element
-        :Example Value: ""
-        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecoverage/coverage/
-        :return:        None
-        """
-        # TODO: Give example value for setCoverage
-        # TODO: Create Docstring for setCoverage
-        if isinstance(newCoverage, PB_Element):
-            self.coverage = newCoverage
-        else:
-            raise TypeError
-
-    def getCoverageType(self):
-        """
-
-        :return:
-        """
-        return self.coverageType
-
-    def setCoverageType(self, newCoverageType):
-        """
-
-        :param          newCoverageType:
-        :type           newCoverageType:    PB_Element
-        :Example Value: ""
-        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecoverage/coveragetype/
-        :return:        None
-        """
-        # TODO: Give example value for setCoverageType
-        # TODO: Create Docstring for setCoverageType
-        if isinstance(newCoverageType, PB_Element):
-            self.coverageType = newCoverageType
-        else:
-            raise TypeError
-
-
-##################################
-# intellectual Property classes
-##################################
-
-
-class IntellectualProperty():
-    """
-    :Description:
-    :URL: http://pbcore.org/elements/
-    """
-    # TODO: Create Docstring for IntellectualProperty
-    def __init__(self):
-        """
-
-        :return:        None
-        """
-        self.pbcoreCreator = []
-        self.pbcoreContributor = []
-        self.pbcorePublisher = []
-        self.pbcoreRightsSummary = []
-
-
     def getpbcoreCreator(self):
         """
 
@@ -704,6 +573,267 @@ class IntellectualProperty():
             self.pbcoreRightsSummary.append(newpbcoreRightsSummary)
         else:
             raise TypeError
+
+    def _makeXML(self):
+        branch = Element("pbcoreDescriptionDocument")
+        # branch.append(etree.tostring(self.pbcoreRelationType))
+        if self.pbcoreAssetType:
+            branch.append(self.pbcoreAssetType.getNode)
+        if self.pbcoreAssetDate:
+            branch.append(self.pbcoreAssetDate.getNode)
+        if self.pbcoreIdentifier:
+            branch.append(self.pbcoreIdentifier.getNode)
+        if self.pbcoreTitle:
+            branch.append(self.pbcoreTitle.getNode)
+        if self.pbcoreSubject:
+            branch.append(self.pbcoreSubject.getNode)
+        if self.pbcoreDescription:
+            branch.append(self.pbcoreDescription.getNode)
+        if self.pbcoreGenre:
+            branch.append(self.pbcoreGenre.getNode)
+        if self.pbcoreRelation:
+            branch.append(self.pbcoreRelation.getNode)
+        if self.pbcoreCoverage:
+            branch.append(self.pbcoreCoverage.getNode)
+        if self.pbcoreAudienceLevel:
+            branch.append(self.pbcoreAudienceLevel.getNode)
+        if self.pbcoreAudienceRating:
+            branch.append(self.pbcoreAudienceRating.getNode)
+        if self.pbcoreAnnotation:
+            branch.append(self.pbcoreAnnotation.getNode)
+        if self.pbcoreCreator:
+            branch.append(self.pbcoreCreator.getNode)
+        if self.pbcoreContributor:
+            branch.append(self.pbcoreContributor.getNode)
+        if self.pbcorePublisher:
+            branch.append(self.pbcorePublisher.getNode)
+        if self.pbcoreRightsSummary:
+            branch.append(self.pbcoreRightsSummary.getNode)
+        if self.pbcoreExtension:
+            branch.append(self.pbcoreExtension.getNode)
+        if self.pbcorePart:
+            branch.append(self.pbcorePart.getNode)
+        # branch.append(self.pbcoreRelationIdentifier.getETreeElement())
+        # branch.append(self.pbcoreRelationType.getETreeElement())
+        return branch
+
+    def xml(self):
+
+        # branch = etree.ElementTree(self.pbcoreRelationType)
+        XML = self._makeXML()
+        return XML
+
+    def xmlString(self):
+        XML = self._makeXML()
+        return etree.tostring(XML)
+
+    def addpbcoreExtension(self, newpbcoreExtension):
+        """
+
+        :param          newpbcoreExtension:
+        :type           newpbcoreExtension: PB_Element
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreextension/
+        :return:        None
+        """
+
+        if isinstance(newpbcoreExtension, pbcoreExtension):
+            self.pbcoreExtension.append(newpbcoreExtension)
+        else:
+            raise TypeError
+
+    def getpbcoreExtension(self):
+        """
+
+        :return:
+        """
+
+        return self.pbcoreExtension
+
+    def setpbcorePart(self, newpbcorePart):
+        """
+
+        :param          newpbcorePart:
+        :type           newpbcorePart:  PB_Element
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorepart/
+        :return:        None
+        """
+        # TODO: Add example of pbcorePart
+
+        if isinstance(newpbcorePart, PB_Element):
+            self.pbcorePart = newpbcorePart
+        else:
+            raise TypeError
+
+    def getpbcorePart(self):
+        """
+
+        :return:
+        """
+        return self.pbcorePart
+
+# __________________________________
+class pbcoreRelation():
+    """
+    :Description:
+    :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerelation/
+    """
+    # TODO: Create Docstring for pbcoreRelation
+    def __init__(self):
+        """
+
+        :return:    None
+        """
+        self.pbcoreRelationType = None
+        self.pbcoreRelationIdentifier = None
+
+    def getpbcoreRelationType(self):
+        """
+
+        :return:
+        """
+        return self.pbcoreRelationType
+
+    def setpbcoreRelationType(self, newpbcoreRelationType):
+        """
+
+        :param          newpbcoreRelationType:
+        :type           newpbcoreRelationType: PB_Element
+        :Example Value: Has Part
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerelation/pbcorerelationtype/
+        :return:        None
+        """
+        # TODO: Create Docstring for setpbcoreRelationType
+        # etree.tostring(newpbcoreRelationType)
+
+        if isinstance(newpbcoreRelationType, PB_Element):
+            self.pbcoreRelationType = newpbcoreRelationType
+        else:
+            raise TypeError
+
+    def getpbcoreRelationIdentifier(self):
+        """
+
+        :return:
+        """
+        return self.pbcoreRelationIdentifier
+
+    def setpbcoreRelationIdentifier(self, newpbcoreRelationIdentifier):
+        """
+
+        :param          newpbcoreRelationIdentifier:
+        :type           newpbcoreRelationIdentifier: PB_Element
+        :Example Value: cscrm_000012_r3
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerelation/pbcoreRelationIdentifier/
+        :return:        None
+        """
+        # TODO: Create Docstring for setpbcoreRelationIdentifier
+        if isinstance(newpbcoreRelationIdentifier, PB_Element):
+            self.pbcoreRelationIdentifier = newpbcoreRelationIdentifier
+        else:
+            raise TypeError
+
+    def _makeXML(self):
+        branch = Element("pbcoreRelation")
+        # branch.append(etree.tostring(self.pbcoreRelationType))
+        branch.append(self.pbcoreRelationIdentifier.getETreeElement())
+        branch.append(self.pbcoreRelationType.getETreeElement())
+        return branch
+
+    def xml(self):
+
+        # branch = etree.ElementTree(self.pbcoreRelationType)
+        XML = self._makeXML()
+        return XML
+
+    def xmlString(self):
+        XML = self._makeXML()
+        return etree.tostring(XML)
+
+
+# __________________________________
+class pbcoreCoverage():
+    """
+    :Description:
+    :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecoverage/
+    """
+    # TODO: Create Docstring for pbcoreCoverage
+    def __init__(self):
+        """
+
+        :return:        None
+        """
+        self.coverage = None
+        self.coverageType = None
+
+    def getCoverage(self):
+        """
+
+        :return:
+        """
+        return self.coverage
+
+    def setCoverage(self, newCoverage):
+
+        """
+
+        :param          newCoverage:
+        :type           newCoverage:    PB_Element
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecoverage/coverage/
+        :return:        None
+        """
+        # TODO: Give example value for setCoverage
+        # TODO: Create Docstring for setCoverage
+        if isinstance(newCoverage, PB_Element):
+            self.coverage = newCoverage
+        else:
+            raise TypeError
+
+    def getCoverageType(self):
+        """
+
+        :return:
+        """
+        return self.coverageType
+
+    def setCoverageType(self, newCoverageType):
+        """
+
+        :param          newCoverageType:
+        :type           newCoverageType:    PB_Element
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecoverage/coveragetype/
+        :return:        None
+        """
+        # TODO: Give example value for setCoverageType
+        # TODO: Create Docstring for setCoverageType
+        if isinstance(newCoverageType, PB_Element):
+            self.coverageType = newCoverageType
+        else:
+            raise TypeError
+
+
+##################################
+# intellectual Property classes
+##################################
+
+
+class IntellectualProperty():
+    """
+    :Description:
+    :URL: http://pbcore.org/elements/
+    """
+    # TODO: Create Docstring for IntellectualProperty
+    def __init__(self):
+        """
+
+        :return:        None
+        """
+
+
+
 
 
 # __________________________________
@@ -1554,6 +1684,7 @@ class pbcoreInstantiation():
             raise TypeError
 
 
+# __________________________________
 class instantiationEssenceTrack():
     """
     :Description:
@@ -1953,6 +2084,7 @@ class instantiationEssenceTrack():
             raise TypeError
 
 
+# __________________________________
 class instantiationRelation():
     """
     :Description:
@@ -2021,67 +2153,23 @@ class instantiationRelation():
 # Extensions classes
 ##################################
 
-class Extensions():
-    """
-    :Description:
-    :URL: http://pbcore.org/elements/
-    """
-    # TODO: Create Docstring for extensions
-    def __init__(self):
-        """
-        :URL:           http://pbcore.org/elements/
-        :return:        None
-        """
-        self.pbcoreExtension = []
-        self.pbcorePart = None
+# class Extensions():
+#     """
+#     :Description:
+#     :URL: http://pbcore.org/elements/
+#     """
+#     # TODO: Create Docstring for extensions
+#     def __init__(self):
+#         """
+#         :URL:           http://pbcore.org/elements/
+#         :return:        None
+#         """
+#
+#
+#
+#
 
-    def addpbcoreExtension(self, newpbcoreExtension):
-        """
-
-        :param          newpbcoreExtension:
-        :type           newpbcoreExtension: PB_Element
-        :Example Value: ""
-        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreextension/
-        :return:        None
-        """
-
-        if isinstance(newpbcoreExtension, pbcoreExtension):
-            self.pbcoreExtension.append(newpbcoreExtension)
-        else:
-            raise TypeError
-
-    def getpbcoreExtension(self):
-        """
-
-        :return:
-        """
-
-        return self.pbcoreExtension
-
-    def setpbcorePart(self, newpbcorePart):
-        """
-
-        :param          newpbcorePart:
-        :type           newpbcorePart:  PB_Element
-        :Example Value: ""
-        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorepart/
-        :return:        None
-        """
-        # TODO: Add example of pbcorePart
-
-        if isinstance(newpbcorePart, PB_Element):
-            self.pbcorePart = newpbcorePart
-        else:
-            raise TypeError
-
-    def getpbcorePart(self):
-        """
-
-        :return:
-        """
-        return self.pbcorePart
-
-
+# __________________________________
 class pbcoreExtension():
     """
     :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreextension/
