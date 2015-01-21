@@ -189,6 +189,7 @@ class pbcoreDescriptionDocument():
     """
     # TODO: Create Docstring for pbcoreDescriptionDocument
 
+    # @property
     def __init__(self):
         """
         @type           self.pbcoreAssetType:           PB_Element
@@ -232,6 +233,150 @@ class pbcoreDescriptionDocument():
         self.pbcoreExtension = []
         self.pbcorePart = None
 
+        # Valid attributes
+        self.pbcoreDescriptionDocumentAttributesRequired = [
+            # Must Contain:
+            "xmlns",                        # (text, specific value: "http://pbcore.org/PBCore/PBCoreNamespace.html")
+            "xsi",                          # (text, specific value: "http://www.w3.org/2001/XMLSchema-instance")
+            "schemaLocation"                # (text, specific value: "http://pbcore.org/PBCore/PBCoreNamespace.html")
+        ]
+
+        self.pbcoreDescriptionDocumentAttributesOptional = [
+            # 5 or less optional attributes, specific:
+            "collectionTitle",              # (text, may be empty)
+            "collectionDescription",        # (text, may be empty)
+            "collectionSource",             # (text, may be empty)
+            "collectionRef",                # (text, may be empty)
+            "collectionDate"                # (text, may be empty)
+        ]
+
+        self.pbcoreAssetTypeAttributesOptional = [
+            # May Contain:
+            "source",                       # (text, may be empty)
+            "ref",                          # (text, may be empty)
+            "version",                      # (text, may be empty)
+            "annotation"                    # (text, may be empty)
+        ]
+
+        self.pbcoreAssetDateAttributesOptional = [
+            # May Contain
+            "dateType"                      # ( may be empty)
+        ]
+
+        self.pbcoreIdentifierAttributesRequired = [
+            # Must Contain:
+            # 1 required attribute, specific:
+            "source"                        # (text, may be empty)
+        ]
+
+        self.pbcoreIdentifierAttributesOptional = [
+            # May Contain:
+            # 3 or less optional attributes, specific:
+            "ref"                           # (text, may be empty)
+            "version"                       # (text, may be empty)
+            "annotation"                    # (text, may be empty)
+        ]
+
+        self.pbcoreTitleAttributesOptional = [
+            # May Contain:
+            # 1 or less optional attributes, specific:
+            "titleType",                    # ( may be empty)
+
+            # 4 or less optional attributes, specific:
+            "source",                       # (text, may be empty)
+            "ref",                          # (text, may be empty)
+            "version",                      # (text, may be empty)
+            "annotation",                   # (text, may be empty)
+
+            # 3 or less optional attributes, specific:
+            "startTime",                    # (text, may be empty)
+            "endTime",                      # (text, may be empty)
+            "timeAnnotation"                # (text, may be empty)
+
+        ]
+
+        self.pbcoreSubjectAttributesOptional = [
+            # May Contain:
+            # 1 or less optional attributes, specific:
+            "subjectType"                   # (text, may be empty)
+
+            # 4 or less optional attributes, specific:
+            "source",                       # (text, may be empty)
+            "ref",                          # (text, may be empty)
+            "version",                      # (text, may be empty)
+            "annotation",                   # (text, may be empty)
+
+            # 3 or less optional attributes, specific:
+            "startTime",                    # (text, may be empty)
+            "endTime",                      # (text, may be empty)
+            "timeAnnotation"                # (text, may be empty)
+        ]
+
+        self.pbcoreDescriptionAttributesOptional = [
+            # May Contain:
+            # 5 or less optional attributes, specific:
+            "descriptionType",              # (text, may be empty)
+            "descriptionTypeSource",        # (text, may be empty)
+            "descriptionTypeRef",           # (text, may be empty)
+            "descriptionTypeVersion",       # (text, may be empty)
+            "descriptionTypeAnnotation",    # (text, may be empty)
+
+            # 5 or less optional attributes, specific:
+            "segmentType",                  # (text, may be empty)
+            "segmentTypeSource",            # (text, may be empty)
+            "segmentTypeRef",               # (text, may be empty)
+            "segmentTypeVersion",           # (text, may be empty)
+            "segmentTypeAnnotation",        # (text, may be empty)
+
+            # 3 or less option attributes, specific:
+            "startTime",                    # (text, may be empty)
+            "endTime",                      # (text, may be empty)
+            "timeAnnotation",               # (text, may be empty)
+
+            # 1 or less optional attributes, specific:
+            "annotation"                    # (text, may be empty)
+        ]
+
+        self.pbcoreGenreAttributesOptional = [
+            # May Contain:
+            # 4 or less optional attributes, specific:
+            "source",                       # (text, may be empty)
+            "ref",                          # (text, may be empty)
+            "version",                      # (text, may be empty)
+            "annotation",                   # (text, may be empty)
+
+            # 3 or less optional attributes, specific:
+            "startTime",                    # (text, may be empty)
+            "endTime",                      # (text, may be empty)
+            "timeAnnotation"                # (text, may be empty)
+        ]
+
+        self.pbcoreAudienceLevelAttributesOptional = [
+            # May Contain:
+            # 4 or less optional attributes, specific:
+            "source",                       # (text, may be empty)
+            "ref",                          # (text, may be empty)
+            "version",                      # (text, may be empty)
+            "annotation"                    # (text, may be empty)
+        ]
+
+        self.pbcoreAudienceRatingAttributesOptional = [
+            # May Contain:
+            # 4 or less optional attributes, specific:
+
+            "source",                       # (text, may be empty)
+            "ref",                          # (text, may be empty)
+            "version",                      # (text, may be empty)
+            "annotation"                    # (text, may be empty)
+        ]
+
+        self.pbcoreAnnotationAttributesOptional = [
+            # May Contain:
+            # 2 or less optional attributes, specific:
+            "annotationType",               # ( may be empty)
+            "ref"                           # ( may be empty)
+        ]
+
     def getpbcoreAssetType(self):
         return self.pbcoreAssetType
 
@@ -263,7 +408,7 @@ class pbcoreDescriptionDocument():
     def getpbcoreAssetDateElement(self):
         """
 
-        :return:    Element
+        :return:    xml.etree.ElementTree.Element
         """
         return self.pbcoreAssetDate.getETreeElement()
 
@@ -384,7 +529,7 @@ class pbcoreDescriptionDocument():
     def getpbcoreGenreElement(self):
         """
 
-        :return:    Element
+        :return:    xml.etree.ElementTree.Element
         """
         return self.pbcoreGenre.getETreeElement()
 
@@ -460,7 +605,7 @@ class pbcoreDescriptionDocument():
     def getpbcoreAudienceLevelElement(self):
         """
 
-        :return:    Element
+        :return:    xml.etree.ElementTree.Element
         """
         return self.pbcoreAudienceLevel.getETreeElement()
 
@@ -490,7 +635,7 @@ class pbcoreDescriptionDocument():
     def getpbcoreAudienceRatingElement(self):
         """
 
-        :return:    None
+        :return:    xml.etree.ElementTree.Element
         """
         return self.pbcoreAudienceRating.getETreeElement()
 
@@ -520,7 +665,7 @@ class pbcoreDescriptionDocument():
     def getpbcoreAnnotationElement(self):
         """
 
-        :return:    Element
+        :return:    xml.etree.ElementTree.Element
         """
         return self.pbcoreAnnotation.getETreeElement()
 
@@ -742,7 +887,7 @@ class pbcoreDescriptionDocument():
     def getpbcoreExtensionElement(self):
         """
 
-        :return:    Element
+        :return:    xml.etree.ElementTree.Element
         """
 
         return self.pbcoreExtension.getETreeElement()
@@ -786,6 +931,17 @@ class pbcoreRelation():
         """
         self.pbcoreRelationType = None
         self.pbcoreRelationIdentifier = None
+
+        self.pbcoreRelationIdentifier = [
+            # May Contain:
+            # 4 or less optional attributes, specific:
+
+            "source",                       # (text, may be empty)
+            "ref",                          # (text, may be empty)
+            "version",                      # (text, may be empty)
+            "annotation"                    # (text, may be empty)
+        ]
+
 
     def getpbcoreRelationType(self):
         """
@@ -867,6 +1023,18 @@ class pbcoreCoverage():
         """
         self.coverage = None
         self.coverageType = None
+        self.coverageAttributesOptional = [
+            # 4 or less optional attributes, specific:
+            "source",                       # (text, may be empty)
+            "ref",                          # (text, may be empty)
+            "version",                      # (text, may be empty)
+            "annotation",                   # (text, may be empty)
+
+            # 3 or less optional attributes, specific:
+            "startTime",                    # (text, may be empty)
+            "endTime",                      # (text, may be empty)
+            "timeAnnotation"                # (text, may be empty)
+        ]
 
     def getCoverage(self):
         """
@@ -934,9 +1102,6 @@ class IntellectualProperty():
         """
 
 
-
-
-
 # __________________________________
 class pbcoreCreator():
     """
@@ -952,8 +1117,30 @@ class pbcoreCreator():
         """
         self.creator = None
         self.creatorRole = None
+        self.creatorAttributesOptional = [
 
+            # May Contain:
+            # 3 or less optional attributes, specific:
 
+            "affiliation",                  # ( may be empty)
+            "ref",                          # ( may be empty)
+            "annotation",                   # ( may be empty)
+            # 3 or less optional attributes, specific:
+
+            "startTime",                    # (text, may be empty)
+            "endTime",                      # (text, may be empty)
+            "timeAnnotation"                # (text, may be empty)
+        ]
+
+        self.creatorRoleAttributesOptional = [
+            # May Contain:
+            # 4 or less optional attributes, specific:
+
+            "source",                       # (text, may be empty)
+            "ref",                          # (text, may be empty)
+            "version",                      # (text, may be empty)
+            "annotation"                    # (text, may be empty)
+        ]
 
     def getCreator(self):
         """
@@ -1015,6 +1202,33 @@ class pbcoreContributor:
         """
         self.contributor = None
         self.contributorRole = None
+        self.contributorAttributesOptional = [
+            # May Contain:
+            # 3 or less optional attributes, specific:
+
+            "affiliation",              # ( may be empty)
+            "ref",                      # ( may be empty)
+            "annotation",               # ( may be empty)
+            # 3 or less optional attributes, specific:
+
+            "startTime",                # (text, may be empty)
+            "endTime",                  # (text, may be empty)
+            "timeAnnotation"            # (text, may be empty)
+        ]
+
+        self.contributorRoleAttributesOptional = [
+            # May Contain:
+            # 1 or less optional attributes, specific:
+
+            "portrayal",                # (text, may be empty)
+            # 4 or less optional attributes, specific:
+
+            "source",                   # (text, may be empty)
+            "ref",                      # (text, may be empty)
+            "version",                  # (text, may be empty)
+            "annotation",               # (text, may be empty)
+
+        ]
 
     def setContributor(self, newContributor):
         """
@@ -1079,6 +1293,30 @@ class pbcorePublisher():
         """
         self.publisher = None
         self.publisherRole = None
+        self.publisherAttributesOptional = [
+            # May Contain:
+            # 3 or less optional attributes, specific:
+            "affiliation",                  # ( may be empty)
+            "ref",                          # ( may be empty)
+            "annotation",                   # ( may be empty)
+
+            # 3 or less optional attributes, specific:
+            "startTime",                    # (text, may be empty)
+            "endTime",                      # (text, may be empty)
+            "timeAnnotation"                # (text, may be empty)
+        ]
+
+        self.publisherRoleAttributesOptional = [
+            # May Contain:
+            # 4 or less optional attributes, specific:
+            "source",                   # (text, may be empty)
+            "ref",                      # (text, may be empty)
+            "version",                  # (text, may be empty)
+            "annotation"                # (text, may be empty)
+
+        ]
+
+
 
     def getPublisher(self):
         """
@@ -1144,8 +1382,35 @@ class pbcoreRightsSummary():
         self.rightsSummary = []
         self.rightsLink = None
         self.rightsEmbedded = None
+        self.pbcoreRightsSummaryAttributesOptional = [
+            # 3 or less optional attributes, specific:
 
+            "startTime",                    # (text, may be empty)
+            "endTime",                      # (text, may be empty)
+            "timeAnnotation"                # (text, may be empty)
+        ]
+        self.rightsSummaryAttributesOptional = [
+            # May Contain:
+            # 4 or less optional attributes, specific:
+            "source",                   # (text, may be empty)
+            "ref",                      # (text, may be empty)
+            "version",                  # (text, may be empty)
+            "annotation"                # (text, may be empty)
+        ]
 
+        self.rightsLinkAttributesOptional = [
+            # May Contain:
+            # 1 or less optional attributes, specific:
+
+            "annotation"                # (text, may be empty)
+        ]
+
+        self.rightsEmbeddedAttributes = dict[
+            # May Contain:
+            # 1 or less optional attributes, specific:
+
+            "annotation"                # (text, may be empty)
+        ]
 
     def getRightsSummary(self):
         """
@@ -1250,8 +1515,8 @@ class pbcoreInstantiation():
         @type           self.instantiationChannelConfiguration:     PB_Element
         @type           self.instantiationLanguage:                 PB_Element
         @type           self.instantiationAlternativeModes:         PB_Element
-        @type           self.instantiationEssenceTrack:             PB_Element
-        @type           self.instantiationRelation:                 PB_Element
+        @type           self.InstantiationEssenceTrack:             PB_Element
+        @type           self.InstantiationRelation:                 PB_Element
         @type           self.instantiationAnnotation:               PB_Element
         @type           self.instantiationPart:                     PB_Element
         @type           self.instantiationExtension:                PB_Element
@@ -1285,6 +1550,130 @@ class pbcoreInstantiation():
         self.instantiationAnnotation = []
         self.instantiationPart = None
         self.instantiationExtension = None
+        self.instantiationIdentifierAttributesRequired = [
+            # Must Contain:
+            # 1 required attribute, specific:
+            "source"                        # (text, may be empty)
+        ]
+
+        self.instantiationIdentifierAttributesOptional = [
+            # May Contain:
+            # 3 or less optional attributes, specific:
+
+            "ref"                           # (text, may be empty)
+            "version"                       # (text, may be empty)
+            "annotation"                    # (text, may be empty)
+        ]
+
+        self.instantiationDateAttributesOptional = [
+            # May Contain:
+            # 1 or less optional attributes, specific:
+            "dateType"                      # ( may be empty)
+        ]
+
+        self.instantiationDimensionsAttributesOptional = [
+            # May Contain:
+            # 2 or less optional attributes, specific:
+
+            "unitsOfMeasure",               # ( may be empty)
+            "annotation"                    # ( may be empty)
+        ]
+
+        self.instantiationPhysicalAttributesOptional = [
+            # May Contain:
+            # 4 or less optional attributes, specific:
+            "source",                       # (text, may be empty)
+            "ref",                          # (text, may be empty)
+            "version",                      # (text, may be empty)
+            "annotation"                    # (text, may be empty)
+
+        ]
+
+        self.instantiationDigitalAttributesOptional = [
+            # 4 or less optional attributes, specific:
+            "source",                       # (text, may be empty)
+            "ref",                          # (text, may be empty)
+            "version",                      # (text, may be empty)
+            "annotation"                    # (text, may be empty)
+        ]
+
+        self.instantiationStandardAttributesOptional = [
+            # May Contain:
+            # 1 or less optional attributes, specific:
+
+            "profile",                      # ( may be empty)
+            # 4 or less optional attributes, specific:
+
+            "source",                       # (text, may be empty)
+            "ref",                          # (text, may be empty)
+            "version",                      # (text, may be empty)
+            "annotation"                    # (text, may be empty)
+        ]
+
+        self.instantiationMediaTypeAttributesOptional = [
+            # May Contain:
+            # 4 or less optional attributes, specific:
+
+            "source",                       # (text, may be empty)
+            "ref",                          # (text, may be empty)
+            "version",                      # (text, may be empty)
+            "annotation"                    # (text, may be empty)
+        ]
+
+        self.instantiationGenerationsAttributesOptional = [
+            # May Contain:
+            # 4 or less optional attributes, specific:
+            "source",                       # (text, may be empty)
+            "ref",                          # (text, may be empty)
+            "version",                      # (text, may be empty)
+            "annotation"                    # (text, may be empty)
+        ]
+
+        self.instantiationFileSizeAttributesOptional = [
+            # May Contain:
+            # 2 or less optional attributes, specific:
+            "unitsOfMeasure",               # ( may be empty)
+            "annotation"                    # ( may be empty)
+        ]
+
+        self.instantiationDataRateAttributesOptional = [
+            # May Contain:
+            # 2 or less optional attributes, specific:
+            "unitsOfMeasure",               # ( may be empty)
+            "annotation"                    # ( may be empty)
+        ]
+
+        self.instantiationColorsAttributesOptional = [
+            # May Contain:
+            # 4 or less optional attributes, specific:
+            "source",                       # (text, may be empty)
+            "ref",                          # (text, may be empty)
+            "version",                      # (text, may be empty)
+            "annotation"                    # (text, may be empty)
+        ]
+
+        self.instantiationLanguageAttributesOptional = [
+            # May Contain:
+            # 4 or less optional attributes, specific:
+            "source",                       # (text, may be empty)
+            "ref",                          # (text, may be empty)
+            "version",                      # (text, may be empty)
+            "annotation"                    # (text, may be empty)
+
+        ]
+        self.instantiationAnnotationOptional = [
+            # May Contain:
+            # 2 or less optional attributes, specific:
+
+            "annotationType",               # ( may be empty)
+            "ref"                           # ( may be empty)
+        ]
+
+        self.instantiationPartOptional = [
+            "startTime",                    # (text, may be empty)
+            "endTime",                      # (text, may be empty)
+            "timeAnnotation"                # (text, may be empty)
+        ]
 
     def getInstantiationIdentifier(self):
         return self.instantiationIdentifier
@@ -1693,15 +2082,15 @@ class pbcoreInstantiation():
         """
 
         :param          newinstantiationRelation:
-        :type           newinstantiationRelation: instantiationRelation
+        :type           newinstantiationRelation: InstantiationRelation
         :Example Value: ""
         :return:        None
-        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationRelation/
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/InstantiationRelation/
         """
         # TODO: Give example for addInstantiationRelation
         # TODO: Create Docstring for addInstantiationRelation
 
-        if isinstance(newinstantiationRelation, instantiationRelation):
+        if isinstance(newinstantiationRelation, InstantiationRelation):
             self.instantiationRelation.append(newinstantiationRelation)
         else:
             raise TypeError
@@ -1711,20 +2100,20 @@ class pbcoreInstantiation():
 
         :return:
         """
-        return instantiationEssenceTrack
+        return InstantiationEssenceTrack
 
     def addInstantiationEssenceTrack(self, newInstantiationEssenceTrack):
         """
 
         :param          newInstantiationEssenceTrack:
-        :type           newInstantiationEssenceTrack: instantiationEssenceTrack
+        :type           newInstantiationEssenceTrack: InstantiationEssenceTrack
         :Example Value: ""
         :return:        None
-        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationEssenceTrack/
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/InstantiationEssenceTrack/
 
         """
 
-        if isinstance(newInstantiationEssenceTrack, instantiationEssenceTrack):
+        if isinstance(newInstantiationEssenceTrack, InstantiationEssenceTrack):
             self.instantiationEssenceTrack.append(newInstantiationEssenceTrack)
         else:
             raise TypeError
@@ -1735,7 +2124,7 @@ class pbcoreInstantiation():
 
         :return:
         """
-        return instantiationRelation
+        return InstantiationRelation
 
     def setInstantiationRelation(self, newInstantiationRelation):
         """
@@ -1823,12 +2212,12 @@ class pbcoreInstantiation():
 
 
 # __________________________________
-class instantiationEssenceTrack():
+class InstantiationEssenceTrack():
     """
     :Description:
     :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/
     """
-    # TODO: Create Docstring for instantiationEssenceTrack
+    # TODO: Create Docstring for InstantiationEssenceTrack
     def __init__(self):
         """
         @type           self.essenceTrackType:              PB_Element
@@ -1868,6 +2257,107 @@ class instantiationEssenceTrack():
         self.essenceTrackLanguage = None
         self.essenceTrackAnnotation = None
         self.essenceTrackExtension = None
+        self.essenceTrackIdentifierAttributesOptional = [
+            # May Contain:
+            # 4 or less optional attributes, specific:
+            "source",                       # (text, may be empty)
+            "ref",                          # (text, may be empty)
+            "version",                      # (text, may be empty)
+            "annotation"                    # (text, may be empty)
+
+        ]
+
+        self.essenceTrackStandardAttributes = [
+            # May Contain:
+            # 4 or less optional attributes, specific:
+            "source",                       # (text, may be empty)
+            "ref",                          # (text, may be empty)
+            "version",                      # (text, may be empty)
+            "annotation"                    # (text, may be empty)
+
+        ]
+
+        self.essenceTrackEncodingAttributes = [
+            # May Contain:
+            # 4 or less optional attributes, specific:
+            "source",                       # (text, may be empty)
+            "ref",                          # (text, may be empty)
+            "version",                      # (text, may be empty)
+            "annotation"                    # (text, may be empty)
+
+        ]
+
+        self.essenceTrackDataRateAttributes = [
+            # May Contain:
+            # 2 or less optional attributes, specific:
+
+            "unitsOfMeasure",               # ( may be empty)
+            "annotation"                    # ( may be empty)
+        ]
+
+        self.essenceTrackFrameRateAttributes = [
+            # May Contain:
+            # 2 or less optional attributes, specific:
+
+            "unitsOfMeasure",               # ( may be empty)
+            "annotation"                    # ( may be empty)
+
+        ]
+
+        self.essenceTrackPlaybackSpeedAttributes = [
+            # May Contain:
+            # 2 or less optional attributes, specific:
+
+            "unitsOfMeasure",               # ( may be empty)
+            "annotation"                    # ( may be empty)
+
+        ]
+
+        self.essenceTrackSamplingRateAttributes = [
+            # May Contain:
+            # 2 or less optional attributes, specific:
+
+            "unitsOfMeasure",               # ( may be empty)
+            "annotation"                    # ( may be empty)
+
+        ]
+
+        self.essenceTrackFrameSizeAttributes = [
+            # May Contain:
+            # 4 or less optional attributes, specific:
+            "source",                       # (text, may be empty)
+            "ref",                          # (text, may be empty)
+            "version",                      # (text, may be empty)
+            "annotation"                    # (text, may be empty)
+
+        ]
+
+        self.essenceTrackAspectRatioAttributes = [
+            # May Contain:
+            # 4 or less optional attributes, specific:
+            "source",                       # (text, may be empty)
+            "ref",                          # (text, may be empty)
+            "version",                      # (text, may be empty)
+            "annotation"                    # (text, may be empty)
+
+        ]
+
+        self.essenceTrackLanguageAttributes = [
+            # May Contain:
+            # 4 or less optional attributes, specific:
+            "source",                       # (text, may be empty)
+            "ref",                          # (text, may be empty)
+            "version",                      # (text, may be empty)
+            "annotation"                    # (text, may be empty)
+        ]
+
+        self.essenceTrackAnnotationAttributes = [
+            # May Contain:
+            # 2 or less optional attributes, specific:
+
+            "annotationType",               # ( may be empty)
+            "ref"                           # ( may be empty)
+        ]
 
     def getEssenceTrackType(self):
 
@@ -2245,12 +2735,12 @@ class instantiationEssenceTrack():
 
 
 # __________________________________
-class instantiationRelation():
+class InstantiationRelation():
     """
     :Description:
     :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationrelation/
     """
-    # TODO: Create Docstring for instantiationRelation
+    # TODO: Create Docstring for InstantiationRelation
 
     def __init__(self):
         """
@@ -2261,7 +2751,25 @@ class instantiationRelation():
         """
         self.instantiationRelationType = None
         self.instantiationRelationIdentifier = None
+        self.instantiationRelationTypeAttributesOptional = [
+            # May Contain:
+            # 4 or less optional attributes, specific:
 
+            "source",                       # (text, may be empty)
+            "ref",                          # (text, may be empty)
+            "version",                      # (text, may be empty)
+            "annotation"                    # (text, may be empty)
+        ]
+
+        self.instantiationRelationIdentifierAttributesOptional = [
+            # May Contain:
+            # 4 or less optional attributes, specific:
+
+            "source",                       # (text, may be empty)
+            "ref",                          # (text, may be empty)
+            "version",                      # (text, may be empty)
+            "annotation"                    # (text, may be empty)
+        ]
 
     def getInstantiationRelationType(self):
         """
@@ -2309,6 +2817,40 @@ class instantiationRelation():
             self.instantiationRelationIdentifier = newInstantiationRelationIdentifier
         else:
             raise TypeError
+
+class InstantiationRights():
+    def __init__(self):
+        self.rightsSummary = []
+        self.rightsLink = []
+        self.rightsEmbedded = []
+
+    def addRightsSummary(self, newRightsSummary):
+        if isinstance(newRightsSummary, PB_Element):
+            self.rightsSummary.append(newRightsSummary)
+
+
+    def getRightsSummary(self):
+        return self.rightsSummary
+
+    def addRightsLink(self, newRightsLink):
+        if isinstance(newRightsLink, PB_Element):
+            self.rightsLink.append(newRightsLink)
+        else:
+            raise ValueError
+
+    def getRightsLink(self):
+        return self.rightsLink
+
+    def addRightsEmbedded(self, newRightsEmbedded):
+        if isinstance(newRightsEmbedded):
+            self.rightsEmbedded.append(newRightsEmbedded)
+        else:
+            raise ValueError
+
+    def getRightsEmbedded(self):
+        return self.rightsEmbedded
+
+
 
 
 ##################################
