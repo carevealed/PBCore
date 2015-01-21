@@ -1,4 +1,5 @@
 # from xml.dom.minidom import parse, Element as elmt, Document, Node
+from collections import OrderedDict
 from xml.etree.ElementTree import Element
 import xml.etree.ElementTree as etree
 
@@ -7,29 +8,29 @@ __author__ = 'California Audiovisual Preservation Project'
 from xml.dom import minidom
 
 
-class PBData():
-    def __init__(self):
-        self.elements = []
-        self.addData("dafsd")
-        pass
-
-    def printData(self):
-        if self.elements:
-            for element in self.elements:
-                print element
-
-    def addData(self, newDataMember):
-        self.elements.append(newDataMember)
-
-    def xml(self):
-
-        # branch = etree.ElementTree(self.pbcoreRelationType)
-        XML = self._makeXML()
-        return XML
-
-    def xmlString(self):
-        XML = self._makeXML()
-        return etree.tostring(XML)
+# class PBData():
+#     def __init__(self):
+#         self.elements = []
+#         self.addData("dafsd")
+#         pass
+#
+#     def printData(self):
+#         if self.elements:
+#             for element in self.elements:
+#                 print element
+#
+#     def addData(self, newDataMember):
+#         self.elements.append(newDataMember)
+#
+#     def xml(self):
+#
+#         # branch = etree.ElementTree(self.pbcoreRelationType)
+#         XML = self._makeXML()
+#         return XML
+#
+#     def xmlString(self):
+#         XML = self._makeXML()
+#         return etree.tostring(XML)
 
 
 
@@ -181,7 +182,7 @@ class PBCore():
 # Intellectual Content
 ##################################
 
-class pbcoreDescriptionDocument(PBData):
+class pbcoreDescriptionDocument():
     """
     :Description:
     :URL: http://pbcore.org/elements/
@@ -190,7 +191,26 @@ class pbcoreDescriptionDocument(PBData):
 
     def __init__(self):
         """
+        @type           self.pbcoreAssetType:           PB_Element
+        @type           self.pbcoreAssetDate:           PB_Element
+        @type           self.pbcoreIdentifier:          PB_Element
+        @type           self.pbcoreTitle:               PB_Element
+        @type           self.pbcoreSubject:             PB_Element
+        @type           self.pbcoreDescription:         PB_Element
+        @type           self.pbcoreGenre:               PB_Element
+        @type           self.pbcoreRelation:            PB_Element
+        @type           self.pbcoreCoverage:            PB_Element
+        @type           self.pbcoreAudienceLevel:       PB_Element
+        @type           self.pbcoreAudienceRating:      PB_Element
+        @type           self.pbcoreAnnotation:          PB_Element
+        @type           self.pbcoreCreator:             pbcoreCreator
+        @type           self.pbcoreContributor:         pbcoreContributor
+        @type           self.pbcorePublisher:           pbcorePublisher
+        @type           self.pbcoreRightsSummary:       pbcoreRightsSummary
+        @type           self.pbcoreExtension:           PB_Element
+        @type           self.pbcorePart:                PB_Element
 
+    def getpbcoreAssetType
         :return: None
         """
         self.pbcoreAssetType = None
@@ -215,6 +235,9 @@ class pbcoreDescriptionDocument(PBData):
     def getpbcoreAssetType(self):
         return self.pbcoreAssetType
 
+    def getpbcoreAssetTypeElement(self):
+        return self.pbcoreAssetType.getETreeElement()
+
     def setpbcoreAssetType(self, newpbcoreAssetType):
         """
 
@@ -236,6 +259,13 @@ class pbcoreDescriptionDocument(PBData):
         :return: str
         """
         return self.pbcoreAssetDate
+
+    def getpbcoreAssetDateElement(self):
+        """
+
+        :return:    Element
+        """
+        return self.pbcoreAssetDate.getETreeElement()
 
     def addpbcoreAssetDate(self, newpbcoreAssetDate):
         """
@@ -351,6 +381,13 @@ class pbcoreDescriptionDocument(PBData):
         """
         return self.pbcoreGenre
 
+    def getpbcoreGenreElement(self):
+        """
+
+        :return:    Element
+        """
+        return self.pbcoreGenre.getETreeElement()
+
     def setpbcoreGenre(self, newpbcoreGenre):
         """
 
@@ -420,6 +457,13 @@ class pbcoreDescriptionDocument(PBData):
         """
         return self.pbcoreAudienceLevel
 
+    def getpbcoreAudienceLevelElement(self):
+        """
+
+        :return:    Element
+        """
+        return self.pbcoreAudienceLevel.getETreeElement()
+
     def setpbcoreAudienceLevel(self, newpbcoreAudienceLevel):
         """
 
@@ -443,6 +487,13 @@ class pbcoreDescriptionDocument(PBData):
         """
         return self.pbcoreAudienceRating
 
+    def getpbcoreAudienceRatingElement(self):
+        """
+
+        :return:    None
+        """
+        return self.pbcoreAudienceRating.getETreeElement()
+
     def setpbcoreAudienceRating(self, newpbcoreAudienceRating):
         """
 
@@ -465,6 +516,13 @@ class pbcoreDescriptionDocument(PBData):
         :return:
         """
         return self.pbcoreAnnotation
+
+    def getpbcoreAnnotationElement(self):
+        """
+
+        :return:    Element
+        """
+        return self.pbcoreAnnotation.getETreeElement()
 
     def setpbcoreAnnotation(self, newpbcoreAnnotation):
         """
@@ -576,43 +634,74 @@ class pbcoreDescriptionDocument(PBData):
 
     def _makeXML(self):
         branch = Element("pbcoreDescriptionDocument")
-        # branch.append(etree.tostring(self.pbcoreRelationType))
         if self.pbcoreAssetType:
-            branch.append(self.pbcoreAssetType.getNode)
+            branch.append(self.getpbcoreAssetTypeElement())
+
         if self.pbcoreAssetDate:
-            branch.append(self.pbcoreAssetDate.getNode)
+            for node in self.pbcoreAssetDate:
+                branch.append(node.getETreeElement())
+
         if self.pbcoreIdentifier:
-            branch.append(self.pbcoreIdentifier.getNode)
+            for node in self.pbcoreIdentifier:
+                branch.append(node.getETreeElement())
+
         if self.pbcoreTitle:
-            branch.append(self.pbcoreTitle.getNode)
+            for node in self.pbcoreTitle:
+                branch.append(node.getETreeElement())
+
         if self.pbcoreSubject:
-            branch.append(self.pbcoreSubject.getNode)
+            branch.append(self.getpbcoreAssetTypeElement())
+
         if self.pbcoreDescription:
-            branch.append(self.pbcoreDescription.getNode)
+            for node in self.pbcoreDescription:
+                branch.append(node.getETreeElement())
+
         if self.pbcoreGenre:
-            branch.append(self.pbcoreGenre.getNode)
+            branch.append(self.getpbcoreGenre())
+
         if self.pbcoreRelation:
-            branch.append(self.pbcoreRelation.getNode)
+            for node in self.pbcoreRelation:
+                branch.append(node.xml())
+
         if self.pbcoreCoverage:
-            branch.append(self.pbcoreCoverage.getNode)
+            for node in self.pbcoreCoverage:
+                branch.append(node.xml)
+
         if self.pbcoreAudienceLevel:
-            branch.append(self.pbcoreAudienceLevel.getNode)
+            for node in self.pbcoreAudienceLevel.getNode:
+                branch.append(node)
+
         if self.pbcoreAudienceRating:
-            branch.append(self.pbcoreAudienceRating.getNode)
+            for node in self.pbcoreAudienceRating.getNode:
+                branch.append(node)
+
         if self.pbcoreAnnotation:
-            branch.append(self.pbcoreAnnotation.getNode)
+            for node in self.pbcoreAnnotation.getNode:
+                branch.append(node)
+
         if self.pbcoreCreator:
-            branch.append(self.pbcoreCreator.getNode)
+            for node in self.pbcoreCreator:
+                branch.append(node.xml)
+
         if self.pbcoreContributor:
-            branch.append(self.pbcoreContributor.getNode)
+            for node in self.pbcoreContributor:
+                branch.append(node.xml)
+
         if self.pbcorePublisher:
-            branch.append(self.pbcorePublisher.getNode)
+            for node in self.pbcorePublisher:
+                branch.append(node.xml)
+
         if self.pbcoreRightsSummary:
-            branch.append(self.pbcoreRightsSummary.getNode)
+            for node in self.pbcoreRightsSummary:
+                branch.append(node.xml)
+
         if self.pbcoreExtension:
-            branch.append(self.pbcoreExtension.getNode)
+            for node in self.pbcoreExtension:
+                branch.append(node.xml)
+
         if self.pbcorePart:
-            branch.append(self.pbcorePart.getNode)
+            for node in self.pbcorePart.getNode:
+                branch.append(node)
         # branch.append(self.pbcoreRelationIdentifier.getETreeElement())
         # branch.append(self.pbcoreRelationType.getETreeElement())
         return branch
@@ -649,6 +738,14 @@ class pbcoreDescriptionDocument(PBData):
         """
 
         return self.pbcoreExtension
+
+    def getpbcoreExtensionElement(self):
+        """
+
+        :return:    Element
+        """
+
+        return self.pbcoreExtension.getETreeElement()
 
     def setpbcorePart(self, newpbcorePart):
         """
@@ -2310,7 +2407,7 @@ class PB_Element():
 
         self.tag = tag
         self.value = value
-        self.attribute = dict()
+        self.attribute = OrderedDict()
 
     def getAttribute(self):
         """
@@ -2327,6 +2424,7 @@ class PB_Element():
         :return:        None
         """
         # TODO: Create Docstring for addAttribute
+
         self.attribute[key] = value
 
     def deleteAttribute(self, key):
@@ -2377,12 +2475,14 @@ class PB_Element():
         :Description:   Gets a single element as an XML element to be passed down.
         :return:        xml.etree.ElementTree.Element
         """
-
         element = Element(self.tag)
         element.text = self.value
         if self.attribute:
-            for key in self.attribute:
-                element.set(key, self.attribute[key])
+            # print self.attribute.popitem()
+            attributes = self.attribute
+            while attributes:
+                key, value = attributes.popitem(last=False)
+                element.set(key, value)
             # print self.attribute
         return element
         #
