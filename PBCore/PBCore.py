@@ -779,6 +779,8 @@ class pbcoreRelation():
     # TODO: Create Docstring for pbcoreRelation
     def __init__(self):
         """
+        @type           self.pbcoreRelationType:            PB_Element
+        @type           self.pbcoreRelationIdentifier:      PB_Element
 
         :return:    None
         """
@@ -859,6 +861,8 @@ class pbcoreCoverage():
     def __init__(self):
         """
 
+        @type           self.coverage:          PB_Element
+        @type           self.coverageType:      PB_Element
         :return:        None
         """
         self.coverage = None
@@ -942,7 +946,8 @@ class pbcoreCreator():
     # TODO: Create Docstring for pbcoreCreator
     def __init__(self):
         """
-
+        @type           self.creator:           PB_Element
+        @type           self.creatorRole:       PB_Element
         :return:
         """
         self.creator = None
@@ -1004,7 +1009,8 @@ class pbcoreContributor:
     # TODO: Create Docstring for pbcoreContributor
     def __init__(self):
         """
-
+        @type           self.contributor:           PB_Element
+        @type           self.contributorRole:       PB_Element
         :return:
         """
         self.contributor = None
@@ -1066,6 +1072,8 @@ class pbcorePublisher():
     # TODO: Create Docstring for pbcorePublisher
     def __init__(self):
         """
+        @type           self.publisher:             PB_Element
+        @type           self.publisherRole:         PB_Element
 
         :return:        None
         """
@@ -1126,6 +1134,10 @@ class pbcoreRightsSummary():
     # TODO: Create Docstring for pbcoreRightsSummary
     def __init__(self):
         """
+
+        @type           self.rightsSummary:         PB_Element
+        @type           self.rightsLink:            PB_Element
+        @type           self.rightsEmbedded:        PB_Element
 
         :return:        None
         """
@@ -1218,6 +1230,35 @@ class pbcoreInstantiation():
     :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/
     """
     def __init__(self, instantiationType=None):
+        """
+
+        @type           self.instantiationIdentifier:               PB_Element
+        @type           self.instantiationDate:                     PB_Element
+        @type           self.instantiationDimensions:               PB_Element
+        @type           self.instantiationPhysical:                 PB_Element
+        @type           self.instantiationDigital:                  PB_Element
+        @type           self.instantiationStandard:                 PB_Element
+        @type           self.instantiationLocation:                 PB_Element
+        @type           self.instantiationMediaType:                PB_Element
+        @type           self.instantiationGenerations:              PB_Element
+        @type           self.instantiationFileSize:                 PB_Element
+        @type           self.instantiationTimeStart:                PB_Element
+        @type           self.instantiationDuration:                 PB_Element
+        @type           self.instantiationDataRate:                 PB_Element
+        @type           self.instantiationColors:                   PB_Element
+        @type           self.instantiationTracks:                   PB_Element
+        @type           self.instantiationChannelConfiguration:     PB_Element
+        @type           self.instantiationLanguage:                 PB_Element
+        @type           self.instantiationAlternativeModes:         PB_Element
+        @type           self.instantiationEssenceTrack:             PB_Element
+        @type           self.instantiationRelation:                 PB_Element
+        @type           self.instantiationAnnotation:               PB_Element
+        @type           self.instantiationPart:                     PB_Element
+        @type           self.instantiationExtension:                PB_Element
+
+        :param instantiationType:
+        :return:
+        """
         self.instantiationAssetType = instantiationType
         # For example: "Physical Asset" instantiationAssetType
 
@@ -1789,6 +1830,28 @@ class instantiationEssenceTrack():
     """
     # TODO: Create Docstring for instantiationEssenceTrack
     def __init__(self):
+        """
+        @type           self.essenceTrackType:              PB_Element
+        @type           self.essenceTrackIdentifier:        PB_Element
+        @type           self.essenceTrackStandard:          PB_Element
+        @type           self.essenceTrackEncoding:          PB_Element
+        @type           self.essenceTrackDataRate:          PB_Element
+        @type           self.essenceTrackFrameRate:         PB_Element
+        @type           self.essenceTrackPlaybackSpeed:     PB_Element
+        @type           self.essenceTrackSamplingRate:      PB_Element
+        @type           self.essenceTrackBitDepth:          PB_Element
+        @type           self.essenceTrackFrameSize:         PB_Element
+        @type           self.essenceTrackAspectRatio:       PB_Element
+        @type           self.essenceTrackTimeStart:         PB_Element
+        @type           self.essenceTrackDuration:          PB_Element
+        @type           self.essenceTrackLanguage:          PB_Element
+        @type           self.essenceTrackAnnotation:        PB_Element
+        @type           self.essenceTrackExtension:         PB_Element
+
+
+
+        :return:        None
+        """
         self.essenceTrackType = None
         self.essenceTrackIdentifier = None
         self.essenceTrackStandard = None
@@ -2191,8 +2254,10 @@ class instantiationRelation():
 
     def __init__(self):
         """
+        @type           self.instantiationRelationType:             PB_Element
+        @type           self.instantiationRelationIdentifier:       PB_Element
 
-        :return:
+        :return:    None
         """
         self.instantiationRelationType = None
         self.instantiationRelationIdentifier = None
@@ -2273,6 +2338,15 @@ class pbcoreExtension():
     """
     # TODO: Create Docstring for pbcoreExtension
     def __init__(self):
+        """
+        @type           self.extensionWrap:                 PB_Element
+        @type           self.extensionElement:              PB_Element
+        @type           self.extensionValue:                PB_Element
+        @type           self.extensionAuthorityUsed:        PB_Element
+        @type           self.extensionEmbedded:             PB_Element
+
+        :return:    None
+        """
         self.extensionWrap = []
         self.extensionElement = None
         self.extensionValue = None
