@@ -122,7 +122,7 @@ class PBCore():
         """
         return self.instantiation
 
-    def setinstantiation(self,newinstantiation):
+    def setinstantiation(self, newinstantiation):
         """
 
         :param          newinstantiation:
