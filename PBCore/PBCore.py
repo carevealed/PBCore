@@ -71,7 +71,7 @@ class PBCore():
         if isinstance(newIntellectualContent, pbcoreDescriptionDocument):
             self.intellectualContent = newIntellectualContent
         else:
-            raise TypeError
+            raise TypeError("setIntellectualContent expected type: pbcoreDescriptionDocument")
 
     def getIntellectualProperty(self):
         """
@@ -92,7 +92,7 @@ class PBCore():
         if isinstance(newIntellectualProperty, IntellectualProperty):
             self.intellectualProperty = newIntellectualProperty
         else:
-            raise TypeError
+            raise TypeError("setIntellectualProperty expected type: IntellectualProperty")
 
     def getextensions(self):
         """
@@ -113,7 +113,7 @@ class PBCore():
         if isinstance(newextensions, pbcoreExtension):
             self.extensions = newextensions
         else:
-            raise TypeError
+            raise TypeError("setextensions expected type: pbcoreExtension")
 
     def getinstantiation(self):
         """
@@ -134,7 +134,7 @@ class PBCore():
         if isinstance(newinstantiation, pbcoreInstantiation):
             self.instantiation = newinstantiation
         else:
-            raise TypeError
+            raise TypeError("setinstantiation expected type: pbcoreInstantiation")
 
 
 
@@ -161,21 +161,21 @@ class PBCore():
 #         return self.pbcoreDescriptionDocument
 #
 #     def setpbcoreDescriptionDocument(self, newpbcoreDescriptionDocument):
-#         # TODO: create Docstring for setpbcoreDescriptionDocument
+#         # create Docstring for setpbcoreDescriptionDocument
 #         self.pbcoreDescriptionDocument = newpbcoreDescriptionDocument
 #
 #     def getpbcoreCollection(self):
 #         return self.pbcoreCollection
 #
 #     def setpbcoreCollection(self, newpbcoreCollection):
-#         # TODO: create Docstring for setpbcoreCollection
+#         # create Docstring for setpbcoreCollection
 #         self.pbcoreCollection = newpbcoreCollection
 #
 #     def getpbcoreInstantiationDocument(self):
 #         return self.pbcoreInstantiationDocument
 #
 #     def setpbcoreInstantiationDocument(self, newpbcoreInstantiationDocument):
-#         # TODO: create Docstring for setpbcoreInstantiationDocument
+#         # create Docstring for setpbcoreInstantiationDocument
 #         self.pbcoreInstantiationDocument = newpbcoreInstantiationDocument
 
 ##################################
@@ -187,7 +187,6 @@ class pbcoreDescriptionDocument():
     :Description:
     :URL: http://pbcore.org/elements/
     """
-    # TODO: Create Docstring for pbcoreDescriptionDocument
 
     # @property
     def __init__(self):
@@ -388,15 +387,15 @@ class pbcoreDescriptionDocument():
 
         :param          newpbcoreAssetType:
         :type           newpbcoreAssetType: PB_Element
-        :Example Value: Media Object
+        :Example Value: PB_Element(tag="pbcoreAssetType", value="Media Object")
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreassettype/
         :return:        None
         """
-        # TODO: Give example value for addpbcoreAssetType
+
         if isinstance(newpbcoreAssetType, PB_Element):
             self.pbcoreAssetType = newpbcoreAssetType
         else:
-            raise TypeError
+            raise TypeError("Expected Type: PB_Element")
 
     def getpbcoreAssetDate(self):
         """
@@ -426,7 +425,7 @@ class pbcoreDescriptionDocument():
         if isinstance(newpbcoreAssetDate, PB_Element):
             self.pbcoreAssetDate.append(newpbcoreAssetDate)
         else:
-            raise TypeError
+            raise TypeError("Expected Type: PB_Element")
 
     def getpbcoreIdentifier(self):
         """
@@ -449,7 +448,7 @@ class pbcoreDescriptionDocument():
         if isinstance(newIdentifier, PB_Element):
             self.pbcoreIdentifier.append(newIdentifier)
         else:
-            raise TypeError
+            raise TypeError("Expected Type: PB_Element")
 
     def getpbcoreTitle(self):
         """
@@ -472,7 +471,7 @@ class pbcoreDescriptionDocument():
         if isinstance(newTitle, PB_Element):
             self.pbcoreTitle.append(newTitle)
         else:
-            raise TypeError
+            raise TypeError("Expected Type: PB_Element")
 
     def getpbcoreSubject(self):
         """
@@ -495,7 +494,7 @@ class pbcoreDescriptionDocument():
         if isinstance(newpbcoreSubject, PB_Element):
             self.pbcoreSubject = newpbcoreSubject
         else:
-            raise TypeError
+            raise TypeError("Expected Type: PB_Element")
 
     def getpbcoreDescription(self):
         """
@@ -517,7 +516,7 @@ class pbcoreDescriptionDocument():
         if isinstance(newDescription, PB_Element):
             self.pbcoreDescription.append(newDescription)
         else:
-            raise TypeError
+            raise TypeError("Expected Type: PB_Element")
 
     def getpbcoreGenre(self):
         """
@@ -547,7 +546,7 @@ class pbcoreDescriptionDocument():
         if isinstance(newpbcoreGenre, PB_Element):
             self.pbcoreGenre = newpbcoreGenre
         else:
-            raise TypeError
+            raise TypeError("Expected Type: PB_Element")
 
     def getpbcoreRelation(self):
         """
@@ -570,7 +569,7 @@ class pbcoreDescriptionDocument():
         if isinstance(newpbcoreRelation, pbcoreRelation):
             self.pbcoreRelation.append(newpbcoreRelation)
         else:
-            raise TypeError
+            raise TypeError("Expected Type: pbcoreRelation")
 
     def getpbcoreCoverage(self):
         """
@@ -593,7 +592,7 @@ class pbcoreDescriptionDocument():
         if isinstance(newpbcoreCoverage, pbcoreCoverage):
             self.pbcoreCoverage.append(newpbcoreCoverage)
         else:
-            raise TypeError
+            raise TypeError("Expected type: pbcoreCoverage")
 
     def getpbcoreAudienceLevel(self):
         """
@@ -623,7 +622,7 @@ class pbcoreDescriptionDocument():
         if isinstance(newpbcoreAudienceLevel, PB_Element):
             self.pbcoreAudienceLevel = newpbcoreAudienceLevel
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
     def getpbcoreAudienceRating(self):
         """
@@ -653,7 +652,7 @@ class pbcoreDescriptionDocument():
         if isinstance(newpbcoreAudienceRating, PB_Element):
             self.pbcoreAudienceRating = newpbcoreAudienceRating
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
     def getpbcoreAnnotation(self):
         """
@@ -683,7 +682,7 @@ class pbcoreDescriptionDocument():
         if isinstance(newpbcoreAnnotation, PB_Element):
             self.pbcoreAnnotation = newpbcoreAnnotation
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
     def getpbcoreCreator(self):
         """
@@ -705,7 +704,7 @@ class pbcoreDescriptionDocument():
         if isinstance(newpbcoreCreator, pbcoreCreator):
             self.pbcoreCreator.append(newpbcoreCreator)
         else:
-            raise TypeError
+            raise TypeError("Expected Type: pbcoreCreator")
 
     def getpbcoreContributor(self):
         """
@@ -727,7 +726,7 @@ class pbcoreDescriptionDocument():
         if isinstance(newpbcoreContributor, pbcoreContributor):
             self.pbcoreContributor.append(newpbcoreContributor)
         else:
-            raise TypeError
+            raise TypeError("Expected Type: pbcoreContributor")
 
     def getpbcorePublisher(self):
         """
@@ -750,7 +749,7 @@ class pbcoreDescriptionDocument():
         if isinstance(newpbcorePublisher, pbcorePublisher):
             self.pbcorePublisher.append(newpbcorePublisher)
         else:
-            raise TypeError
+            raise TypeError("Expected Type: pbcorePublisher")
 
     def getpbcoreRightsSummary(self):
         """
@@ -775,7 +774,7 @@ class pbcoreDescriptionDocument():
         if isinstance(newpbcoreRightsSummary, pbcoreRightsSummary):
             self.pbcoreRightsSummary.append(newpbcoreRightsSummary)
         else:
-            raise TypeError
+            raise TypeError("Expected Type: pbcoreRightsSummary")
 
     def _makeXML(self):
         branch = Element("pbcoreDescriptionDocument")
@@ -813,20 +812,20 @@ class pbcoreDescriptionDocument():
                 branch.append(node.xml)
 
         if self.pbcoreAudienceLevel:
-            for node in self.pbcoreAudienceLevel.getNode:
+            for node in self.pbcoreAudienceLevel:
                 branch.append(node)
 
         if self.pbcoreAudienceRating:
-            for node in self.pbcoreAudienceRating.getNode:
+            for node in self.pbcoreAudienceRating:
                 branch.append(node)
 
         if self.pbcoreAnnotation:
-            for node in self.pbcoreAnnotation.getNode:
+            for node in self.pbcoreAnnotation:
                 branch.append(node)
 
         if self.pbcoreCreator:
             for node in self.pbcoreCreator:
-                branch.append(node.xml)
+                branch.append(node.xml())
 
         if self.pbcoreContributor:
             for node in self.pbcoreContributor:
@@ -838,7 +837,7 @@ class pbcoreDescriptionDocument():
 
         if self.pbcoreRightsSummary:
             for node in self.pbcoreRightsSummary:
-                branch.append(node.xml)
+                branch.append(node.xml())
 
         if self.pbcoreExtension:
             for node in self.pbcoreExtension:
@@ -859,6 +858,7 @@ class pbcoreDescriptionDocument():
 
     def xmlString(self):
         XML = self._makeXML()
+
         return etree.tostring(XML)
 
     def addpbcoreExtension(self, newpbcoreExtension):
@@ -874,7 +874,7 @@ class pbcoreDescriptionDocument():
         if isinstance(newpbcoreExtension, pbcoreExtension):
             self.pbcoreExtension.append(newpbcoreExtension)
         else:
-            raise TypeError
+            raise TypeError("Expected type: pbcoreExtension")
 
     def getpbcoreExtension(self):
         """
@@ -906,7 +906,7 @@ class pbcoreDescriptionDocument():
         if isinstance(newpbcorePart, PB_Element):
             self.pbcorePart = newpbcorePart
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
     def getpbcorePart(self):
         """
@@ -965,7 +965,7 @@ class pbcoreRelation():
         if isinstance(newpbcoreRelationType, PB_Element):
             self.pbcoreRelationType = newpbcoreRelationType
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
     def getpbcoreRelationIdentifier(self):
         """
@@ -987,7 +987,7 @@ class pbcoreRelation():
         if isinstance(newpbcoreRelationIdentifier, PB_Element):
             self.pbcoreRelationIdentifier = newpbcoreRelationIdentifier
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
     def _makeXML(self):
         branch = Element("pbcoreRelation")
@@ -1058,7 +1058,7 @@ class pbcoreCoverage():
         if isinstance(newCoverage, PB_Element):
             self.coverage = newCoverage
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
     def getCoverageType(self):
         """
@@ -1081,7 +1081,7 @@ class pbcoreCoverage():
         if isinstance(newCoverageType, PB_Element):
             self.coverageType = newCoverageType
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
 
 ##################################
@@ -1116,7 +1116,7 @@ class pbcoreCreator():
         :return:
         """
         self.creator = None
-        self.creatorRole = None
+        self.creatorRole = []
         self.creatorAttributesOptional = [
 
             # May Contain:
@@ -1162,7 +1162,7 @@ class pbcoreCreator():
         if isinstance(newCreator, PB_Element):
             self.creator = newCreator
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element. Got", type(newCreator))
 
     def getCreatorRole(self):
         """
@@ -1171,7 +1171,7 @@ class pbcoreCreator():
         """
         return self.creatorRole
 
-    def setCreatorRole(self, newCreatorRole):
+    def addCreatorRole(self, newCreatorRole):
         """
 
         :param          newCreatorRole:
@@ -1182,10 +1182,28 @@ class pbcoreCreator():
         """
         # TODO: Create Docstring for setCreatorRole
         if isinstance(newCreatorRole, PB_Element):
-            self.creatorRole = newCreatorRole
+            self.creatorRole.append(newCreatorRole)
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
+    def _makeXML(self):
+        branch = Element("pbcoreCreator")
+        # branch.append(etree.tostring(self.pbcoreRelationType))
+
+        branch.append(self.creator.getETreeElement())
+        for role in self.creatorRole:
+            branch.append(role.getETreeElement())
+        return branch
+
+    def xml(self):
+
+        # branch = etree.ElementTree(self.pbcoreRelationType)
+        XML = self._makeXML()
+        return XML
+
+    def xmlString(self):
+        XML = self._makeXML()
+        return etree.tostring(XML)
 
 # __________________________________
 class pbcoreContributor:
@@ -1244,7 +1262,7 @@ class pbcoreContributor:
         if isinstance(newContributor, PB_Element):
             self.contributor = newContributor
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
     def getContributor(self):
         """
@@ -1267,7 +1285,7 @@ class pbcoreContributor:
         if isinstance(newContributoRole, PB_Element):
             self.contributorRole = newContributoRole
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
     def getContributoRoler(self):
         """
@@ -1339,7 +1357,7 @@ class pbcorePublisher():
         if isinstance(newPublisher, PB_Element):
             self.publisher = newPublisher
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
     def getPublisherRole(self):
         """
@@ -1360,7 +1378,7 @@ class pbcorePublisher():
         if isinstance(newPublisherRole, PB_Element):
             self.publisherRole = newPublisherRole
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
 
 # __________________________________
@@ -1380,8 +1398,8 @@ class pbcoreRightsSummary():
         :return:        None
         """
         self.rightsSummary = []
-        self.rightsLink = None
-        self.rightsEmbedded = None
+        self.rightsLink = []
+        self.rightsEmbedded = []
         self.pbcoreRightsSummaryAttributesOptional = [
             # 3 or less optional attributes, specific:
 
@@ -1405,7 +1423,7 @@ class pbcoreRightsSummary():
             "annotation"                # (text, may be empty)
         ]
 
-        self.rightsEmbeddedAttributes = dict[
+        self.rightsEmbeddedAttributes = [
             # May Contain:
             # 1 or less optional attributes, specific:
 
@@ -1434,7 +1452,7 @@ class pbcoreRightsSummary():
         if isinstance(newRightsSummary, PB_Element):
             self.rightsSummary.append(newRightsSummary)
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
     def getRightsLink(self):
         """
@@ -1443,7 +1461,7 @@ class pbcoreRightsSummary():
         """
         return self.rightsLink
 
-    def setRightsLink(self, newRightsLink):
+    def addRightsLink(self, newRightsLink):
         """
 
         :param          newRightsLink:
@@ -1456,9 +1474,9 @@ class pbcoreRightsSummary():
         # TODO: Create Docstring for setRightsLink
 
         if isinstance(newRightsLink, PB_Element):
-            self.rightsLink = newRightsLink
+            self.rightsLink.append(newRightsLink)
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
     def getRightsEmbedded(self):
         """
@@ -1467,7 +1485,7 @@ class pbcoreRightsSummary():
         """
         return self.rightsEmbedded
 
-    def setRightsEmbedded(self, newRightsEmbedded):
+    def addRightsEmbedded(self, newRightsEmbedded):
         """
 
         :param          newRightsEmbedded:
@@ -1479,9 +1497,32 @@ class pbcoreRightsSummary():
         # TODO: Give example of rightsEmbedded
         # TODO: Create Docstring for setRightsEmbedded
         if isinstance(newRightsEmbedded, PB_Element):
-            self.rightsEmbedded = newRightsEmbedded
+            self.rightsEmbedded.append(newRightsEmbedded)
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
+
+    def _makeXML(self):
+        branch = Element("pbcoreRightsSummary")
+        # branch.append(etree.tostring(self.pbcoreRelationType))
+        for rightsSum in self.rightsSummary:
+            branch.append(rightsSum.getETreeElement())
+
+        for link in self.rightsLink:
+            branch.append(link.getETreeElement())
+
+        for rightsEmb in self.rightsEmbedded:
+            branch.append(rightsEmb.getETreeElement())
+        return branch
+
+    def xml(self):
+
+        # branch = etree.ElementTree(self.pbcoreRelationType)
+        XML = self._makeXML()
+        return XML
+
+    def xmlString(self):
+        XML = self._makeXML()
+        return etree.tostring(XML)
 
 
 ##################################
@@ -1986,7 +2027,8 @@ class pbcoreInstantiation():
         if isinstance(newInstantiationColors, PB_Element):
             self.instantiationColors = newInstantiationColors
         else:
-            raise TypeError
+            pass
+        raise TypeError("Expected type: PB_Element")
 
     def getInstantiationTracks(self):
         """
@@ -2009,7 +2051,8 @@ class pbcoreInstantiation():
         if isinstance(newInstantiationTracks, PB_Element):
             self.instantiationTracks = newInstantiationTracks
         else:
-            raise TypeError
+            pass
+        raise TypeError("Expected type: PB_Element")
 
     def getInstantiationChannelConfiguration(self):
         """
@@ -2032,7 +2075,8 @@ class pbcoreInstantiation():
         if isinstance(newInstantiationChannelConfiguration, PB_Element):
             self.instantiationChannelConfiguration = newInstantiationChannelConfiguration
         else:
-            raise TypeError
+            pass
+        raise TypeError("Expected type: PB_Element")
 
     def getInstantiationLanguage(self):
         """
@@ -2056,7 +2100,8 @@ class pbcoreInstantiation():
         if isinstance(newInstantiationLanguage, PB_Element):
             self.instantiationLanguage = newInstantiationLanguage
         else:
-            raise TypeError
+            pass
+        raise TypeError("Expected type: PB_Element")
 
     def getInstantiationAlternativeModes(self):
         """
@@ -2093,7 +2138,7 @@ class pbcoreInstantiation():
         if isinstance(newinstantiationRelation, InstantiationRelation):
             self.instantiationRelation.append(newinstantiationRelation)
         else:
-            raise TypeError
+            raise TypeError("Expected type: InstantiationRelation")
 
     def getInstantiationEssenceTrack(self):
         """
@@ -2116,7 +2161,7 @@ class pbcoreInstantiation():
         if isinstance(newInstantiationEssenceTrack, InstantiationEssenceTrack):
             self.instantiationEssenceTrack.append(newInstantiationEssenceTrack)
         else:
-            raise TypeError
+            raise TypeError("Expected type: InstantiationEssenceTrack")
 
 
     def getInstantiationRelation(self):
@@ -2138,7 +2183,7 @@ class pbcoreInstantiation():
         if isinstance(newInstantiationRelation, PB_Element):
             self.instantiationRelation = newInstantiationRelation
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
 
     def getInstantiationAnnotation(self):
@@ -2163,7 +2208,7 @@ class pbcoreInstantiation():
         if isinstance(newAnnotation, PB_Element):
             self.instantiationAnnotation.append(newAnnotation)
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
     def getInstantiationPart(self):
         """
@@ -2186,7 +2231,7 @@ class pbcoreInstantiation():
         if isinstance(newInstantiationPart, PB_Element):
             self.instantiationPart = newInstantiationPart
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
     def getInstantiationExtension(self):
         """
@@ -2208,7 +2253,7 @@ class pbcoreInstantiation():
         if isinstance(newnstantiationExtension, PB_Element):
             self.instantiationExtension = newnstantiationExtension
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
 
 # __________________________________
@@ -2382,7 +2427,7 @@ class InstantiationEssenceTrack():
         if isinstance(newEssenceTrackType, PB_Element):
             self.essenceTrackType = newEssenceTrackType
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
     def getEssenceTrackIdentifier(self):
         """
@@ -2406,7 +2451,7 @@ class InstantiationEssenceTrack():
         if isinstance(newEssenceTrackIdentifier, PB_Element):
             self.essenceTrackIdentifier = newEssenceTrackIdentifier
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
     def getEssenceTrackStandard(self):
         """
@@ -2430,7 +2475,7 @@ class InstantiationEssenceTrack():
         if isinstance(newEssenceTrackStandard, PB_Element):
             self.essenceTrackStandard = newEssenceTrackStandard
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
     def getEssenceTrackEncoding(self):
         """
@@ -2453,7 +2498,7 @@ class InstantiationEssenceTrack():
         if isinstance(newEssenceTrackEncoding, PB_Element):
             self.essenceTrackEncoding = newEssenceTrackEncoding
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
     def getEssenceTrackDataRate(self):
         """
@@ -2476,7 +2521,7 @@ class InstantiationEssenceTrack():
         if isinstance(newEssenceTrackDataRate, PB_Element):
             self.essenceTrackDataRate = newEssenceTrackDataRate
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
     def getEssenceTrackFrameRate(self):
         """
@@ -2499,7 +2544,7 @@ class InstantiationEssenceTrack():
         if isinstance(newEssenceTrackFrameRate, PB_Element):
             self.essenceTrackFrameRate = newEssenceTrackFrameRate
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
     def getEssenceTrackPlaybackSpeed(self):
         """
@@ -2522,7 +2567,7 @@ class InstantiationEssenceTrack():
         if isinstance(newEssenceTrackPlaybackSpeed, PB_Element):
             self.essenceTrackPlaybackSpeed = newEssenceTrackPlaybackSpeed
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
     def getEssenceTrackSamplingRate(self):
         """
@@ -2545,7 +2590,7 @@ class InstantiationEssenceTrack():
         if isinstance(newEssenceTrackSamplingRate, PB_Element):
             self.essenceTrackSamplingRate = newEssenceTrackSamplingRate
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
     def getEssenceTrackBitDepth(self):
         """
@@ -2568,7 +2613,7 @@ class InstantiationEssenceTrack():
         if isinstance(newEssenceTrackBitDepth, PB_Element):
             self.essenceTrackBitDepth = newEssenceTrackBitDepth
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
     def getEssenceTrackFrameSize(self):
         """
@@ -2591,7 +2636,7 @@ class InstantiationEssenceTrack():
         if isinstance(newEssenceTrackFrameSize, PB_Element):
             self.essenceTrackFrameSize = newEssenceTrackFrameSize
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
     def getEssenceTrackAspectRatio(self):
         """
@@ -2614,7 +2659,7 @@ class InstantiationEssenceTrack():
         if isinstance(newEssenceTrackAspectRatio, PB_Element):
             self.essenceTrackAspectRatio = newEssenceTrackAspectRatio
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
     def getEssenceTrackTimeStart(self):
         """
@@ -2637,7 +2682,7 @@ class InstantiationEssenceTrack():
         if isinstance(newEssenceTrackTimeStart, PB_Element):
             self.essenceTrackTimeStart = newEssenceTrackTimeStart
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
     def getEssenceTrackDuration(self):
         """
@@ -2659,7 +2704,7 @@ class InstantiationEssenceTrack():
         if isinstance(newEssenceTrackDuration, PB_Element):
             self.essenceTrackDuration = newEssenceTrackDuration
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
     def getEssenceTrackLanguage(self):
         """
@@ -2683,7 +2728,7 @@ class InstantiationEssenceTrack():
         if isinstance(newEssenceTrackLanguage, PB_Element):
             self.essenceTrackLanguage = newEssenceTrackLanguage
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
     def getEssenceTrackAnnotation(self):
         """
@@ -2707,7 +2752,7 @@ class InstantiationEssenceTrack():
         if isinstance(newEssenceTrackAnnotation, PB_Element):
             self.essenceTrackAnnotation = newEssenceTrackAnnotation
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
     def getEssenceTrackExtension(self):
         """
@@ -2731,7 +2776,7 @@ class InstantiationEssenceTrack():
         if isinstance(newEssenceTrackExtension, PB_Element):
             self.essenceTrackExtension = newEssenceTrackExtension
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
 
 # __________________________________
@@ -2793,7 +2838,7 @@ class InstantiationRelation():
         if isinstance(newInstantiationRelationType, PB_Element):
             self.instantiationRelationType = newInstantiationRelationType
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
     def getInstantiationRelationIdentifier(self):
         """
@@ -2816,36 +2861,81 @@ class InstantiationRelation():
         if isinstance(newInstantiationRelationIdentifier, PB_Element):
             self.instantiationRelationIdentifier = newInstantiationRelationIdentifier
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
+
 
 class InstantiationRights():
+    """
+    Description: Instantiation Rights
+    URI:                http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationrights/
+    """
     def __init__(self):
+        """
+        @type           self.rightsSummary:                 list
+        @type           self.rightsLink:                    list
+        @type           self.rightsEmbedded:                list
+
+        :return:    None
+        """
         self.rightsSummary = []
         self.rightsLink = []
         self.rightsEmbedded = []
 
     def addRightsSummary(self, newRightsSummary):
+        """
+
+        :param          newRightsSummary:
+        :type           newRightsSummary: PB_Element
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerightssummary/rightssummary/
+        :return:        None
+        """
         if isinstance(newRightsSummary, PB_Element):
             self.rightsSummary.append(newRightsSummary)
 
-
     def getRightsSummary(self):
+        """
+        :return:
+        """
+
         return self.rightsSummary
 
     def addRightsLink(self, newRightsLink):
+        """
+
+        :param          newRightsLink:
+        :type           newRightsLink: PB_Element
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerightssummary/rightslink/
+        :return:        None
+        """
+
         if isinstance(newRightsLink, PB_Element):
             self.rightsLink.append(newRightsLink)
         else:
-            raise ValueError
+            raise ValueError("Expected type: PB_Element")
 
     def getRightsLink(self):
+        """
+
+        :return:
+        """
+
         return self.rightsLink
 
     def addRightsEmbedded(self, newRightsEmbedded):
-        if isinstance(newRightsEmbedded):
+        """
+
+        :param          newRightsEmbedded:
+        :type           newRightsEmbedded: PB_Element
+        :Example Value: ""
+        :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerightssummary/rightsembedded/
+        :return:        None
+        """
+        if isinstance(newRightsEmbedded, PB_Element):
             self.rightsEmbedded.append(newRightsEmbedded)
         else:
-            raise ValueError
+            raise ValueError("Expected type: PB_Element")
 
     def getRightsEmbedded(self):
         return self.rightsEmbedded
@@ -2928,7 +3018,7 @@ class pbcoreExtension():
         if isinstance(newExtensionElement, PB_Element):
             self.extensionElement = newExtensionElement
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
     def getExtensionElement(self):
         """
@@ -2950,7 +3040,7 @@ class pbcoreExtension():
         if isinstance(newExtensionValue, PB_Element):
             self.extensionValue = newExtensionValue
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
     def getExtensionValue(self):
         """
@@ -2972,7 +3062,7 @@ class pbcoreExtension():
         if isinstance(newExtensionAuthorityUsed, PB_Element):
             self.extensionAuthorityUsed = newExtensionAuthorityUsed
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
     def getExtensionAuthorityUsed(self):
         """
@@ -2994,7 +3084,7 @@ class pbcoreExtension():
         if isinstance(newExtensionEmbedded, PB_Element):
             self.extensionEmbedded = newExtensionEmbedded
         else:
-            raise TypeError
+            raise TypeError("Expected type: PB_Element")
 
     def getExtensionEmbedded(self):
         """
@@ -3012,18 +3102,120 @@ class PB_Element():
     """
     :Description: Basic element tag
     """
+
     # TODO: Create Docstring for PB_Element
-    def __init__(self, tag=None, value=None):
+    # def __init__(self, tag=None, value=None): # use if other one doesn't work
+    def __init__(self, *args, **kwargs):
         """
 
         :param          tag:
         :param          value:
         :return:        None
         """
+        self.validTags = [
+            "contributor",
+            "contributorRole",
+            "coverage",
+            "coverageType",
+            "creator",
+            "creatorRole",
+            "essenceTrackAnnotation",
+            "essenceTrackAspectRatio",
+            "essenceTrackBitDepth",
+            "essenceTrackDataRate",
+            "essenceTrackDuration",
+            "essenceTrackEncoding",
+            "essenceTrackExtension",
+            "essenceTrackFrameRate",
+            "essenceTrackFrameSize",
+            "essenceTrackIdentifier",
+            "essenceTrackLanguage",
+            "essenceTrackPlaybackSpeed",
+            "essenceTrackSamplingRate",
+            "essenceTrackStandard",
+            "essenceTrackTimeStart",
+            "essenceTrackType",
+            "extensionAuthorityUsed",
+            "extensionElement",
+            "extensionEmbedded",
+            "extensionValue",
+            "extensionWrap",
+            "instantiationAlternativeModes",
+            "instantiationAnnotation",
+            "instantiationChannelConfiguration",
+            "instantiationColors",
+            "instantiationDataRate",
+            "instantiationDate",
+            "instantiationDigital",
+            "instantiationDimensions",
+            "instantiationDuration",
+            "instantiationEssenceTrack",
+            "instantiationExtension",
+            "instantiationFileSize",
+            "instantiationGenerations",
+            "instantiationIdentifier",
+            "instantiationLanguage",
+            "instantiationLocation",
+            "instantiationMediaType",
+            "instantiationPart",
+            "instantiationPhysical",
+            "instantiationRelation",
+            "instantiationRelationIdentifier",
+            "instantiationRelationType",
+            "instantiationRights",
+            "instantiationStandard",
+            "instantiationTimeStart",
+            "instantiationTracks",
+            "pbcoreAnnotation",
+            "pbcoreAssetDate",
+            "pbcoreAssetType",
+            "pbcoreAudienceLevel",
+            "pbcoreAudienceRating",
+            "pbcoreCollection",
+            "pbcoreContributor",
+            "pbcoreCoverage",
+            "pbcoreCreator",
+            "pbcoreDescription",
+            "pbcoreDescriptionDocument",
+            "pbcoreExtension",
+            "pbcoreGenre",
+            "pbcoreIdentifier",
+            "pbcoreInstantiation",
+            "pbcoreInstantiationDocument",
+            "pbcorePart",
+            "pbcorePublisher",
+            "pbcoreRelation",
+            "pbcoreRelationIdentifier",
+            "pbcoreRelationType",
+            "pbcoreRightsSummary",
+            "pbcoreSubject",
+            "pbcoreTitle",
+            "publisher",
+            "publisherRole",
+            "rightsEmbedded",
+            "rightsLink",
+            "rightsSummary"
+        ]
 
-        self.tag = tag
-        self.value = value
-        self.attribute = OrderedDict()
+        if kwargs:
+            if isinstance(kwargs["tag"], str):      # checks if the tag is a string
+                if kwargs["tag"] in self.validTags:
+                    self.tag = kwargs["tag"]
+                else:
+                    raise ValueError("Expected only PBCore elements. Received: ", kwargs["tag"])
+            else:
+                raise TypeError("Expected string. Received: " + type(kwargs["tag"]))
+            if isinstance(kwargs["value"], str):    # checks if the value is a string
+                self.value = kwargs["value"]
+            else:
+                raise TypeError("Expected string. Received: " + type(kwargs["value"]))
+            self.attribute = OrderedDict()
+        if args:
+            for arg in args:
+                if isinstance(arg[0], str) and isinstance(arg[1], str):     # checks if the attribute name and value are a string
+                    self.addAttribute(arg[0], arg[1])
+                else:
+                    raise ValueError
 
     def getAttribute(self):
         """
@@ -3035,18 +3227,37 @@ class PB_Element():
     def addAttribute(self, key, value):
         """
 
-        :param          key:
-        :param          value:
+        :param          key: name of the attribute
+        :param          value: value of the attribute
         :return:        None
         """
         # TODO: Create Docstring for addAttribute
 
         self.attribute[key] = value
 
+    def addAttributes(self, *args):
+        """
+
+        :param          args: Use a list in [attribute name, attribute value] format
+        :return:        None
+        """
+        # TODO: Create Docstring for addAttributes
+        if args:
+            for arg in args:
+                if not isinstance(arg, list):
+                    raise TypeError("Arguments to addAttributes must be in format [attribute name, attribute value]")
+            for arg in args:
+                if isinstance(arg[0], str) and isinstance(arg[1], str):
+                    self.addAttribute(arg[0], arg[1])
+                else:
+                    raise ValueError
+
+        # self.attribute[key] = value
+
     def deleteAttribute(self, key):
         """
 
-        :param          key:
+        :param          key: name of the attribute to be deleted
         :return:        None
         """
         # TODO: Create Docstring for deleteAttribute
