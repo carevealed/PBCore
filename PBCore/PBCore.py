@@ -28,7 +28,7 @@ from xml.dom import minidom
 #         XML = self._makeXML()
 #         return XML
 #
-#     def xmlString(self):
+#     def xml_string(self):
 #         XML = self._makeXML()
 #         return etree.tostring(XML)
 
@@ -52,14 +52,14 @@ class PBCore():
         self.extensions = None
         self.instantiation = None
 
-    def getIntellectualContent(self):
+    def get_IntellectualContent(self):
         """
 
         :return:
         """
         return self.intellectualContent
 
-    def setIntellectualContent(self, newIntellectualContent):
+    def set_IntellectualContent(self, newIntellectualContent):
         """
 
         :param          newIntellectualContent:
@@ -73,14 +73,14 @@ class PBCore():
         else:
             raise TypeError("setIntellectualContent expected type: pbcoreDescriptionDocument")
 
-    def getIntellectualProperty(self):
+    def get_IntellectualProperty(self):
         """
 
         :return:
         """
         return self.intellectualProperty
 
-    def setIntellectualProperty(self, newIntellectualProperty):
+    def set_IntellectualProperty(self, newIntellectualProperty):
         """
 
         :param          newIntellectualProperty:
@@ -94,14 +94,14 @@ class PBCore():
         else:
             raise TypeError("setIntellectualProperty expected type: IntellectualProperty")
 
-    def getextensions(self):
+    def get_extensions(self):
         """
 
         :return:
         """
         return self.extensions
 
-    def setextensions(self, newextensions):
+    def set_extensions(self, newextensions):
         """
 
         :param          newextensions:
@@ -115,14 +115,14 @@ class PBCore():
         else:
             raise TypeError("setextensions expected type: pbcoreExtension")
 
-    def getinstantiation(self):
+    def get_instantiation(self):
         """
 
         :return:
         """
         return self.instantiation
 
-    def setinstantiation(self, newinstantiation):
+    def set_instantiation(self, newinstantiation):
         """
 
         :param          newinstantiation:
@@ -188,7 +188,6 @@ class pbcoreDescriptionDocument():
     :URL: http://pbcore.org/elements/
     """
 
-    # @property
     def __init__(self):
         """
         @type           self.pbcoreAssetType:           PB_Element
@@ -230,7 +229,7 @@ class pbcoreDescriptionDocument():
         self.pbcorePublisher = []
         self.pbcoreRightsSummary = []
         self.pbcoreExtension = []
-        self.pbcorePart = None
+        self.pbcorePart = []
 
         # Valid attributes
         self.pbcoreDescriptionDocumentAttributesRequired = [
@@ -376,13 +375,13 @@ class pbcoreDescriptionDocument():
             "ref"                           # ( may be empty)
         ]
 
-    def getpbcoreAssetType(self):
+    def get_pbcoreAssetType(self):
         return self.pbcoreAssetType
 
-    def getpbcoreAssetTypeElement(self):
-        return self.pbcoreAssetType.getETreeElement()
+    def get_pbcoreAssetTypeElement(self):
+        return self.pbcoreAssetType.get_etree_element()
 
-    def setpbcoreAssetType(self, newpbcoreAssetType):
+    def set_pbcoreAssetType(self, newpbcoreAssetType):
         """
 
         :param          newpbcoreAssetType:
@@ -397,21 +396,21 @@ class pbcoreDescriptionDocument():
         else:
             raise TypeError("Expected Type: PB_Element")
 
-    def getpbcoreAssetDate(self):
+    def get_pbcoreAssetDate(self):
         """
 
         :return: str
         """
         return self.pbcoreAssetDate
 
-    def getpbcoreAssetDateElement(self):
+    def get_pbcoreAssetDateElement(self):
         """
 
         :return:    xml.etree.ElementTree.Element
         """
-        return self.pbcoreAssetDate.getETreeElement()
+        return self.pbcoreAssetDate.get_etree_element()
 
-    def addpbcoreAssetDate(self, newpbcoreAssetDate):
+    def add_pbcoreAssetDate(self, newpbcoreAssetDate):
         """
 
         :param          newpbcoreAssetDate:
@@ -427,14 +426,14 @@ class pbcoreDescriptionDocument():
         else:
             raise TypeError("Expected Type: PB_Element")
 
-    def getpbcoreIdentifier(self):
+    def get_pbcoreIdentifier(self):
         """
 
         :return:
         """
         return self.pbcoreIdentifier
 
-    def addpbcoreIdentifier(self, newIdentifier):
+    def add_pbcoreIdentifier(self, newIdentifier):
         """
 
         :param          newIdentifier:
@@ -450,14 +449,14 @@ class pbcoreDescriptionDocument():
         else:
             raise TypeError("Expected Type: PB_Element")
 
-    def getpbcoreTitle(self):
+    def get_pbcoreTitle(self):
         """
 
         :return: None
         """
         return self.pbcoreTitle
 
-    def addpbcoreTitle(self, newTitle):
+    def add_pbcoreTitle(self, newTitle):
         """
 
         :param          newTitle:
@@ -473,14 +472,14 @@ class pbcoreDescriptionDocument():
         else:
             raise TypeError("Expected Type: PB_Element")
 
-    def getpbcoreSubject(self):
+    def get_pbcoreSubject(self):
         """
 
         :return: None
         """
         return self.pbcoreSubject
 
-    def setpbcoreSubject(self, newpbcoreSubject):
+    def set_pbcoreSubject(self, newpbcoreSubject):
         """
 
         :param          newpbcoreSubject:
@@ -496,14 +495,14 @@ class pbcoreDescriptionDocument():
         else:
             raise TypeError("Expected Type: PB_Element")
 
-    def getpbcoreDescription(self):
+    def get_pbcoreDescription(self):
         """
 
         :return:
         """
         return self.pbcoreDescription
 
-    def addpbcoreDescription(self, newDescription):
+    def add_pbcoreDescription(self, newDescription):
         """
 
         :param          newDescription:
@@ -518,21 +517,21 @@ class pbcoreDescriptionDocument():
         else:
             raise TypeError("Expected Type: PB_Element")
 
-    def getpbcoreGenre(self):
+    def get_pbcoreGenre(self):
         """
 
         :return:    None
         """
         return self.pbcoreGenre
 
-    def getpbcoreGenreElement(self):
+    def get_pbcoreGenreElement(self):
         """
 
         :return:    xml.etree.ElementTree.Element
         """
-        return self.pbcoreGenre.getETreeElement()
+        return self.pbcoreGenre.get_etree_element()
 
-    def setpbcoreGenre(self, newpbcoreGenre):
+    def set_pbcoreGenre(self, newpbcoreGenre):
         """
 
         :param          newpbcoreGenre:
@@ -548,14 +547,14 @@ class pbcoreDescriptionDocument():
         else:
             raise TypeError("Expected Type: PB_Element")
 
-    def getpbcoreRelation(self):
+    def get_pbcoreRelation(self):
         """
 
         :return:
         """
         return self.pbcoreRelation
 
-    def addpbcoreRelation(self, newpbcoreRelation):
+    def add_pbcoreRelation(self, newpbcoreRelation):
         """
 
         :param          newpbcoreRelation:
@@ -571,14 +570,14 @@ class pbcoreDescriptionDocument():
         else:
             raise TypeError("Expected Type: pbcoreRelation")
 
-    def getpbcoreCoverage(self):
+    def get_pbcoreCoverage(self):
         """
 
         :return:
         """
         return self.pbcoreCoverage
 
-    def addpbcoreCoverage(self, newpbcoreCoverage):
+    def add_pbcoreCoverage(self, newpbcoreCoverage):
         """
 
         :param          newpbcoreCoverage:
@@ -594,21 +593,21 @@ class pbcoreDescriptionDocument():
         else:
             raise TypeError("Expected type: pbcoreCoverage")
 
-    def getpbcoreAudienceLevel(self):
+    def get_pbcoreAudienceLevel(self):
         """
 
         :return:
         """
         return self.pbcoreAudienceLevel
 
-    def getpbcoreAudienceLevelElement(self):
+    def get_pbcoreAudienceLevelElement(self):
         """
 
         :return:    xml.etree.ElementTree.Element
         """
-        return self.pbcoreAudienceLevel.getETreeElement()
+        return self.pbcoreAudienceLevel.get_etree_element()
 
-    def setpbcoreAudienceLevel(self, newpbcoreAudienceLevel):
+    def set_pbcoreAudienceLevel(self, newpbcoreAudienceLevel):
         """
 
         :param          newpbcoreAudienceLevel:
@@ -624,21 +623,21 @@ class pbcoreDescriptionDocument():
         else:
             raise TypeError("Expected type: PB_Element")
 
-    def getpbcoreAudienceRating(self):
+    def get_pbcoreAudienceRating(self):
         """
 
         :return:    None
         """
         return self.pbcoreAudienceRating
 
-    def getpbcoreAudienceRatingElement(self):
+    def get_pbcoreAudienceRatingElement(self):
         """
 
         :return:    xml.etree.ElementTree.Element
         """
-        return self.pbcoreAudienceRating.getETreeElement()
+        return self.pbcoreAudienceRating.get_etree_element()
 
-    def setpbcoreAudienceRating(self, newpbcoreAudienceRating):
+    def set_pbcoreAudienceRating(self, newpbcoreAudienceRating):
         """
 
         :param          newpbcoreAudienceRating:
@@ -654,21 +653,21 @@ class pbcoreDescriptionDocument():
         else:
             raise TypeError("Expected type: PB_Element")
 
-    def getpbcoreAnnotation(self):
+    def get_pbcoreAnnotation(self):
         """
 
         :return:
         """
         return self.pbcoreAnnotation
 
-    def getpbcoreAnnotationElement(self):
+    def get_pbcoreAnnotationElement(self):
         """
 
         :return:    xml.etree.ElementTree.Element
         """
-        return self.pbcoreAnnotation.getETreeElement()
+        return self.pbcoreAnnotation.get_etree_element()
 
-    def setpbcoreAnnotation(self, newpbcoreAnnotation):
+    def set_pbcoreAnnotation(self, newpbcoreAnnotation):
         """
 
         :param          newpbcoreAnnotation:
@@ -677,21 +676,21 @@ class pbcoreDescriptionDocument():
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreAnnotation
         :return:        None
         """
-        # TODO: Give example value for setpbcoreAnnotation
-        # TODO: Create Docstring for setpbcoreAnnotation
+        # TODO: Give example value for set_pbcoreAnnotation
+        # TODO: Create Docstring for set_pbcoreAnnotation
         if isinstance(newpbcoreAnnotation, PB_Element):
             self.pbcoreAnnotation = newpbcoreAnnotation
         else:
             raise TypeError("Expected type: PB_Element")
 
-    def getpbcoreCreator(self):
+    def get_pbcoreCreator(self):
         """
 
         :return:
         """
         return self.pbcoreCreator
 
-    def addpbcoreCreator(self, newpbcoreCreator):
+    def add_pbcoreCreator(self, newpbcoreCreator):
         """
 
         :param          newpbcoreCreator:
@@ -706,14 +705,14 @@ class pbcoreDescriptionDocument():
         else:
             raise TypeError("Expected Type: pbcoreCreator")
 
-    def getpbcoreContributor(self):
+    def get_pbcoreContributor(self):
         """
 
         :return:
         """
         return self.pbcoreContributor
 
-    def addpbcoreContributor(self, newpbcoreContributor):
+    def add_pbcoreContributor(self, newpbcoreContributor):
         """
 
         :param          newpbcoreContributor:
@@ -728,7 +727,7 @@ class pbcoreDescriptionDocument():
         else:
             raise TypeError("Expected Type: pbcoreContributor")
 
-    def getpbcorePublisher(self):
+    def get_pbcorePublisher(self):
         """
 
         :return:
@@ -736,7 +735,7 @@ class pbcoreDescriptionDocument():
         # TODO: Create Docstring for getpbcorePublisher
         return self.pbcorePublisher
 
-    def addpbcorePublisher(self, newpbcorePublisher):
+    def add_pbcorePublisher(self, newpbcorePublisher):
         """
 
         :param          newpbcorePublisher:
@@ -751,7 +750,7 @@ class pbcoreDescriptionDocument():
         else:
             raise TypeError("Expected Type: pbcorePublisher")
 
-    def getpbcoreRightsSummary(self):
+    def get_pbcoreRightsSummary(self):
         """
 
         :return:
@@ -759,7 +758,7 @@ class pbcoreDescriptionDocument():
         # TODO: Create Docstring for getpbcoreRightsSummary
         return self.pbcoreRightsSummary
 
-    def addpbcoreRightsSummary(self, newpbcoreRightsSummary):
+    def add_pbcoreRightsSummary(self, newpbcoreRightsSummary):
         """
 
         :param          newpbcoreRightsSummary:
@@ -779,29 +778,29 @@ class pbcoreDescriptionDocument():
     def _makeXML(self):
         branch = Element("pbcoreDescriptionDocument")
         if self.pbcoreAssetType:
-            branch.append(self.getpbcoreAssetTypeElement())
+            branch.append(self.get_pbcoreAssetTypeElement())
 
         if self.pbcoreAssetDate:
             for node in self.pbcoreAssetDate:
-                branch.append(node.getETreeElement())
+                branch.append(node.get_etree_element())
 
         if self.pbcoreIdentifier:
             for node in self.pbcoreIdentifier:
-                branch.append(node.getETreeElement())
+                branch.append(node.get_etree_element())
 
         if self.pbcoreTitle:
             for node in self.pbcoreTitle:
-                branch.append(node.getETreeElement())
+                branch.append(node.get_etree_element())
 
         if self.pbcoreSubject:
-            branch.append(self.getpbcoreAssetTypeElement())
+            branch.append(self.get_pbcoreAssetTypeElement())
 
         if self.pbcoreDescription:
             for node in self.pbcoreDescription:
-                branch.append(node.getETreeElement())
+                branch.append(node.get_etree_element())
 
         if self.pbcoreGenre:
-            branch.append(self.getpbcoreGenre())
+            branch.append(self.get_pbcoreGenre())
 
         if self.pbcoreRelation:
             for node in self.pbcoreRelation:
@@ -844,10 +843,10 @@ class pbcoreDescriptionDocument():
                 branch.append(node.xml)
 
         if self.pbcorePart:
-            for node in self.pbcorePart.getNode:
-                branch.append(node)
-        # branch.append(self.pbcoreRelationIdentifier.getETreeElement())
-        # branch.append(self.pbcoreRelationType.getETreeElement())
+            for node in self.pbcorePart:
+                branch.append(node.xml())
+        # branch.append(self.pbcoreRelationIdentifier.get_etree_element())
+        # branch.append(self.pbcoreRelationType.get_etree_element())
         return branch
 
     def xml(self):
@@ -856,12 +855,12 @@ class pbcoreDescriptionDocument():
         XML = self._makeXML()
         return XML
 
-    def xmlString(self):
+    def xml_string(self):
         XML = self._makeXML()
 
         return etree.tostring(XML)
 
-    def addpbcoreExtension(self, newpbcoreExtension):
+    def add_pbcore_extension(self, newpbcoreExtension):
         """
 
         :param          newpbcoreExtension:
@@ -876,7 +875,7 @@ class pbcoreDescriptionDocument():
         else:
             raise TypeError("Expected type: pbcoreExtension")
 
-    def getpbcoreExtension(self):
+    def get_pbcore_extension(self):
         """
 
         :return:
@@ -884,15 +883,15 @@ class pbcoreDescriptionDocument():
 
         return self.pbcoreExtension
 
-    def getpbcoreExtensionElement(self):
+    def get_pbcore_extension_element(self):
         """
 
         :return:    xml.etree.ElementTree.Element
         """
 
-        return self.pbcoreExtension.getETreeElement()
+        return self.pbcoreExtension.get_etree_element()
 
-    def setpbcorePart(self, newpbcorePart):
+    def add_pbcore_part(self, newpbcorePart):
         """
 
         :param          newpbcorePart:
@@ -903,12 +902,12 @@ class pbcoreDescriptionDocument():
         """
         # TODO: Add example of pbcorePart
 
-        if isinstance(newpbcorePart, PB_Element):
-            self.pbcorePart = newpbcorePart
+        if isinstance(newpbcorePart, CAVPP_Part):
+            self.pbcorePart.append(newpbcorePart)
         else:
-            raise TypeError("Expected type: PB_Element")
+            raise TypeError("Expected type: PB_Element. Recieved: " + str(type(newpbcorePart)))
 
-    def getpbcorePart(self):
+    def get_pbcore_part(self):
         """
 
         :return:
@@ -943,14 +942,14 @@ class pbcoreRelation():
         ]
 
 
-    def getpbcoreRelationType(self):
+    def get_pbcoreRelationType(self):
         """
 
         :return:
         """
         return self.pbcoreRelationType
 
-    def setpbcoreRelationType(self, newpbcoreRelationType):
+    def set_pbcoreRelationType(self, newpbcoreRelationType):
         """
 
         :param          newpbcoreRelationType:
@@ -967,14 +966,14 @@ class pbcoreRelation():
         else:
             raise TypeError("Expected type: PB_Element")
 
-    def getpbcoreRelationIdentifier(self):
+    def get_pbcoreRelationIdentifier(self):
         """
 
         :return:
         """
         return self.pbcoreRelationIdentifier
 
-    def setpbcoreRelationIdentifier(self, newpbcoreRelationIdentifier):
+    def set_pbcoreRelationIdentifier(self, newpbcoreRelationIdentifier):
         """
 
         :param          newpbcoreRelationIdentifier:
@@ -983,7 +982,7 @@ class pbcoreRelation():
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerelation/pbcoreRelationIdentifier/
         :return:        None
         """
-        # TODO: Create Docstring for setpbcoreRelationIdentifier
+        # TODO: Create Docstring for set_pbcoreRelationIdentifier
         if isinstance(newpbcoreRelationIdentifier, PB_Element):
             self.pbcoreRelationIdentifier = newpbcoreRelationIdentifier
         else:
@@ -992,8 +991,8 @@ class pbcoreRelation():
     def _makeXML(self):
         branch = Element("pbcoreRelation")
         # branch.append(etree.tostring(self.pbcoreRelationType))
-        branch.append(self.pbcoreRelationIdentifier.getETreeElement())
-        branch.append(self.pbcoreRelationType.getETreeElement())
+        branch.append(self.pbcoreRelationIdentifier.get_etree_element())
+        branch.append(self.pbcoreRelationType.get_etree_element())
         return branch
 
     def xml(self):
@@ -1002,7 +1001,7 @@ class pbcoreRelation():
         XML = self._makeXML()
         return XML
 
-    def xmlString(self):
+    def xml_string(self):
         XML = self._makeXML()
         return etree.tostring(XML)
 
@@ -1036,14 +1035,14 @@ class pbcoreCoverage():
             "timeAnnotation"                # (text, may be empty)
         ]
 
-    def getCoverage(self):
+    def get_coverage(self):
         """
 
         :return:
         """
         return self.coverage
 
-    def setCoverage(self, newCoverage):
+    def set_coverage(self, newCoverage):
 
         """
 
@@ -1053,21 +1052,21 @@ class pbcoreCoverage():
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecoverage/coverage/
         :return:        None
         """
-        # TODO: Give example value for setCoverage
-        # TODO: Create Docstring for setCoverage
+        # TODO: Give example value for set_coverage
+        # TODO: Create Docstring for set_coverage
         if isinstance(newCoverage, PB_Element):
             self.coverage = newCoverage
         else:
             raise TypeError("Expected type: PB_Element")
 
-    def getCoverageType(self):
+    def get_coverageType(self):
         """
 
         :return:
         """
         return self.coverageType
 
-    def setCoverageType(self, newCoverageType):
+    def set_coverageType(self, newCoverageType):
         """
 
         :param          newCoverageType:
@@ -1076,8 +1075,8 @@ class pbcoreCoverage():
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecoverage/coveragetype/
         :return:        None
         """
-        # TODO: Give example value for setCoverageType
-        # TODO: Create Docstring for setCoverageType
+        # TODO: Give example value for set_coverageType
+        # TODO: Create Docstring for set_coverageType
         if isinstance(newCoverageType, PB_Element):
             self.coverageType = newCoverageType
         else:
@@ -1142,14 +1141,14 @@ class pbcoreCreator():
             "annotation"                    # (text, may be empty)
         ]
 
-    def getCreator(self):
+    def get_creator(self):
         """
 
         :return:
         """
         return self.creator
 
-    def setCreator(self, newCreator):
+    def set_creator(self, newCreator):
         """
 
         :param          newCreator:
@@ -1158,20 +1157,20 @@ class pbcoreCreator():
         :Example Value: Unknown
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecreator/creator/
         """
-        # TODO: Create Docstring for setCreator
+        # TODO: Create Docstring for set_creator
         if isinstance(newCreator, PB_Element):
             self.creator = newCreator
         else:
             raise TypeError("Expected type: PB_Element. Got", type(newCreator))
 
-    def getCreatorRole(self):
+    def get_creatorRole(self):
         """
 
         :return:
         """
         return self.creatorRole
 
-    def addCreatorRole(self, newCreatorRole):
+    def add_creatorRole(self, newCreatorRole):
         """
 
         :param          newCreatorRole:
@@ -1190,9 +1189,9 @@ class pbcoreCreator():
         branch = Element("pbcoreCreator")
         # branch.append(etree.tostring(self.pbcoreRelationType))
 
-        branch.append(self.creator.getETreeElement())
+        branch.append(self.creator.get_etree_element())
         for role in self.creatorRole:
-            branch.append(role.getETreeElement())
+            branch.append(role.get_etree_element())
         return branch
 
     def xml(self):
@@ -1201,7 +1200,7 @@ class pbcoreCreator():
         XML = self._makeXML()
         return XML
 
-    def xmlString(self):
+    def xml_string(self):
         XML = self._makeXML()
         return etree.tostring(XML)
 
@@ -1248,7 +1247,7 @@ class pbcoreContributor:
 
         ]
 
-    def setContributor(self, newContributor):
+    def set_contributor(self, newContributor):
         """
 
         :param          newContributor:
@@ -1258,20 +1257,20 @@ class pbcoreContributor:
         :return:        None
         """
         # TODO: Give example of contributor
-        # TODO: Create Docstring for setContributor
+        # TODO: Create Docstring for set_contributor
         if isinstance(newContributor, PB_Element):
             self.contributor = newContributor
         else:
             raise TypeError("Expected type: PB_Element")
 
-    def getContributor(self):
+    def get_contributor(self):
         """
 
         :return:
         """
         return self.contributor
 
-    def setContributoRoler(self, newContributoRole):
+    def set_contributorRole(self, newContributoRole):
         """
 
         :param          newContributoRole:
@@ -1281,13 +1280,13 @@ class pbcoreContributor:
         :return:        None
         """
         # TODO: Give example of contributorRole
-        # TODO: Create Docstring for setContributoRoler
+        # TODO: Create Docstring for set_contributorRole
         if isinstance(newContributoRole, PB_Element):
             self.contributorRole = newContributoRole
         else:
             raise TypeError("Expected type: PB_Element")
 
-    def getContributoRoler(self):
+    def get_contributorRole(self):
         """
 
         :return:
@@ -1336,14 +1335,14 @@ class pbcorePublisher():
 
 
 
-    def getPublisher(self):
+    def get_publisher(self):
         """
         :return:
         """
 
         return self.publisher
 
-    def setPublisher(self, newPublisher):
+    def set_publisher(self, newPublisher):
         """
         :param          newPublisher:
         :type           newPublisher:   PB_Element
@@ -1353,19 +1352,19 @@ class pbcorePublisher():
         """
 
         # TODO: Give example of publisher
-        # TODO: Create Docstring for setPublisher
+        # TODO: Create Docstring for set_publisher
         if isinstance(newPublisher, PB_Element):
             self.publisher = newPublisher
         else:
             raise TypeError("Expected type: PB_Element")
 
-    def getPublisherRole(self):
+    def get_publisherRole(self):
         """
         :return:
         """
         return self.publisherRole
 
-    def setPublisherRole(self, newPublisherRole):
+    def set_publisherRole(self, newPublisherRole):
         """
         :param          newPublisherRole:
         :type           newPublisherRole:   PB_Element
@@ -1374,7 +1373,7 @@ class pbcorePublisher():
         :return:        None
         """
         # For example: "" TODO: Give example of publisherRole
-        # TODO: Create Docstring for setPublisherRole
+        # TODO: Create Docstring for set_publisherRole
         if isinstance(newPublisherRole, PB_Element):
             self.publisherRole = newPublisherRole
         else:
@@ -1430,14 +1429,14 @@ class pbcoreRightsSummary():
             "annotation"                # (text, may be empty)
         ]
 
-    def getRightsSummary(self):
+    def get_rightsSummary(self):
         """
 
         :return:
         """
         return self.rightsSummary
 
-    def addRightsSummary(self, newRightsSummary):
+    def add_rightsSummary(self, newRightsSummary):
         """
 
         :param          newRightsSummary:
@@ -1446,22 +1445,22 @@ class pbcoreRightsSummary():
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerightssummary/rightssummary/
         """
-        # TODO: Give example of addRightsSummary
-        # TODO: Create Docstring for addRightsSummary
+        # TODO: Give example of add_rightsSummary
+        # TODO: Create Docstring for add_rightsSummary
 
         if isinstance(newRightsSummary, PB_Element):
             self.rightsSummary.append(newRightsSummary)
         else:
             raise TypeError("Expected type: PB_Element")
 
-    def getRightsLink(self):
+    def get_rightsLink(self):
         """
 
         :return:
         """
         return self.rightsLink
 
-    def addRightsLink(self, newRightsLink):
+    def add_rightsLink(self, newRightsLink):
         """
 
         :param          newRightsLink:
@@ -1478,14 +1477,14 @@ class pbcoreRightsSummary():
         else:
             raise TypeError("Expected type: PB_Element")
 
-    def getRightsEmbedded(self):
+    def get_rightsEmbedded(self):
         """
 
         :return:
         """
         return self.rightsEmbedded
 
-    def addRightsEmbedded(self, newRightsEmbedded):
+    def add_rightsEmbedded(self, newRightsEmbedded):
         """
 
         :param          newRightsEmbedded:
@@ -1505,13 +1504,13 @@ class pbcoreRightsSummary():
         branch = Element("pbcoreRightsSummary")
         # branch.append(etree.tostring(self.pbcoreRelationType))
         for rightsSum in self.rightsSummary:
-            branch.append(rightsSum.getETreeElement())
+            branch.append(rightsSum.get_etree_element())
 
         for link in self.rightsLink:
-            branch.append(link.getETreeElement())
+            branch.append(link.get_etree_element())
 
         for rightsEmb in self.rightsEmbedded:
-            branch.append(rightsEmb.getETreeElement())
+            branch.append(rightsEmb.get_etree_element())
         return branch
 
     def xml(self):
@@ -1520,7 +1519,7 @@ class pbcoreRightsSummary():
         XML = self._makeXML()
         return XML
 
-    def xmlString(self):
+    def xml_string(self):
         XML = self._makeXML()
         return etree.tostring(XML)
 
@@ -1528,6 +1527,66 @@ class pbcoreRightsSummary():
 ##################################
 # instantiation classes
 ##################################
+class CAVPP_Part():
+    def __init__(self):
+        self.pbcoreIdentifier = []
+        self.pbcoreTitle = None
+        self.pbcoreDescription = []
+        self.pbcoreInstantiation = []
+
+    def get_pbcoreIdentifier(self):
+        return self.pbcoreIdentifier
+
+    def add_pbcoreIdentifier(self, newpbcoreIdentifier):
+        if isinstance(newpbcoreIdentifier, PB_Element):
+            self.pbcoreIdentifier.append(newpbcoreIdentifier)
+
+    def get_pbcoreTitle(self):
+        return self.pbcoreTitle
+
+    def set_pbcoreTitle(self, newpbcoreTitle):
+        if isinstance(newpbcoreTitle, PB_Element):
+            self.pbcoreTitle = newpbcoreTitle
+
+    def get_pbcoreDescription(self):
+        return self.pbcoreDescription
+
+    def add_pbcoreDescription(self, newpbcoreDescription):
+        if isinstance(newpbcoreDescription, PB_Element):
+            self.pbcoreDescription.append(newpbcoreDescription)
+
+    def get_pbcoreInstantiation(self):
+        return self.pbcoreInstantiation
+
+    def add_pbcoreInstantiation(self, newpbcoreInstantiation):
+        if isinstance(newpbcoreInstantiation, pbcoreInstantiation):
+            self.pbcoreInstantiation.append(newpbcoreInstantiation)
+
+    def _makeXML(self):
+        branch = Element("pbcorePart")
+        # branch.append(etree.tostring(self.pbcoreRelationType))
+        for pbID in self.pbcoreIdentifier:
+            branch.append(pbID.get_etree_element())
+
+        # for pbTitle in self.pbcoreTitle:
+        branch.append(self.pbcoreTitle.get_etree_element())
+
+        for pbDescrip in self.pbcoreDescription:
+            branch.append(pbDescrip.get_etree_element())
+
+        for pbInst in self.pbcoreInstantiation:
+            branch.append(pbInst.xml())
+        return branch
+
+    def xml(self):
+
+        # branch = etree.ElementTree(self.pbcoreRelationType)
+        XML = self._makeXML()
+        return XML
+
+    def xml_string(self):
+        XML = self._makeXML()
+        return etree.tostring(XML)
 
 class pbcoreInstantiation():
     # TODO: Create Docstring for pbcoreInstantiation
@@ -1556,8 +1615,8 @@ class pbcoreInstantiation():
         @type           self.instantiationChannelConfiguration:     PB_Element
         @type           self.instantiationLanguage:                 PB_Element
         @type           self.instantiationAlternativeModes:         PB_Element
-        @type           self.InstantiationEssenceTrack:             PB_Element
-        @type           self.InstantiationRelation:                 PB_Element
+        @type           self.instantiationEssenceTrack:             PB_Element
+        @type           self.instantiationRelation:                 PB_Element
         @type           self.instantiationAnnotation:               PB_Element
         @type           self.instantiationPart:                     PB_Element
         @type           self.instantiationExtension:                PB_Element
@@ -1569,8 +1628,8 @@ class pbcoreInstantiation():
         # For example: "Physical Asset" instantiationAssetType
 
         self.instantiationIdentifier = []
-        self.instantiationDate = None
-        self.instantiationDimensions = None
+        self.instantiationDate = []
+        self.instantiationDimensions = []
         self.instantiationPhysical = None
         self.instantiationDigital = None
         self.instantiationStandard = None
@@ -1716,10 +1775,10 @@ class pbcoreInstantiation():
             "timeAnnotation"                # (text, may be empty)
         ]
 
-    def getInstantiationIdentifier(self):
+    def get_instantiationIdentifier(self):
         return self.instantiationIdentifier
 
-    def addInstantiationIdentifier(self, newInstantiationIdentifier):
+    def add_instantiationIdentifier(self, newInstantiationIdentifier):
         """
 
         :param          newInstantiationIdentifier:
@@ -1734,14 +1793,14 @@ class pbcoreInstantiation():
         else:
             raise TypeError
 
-    def getInstantiationDate(self):
+    def get_instantiationDate(self):
         """
 
-        :return:
+        :return:        list
         """
         return self.instantiationDate
 
-    def setInstantiationDate(self, newInstantiationDate):
+    def add_instantiationDate(self, newInstantiationDate):
         """
 
         :param          newInstantiationDate:
@@ -1752,18 +1811,18 @@ class pbcoreInstantiation():
         """
         # TODO: Create Docstring for setInstantiationDate
         if isinstance(newInstantiationDate, PB_Element):
-            self.instantiationDate = newInstantiationDate
+            self.instantiationDate.append(newInstantiationDate)
         else:
             raise TypeError
 
-    def getInstantiationDimensions(self):
+    def get_instantiationDimensions(self):
         """
 
-        :return:
+        :return:        list
         """
         return self.instantiationDimensions
 
-    def setInstantiationDimensions(self, newInstantiationDimensions):
+    def add_instantiationDimensions(self, newInstantiationDimensions):
         """
 
         :param          newInstantiationDimensions:
@@ -1775,18 +1834,18 @@ class pbcoreInstantiation():
         # TODO: Give example instantiationDimensions
         # TODO: Create Docstring for setInstantiationDimensions
         if isinstance(newInstantiationDimensions, PB_Element):
-            self.instantiationDimensions = newInstantiationDimensions
+            self.instantiationDimensions.append(newInstantiationDimensions)
         else:
             raise TypeError
 
-    def getInstantiationPhysical(self):
+    def get_instantiationPhysical(self):
         """
 
         :return:
         """
         return self.instantiationPhysical
 
-    def setInstantiationPhysical(self, newInstantiationPhysical):
+    def set_instantiationPhysical(self, newInstantiationPhysical):
         """
 
         :param          newInstantiationPhysical:
@@ -1795,20 +1854,20 @@ class pbcoreInstantiation():
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationPhysical/
         """
-        # TODO: Create Docstring for setInstantiationPhysical
+        # TODO: Create Docstring for set_instantiationPhysical
         if isinstance(newInstantiationPhysical, PB_Element):
             self.instantiationPhysical = newInstantiationPhysical
         else:
             raise TypeError
 
-    def getInstantiationDigital(self):
+    def get_instantiationDigital(self):
         """
 
         :return:
         """
         return self.instantiationDigital
 
-    def setInstantiationDigital(self, newInstantiationDigital):
+    def set_instantiationDigital(self, newInstantiationDigital):
         """
 
         :param          newInstantiationDigital:
@@ -1823,14 +1882,14 @@ class pbcoreInstantiation():
         else:
             raise TypeError
 
-    def getInstantiationStandard(self):
+    def get_instantiationStandard(self):
         """
 
         :return:
         """
         return self.instantiationStandard
 
-    def setInstantiationStandard(self, newInstantiationStandard):
+    def set_instantiationStandard(self, newInstantiationStandard):
         """
 
         :param          newInstantiationStandard:
@@ -1839,21 +1898,21 @@ class pbcoreInstantiation():
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationStandard/
         """
-        # TODO: Create Docstring for setInstantiationStandard
+        # TODO: Create Docstring for set_instantiationStandard
 
         if isinstance(newInstantiationStandard, PB_Element):
             self.instantiationStandard = newInstantiationStandard
         else:
             raise TypeError
 
-    def getInstantiationLocation(self):
+    def get_instantiationLocation(self):
         """
 
         :return:
         """
         return self.instantiationLocation
 
-    def setInstantiationLocation(self, newInstantiationLocation):
+    def set_instantiationLocation(self, newInstantiationLocation):
         """
 
         :param          newInstantiationLocation:
@@ -1862,21 +1921,21 @@ class pbcoreInstantiation():
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationLocation/
         """
-        # TODO: Create Docstring for setInstantiationLocation
+        # TODO: Create Docstring for set_instantiationLocation
 
         if isinstance(newInstantiationLocation, PB_Element):
             self.instantiationLocation = newInstantiationLocation
         else:
             raise TypeError
 
-    def getInstantiationMediaType(self):
+    def get_instantiationMediaType(self):
         """
 
         :return:
         """
         return self.instantiationMediaType
 
-    def setInstantiationMediaType(self, newInstantiationMediaType):
+    def set_instantiationMediaType(self, newInstantiationMediaType):
         """
 
         :param          newInstantiationMediaType:
@@ -1885,21 +1944,21 @@ class pbcoreInstantiation():
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationMediaType/
         """
-        # TODO: Create Docstring for setInstantiationMediaType
+        # TODO: Create Docstring for set_instantiationMediaType
 
         if isinstance(newInstantiationMediaType, PB_Element):
             self.instantiationMediaType = newInstantiationMediaType
         else:
             raise TypeError
 
-    def getInstantiationGenerations(self):
+    def get_instantiationGenerations(self):
         """
 
         :return:
         """
         return self.instantiationGenerations
 
-    def setInstantiationGenerations(self, newInstantiationGenerations):
+    def set_instantiationGenerations(self, newInstantiationGenerations):
         """
 
         :param          newInstantiationGenerations:
@@ -1908,20 +1967,20 @@ class pbcoreInstantiation():
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationGenerations/
         """
-        # TODO: Create Docstring for setInstantiationGenerations
+        # TODO: Create Docstring for set_instantiationGenerations
         if isinstance(newInstantiationGenerations, PB_Element):
             self.instantiationGenerations = newInstantiationGenerations
         else:
             raise TypeError
 
-    def getInstantiationFileSize(self):
+    def get_instantiationFileSize(self):
         """
 
         :return:
         """
         return self.instantiationFileSize
 
-    def setInstantiationFileSize(self, newInstantiationFileSize):
+    def set_instantiationFileSize(self, newInstantiationFileSize):
         """
 
         :param          newInstantiationFileSize:
@@ -1936,14 +1995,14 @@ class pbcoreInstantiation():
         else:
             raise TypeError
 
-    def getInstantiationTimeStart(self):
+    def get_instantiationTimeStart(self):
         """
 
         :return:
         """
         return self.instantiationTimeStart
 
-    def setInstantiationTimeStart(self, newInstantiationTimeStart):
+    def set_instantiationTimeStart(self, newInstantiationTimeStart):
         """
 
         :param          newInstantiationTimeStart:
@@ -1959,14 +2018,14 @@ class pbcoreInstantiation():
         else:
             raise TypeError
 
-    def getInstantiationDuration(self):
+    def get_instantiationDuration(self):
         """
 
         :return:
         """
         return self.instantiationDuration
 
-    def setInstantiationDuration(self, newInstantiationDuration):
+    def set_instantiationDuration(self, newInstantiationDuration):
         """
 
         :param          newInstantiationDuration:
@@ -1975,21 +2034,21 @@ class pbcoreInstantiation():
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationDuration/
         """
-        # TODO: Create Docstring for setInstantiationDuration
+        # TODO: Create Docstring for set_instantiationDuration
 
         if isinstance(newInstantiationDuration, PB_Element):
             self.instantiationDuration = newInstantiationDuration
         else:
             raise TypeError
 
-    def getInstantiationDataRate(self):
+    def get_instantiationDataRate(self):
         """
 
         :return:
         """
         return self.instantiationDataRate
 
-    def setInstantiationDataRate(self, newInstantiationDataRate):
+    def set_instantiationDataRate(self, newInstantiationDataRate):
         """
 
         :param          newInstantiationDataRate:
@@ -1999,21 +2058,21 @@ class pbcoreInstantiation():
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationDataRate/
         """
         # TODO: Give example instantiationDataRate
-        # TODO: Create Docstring for setInstantiationDataRate
+        # TODO: Create Docstring for set_instantiationDataRate
 
         if isinstance(newInstantiationDataRate, PB_Element):
             self.instantiationDataRate = newInstantiationDataRate
         else:
             raise TypeError
 
-    def getInstantiationColors(self):
+    def get_instantiationColors(self):
         """
 
         :return:
         """
         return self.instantiationColors
 
-    def setInstantiationColors(self, newInstantiationColors):
+    def set_instantiationColors(self, newInstantiationColors):
         """
 
         :param          newInstantiationColors:
@@ -2022,22 +2081,21 @@ class pbcoreInstantiation():
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationColors/
         """
-        # TODO: Create Docstring for setInstantiationColors
+        # TODO: Create Docstring for set_instantiationColors
 
         if isinstance(newInstantiationColors, PB_Element):
             self.instantiationColors = newInstantiationColors
         else:
-            pass
-        raise TypeError("Expected type: PB_Element")
+            raise TypeError("Expected type: PB_Element. Recieved: " + newInstantiationColors.__class__.__name__)
 
-    def getInstantiationTracks(self):
+    def get_instantiationTracks(self):
         """
 
         :return:
         """
         return self.instantiationTracks
 
-    def setInstantiationTracks(self, newInstantiationTracks):
+    def set_instantiationTracks(self, newInstantiationTracks):
         """
 
         :param          newInstantiationTracks:
@@ -2046,22 +2104,21 @@ class pbcoreInstantiation():
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationTracks/
         """
-        # TODO: Create Docstring for setInstantiationTracks
+        # TODO: Create Docstring for set_instantiationTracks
 
         if isinstance(newInstantiationTracks, PB_Element):
             self.instantiationTracks = newInstantiationTracks
         else:
-            pass
-        raise TypeError("Expected type: PB_Element")
+            raise TypeError("Expected type: PB_Element. Received: " + newInstantiationTracks.__class__.__name__)
 
-    def getInstantiationChannelConfiguration(self):
+    def get_instantiationChannelConfiguration(self):
         """
 
         :return:
         """
         return self.instantiationChannelConfiguration
 
-    def setInstantiationChannelConfiguration(self, newInstantiationChannelConfiguration):
+    def set_instantiationChannelConfiguration(self, newInstantiationChannelConfiguration):
         """
 
         :param          newInstantiationChannelConfiguration:
@@ -2070,22 +2127,21 @@ class pbcoreInstantiation():
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationChannelConfiguration/
         """
-        # TODO: Create Docstring for setInstantiationChannelConfiguration
+        # TODO: Create Docstring for set_instantiationChannelConfiguration
 
         if isinstance(newInstantiationChannelConfiguration, PB_Element):
             self.instantiationChannelConfiguration = newInstantiationChannelConfiguration
         else:
-            pass
-        raise TypeError("Expected type: PB_Element")
+            raise TypeError("Expected type: PB_Element")
 
-    def getInstantiationLanguage(self):
+    def get_instantiationLanguage(self):
         """
 
         :return:
         """
         return self.instantiationLanguage
 
-    def setInstantiationLanguage(self, newInstantiationLanguage):
+    def set_instantiationLanguage(self, newInstantiationLanguage):
         """
 
         :param          newInstantiationLanguage:
@@ -2095,7 +2151,7 @@ class pbcoreInstantiation():
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationLanguage/
         """
         # TODO: Give example instantiationLanguage
-        # TODO: Create Docstring for setInstantiationLanguage
+        # TODO: Create Docstring for set_instantiationLanguage
 
         if isinstance(newInstantiationLanguage, PB_Element):
             self.instantiationLanguage = newInstantiationLanguage
@@ -2103,14 +2159,14 @@ class pbcoreInstantiation():
             pass
         raise TypeError("Expected type: PB_Element")
 
-    def getInstantiationAlternativeModes(self):
+    def get_instantiationAlternativeModes(self):
         """
 
         :return:
         """
         return self.instantiationAlternativeModes
 
-    def setInstantiationAlternativeModes(self, newInstantiationAlternativeModes):
+    def set_instantiationAlternativeModes(self, newInstantiationAlternativeModes):
         """
 
         :param          newInstantiationAlternativeModes:
@@ -2120,10 +2176,10 @@ class pbcoreInstantiation():
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationAlternativeModes/
         """
         # TODO: Give example instantiationAlternativeModes
-        # TODO: Create Docstring for setInstantiationAlternativeModes
+        # TODO: Create Docstring for set_instantiationAlternativeModes
         self.instantiationAlternativeModes = newInstantiationAlternativeModes
 
-    def addInstantiationRelation(self, newinstantiationRelation):
+    def add_instantiationRelation(self, newinstantiationRelation):
         """
 
         :param          newinstantiationRelation:
@@ -2132,22 +2188,22 @@ class pbcoreInstantiation():
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/InstantiationRelation/
         """
-        # TODO: Give example for addInstantiationRelation
-        # TODO: Create Docstring for addInstantiationRelation
+        # TODO: Give example for add_instantiationRelation
+        # TODO: Create Docstring for add_instantiationRelation
 
         if isinstance(newinstantiationRelation, InstantiationRelation):
             self.instantiationRelation.append(newinstantiationRelation)
         else:
             raise TypeError("Expected type: InstantiationRelation")
 
-    def getInstantiationEssenceTrack(self):
+    def get_instantiationEssenceTrack(self):
         """
 
         :return:
         """
         return InstantiationEssenceTrack
 
-    def addInstantiationEssenceTrack(self, newInstantiationEssenceTrack):
+    def add_instantiationEssenceTrack(self, newInstantiationEssenceTrack):
         """
 
         :param          newInstantiationEssenceTrack:
@@ -2164,14 +2220,14 @@ class pbcoreInstantiation():
             raise TypeError("Expected type: InstantiationEssenceTrack")
 
 
-    def getInstantiationRelation(self):
+    def get_instantiationRelation(self):
         """
 
         :return:
         """
         return InstantiationRelation
 
-    def setInstantiationRelation(self, newInstantiationRelation):
+    def set_instantiationRelation(self, newInstantiationRelation):
         """
         :param          newInstantiationRelation:
         :type           newInstantiationRelation:   PB_Element
@@ -2186,14 +2242,14 @@ class pbcoreInstantiation():
             raise TypeError("Expected type: PB_Element")
 
 
-    def getInstantiationAnnotation(self):
+    def get_instantiationAnnotation(self):
         """
 
         :return:
         """
         return self.instantiationAnnotation
 
-    def addInstantiationAnnotation(self, newAnnotation):
+    def add_instantiationAnnotation(self, newAnnotation):
         """
 
         :param          newAnnotation:
@@ -2202,22 +2258,22 @@ class pbcoreInstantiation():
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationAnnotation/
         """
-        # TODO: Give example for addInstantiationAnnotation
-        # TODO: Create Docstring for addInstantiationAnnotation
+        # TODO: Give example for add_instantiationAnnotation
+        # TODO: Create Docstring for add_instantiationAnnotation
 
         if isinstance(newAnnotation, PB_Element):
             self.instantiationAnnotation.append(newAnnotation)
         else:
             raise TypeError("Expected type: PB_Element")
 
-    def getInstantiationPart(self):
+    def get_instantiationPart(self):
         """
         :return:
         """
 
         return self.instantiationPart
 
-    def setInstantiationPart(self, newInstantiationPart):
+    def set_instantiationPart(self, newInstantiationPart):
         """
 
         :param          newInstantiationPart:
@@ -2227,19 +2283,19 @@ class pbcoreInstantiation():
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationPart/
         """
         # TODO: Give example instantiationPart
-        # TODO: Create Docstring for setInstantiationPart
+        # TODO: Create Docstring for set_instantiationPart
         if isinstance(newInstantiationPart, PB_Element):
             self.instantiationPart = newInstantiationPart
         else:
             raise TypeError("Expected type: PB_Element")
 
-    def getInstantiationExtension(self):
+    def get_instantiationExtension(self):
         """
         :return:
         """
         return self.instantiationExtension
 
-    def setInstantiationExtension(self, newnstantiationExtension):
+    def set_instantiationExtension(self, newnstantiationExtension):
         """
         :param          newnstantiationExtension:
         :type           newnstantiationExtension:   PB_Element
@@ -2248,14 +2304,102 @@ class pbcoreInstantiation():
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationExtension/
         """
         # TODO: Give example instantiationExtension
-        # TODO: Create Docstring for setInstantiationExtension
+        # TODO: Create Docstring for set_instantiationExtension
 
         if isinstance(newnstantiationExtension, PB_Element):
             self.instantiationExtension = newnstantiationExtension
         else:
             raise TypeError("Expected type: PB_Element")
 
+    def _makeXML(self):
+        branch = Element("pbcoreRightsSummary")
+        # branch.append(etree.tostring(self.pbcoreRelationType))
+        if self.instantiationIdentifier:
+            for instIdentifier in self.instantiationIdentifier:
+                branch.append(instIdentifier)
 
+        if self.instantiationDate:
+            for instDate in self.instantiationDate:
+                branch.append(instDate)
+
+        if self.instantiationDimensions:
+            for instDimensions in self.instantiationDimensions:
+                branch.append(instDimensions)
+
+        if self.instantiationPhysical:
+            branch.append(self.instantiationPhysical)
+
+        if self.instantiationDigital:
+            branch.append(self.instantiationDigital)
+
+        if self.instantiationStandard:
+            branch.append(self.instantiationStandard)
+
+        if self.instantiationLocation:
+            branch.append(self.instantiationLocation)
+
+        if self.instantiationMediaType:
+            branch.append(self.instantiationMediaType)
+
+        if self.instantiationGenerations:
+            branch.append(self.instantiationGenerations)
+
+        if self.instantiationFileSize:
+            branch.append(self.instantiationFileSize)
+
+        if self.instantiationTimeStart:
+            branch.append(self.instantiationTimeStart)
+
+        if self.instantiationDuration:
+            branch.append(self.instantiationDuration)
+
+        if self.instantiationDataRate:
+            branch.append(self.instantiationDataRate)
+
+        if self.instantiationColors:
+            branch.append(self.instantiationColors)
+
+        if self.instantiationTracks:
+            branch.append(self.instantiationTracks)
+
+        if self.instantiationChannelConfiguration:
+            branch.append(self.instantiationChannelConfiguration)
+
+        if self.instantiationLanguage:
+            branch.append(self.instantiationLanguage)
+
+        if self.instantiationAlternativeModes:
+            branch.append(self.instantiationAlternativeModes)
+
+        if self.instantiationEssenceTrack:
+            for instEssenceTrack in self.instantiationEssenceTrack:
+                branch.append(instEssenceTrack)
+
+        if self.instantiationRelation:
+            for instRelation in self.instantiationRelation:
+                branch.append(instRelation)
+
+        if self.instantiationAnnotation:
+            for instAnnotation in self.instantiationAnnotation:
+                branch.append(instAnnotation)
+
+        if self.instantiationPart:
+            branch.append(self.instantiationPart)
+
+        if self.instantiationExtension:
+            branch.append(self.instantiationExtension)
+
+        return branch
+
+    def xml(self):
+
+        # branch = etree.ElementTree(self.pbcoreRelationType)
+        XML = self._makeXML()
+        return XML
+
+    def xmlString(self):
+        XML = self._makeXML()
+        return etree.tostring(XML)
 # __________________________________
 class InstantiationEssenceTrack():
     """
@@ -2404,7 +2548,7 @@ class InstantiationEssenceTrack():
             "ref"                           # ( may be empty)
         ]
 
-    def getEssenceTrackType(self):
+    def get_essenceTrackType(self):
 
         """
 
@@ -2413,7 +2557,7 @@ class InstantiationEssenceTrack():
 
         return self.essenceTrackType
 
-    def setEssenceTrackType(self, newEssenceTrackType):
+    def set_essenceTrackType(self, newEssenceTrackType):
 
         """
 
@@ -2429,7 +2573,7 @@ class InstantiationEssenceTrack():
         else:
             raise TypeError("Expected type: PB_Element")
 
-    def getEssenceTrackIdentifier(self):
+    def get_essenceTrackIdentifier(self):
         """
 
         :return:
@@ -2437,7 +2581,7 @@ class InstantiationEssenceTrack():
 
         return self.essenceTrackIdentifier
 
-    def setEssenceTrackIdentifier(self, newEssenceTrackIdentifier):
+    def set_essenceTrackIdentifier(self, newEssenceTrackIdentifier):
         """
 
         :param          newEssenceTrackIdentifier:
@@ -2453,14 +2597,14 @@ class InstantiationEssenceTrack():
         else:
             raise TypeError("Expected type: PB_Element")
 
-    def getEssenceTrackStandard(self):
+    def get_essenceTrackStandard(self):
         """
 
         :return:
         """
         return self.essenceTrackStandard
 
-    def setEssenceTrackStandard(self, newEssenceTrackStandard):
+    def set_essenceTrackStandard(self, newEssenceTrackStandard):
 
         """
 
@@ -2477,14 +2621,14 @@ class InstantiationEssenceTrack():
         else:
             raise TypeError("Expected type: PB_Element")
 
-    def getEssenceTrackEncoding(self):
+    def get_essenceTrackEncoding(self):
         """
 
         :return:
         """
         return self.essenceTrackEncoding
 
-    def setEssenceTrackEncoding(self, newEssenceTrackEncoding):
+    def set_essenceTrackEncoding(self, newEssenceTrackEncoding):
         """
 
         :param          newEssenceTrackEncoding:
@@ -2500,14 +2644,14 @@ class InstantiationEssenceTrack():
         else:
             raise TypeError("Expected type: PB_Element")
 
-    def getEssenceTrackDataRate(self):
+    def get_essenceTrackDataRate(self):
         """
 
         :return:
         """
         return self.essenceTrackDataRate
 
-    def setEssenceTrackDataRate(self, newEssenceTrackDataRate):
+    def set_essenceTrackDataRate(self, newEssenceTrackDataRate):
         """
 
         :param          newEssenceTrackDataRate:
@@ -2523,14 +2667,14 @@ class InstantiationEssenceTrack():
         else:
             raise TypeError("Expected type: PB_Element")
 
-    def getEssenceTrackFrameRate(self):
+    def get_essenceTrackFrameRate(self):
         """
 
         :return:
         """
         return self.essenceTrackFrameRate
 
-    def setEssenceTrackFrameRate(self, newEssenceTrackFrameRate):
+    def set_essenceTrackFrameRate(self, newEssenceTrackFrameRate):
 
         """
 
@@ -2540,13 +2684,13 @@ class InstantiationEssenceTrack():
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackFrameRate/
         :return:        None
         """
-        # TODO: Add example of setEssenceTrackFrameRate
+        # TODO: Add example of set_essenceTrackFrameRate
         if isinstance(newEssenceTrackFrameRate, PB_Element):
             self.essenceTrackFrameRate = newEssenceTrackFrameRate
         else:
             raise TypeError("Expected type: PB_Element")
 
-    def getEssenceTrackPlaybackSpeed(self):
+    def get_essenceTrackPlaybackSpeed(self):
         """
 
         :return:
@@ -2554,7 +2698,7 @@ class InstantiationEssenceTrack():
 
         return self.essenceTrackPlaybackSpeed
 
-    def setEssenceTrackPlaybackSpeed(self, newEssenceTrackPlaybackSpeed):
+    def set_essenceTrackPlaybackSpeed(self, newEssenceTrackPlaybackSpeed):
         """
 
         :param          newEssenceTrackPlaybackSpeed:
@@ -2563,20 +2707,20 @@ class InstantiationEssenceTrack():
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackPlaybackSpeed/
         :return:        None
         """
-        # TODO: Add example of setEssenceTrackPlaybackSpeed
+        # TODO: Add example of set_essenceTrackPlaybackSpeed
         if isinstance(newEssenceTrackPlaybackSpeed, PB_Element):
             self.essenceTrackPlaybackSpeed = newEssenceTrackPlaybackSpeed
         else:
             raise TypeError("Expected type: PB_Element")
 
-    def getEssenceTrackSamplingRate(self):
+    def get_essenceTrackSamplingRate(self):
         """
 
         :return:
         """
         return self.essenceTrackSamplingRate
 
-    def setEssenceTrackSamplingRate(self, newEssenceTrackSamplingRate):
+    def set_essenceTrackSamplingRate(self, newEssenceTrackSamplingRate):
 
         """
 
@@ -2586,13 +2730,13 @@ class InstantiationEssenceTrack():
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackSamplingRate/
         :return:        None
         """
-        # TODO: Add example of setEssenceTrackSamplingRate
+        # TODO: Add example of set_essenceTrackSamplingRate
         if isinstance(newEssenceTrackSamplingRate, PB_Element):
             self.essenceTrackSamplingRate = newEssenceTrackSamplingRate
         else:
             raise TypeError("Expected type: PB_Element")
 
-    def getEssenceTrackBitDepth(self):
+    def get_essenceTrackBitDepth(self):
         """
 
         :return:
@@ -2600,7 +2744,7 @@ class InstantiationEssenceTrack():
 
         return self.essenceTrackBitDepth
 
-    def setEssenceTrackBitDepth(self, newEssenceTrackBitDepth):
+    def set_essenceTrackBitDepth(self, newEssenceTrackBitDepth):
         """
 
         :param          newEssenceTrackBitDepth:
@@ -2615,14 +2759,14 @@ class InstantiationEssenceTrack():
         else:
             raise TypeError("Expected type: PB_Element")
 
-    def getEssenceTrackFrameSize(self):
+    def get_essenceTrackFrameSize(self):
         """
 
         :return:
         """
         return self.essenceTrackFrameSize
 
-    def setEssenceTrackFrameSize(self, newEssenceTrackFrameSize):
+    def set_essenceTrackFrameSize(self, newEssenceTrackFrameSize):
         """
 
         :param          newEssenceTrackFrameSize:
@@ -2632,13 +2776,13 @@ class InstantiationEssenceTrack():
         :return:        None
         """
         # TODO: Add example of essenceTrackFrameSize
-        # TODO: Create Docstring for setEssenceTrackFrameSize
+        # TODO: Create Docstring for set_essenceTrackFrameSize
         if isinstance(newEssenceTrackFrameSize, PB_Element):
             self.essenceTrackFrameSize = newEssenceTrackFrameSize
         else:
             raise TypeError("Expected type: PB_Element")
 
-    def getEssenceTrackAspectRatio(self):
+    def get_essenceTrackAspectRatio(self):
         """
 
         :return:
@@ -2646,7 +2790,7 @@ class InstantiationEssenceTrack():
 
         return self.essenceTrackAspectRatio
 
-    def setEssenceTrackAspectRatio(self, newEssenceTrackAspectRatio):
+    def set_essenceTrackAspectRatio(self, newEssenceTrackAspectRatio):
         """
 
         :param          newEssenceTrackAspectRatio:
@@ -2661,7 +2805,7 @@ class InstantiationEssenceTrack():
         else:
             raise TypeError("Expected type: PB_Element")
 
-    def getEssenceTrackTimeStart(self):
+    def get_essenceTrackTimeStart(self):
         """
 
         :return:
@@ -2669,7 +2813,7 @@ class InstantiationEssenceTrack():
 
         return self.essenceTrackTimeStart
 
-    def setEssenceTrackTimeStart(self, newEssenceTrackTimeStart):
+    def set_essenceTrackTimeStart(self, newEssenceTrackTimeStart):
         """
 
         :param          newEssenceTrackTimeStart:
@@ -2678,20 +2822,20 @@ class InstantiationEssenceTrack():
         :Example Value: 00:00:00
         :return:        None
         """
-        # TODO: Create Docstring for setEssenceTrackTimeStart
+        # TODO: Create Docstring for set_essenceTrackTimeStart
         if isinstance(newEssenceTrackTimeStart, PB_Element):
             self.essenceTrackTimeStart = newEssenceTrackTimeStart
         else:
             raise TypeError("Expected type: PB_Element")
 
-    def getEssenceTrackDuration(self):
+    def get_essenceTrackDuration(self):
         """
 
         :return:
         """
         return self.essenceTrackDuration
 
-    def setEssenceTrackDuration(self, newEssenceTrackDuration):
+    def set_essenceTrackDuration(self, newEssenceTrackDuration):
         """
 
         :param          newEssenceTrackDuration:
@@ -2700,13 +2844,13 @@ class InstantiationEssenceTrack():
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackDuration/
         :return:        None
         """
-        # TODO: Create Docstring for setEssenceTrackDuration
+        # TODO: Create Docstring for set_essenceTrackDuration
         if isinstance(newEssenceTrackDuration, PB_Element):
             self.essenceTrackDuration = newEssenceTrackDuration
         else:
             raise TypeError("Expected type: PB_Element")
 
-    def getEssenceTrackLanguage(self):
+    def get_essenceTrackLanguage(self):
         """
 
         :return:
@@ -2714,7 +2858,7 @@ class InstantiationEssenceTrack():
 
         return self.essenceTrackLanguage
 
-    def setEssenceTrackLanguage(self, newEssenceTrackLanguage):
+    def set_essenceTrackLanguage(self, newEssenceTrackLanguage):
         """
 
         :param          newEssenceTrackLanguage:
@@ -2724,20 +2868,20 @@ class InstantiationEssenceTrack():
         :return:        None
         """
         # TODO: Add example of essenceTrackLanguage
-        # TODO: Create Docstring for setEssenceTrackLanguage
+        # TODO: Create Docstring for set_essenceTrackLanguage
         if isinstance(newEssenceTrackLanguage, PB_Element):
             self.essenceTrackLanguage = newEssenceTrackLanguage
         else:
             raise TypeError("Expected type: PB_Element")
 
-    def getEssenceTrackAnnotation(self):
+    def get_essenceTrackAnnotation(self):
         """
 
         :return:
         """
         return self.essenceTrackAnnotation
 
-    def setEssenceTrackAnnotation(self, newEssenceTrackAnnotation):
+    def set_essenceTrackAnnotation(self, newEssenceTrackAnnotation):
 
         """
 
@@ -2747,14 +2891,14 @@ class InstantiationEssenceTrack():
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackAnnotation/
         :return:        None
         """
-        # TODO: add example of setEssenceTrackAnnotation
+        # TODO: add example of set_essenceTrackAnnotation
 
         if isinstance(newEssenceTrackAnnotation, PB_Element):
             self.essenceTrackAnnotation = newEssenceTrackAnnotation
         else:
             raise TypeError("Expected type: PB_Element")
 
-    def getEssenceTrackExtension(self):
+    def get_essenceTrackExtension(self):
         """
 
         :return:
@@ -2762,7 +2906,7 @@ class InstantiationEssenceTrack():
 
         return self.essenceTrackExtension
 
-    def setEssenceTrackExtension(self, newEssenceTrackExtension):
+    def set_essenceTrackExtension(self, newEssenceTrackExtension):
         """
 
         :param          newEssenceTrackExtension:
@@ -2772,7 +2916,7 @@ class InstantiationEssenceTrack():
         :return:        None
         """
         # TODO: add example of essenceTrackExtension
-        # TODO: Create Docstring for setEssenceTrackExtension
+        # TODO: Create Docstring for set_essenceTrackExtension
         if isinstance(newEssenceTrackExtension, PB_Element):
             self.essenceTrackExtension = newEssenceTrackExtension
         else:
@@ -2816,14 +2960,14 @@ class InstantiationRelation():
             "annotation"                    # (text, may be empty)
         ]
 
-    def getInstantiationRelationType(self):
+    def get_instantiationRelationType(self):
         """
 
         :return:
         """
         return self.instantiationRelationType
 
-    def setInstantiationRelationType(self, newInstantiationRelationType):
+    def set_instantiationRelationType(self, newInstantiationRelationType):
 
         """
 
@@ -2840,14 +2984,14 @@ class InstantiationRelation():
         else:
             raise TypeError("Expected type: PB_Element")
 
-    def getInstantiationRelationIdentifier(self):
+    def get_instantiationRelationIdentifier(self):
         """
 
         :return:
         """
         return self.instantiationRelationIdentifier
 
-    def setInstantiationRelationIdentifier(self, newInstantiationRelationIdentifier):
+    def set_instantiationRelationIdentifier(self, newInstantiationRelationIdentifier):
         """
 
         :param          newInstantiationRelationIdentifier:
@@ -2881,7 +3025,7 @@ class InstantiationRights():
         self.rightsLink = []
         self.rightsEmbedded = []
 
-    def addRightsSummary(self, newRightsSummary):
+    def add_rightsSummary(self, newRightsSummary):
         """
 
         :param          newRightsSummary:
@@ -2893,14 +3037,14 @@ class InstantiationRights():
         if isinstance(newRightsSummary, PB_Element):
             self.rightsSummary.append(newRightsSummary)
 
-    def getRightsSummary(self):
+    def get_rightsSummary(self):
         """
         :return:
         """
 
         return self.rightsSummary
 
-    def addRightsLink(self, newRightsLink):
+    def add_rightsLink(self, newRightsLink):
         """
 
         :param          newRightsLink:
@@ -2915,7 +3059,7 @@ class InstantiationRights():
         else:
             raise ValueError("Expected type: PB_Element")
 
-    def getRightsLink(self):
+    def get_rightsLink(self):
         """
 
         :return:
@@ -2923,7 +3067,7 @@ class InstantiationRights():
 
         return self.rightsLink
 
-    def addRightsEmbedded(self, newRightsEmbedded):
+    def add_rightsEmbedded(self, newRightsEmbedded):
         """
 
         :param          newRightsEmbedded:
@@ -2937,10 +3081,8 @@ class InstantiationRights():
         else:
             raise ValueError("Expected type: PB_Element")
 
-    def getRightsEmbedded(self):
+    def get_rightsEmbedded(self):
         return self.rightsEmbedded
-
-
 
 
 ##################################
@@ -2958,11 +3100,6 @@ class InstantiationRights():
 #         :URL:           http://pbcore.org/elements/
 #         :return:        None
 #         """
-#
-#
-#
-#
-
 # __________________________________
 class pbcoreExtension():
     """
@@ -2985,7 +3122,7 @@ class pbcoreExtension():
         self.extensionAuthorityUsed = None
         self.extensionEmbedded = None
 
-    def addExtensionWrap(self, newExtensionWrap):
+    def add_extensionWrap(self, newExtensionWrap):
         """
 
         :param          newExtensionWrap:
@@ -2994,18 +3131,18 @@ class pbcoreExtension():
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreextension/extensionWrap/
         :return:        None
         """
-        # TODO: Create Docstring for addExtensionWrap
-        # TODO: Create Example value for addExtensionWrap
+        # TODO: Create Docstring for add_extensionWrap
+        # TODO: Create Example value for add_extensionWrap
         self.extensionWrap.append(newExtensionWrap)
 
-    def getExtensionWrap(self):
+    def get_extensionWrap(self):
         """
 
         :return:
         """
         return self.extensionWrap
 
-    def setExtensionElement(self, newExtensionElement):
+    def set_extensionElement(self, newExtensionElement):
         """
 
         :param          newExtensionElement:
@@ -3014,20 +3151,20 @@ class pbcoreExtension():
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreextension/extensionElement/
         :return:        None
         """
-        # TODO: Create Docstring for setExtensionElement
+        # TODO: Create Docstring for set_extensionElement
         if isinstance(newExtensionElement, PB_Element):
             self.extensionElement = newExtensionElement
         else:
             raise TypeError("Expected type: PB_Element")
 
-    def getExtensionElement(self):
+    def get_extensionElement(self):
         """
 
         :return:
         """
         return self.extensionElement
 
-    def setExtensionValue(self, newExtensionValue):
+    def set_extensionValue(self, newExtensionValue):
         """
 
         :param          newExtensionValue:
@@ -3036,20 +3173,20 @@ class pbcoreExtension():
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreextension/extensionValue/
         :return:        None
         """
-        # TODO: Create Docstring for setExtensionValue
+        # TODO: Create Docstring for set_extensionValue
         if isinstance(newExtensionValue, PB_Element):
             self.extensionValue = newExtensionValue
         else:
             raise TypeError("Expected type: PB_Element")
 
-    def getExtensionValue(self):
+    def get_extensionValue(self):
         """
 
         :return:
         """
         return self.extensionValue
 
-    def setExtensionAuthorityUsed(self, newExtensionAuthorityUsed):
+    def set_extensionAuthorityUsed(self, newExtensionAuthorityUsed):
         """
 
         :param          newExtensionAuthorityUsed:
@@ -3058,20 +3195,20 @@ class pbcoreExtension():
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreextension/extensionAuthorityUsed/
         :return:        None
         """
-        # TODO: Create Docstring for setExtensionAuthorityUsed
+        # TODO: Create Docstring for set_extensionAuthorityUsed
         if isinstance(newExtensionAuthorityUsed, PB_Element):
             self.extensionAuthorityUsed = newExtensionAuthorityUsed
         else:
             raise TypeError("Expected type: PB_Element")
 
-    def getExtensionAuthorityUsed(self):
+    def get_extensionAuthorityUsed(self):
         """
 
         :return:
         """
         return self.extensionAuthorityUsed
 
-    def setExtensionEmbedded(self, newExtensionEmbedded):
+    def set_extensionEmbedded(self, newExtensionEmbedded):
         """
 
         :param          newExtensionEmbedded:
@@ -3080,13 +3217,13 @@ class pbcoreExtension():
         :return:        None
         """
         # TODO: Add example of extensionEmbedded
-        # TODO: Create Docstring for setExtensionEmbedded
+        # TODO: Create Docstring for set_extensionEmbedded
         if isinstance(newExtensionEmbedded, PB_Element):
             self.extensionEmbedded = newExtensionEmbedded
         else:
             raise TypeError("Expected type: PB_Element")
 
-    def getExtensionEmbedded(self):
+    def get_extensionEmbedded(self):
         """
 
         :return:
@@ -3198,106 +3335,106 @@ class PB_Element():
         ]
 
         if kwargs:
-            if isinstance(kwargs["tag"], str):      # checks if the tag is a string
-                if kwargs["tag"] in self.validTags:
-                    self.tag = kwargs["tag"]
+            if isinstance(kwargs.get("tag"), str):      # checks if the tag is a string
+                if kwargs.get("tag") in self.validTags:
+                    self.tag = kwargs.get("tag")
                 else:
-                    raise ValueError("Expected only PBCore elements. Received: ", kwargs["tag"])
+                    raise ValueError("Expected only PBCore elements. Received: ", kwargs.get("tag"))
             else:
-                raise TypeError("Expected string. Received: " + type(kwargs["tag"]))
-            if isinstance(kwargs["value"], str):    # checks if the value is a string
-                self.value = kwargs["value"]
+                raise TypeError("Expected string. Received: " + type(kwargs.get("tag")))
+            if isinstance(kwargs.get("value"), str):    # checks if the value is a string
+                self.value = kwargs.get("value")
             else:
-                raise TypeError("Expected string. Received: " + type(kwargs["value"]))
+                raise TypeError("Expected string. Received: " + type(kwargs.get("value")))
             self.attribute = OrderedDict()
         if args:
             for arg in args:
                 if isinstance(arg[0], str) and isinstance(arg[1], str):     # checks if the attribute name and value are a string
-                    self.addAttribute(arg[0], arg[1])
+                    self.add_attribute(arg[0], arg[1])
                 else:
                     raise ValueError
 
-    def getAttribute(self):
+    def get_attribute(self):
         """
 
         :return:
         """
         return self.attribute
 
-    def addAttribute(self, key, value):
+    def add_attribute(self, key, value):
         """
 
         :param          key: name of the attribute
         :param          value: value of the attribute
         :return:        None
         """
-        # TODO: Create Docstring for addAttribute
+        # TODO: Create Docstring for add_attribute
 
         self.attribute[key] = value
 
-    def addAttributes(self, *args):
+    def add_attributes(self, *args):
         """
 
         :param          args: Use a list in [attribute name, attribute value] format
         :return:        None
         """
-        # TODO: Create Docstring for addAttributes
+        # TODO: Create Docstring for add_attributes
         if args:
             for arg in args:
                 if not isinstance(arg, list):
-                    raise TypeError("Arguments to addAttributes must be in format [attribute name, attribute value]")
+                    raise TypeError("Arguments to add_attributes must be in format [attribute name, attribute value]")
             for arg in args:
                 if isinstance(arg[0], str) and isinstance(arg[1], str):
-                    self.addAttribute(arg[0], arg[1])
+                    self.add_attribute(arg[0], arg[1])
                 else:
                     raise ValueError
 
         # self.attribute[key] = value
 
-    def deleteAttribute(self, key):
+    def delete_attribute(self, key):
         """
 
         :param          key: name of the attribute to be deleted
         :return:        None
         """
-        # TODO: Create Docstring for deleteAttribute
+        # TODO: Create Docstring for delete_attribute
         del self.attribute[key]
 
-    def getTag(self):
+    def get_tag(self):
         """
 
         :return:
         """
         return self.tag
 
-    def setTag(self, tag):
+    def set_tag(self, tag):
         """
 
         :param          tag:
         :return:        None
         """
-        # TODO: Create Docstring for setTag
+        # TODO: Create Docstring for set_tag
         self.tag = tag
 
-    def getValue(self):
+    def get_value(self):
         """
 
         :return:
         """
         return self.value
 
-    def setValue(self, value):
+    def set_value(self, value):
         """
 
         :param          value:
         :return:        None
         """
-        # TODO: Create Docstring for setValue
+        # TODO: Create Docstring for set_value
         self.value = value
 
 
 
-    def getETreeElement(self):
+    def get_etree_element(self):
         """
         :Description:   Gets a single element as an XML element to be passed down.
         :return:        xml.etree.ElementTree.Element
@@ -3314,7 +3451,7 @@ class PB_Element():
         return element
         #
 
-    def xmlprint(self):
+    def xml_print(self):
         """
         :Description:   For debugging. Prints the XML.
         :return:        None
