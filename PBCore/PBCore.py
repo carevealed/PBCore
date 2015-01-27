@@ -1565,17 +1565,17 @@ class CAVPP_Part():
     def _makeXML(self):
         branch = Element("pbcorePart")
         # branch.append(etree.tostring(self.pbcoreRelationType))
-        for pbID in self.pbcoreIdentifier:
-            branch.append(pbID.get_etree_element())
+        for node in self.pbcoreIdentifier:
+            branch.append(node.get_etree_element())
 
         # for pbTitle in self.pbcoreTitle:
         branch.append(self.pbcoreTitle.get_etree_element())
 
-        for pbDescrip in self.pbcoreDescription:
-            branch.append(pbDescrip.get_etree_element())
+        for node in self.pbcoreDescription:
+            branch.append(node.get_etree_element())
 
-        for pbInst in self.pbcoreInstantiation:
-            branch.append(pbInst.xml())
+        for node in self.pbcoreInstantiation:
+            branch.append(node.xml())
         return branch
 
     def xml(self):
@@ -1624,7 +1624,7 @@ class pbcoreInstantiation():
         :param instantiationType:
         :return:
         """
-        self.instantiationAssetType = instantiationType
+        self.instantiationAssetType = None
         # For example: "Physical Asset" instantiationAssetType
 
         self.instantiationIdentifier = []
@@ -1774,6 +1774,13 @@ class pbcoreInstantiation():
             "endTime",                      # (text, may be empty)
             "timeAnnotation"                # (text, may be empty)
         ]
+
+
+    def get_instantiationAssetType(self):
+        return self.instantiationAssetType
+
+    def set_instantiationAssetType(self, newInstantiationAssetType):
+        self.instantiationAssetType = newInstantiationAssetType
 
     def get_instantiationIdentifier(self):
         return self.instantiationIdentifier
@@ -2312,72 +2319,74 @@ class pbcoreInstantiation():
             raise TypeError("Expected type: PB_Element")
 
     def _makeXML(self):
-        branch = Element("pbcoreRightsSummary")
+        branch = Element("pbcoreInstantiation")
         # branch.append(etree.tostring(self.pbcoreRelationType))
+        if self.instantiationAssetType:
+            branch.append(etree.Comment(text=self.instantiationAssetType))
         if self.instantiationIdentifier:
             for instIdentifier in self.instantiationIdentifier:
-                branch.append(instIdentifier)
+                branch.append(instIdentifier.get_etree_element())
 
         if self.instantiationDate:
             for instDate in self.instantiationDate:
-                branch.append(instDate)
+                branch.append(instDate.get_etree_element())
 
         if self.instantiationDimensions:
             for instDimensions in self.instantiationDimensions:
-                branch.append(instDimensions)
+                branch.append(instDimensions.get_etree_element())
 
         if self.instantiationPhysical:
-            branch.append(self.instantiationPhysical)
+            branch.append(self.instantiationPhysical.get_etree_element())
 
         if self.instantiationDigital:
-            branch.append(self.instantiationDigital)
+            branch.append(self.instantiationDigital.get_etree_element())
 
         if self.instantiationStandard:
-            branch.append(self.instantiationStandard)
+            branch.append(self.instantiationStandard.get_etree_element())
 
         if self.instantiationLocation:
-            branch.append(self.instantiationLocation)
+            branch.append(self.instantiationLocation.get_etree_element())
 
         if self.instantiationMediaType:
-            branch.append(self.instantiationMediaType)
+            branch.append(self.instantiationMediaType.get_etree_element())
 
         if self.instantiationGenerations:
-            branch.append(self.instantiationGenerations)
+            branch.append(self.instantiationGenerations.get_etree_element())
 
         if self.instantiationFileSize:
-            branch.append(self.instantiationFileSize)
+            branch.append(self.instantiationFileSize.get_etree_element())
 
         if self.instantiationTimeStart:
-            branch.append(self.instantiationTimeStart)
+            branch.append(self.instantiationTimeStart.get_etree_element())
 
         if self.instantiationDuration:
-            branch.append(self.instantiationDuration)
+            branch.append(self.instantiationDuration.get_etree_element())
 
         if self.instantiationDataRate:
-            branch.append(self.instantiationDataRate)
+            branch.append(self.instantiationDataRate.get_etree_element())
 
         if self.instantiationColors:
-            branch.append(self.instantiationColors)
+            branch.append(self.instantiationColors.get_etree_element())
 
         if self.instantiationTracks:
-            branch.append(self.instantiationTracks)
+            branch.append(self.instantiationTracks.get_etree_element())
 
         if self.instantiationChannelConfiguration:
-            branch.append(self.instantiationChannelConfiguration)
+            branch.append(self.instantiationChannelConfiguration.get_etree_element())
 
         if self.instantiationLanguage:
-            branch.append(self.instantiationLanguage)
+            branch.append(self.instantiationLanguage.get_etree_element())
 
         if self.instantiationAlternativeModes:
-            branch.append(self.instantiationAlternativeModes)
+            branch.append(self.instantiationAlternativeModes.get_etree_element())
 
         if self.instantiationEssenceTrack:
             for instEssenceTrack in self.instantiationEssenceTrack:
-                branch.append(instEssenceTrack)
+                branch.append(instEssenceTrack.get_etree_element())
 
         if self.instantiationRelation:
             for instRelation in self.instantiationRelation:
-                branch.append(instRelation)
+                branch.append(instRelation.get_etree_element())
 
         if self.instantiationAnnotation:
             for instAnnotation in self.instantiationAnnotation:
