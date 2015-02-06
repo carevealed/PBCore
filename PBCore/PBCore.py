@@ -136,7 +136,16 @@ class PBCore():
         else:
             raise TypeError("setinstantiation expected type: pbcoreInstantiation")
 
+# FIXME Add _makeXML method for PBCore
 
+    def xml(self):
+
+        # branch = etree.ElementTree(self.pbcoreRelationType)
+        XML = self._makeXML()
+        return XML
+
+    def xmlString(self):
+        XML = self._makeXML()
 
 
 ##################################
@@ -913,7 +922,16 @@ class pbcoreDescriptionDocument():
         :return:
         """
         return self.pbcorePart
+# FIXME Add _makeXML method for pbcoreDescriptionDocument
 
+    def xml(self):
+
+        # branch = etree.ElementTree(self.pbcoreRelationType)
+        XML = self._makeXML()
+        return XML
+
+    def xmlString(self):
+        XML = self._makeXML()
 # __________________________________
 class pbcoreRelation():
     """
@@ -1082,6 +1100,16 @@ class pbcoreCoverage():
         else:
             raise TypeError("Expected type: PB_Element")
 
+# FIXME Add _makeXML method for pbcoreCoverage
+
+    def xml(self):
+
+        # branch = etree.ElementTree(self.pbcoreRelationType)
+        XML = self._makeXML()
+        return XML
+
+    def xmlString(self):
+        XML = self._makeXML()
 
 ##################################
 # intellectual Property classes
@@ -1293,6 +1321,16 @@ class pbcoreContributor:
         """
         return self.contributorRole
 
+# FIXME Add _makeXML method for pbcoreContributor
+
+    def xml(self):
+
+        # branch = etree.ElementTree(self.pbcoreRelationType)
+        XML = self._makeXML()
+        return XML
+
+    def xmlString(self):
+        XML = self._makeXML()
 
 # __________________________________
 class pbcorePublisher():
@@ -1379,6 +1417,16 @@ class pbcorePublisher():
         else:
             raise TypeError("Expected type: PB_Element")
 
+# FIXME Add _makeXML method for pbcorePublisher
+
+    def xml(self):
+
+        # branch = etree.ElementTree(self.pbcoreRelationType)
+        XML = self._makeXML()
+        return XML
+
+    def xmlString(self):
+        XML = self._makeXML()
 
 # __________________________________
 class pbcoreRightsSummary():
@@ -1624,7 +1672,7 @@ class pbcoreInstantiation():
         :param instantiationType:
         :return:
         """
-        self.instantiationAssetType = None
+        self.instantiationAssetType = instantiationType
         # For example: "Physical Asset" instantiationAssetType
 
         self.instantiationIdentifier = []
@@ -2346,6 +2394,9 @@ class pbcoreInstantiation():
 
         if self.instantiationLocation:
             branch.append(self.instantiationLocation.get_etree_element())
+        else:
+            # TODO put a comment in an emptry instantiationLocation if none is given
+            branch.append(etree.Comment(text="for institutional reference"))
 
         if self.instantiationMediaType:
             branch.append(self.instantiationMediaType.get_etree_element())
@@ -2381,8 +2432,8 @@ class pbcoreInstantiation():
             branch.append(self.instantiationAlternativeModes.get_etree_element())
 
         if self.instantiationEssenceTrack:
-            for instEssenceTrack in self.instantiationEssenceTrack:
-                branch.append(instEssenceTrack.get_etree_element())
+            for node in self.instantiationEssenceTrack:
+                branch.append(node.xml())
 
         if self.instantiationRelation:
             for instRelation in self.instantiationRelation:
@@ -2453,7 +2504,7 @@ class InstantiationEssenceTrack():
         self.essenceTrackTimeStart = None
         self.essenceTrackDuration = None
         self.essenceTrackLanguage = None
-        self.essenceTrackAnnotation = None
+        self.essenceTrackAnnotation = []
         self.essenceTrackExtension = None
         self.essenceTrackIdentifierAttributesOptional = [
             # May Contain:
@@ -2890,7 +2941,7 @@ class InstantiationEssenceTrack():
         """
         return self.essenceTrackAnnotation
 
-    def set_essenceTrackAnnotation(self, newEssenceTrackAnnotation):
+    def add_essenceTrackAnnotation(self, newEssenceTrackAnnotation):
 
         """
 
@@ -2903,7 +2954,7 @@ class InstantiationEssenceTrack():
         # TODO: add example of set_essenceTrackAnnotation
 
         if isinstance(newEssenceTrackAnnotation, PB_Element):
-            self.essenceTrackAnnotation = newEssenceTrackAnnotation
+            self.essenceTrackAnnotation.append(newEssenceTrackAnnotation)
         else:
             raise TypeError("Expected type: PB_Element")
 
@@ -2930,6 +2981,69 @@ class InstantiationEssenceTrack():
             self.essenceTrackExtension = newEssenceTrackExtension
         else:
             raise TypeError("Expected type: PB_Element")
+
+    def _makeXML(self):
+        branch = Element("instantiationEssenceTrack")
+        if self.essenceTrackType:
+            branch.append(self.essenceTrackType.get_etree_element())
+
+        if self.essenceTrackIdentifier:
+            branch.append(self.essenceTrackIdentifier.get_etree_element())
+
+        if self.essenceTrackStandard:
+            branch.append(self.essenceTrackStandard.get_etree_element())
+
+        if self.essenceTrackEncoding:
+            branch.append(self.essenceTrackEncoding.get_etree_element())
+
+        if self.essenceTrackDataRate:
+            branch.append(self.essenceTrackDataRate.get_etree_element())
+
+        if self.essenceTrackFrameRate:
+            branch.append(self.essenceTrackFrameRate.get_etree_element())
+
+        if self.essenceTrackPlaybackSpeed:
+            branch.append(self.essenceTrackPlaybackSpeed.get_etree_element())
+
+        if self.essenceTrackSamplingRate:
+            branch.append(self.essenceTrackSamplingRate.get_etree_element())
+
+        if self.essenceTrackBitDepth:
+            branch.append(self.essenceTrackBitDepth.get_etree_element())
+
+        if self.essenceTrackFrameSize:
+            branch.append(self.essenceTrackFrameSize.get_etree_element())
+
+        if self.essenceTrackAspectRatio:
+            branch.append(self.essenceTrackAspectRatio.get_etree_element())
+
+        if self.essenceTrackTimeStart:
+            branch.append(self.essenceTrackTimeStart.get_etree_element())
+
+        if self.essenceTrackDuration:
+            branch.append(self.essenceTrackDuration.get_etree_element())
+
+        if self.essenceTrackLanguage:
+            branch.append(self.essenceTrackLanguage.get_etree_element())
+
+        if self.essenceTrackAnnotation:
+            for node in self.essenceTrackAnnotation:
+                # node.xml_print()
+                branch.append(node.get_etree_element())
+
+        if self.essenceTrackExtension:
+            branch.append(self.essenceTrackExtension.get_etree_element())
+        # print branch
+        return branch
+
+    def xml(self):
+
+        # branch = etree.ElementTree(self.pbcoreRelationType)
+        XML = self._makeXML()
+        return XML
+
+    def xmlString(self):
+        XML = self._makeXML()
 
 
 # __________________________________
@@ -3015,7 +3129,16 @@ class InstantiationRelation():
             self.instantiationRelationIdentifier = newInstantiationRelationIdentifier
         else:
             raise TypeError("Expected type: PB_Element")
+    # FIXME Add _makeXML method for InstantiationRelation
 
+    def xml(self):
+
+        # branch = etree.ElementTree(self.pbcoreRelationType)
+        XML = self._makeXML()
+        return XML
+
+    def xmlString(self):
+        XML = self._makeXML()
 
 class InstantiationRights():
     """
@@ -3092,7 +3215,16 @@ class InstantiationRights():
 
     def get_rightsEmbedded(self):
         return self.rightsEmbedded
+# FIXME Add _makeXML method for pbcoreRights
 
+    def xml(self):
+
+        # branch = etree.ElementTree(self.pbcoreRelationType)
+        XML = self._makeXML()
+        return XML
+
+    def xmlString(self):
+        XML = self._makeXML()
 
 ##################################
 # Extensions classes
@@ -3109,6 +3241,7 @@ class InstantiationRights():
 #         :URL:           http://pbcore.org/elements/
 #         :return:        None
 #         """
+
 # __________________________________
 class pbcoreExtension():
     """
@@ -3239,6 +3372,16 @@ class pbcoreExtension():
         """
         return self.extensionEmbedded
 
+# FIXME Add _makeXML method for pbcoreExtension
+
+    def xml(self):
+
+        # branch = etree.ElementTree(self.pbcoreRelationType)
+        XML = self._makeXML()
+        return XML
+
+    def xmlString(self):
+        XML = self._makeXML()
 
 ##################################
 # Other classes
@@ -3250,7 +3393,6 @@ class PB_Element():
     """
 
     # TODO: Create Docstring for PB_Element
-    # def __init__(self, tag=None, value=None): # use if other one doesn't work
     def __init__(self, *args, **kwargs):
         """
 
@@ -3258,6 +3400,7 @@ class PB_Element():
         :param          value:
         :return:        None
         """
+        self.attributes = OrderedDict()
         self.validTags = [
             "contributor",
             "contributorRole",
@@ -3355,11 +3498,13 @@ class PB_Element():
                 self.value = kwargs.get("value")
             else:
                 raise TypeError("Expected string. Received: " + type(kwargs.get("value")))
-            self.attribute = OrderedDict()
+            # self.attribute = OrderedDict()
+
         if args:
             for arg in args:
                 if isinstance(arg[0], str) and isinstance(arg[1], str):     # checks if the attribute name and value are a string
                     self.add_attribute(arg[0], arg[1])
+                    # print arg[0], arg[1]
                 else:
                     raise ValueError
 
@@ -3379,7 +3524,7 @@ class PB_Element():
         """
         # TODO: Create Docstring for add_attribute
 
-        self.attribute[key] = value
+        self.attributes[key] = value
 
     def add_attributes(self, *args):
         """
@@ -3407,7 +3552,7 @@ class PB_Element():
         :return:        None
         """
         # TODO: Create Docstring for delete_attribute
-        del self.attribute[key]
+        del self.attributes[key]
 
     def get_tag(self):
         """
@@ -3450,9 +3595,8 @@ class PB_Element():
         """
         element = Element(self.tag)
         element.text = self.value
-        if self.attribute:
-            # print self.attribute.popitem()
-            attributes = self.attribute
+        if self.attributes:
+            attributes = self.attributes
             while attributes:
                 key, value = attributes.popitem(last=False)
                 element.set(key, value)
@@ -3467,8 +3611,8 @@ class PB_Element():
         """
         element = Element(self.tag)
         element.text = self.value
-        if self.attribute:
-            for key in self.attribute:
-                element.set(key, self.attribute[key])
+        if self.attributes:
+            for key in self.attributes:
+                element.set(key, self.attributes[key])
         print etree.tostring(element)
 
