@@ -2395,8 +2395,11 @@ class pbcoreInstantiation():
         if self.instantiationLocation:
             branch.append(self.instantiationLocation.get_etree_element())
         else:
-            # TODO put a comment in an emptry instantiationLocation if none is given
-            branch.append(etree.Comment(text="for institutional reference"))
+            # If no instantiationLocation is given, put a comment that says for institutional reference to
+            # make the PBCore XML validate. Since instantiationLocation
+            empty_Location = Element("instantiationLocation")
+            empty_Location.append(etree.Comment(text="for institutional reference"))
+            branch.append(empty_Location)
 
         if self.instantiationMediaType:
             branch.append(self.instantiationMediaType.get_etree_element())
