@@ -2444,7 +2444,8 @@ class pbcoreInstantiation():
 
         if self.instantiationAnnotation:
             for instAnnotation in self.instantiationAnnotation:
-                branch.append(instAnnotation)
+                # print instAnnotation.get_etree_element()
+                branch.append(instAnnotation.get_etree_element())
 
         if self.instantiationPart:
             branch.append(self.instantiationPart)
