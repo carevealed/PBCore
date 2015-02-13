@@ -449,7 +449,7 @@ def validate_col_titles(f):
         # print(index, heading, officialList[index])
         if heading != officialList[index]:
             valid = False
-            mismatched.append("At column " + str(index+1) + ", recived: ["+ heading + "]. Expected: [" + officialList[index] + "]")
+            mismatched.append("CSV title mismatch. At column " + str(index+1) + ", recived: ["+ heading + "]. Expected: [" + officialList[index] + "]")
 
     f.seek(0)
     return valid, mismatched
@@ -461,48 +461,55 @@ def main():
     parser.add_argument("csv", help="Source CSV file", type=str)
     parser.add_argument("-d", "--debug", help="Debug mode. Writes all messages to debug log.", action='store_true')
     args = parser.parse_args()
-    
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
+    fh = logging.FileHandler('logs/debug.log')
+    eh = logging.StreamHandler(sys.stderr)  # sends any critical errors to standard error
+    eh.setLevel(logging.CRITICAL)
+    ch = logging.StreamHandler(sys.stdout)  # sends all debug info to the standard out
+    ch.setLevel(logging.DEBUG)
     if args.debug:
         mode = 'debug'
         print "ENTERING DEBUG MODE!"
         # logging.basicConfig(filename='logs/debug.log', level=logging.DEBUG)
-        logging.basicConfig(filename='logs/debug.log', level=logging.DEBUG)
+        fh.setLevel(logging.DEBUG)
     else:
         mode = 'normal'
-        logging.basicConfig(filename='logs/debug.log', level=logging.INFO)
-
-
+        fh.setLevel(logging.INFO)
+        # logging.basicConfig(filename='logs/debug.log', level=logging.INFO)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    fh.setFormatter(formatter)
+    eh.setFormatter(formatter)
+    logger.addHandler(ch)
+    logger.addHandler(fh)
+    logger.addHandler(eh)
     f = None
-    if isfile(args.csv):  # checks if the file passed in is a real filegs.csv):
+    if isfile(args.csv):  # checks if the file passed in is a real file):
         try:
-            logging.debug("Opening file:" + args.csv)
+            logger.debug("Opening file:" + args.csv)
             f = open(args.csv, 'rU')
         except IOError:
             print "FAILED"
-            logging.critical("Error, cannot open " + args.csv + ". Quitting")
-            sys.stderr.write("Error, cannot open " + args.csv + ". Quitting\n")
+            logger.critical("Cannot open " + args.csv + ". Quitting")
             quit()
     else:
-        logging.critical("Error, cannot locate " + args.csv + ". Quitting")
-        sys.stderr.write("Error, cannot locate " + args.csv + ". Quitting\n")
+        logger.critical("Cannot locate " + args.csv + ". Quitting")
         quit()
 
-    logging.debug("Validating files column titles")
+    logger.debug("Validating files column titles")
     valid, errors = validate_col_titles(f)
     if not valid:
         sys.stdout.flush()
         for error in errors:
-            sys.stderr.write(error + "\n")
-            logging.critical(error)
+            logger.critical(error)
         quit()
 
     try:
-        logging.debug("Loading file into memory")
+        logger.debug("Loading file into memory")
         records = csv.DictReader(f)
     except ValueError:
         print "FAILED"
-        logging.critical("Error, cannot load file as a CSV.")
-        sys.stderr.write("Error, cannot load file as a CSV.\n")
+        logger.critical("Error, cannot load file as a CSV.")
         print "Quitting"
         quit()
 
@@ -511,11 +518,15 @@ def main():
 
         # print str(record['Project Identifier']) + ":"
         # logging.info("Producing PBCore XML for " + str(record['Project Identifier']))
+        logger.info("Producing PBCore XML for " + str(record['Project Identifier']))
         print generate_pbcore(record)
+        out = open(str(record['Project Identifier'])+".xml", 'w')
+        out.write(generate_pbcore(record))
+        out.close()
 
         # print "DONE\n"
 
-    logging.debug("Closing CSV file:")
+    logger.debug("Closing CSV file:")
     f.close()
     print "Done"
 
