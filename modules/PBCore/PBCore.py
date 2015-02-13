@@ -1604,6 +1604,9 @@ class CAVPP_Part():
             self.pbcoreDescription.append(newpbcoreDescription)
 
     def get_pbcoreInstantiation(self):
+        """
+        :return     list of PBCore Elements
+        """
         return self.pbcoreInstantiation
 
     def add_pbcoreInstantiation(self, newpbcoreInstantiation):
