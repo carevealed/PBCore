@@ -1,5 +1,8 @@
 import sys
+import logging
+import argparse
 from time import sleep
+from os.path import isfile
 
 __author__ = 'lpsdesk'
 import csv
@@ -438,7 +441,6 @@ def generate_pbcore(record):
 # TODO create a function to validate CSV and makes sure all required fields are included
 
 def validate_col_titles(f):
-    print "Validating columns headers:",
     mismatched = []
     valid = True
     for index, heading in enumerate(csv.reader(f).next()):
@@ -446,41 +448,52 @@ def validate_col_titles(f):
         # print(index, heading, officialList[index])
         if heading != officialList[index]:
             valid = False
-            mismatched.append("At column " + str(index) + ", recived: ["+ heading + "]. Expected: [" + officialList[index] + "]")
+            mismatched.append("At column " + str(index+1) + ", recived: ["+ heading + "]. Expected: [" + officialList[index] + "]")
 
     f.seek(0)
     return valid, mismatched
 
 
 def main():
+    mode = "normal"
+    parser = argparse.ArgumentParser()
+    parser.add_argument("csv", help="Source CSV file", type=str)
+    parser.add_argument("-d", "--debug", help="Debug mode. Writes all messages to debug log.", action='store_true')
+    args = parser.parse_args()
+    if args.debug:
+        mode = 'debug'
+        print "ENTERING DEBUG MODE!"
+        logging.basicConfig(filename='logs/debug.log', level=logging.DEBUG)
     f = None
-
-    try:
-        print "Opening file:",
-        f = open('/Users/lpsdesk/PycharmProjects/PBcore/sample_records/casauhs_export.csv', 'rU')
-        print "OPEN"
-    except IOError:
-        print "FAILED"
-        sys.stderr.write("Error, cannot find file.\n")
-        print "Quitting"
+    if isfile(args.csv):
+        try:
+            logging.info("Opening file:" + args.csv)
+            f = open(args.csv, 'rU')
+        except IOError:
+            print "FAILED"
+            logging.critical("Error, cannot open " + args.csv + ". Quitting")
+            sys.stderr.write("Error, cannot open " + args.csv + ". Quitting\n")
+            quit()
+    else:
+        logging.critical("Error, cannot locate " + args.csv + ". Quitting")
+        sys.stderr.write("Error, cannot locate " + args.csv + ". Quitting\n")
         quit()
 
+    logging.info("Validating files column titles")
     valid, errors = validate_col_titles(f)
     if not valid:
-        print "Error"
         sys.stdout.flush()
         for error in errors:
             sys.stderr.write(error + "\n")
+            logging.critical(error)
         quit()
 
-
-
     try:
-        print "Loading file into memory:",
+        logging.info("Loading file into memory")
         records = csv.DictReader(f)
-        print "OK"
     except ValueError:
         print "FAILED"
+        logging.critical("Error, cannot load file as a CSV.")
         sys.stderr.write("Error, cannot load file as a CSV.\n")
         print "Quitting"
         quit()
