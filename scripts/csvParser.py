@@ -89,6 +89,14 @@ officialList = ['Internet Archive URL',
                 'CONTENTdm file path']
 
 
+class RemoveErrorsFilter(logging.Filter):
+    def filter(self, record):
+        # if record.getMessage().startswith('INFO'):
+        if record.levelno < logging.WARNING:
+            return record.getMessage()
+        # return not record.getMessage().startswith('WARNING')
+
+
 def generate_pbcore(record):
     # TODO create XML generatation code here
     XML = str()
@@ -440,7 +448,6 @@ def generate_pbcore(record):
     XML += "</" + rootTag + ">\n"
     return XML
 
-
 def validate_col_titles(f):
     mismatched = []
     valid = True
@@ -465,9 +472,11 @@ def main():
     logger.setLevel(logging.DEBUG)
     fh = logging.FileHandler('logs/debug.log')
     eh = logging.StreamHandler(sys.stderr)  # sends any critical errors to standard error
-    eh.setLevel(logging.CRITICAL)
+    eh.setLevel(logging.WARNING)
     ch = logging.StreamHandler(sys.stdout)  # sends all debug info to the standard out
     ch.setLevel(logging.DEBUG)
+    log_filter = RemoveErrorsFilter()
+    ch.addFilter(log_filter)  # logger.addFilter(NoParsingFilter())
     if args.debug:
         mode = 'debug'
         print "ENTERING DEBUG MODE!"
@@ -477,9 +486,13 @@ def main():
         mode = 'normal'
         fh.setLevel(logging.INFO)
         # logging.basicConfig(filename='logs/debug.log', level=logging.INFO)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    fh.setFormatter(formatter)
-    eh.setFormatter(formatter)
+    error_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    stderr_formatter = logging.Formatter('%(levelname)s - %(message)s')
+    stdout_formatter = logging.Formatter('%(message)s')
+
+    fh.setFormatter(error_formatter)
+    eh.setFormatter(stderr_formatter)
+    ch.setFormatter(stdout_formatter)
     logger.addHandler(ch)
     logger.addHandler(fh)
     logger.addHandler(eh)
@@ -513,18 +526,14 @@ def main():
         print "Quitting"
         quit()
 
-    print "Generating PBCore stubs..."
+    logging.info("Generating PBCore stubs...")
     for record in records:
-
-        # print str(record['Project Identifier']) + ":"
-        # logging.info("Producing PBCore XML for " + str(record['Project Identifier']))
         logger.info("Producing PBCore XML for " + str(record['Project Identifier']))
-        print generate_pbcore(record)
+        if isfile(str(record['Project Identifier'])+".xml"):
+            logger.warning(str(record['Project Identifier'])+".xml is already a file, overwriting." )
         out = open(str(record['Project Identifier'])+".xml", 'w')
         out.write(generate_pbcore(record))
         out.close()
-
-        # print "DONE\n"
 
     logger.debug("Closing CSV file:")
     f.close()
