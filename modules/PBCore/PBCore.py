@@ -1,5 +1,6 @@
 # from xml.dom.minidom import parse, Element as elmt, Document, Node
 from collections import OrderedDict
+from abc import ABCMeta, abstractmethod
 from xml.etree.ElementTree import Element
 import xml.etree.ElementTree as etree
 
@@ -32,16 +33,32 @@ from xml.dom import minidom
 #         XML = self._makeXML()
 #         return etree.tostring(XML)
 
+# Interface
+class XML_PBCore(object):
+
+    __metaclass__ = ABCMeta
+
+    @abstractmethod
+    def _makeXML(self):
+        pass
+
+    def xml(self):
+        XML = self._makeXML()
+        return XML
+
+    def xmlString(self):
+        XML = self._makeXML()
+        return etree.tostring(XML)
 
 
 
-class PBCore():
+class PBCore(XML_PBCore):
     """
 
     :Description: This is the main class for creating PBCore objects
     :PBCore Homepage: http://pbcore.org/
     """
-    def __init__(self):
+    def __init__(self, collectionTitle = "", collectionSource = "", collectionRef = "", collectionDate="for institutional reference"):
         """
 
         :return: None
@@ -49,8 +66,12 @@ class PBCore():
         # self.root = None
         self.intellectualContent = None
         self.intellectualProperty = None
-        self.extensions = None
+        self.extensions = []
         self.instantiation = None
+        self.collectionTitle = collectionTitle
+        self.collectionSource = collectionSource
+        self.collectionRef = collectionRef
+        self.collectionDate = collectionDate
 
     def get_IntellectualContent(self):
         """
@@ -101,7 +122,7 @@ class PBCore():
         """
         return self.extensions
 
-    def set_extensions(self, newextensions):
+    def add_extensions(self, newextensions):
         """
 
         :param          newextensions:
@@ -111,7 +132,7 @@ class PBCore():
         """
         
         if isinstance(newextensions, pbcoreExtension):
-            self.extensions = newextensions
+            self.extensions.append(newextensions)
         else:
             raise TypeError("setextensions expected type: pbcoreExtension")
 
@@ -136,16 +157,29 @@ class PBCore():
         else:
             raise TypeError("setinstantiation expected type: pbcoreInstantiation")
 
-# FIXME Add _makeXML method for PBCore
+    def _makeXML(self):
+        # collectionSource="California State Railroad Museum Library" collectionRef="">
 
-    def xml(self):
+        branch = Element("pbcoreCollection", attrib={
+            "xmlns":                    "http://www.pbcore.org/PBCore/PBCoreNamespace.html",
+            "xmlns:xsi":                "http://www.w3.org/2001/XMLSchema-instance",
+            "xsi:schemaLocation":       "http://www.pbcore.org/PBCore/PBCoreNamespace.html http://pbcore.org/xsd/pbcore-2.0.xsd",
+            "collectionDate":           self.collectionDate,
+            "collectionTitle":          self.collectionTitle,
+            "collectionSource":         self.collectionSource,
+            "collectionRef":            self.collectionRef
+            })
+        if self.intellectualContent:
+            branch.append(self.intellectualContent.xml())
+        if self.intellectualProperty:
+            branch.append(self.intellectualProperty.xml())
+        if self.extensions:
+            for node in self.extensions:
+                branch.append(node.xml())
+        if self.instantiation:
+            branch.append(self.instantiation.xml())
+        return branch
 
-        # branch = etree.ElementTree(self.pbcoreRelationType)
-        XML = self._makeXML()
-        return XML
-
-    def xmlString(self):
-        XML = self._makeXML()
 
 
 ##################################
@@ -191,13 +225,40 @@ class PBCore():
 # Intellectual Content
 ##################################
 
-class pbcoreDescriptionDocument():
+class pbcoreDescriptionDocument(XML_PBCore):
     """
     :Description:
     :URL: http://pbcore.org/elements/
     """
 
-    def __init__(self):
+    def __init__(self,
+                assetType="Media Object",
+                mainTitle=None,
+                parentObjectID=None,
+                projectID=None,
+                addTitle=None,
+                seriesTitle=None,
+                description=None,
+                objectARK=None,
+                institutionARK=None,
+                institutionURL=None,
+                producer=None,
+                director=None,
+                writer=None,
+                interviewer=None,
+                performer=None,
+                camera=None,
+                editor=None,
+                sound=None,
+                music=None,
+                cast=None,
+                interviewee=None,
+                speaker=None,
+                musician=None,
+                publisher=None,
+                distributor=None,
+                genre=None,
+                genreAutority=None):
         """
         @type           self.pbcoreAssetType:           PB_Element
         @type           self.pbcoreAssetDate:           PB_Element
@@ -221,21 +282,93 @@ class pbcoreDescriptionDocument():
     def getpbcoreAssetType
         :return: None
         """
-        self.pbcoreAssetType = None
+        self.pbcoreAssetType = PB_Element(tag="pbcoreAssetType", value=assetType)
         self.pbcoreAssetDate = []
         self.pbcoreIdentifier = []
+        if parentObjectID and parentObjectID != "":
+            self.pbcoreIdentifier.append(PB_Element(['source', 'CAVPP'], ['annotation', 'Object Identifier'], tag="pbcoreIdentifier", value=parentObjectID))
+        if projectID and projectID != "":
+            self.pbcoreIdentifier.append(PB_Element(['source', 'CAVPP'], ['annotation', 'Project Identifier'], tag="pbcoreIdentifier", value=projectID))
+        if objectARK and objectARK != "":
+            self.pbcoreIdentifier.append(PB_Element(['source', 'CDL'], ['annotation', 'Object ARK '], tag="pbcoreIdentifier", value=objectARK))
+        if institutionARK and institutionARK != "":
+            self.pbcoreIdentifier.append(PB_Element(['source', 'CDL'], ['annotation', 'Institution ARK '], tag="pbcoreIdentifier", value=institutionARK))
+        if institutionURL and institutionURL != "":
+            self.pbcoreIdentifier.append(PB_Element(['source', 'CDL'], ['annotation', 'Institution URL '], tag="pbcoreIdentifier", value=institutionURL))
+
         self.pbcoreTitle = []
-        self.pbcoreSubject = None
+        if mainTitle and mainTitle != "":
+            self.pbcoreTitle.append((PB_Element(['titleType', 'Main or Supplied Title'], tag="pbcoreTitle", value=mainTitle)))
+        if addTitle and addTitle != "":
+            self.pbcoreTitle.append((PB_Element(['titleType', 'Additional Title'], tag="pbcoreTitle", value=addTitle)))
+        if seriesTitle and seriesTitle != "":
+            self.pbcoreTitle.append((PB_Element(['titleType', 'Series Title'], tag="pbcoreTitle", value=seriesTitle)))
+
+
+        self.pbcoreSubject = []
         self.pbcoreDescription = []
-        self.pbcoreGenre = None
+        if description and description != "":
+            self.pbcoreDescription.append(PB_Element(['descriptionType', 'Content Summary'], tag="pbcoreDescription", value=description))
+        self.pbcoreGenre = []
+        if genre and genre != "":
+            if genreAutority and genreAutority != "":
+                self.pbcoreGenre.append(PB_Element(['source', genreAutority], tag="pbcoreGenre", value=genre))
+            else:
+                self.pbcoreGenre.append(PB_Element(tag="pbcoreGenre", value=genre))
+            pass
         self.pbcoreRelation = []
         self.pbcoreCoverage = []
         self.pbcoreAudienceLevel = None
         self.pbcoreAudienceRating = None
         self.pbcoreAnnotation = None
         self.pbcoreCreator = []
+        if producer and producer != "":
+            self.pbcoreCreator.append(PB_Element(["role", "Producer"], tag="pbcoreCreator", value=producer))
+
+        if director and director != "":
+            self.pbcoreCreator.append(PB_Element(["role", "Director"], tag="pbcoreCreator", value=director))
+
+        if writer and writer != "":
+            self.pbcoreCreator.append(PB_Element(["role", "writer"], tag="pbcoreCreator", value=writer))
+
+        if interviewer and interviewer != "":
+            self.pbcoreCreator.append(PB_Element(["role", "interviewer"], tag="pbcoreCreator", value=interviewer))
+
+        if performer and performer != "":
+            self.pbcoreCreator.append(PB_Element(["role", "performer"], tag="pbcoreCreator", value=performer))
+
         self.pbcoreContributor = []
+        if camera and camera != "":
+            self.pbcoreContributor.append(PB_Element(["role", "camera"], tag="pbcoreContributor", value=camera))
+
+        if editor and editor != "":
+            self.pbcoreContributor.append(PB_Element(["role", "editor"], tag="pbcoreContributor", value=editor))
+
+        if sound and sound != "":
+            self.pbcoreContributor.append(PB_Element(["role", "sound"], tag="pbcoreContributor", value=sound))
+
+        if music and music != "":
+            self.pbcoreContributor.append(PB_Element(["role", "music"], tag="pbcoreContributor", value=music))
+
+        if cast and cast != "":
+            self.pbcoreContributor.append(PB_Element(["role", "cast"], tag="pbcoreContributor", value=cast))
+
+        if interviewee and interviewee != "":
+            self.pbcoreContributor.append(PB_Element(["role", "interviewee"], tag="pbcoreContributor", value=interviewee))
+
+        if speaker and speaker != "":
+            self.pbcoreContributor.append(PB_Element(["role", "speaker"], tag="pbcoreContributor", value=speaker))
+
+        if musician and musician != "":
+            self.pbcoreContributor.append(PB_Element(["role", "musician"], tag="pbcoreContributor", value=musician))
+
         self.pbcorePublisher = []
+        if publisher and publisher != "":
+            self.pbcorePublisher.append(PB_Element(["role", "publisher"], tag="pbcorePublisher", value=publisher))
+
+        if distributor and distributor != "":
+            self.pbcorePublisher.append(PB_Element(["role", "distributor"], tag="pbcorePublisher", value=distributor))
+
         self.pbcoreRightsSummary = []
         self.pbcoreExtension = []
         self.pbcorePart = []
@@ -417,7 +550,7 @@ class pbcoreDescriptionDocument():
 
         :return:    xml.etree.ElementTree.Element
         """
-        return self.pbcoreAssetDate.get_etree_element()
+        return self.pbcoreAssetDate
 
     def add_pbcoreAssetDate(self, newpbcoreAssetDate):
         """
@@ -488,7 +621,7 @@ class pbcoreDescriptionDocument():
         """
         return self.pbcoreSubject
 
-    def set_pbcoreSubject(self, newpbcoreSubject):
+    def add_pbcoreSubject(self, newpbcoreSubject):
         """
 
         :param          newpbcoreSubject:
@@ -500,7 +633,7 @@ class pbcoreDescriptionDocument():
         # TODO: Give example value for setpbcoreSubject
         # TODO: Create Docstring for setpbcoreSubject
         if isinstance(newpbcoreSubject, PB_Element):
-            self.pbcoreSubject = newpbcoreSubject
+            self.pbcoreSubject.append(newpbcoreSubject)
         else:
             raise TypeError("Expected Type: PB_Element")
 
@@ -540,7 +673,7 @@ class pbcoreDescriptionDocument():
         """
         return self.pbcoreGenre.get_etree_element()
 
-    def set_pbcoreGenre(self, newpbcoreGenre):
+    def add_pbcoreGenre(self, newpbcoreGenre):
         """
 
         :param          newpbcoreGenre:
@@ -552,7 +685,7 @@ class pbcoreDescriptionDocument():
         # TODO: Give example value for setpbcoreGenre
         # TODO: Create Docstring for setpbcoreGenre
         if isinstance(newpbcoreGenre, PB_Element):
-            self.pbcoreGenre = newpbcoreGenre
+            self.pbcoreGenre.append(newpbcoreGenre)
         else:
             raise TypeError("Expected Type: PB_Element")
 
@@ -802,14 +935,16 @@ class pbcoreDescriptionDocument():
                 branch.append(node.get_etree_element())
 
         if self.pbcoreSubject:
-            branch.append(self.get_pbcoreAssetTypeElement())
+            for node in self.pbcoreSubject:
+                branch.append(node.get_etree_element())
 
         if self.pbcoreDescription:
             for node in self.pbcoreDescription:
                 branch.append(node.get_etree_element())
 
         if self.pbcoreGenre:
-            branch.append(self.get_pbcoreGenre())
+            for node in self.pbcoreGenre:
+                branch.append(node.get_etree_element())
 
         if self.pbcoreRelation:
             for node in self.pbcoreRelation:
@@ -837,11 +972,11 @@ class pbcoreDescriptionDocument():
 
         if self.pbcoreContributor:
             for node in self.pbcoreContributor:
-                branch.append(node.xml)
+                branch.append(node.xml())
 
         if self.pbcorePublisher:
             for node in self.pbcorePublisher:
-                branch.append(node.xml)
+                branch.append(node.xml())
 
         if self.pbcoreRightsSummary:
             for node in self.pbcoreRightsSummary:
@@ -859,7 +994,6 @@ class pbcoreDescriptionDocument():
         return branch
 
     def xml(self):
-
         # branch = etree.ElementTree(self.pbcoreRelationType)
         XML = self._makeXML()
         return XML
@@ -924,16 +1058,16 @@ class pbcoreDescriptionDocument():
         return self.pbcorePart
 # FIXME Add _makeXML method for pbcoreDescriptionDocument
 
-    def xml(self):
+    # def xml(self):
+    #
+    #     # branch = etree.ElementTree(self.pbcoreRelationType)
+    #     XML = self._makeXML()
+    #     return XML
 
-        # branch = etree.ElementTree(self.pbcoreRelationType)
-        XML = self._makeXML()
-        return XML
-
-    def xmlString(self):
-        XML = self._makeXML()
+    # def xmlString(self):
+    #     XML = self._makeXML()
 # __________________________________
-class pbcoreRelation():
+class pbcoreRelation(XML_PBCore):
     """
     :Description:
     :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerelation/
@@ -1013,19 +1147,19 @@ class pbcoreRelation():
         branch.append(self.pbcoreRelationType.get_etree_element())
         return branch
 
-    def xml(self):
-
-        # branch = etree.ElementTree(self.pbcoreRelationType)
-        XML = self._makeXML()
-        return XML
-
-    def xml_string(self):
-        XML = self._makeXML()
-        return etree.tostring(XML)
+    # def xml(self):
+    #
+    #     # branch = etree.ElementTree(self.pbcoreRelationType)
+    #     XML = self._makeXML()
+    #     return XML
+    #
+    # def xmlString(self):
+    #     XML = self._makeXML()
+    #     return etree.tostring(XML)
 
 
 # __________________________________
-class pbcoreCoverage():
+class pbcoreCoverage(XML_PBCore):
     """
     :Description:
     :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecoverage/
@@ -1100,23 +1234,30 @@ class pbcoreCoverage():
         else:
             raise TypeError("Expected type: PB_Element")
 
-# FIXME Add _makeXML method for pbcoreCoverage
+# TODO: TEST Add _makeXML method for pbcoreCoverage
 
-    def xml(self):
+    def _makeXNL(self):
+        branch = Element("pbcoreCoverage")
+        branch.append(self.coverage.get_etree_element())
+        branch.append(self.coverageType.get_etree_element())
+        branch.append(self.coverageAttributesOptional.get_etree_element())
+        return branch
 
-        # branch = etree.ElementTree(self.pbcoreRelationType)
-        XML = self._makeXML()
-        return XML
-
-    def xmlString(self):
-        XML = self._makeXML()
+    # def xml(self):
+    #
+    #     # branch = etree.ElementTree(self.pbcoreRelationType)
+    #     XML = self._makeXML()
+    #     return XML
+    #
+    # def xmlString(self):
+    #     XML = self._makeXML()
 
 ##################################
 # intellectual Property classes
 ##################################
 
 
-class IntellectualProperty():
+class IntellectualProperty(XML_PBCore):
     """
     :Description:
     :URL: http://pbcore.org/elements/
@@ -1130,20 +1271,24 @@ class IntellectualProperty():
 
 
 # __________________________________
-class pbcoreCreator():
+class pbcoreCreator(XML_PBCore):
     """
     :Description:
     :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecreator/
     """
     # TODO: Create Docstring for pbcoreCreator
-    def __init__(self):
+    def __init__(self, name=None, role=None):
         """
         @type           self.creator:           PB_Element
         @type           self.creatorRole:       PB_Element
         :return:
         """
         self.creator = None
+        if name and name != "":
+            self.creator = PB_Element(tag="creator", value=name)
         self.creatorRole = []
+        if role and role != "":
+            self.creatorRole.append(PB_Element(tag="creatorRole", value=role))
         self.creatorAttributesOptional = [
 
             # May Contain:
@@ -1215,38 +1360,43 @@ class pbcoreCreator():
 
     def _makeXML(self):
         branch = Element("pbcoreCreator")
-        # branch.append(etree.tostring(self.pbcoreRelationType))
 
         branch.append(self.creator.get_etree_element())
         for role in self.creatorRole:
             branch.append(role.get_etree_element())
         return branch
 
-    def xml(self):
+    # def xml(self):
+    #
+    #     # branch = etree.ElementTree(self.pbcoreRelationType)
+    #     XML = self._makeXML()
+    #     return XML
 
-        # branch = etree.ElementTree(self.pbcoreRelationType)
-        XML = self._makeXML()
-        return XML
-
-    def xml_string(self):
-        XML = self._makeXML()
-        return etree.tostring(XML)
+    # def xmlString(self):
+    #     XML = self._makeXML()
+    #     return etree.tostring(XML)
 
 # __________________________________
-class pbcoreContributor:
+class pbcoreContributor(XML_PBCore):
     """
     :Description:
     :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecontributor/
     """
     # TODO: Create Docstring for pbcoreContributor
-    def __init__(self):
+    def __init__(self, name=None, role=None):
         """
         @type           self.contributor:           PB_Element
         @type           self.contributorRole:       PB_Element
         :return:
         """
         self.contributor = None
-        self.contributorRole = None
+        if name and name != "":
+            self.contributor = PB_Element(tag="contributor", value=name)
+
+        self.contributorRole = []
+        if role and role != "":
+            self.contributorRole.append(PB_Element(tag="contributorRole", value=role))
+
         self.contributorAttributesOptional = [
             # May Contain:
             # 3 or less optional attributes, specific:
@@ -1298,7 +1448,7 @@ class pbcoreContributor:
         """
         return self.contributor
 
-    def set_contributorRole(self, newContributoRole):
+    def add_contributorRole(self, newContributoRole):
         """
 
         :param          newContributoRole:
@@ -1310,7 +1460,7 @@ class pbcoreContributor:
         # TODO: Give example of contributorRole
         # TODO: Create Docstring for set_contributorRole
         if isinstance(newContributoRole, PB_Element):
-            self.contributorRole = newContributoRole
+            self.contributorRole.append(newContributoRole)
         else:
             raise TypeError("Expected type: PB_Element")
 
@@ -1321,25 +1471,32 @@ class pbcoreContributor:
         """
         return self.contributorRole
 
-# FIXME Add _makeXML method for pbcoreContributor
+# TODO: Test _makeXML method for pbcoreContributor
+    def _makeXML(self):
+        branch = Element("pbcoreContributor")
+        branch.append(self.contributor.get_etree_element())
+        for node in self.contributorRole:
+            branch.append(node.get_etree_element())
+        return branch
 
-    def xml(self):
+    # def xml(self):
 
         # branch = etree.ElementTree(self.pbcoreRelationType)
-        XML = self._makeXML()
-        return XML
-
-    def xmlString(self):
-        XML = self._makeXML()
+    #     XML = self._makeXML()
+    #     return XML
+    #
+    # def xmlString(self):
+    #     XML = self._makeXML()
+    #     return etree.tostring(XML)
 
 # __________________________________
-class pbcorePublisher():
+class pbcorePublisher(XML_PBCore):
     """
     :Description:
     :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorepublisher/
     """
     # TODO: Create Docstring for pbcorePublisher
-    def __init__(self):
+    def __init__(self, name=None, role=None):
         """
         @type           self.publisher:             PB_Element
         @type           self.publisherRole:         PB_Element
@@ -1347,7 +1504,13 @@ class pbcorePublisher():
         :return:        None
         """
         self.publisher = None
-        self.publisherRole = None
+        if name and name != "":
+            self.publisher = PB_Element(tag="publisher", value=name)
+
+        self.publisherRole = []
+        if role and role != "":
+            self.publisherRole.append(PB_Element(tag="publisherRole", value=role))
+
         self.publisherAttributesOptional = [
             # May Contain:
             # 3 or less optional attributes, specific:
@@ -1402,7 +1565,7 @@ class pbcorePublisher():
         """
         return self.publisherRole
 
-    def set_publisherRole(self, newPublisherRole):
+    def add_publisherRole(self, newPublisherRole):
         """
         :param          newPublisherRole:
         :type           newPublisherRole:   PB_Element
@@ -1413,29 +1576,38 @@ class pbcorePublisher():
         # For example: "" TODO: Give example of publisherRole
         # TODO: Create Docstring for set_publisherRole
         if isinstance(newPublisherRole, PB_Element):
-            self.publisherRole = newPublisherRole
+            self.publisherRole.append(newPublisherRole)
         else:
             raise TypeError("Expected type: PB_Element")
 
-# FIXME Add _makeXML method for pbcorePublisher
+# TODO: Test _makeXML method for pbcorePublisher
 
-    def xml(self):
+    def _makeXML(self):
+        branch = Element("pbcorePublisher")
+        branch.append(self.publisher.get_etree_element())
+        for node in self.publisherRole:
+            branch.append(node.get_etree_element())
+        return branch
 
-        # branch = etree.ElementTree(self.pbcoreRelationType)
-        XML = self._makeXML()
-        return XML
 
-    def xmlString(self):
-        XML = self._makeXML()
+    # def xml(self):
+    #
+    #     # branch = etree.ElementTree(self.pbcoreRelationType)
+    #     XML = self._makeXML()
+    #     return XML
+    #
+    # def xmlString(self):
+    #     XML = self._makeXML()
+    #     return etree.tostring(XML)
 
 # __________________________________
-class pbcoreRightsSummary():
+class pbcoreRightsSummary(XML_PBCore):
     """
     :Description:
     :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerightssummary/
     """
     # TODO: Create Docstring for pbcoreRightsSummary
-    def __init__(self):
+    def __init__(self, statement=None):
         """
 
         @type           self.rightsSummary:         PB_Element
@@ -1445,6 +1617,9 @@ class pbcoreRightsSummary():
         :return:        None
         """
         self.rightsSummary = []
+        if statement and statement != "":
+            self.rightsSummary.append((PB_Element(['annotation', 'Copyright Statement'], tag="rightsSummary", value=statement)))
+
         self.rightsLink = []
         self.rightsEmbedded = []
         self.pbcoreRightsSummaryAttributesOptional = [
@@ -1476,6 +1651,7 @@ class pbcoreRightsSummary():
 
             "annotation"                # (text, may be empty)
         ]
+
 
     def get_rightsSummary(self):
         """
@@ -1561,21 +1737,21 @@ class pbcoreRightsSummary():
             branch.append(rightsEmb.get_etree_element())
         return branch
 
-    def xml(self):
-
-        # branch = etree.ElementTree(self.pbcoreRelationType)
-        XML = self._makeXML()
-        return XML
-
-    def xml_string(self):
-        XML = self._makeXML()
-        return etree.tostring(XML)
+    # def xml(self):
+    #
+    #     # branch = etree.ElementTree(self.pbcoreRelationType)
+    #     XML = self._makeXML()
+    #     return XML
+    #
+    # def xmlString(self):
+    #     XML = self._makeXML()
+    #     return etree.tostring(XML)
 
 
 ##################################
 # instantiation classes
 ##################################
-class CAVPP_Part():
+class CAVPP_Part(XML_PBCore):
     def __init__(self):
         self.pbcoreIdentifier = []
         self.pbcoreTitle = None
@@ -1629,23 +1805,23 @@ class CAVPP_Part():
             branch.append(node.xml())
         return branch
 
-    def xml(self):
+    # def xml(self):
+    #
+    #     # branch = etree.ElementTree(self.pbcoreRelationType)
+    #     XML = self._makeXML()
+    #     return XML
+    #
+    # def xmlString(self):
+    #     XML = self._makeXML()
+    #     return etree.tostring(XML)
 
-        # branch = etree.ElementTree(self.pbcoreRelationType)
-        XML = self._makeXML()
-        return XML
-
-    def xml_string(self):
-        XML = self._makeXML()
-        return etree.tostring(XML)
-
-class pbcoreInstantiation():
+class pbcoreInstantiation(XML_PBCore):
     # TODO: Create Docstring for pbcoreInstantiation
     """
     :Description:
     :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/
     """
-    def __init__(self, instantiationType=None):
+    def __init__(self, instantiationType=""):
         """
 
         @type           self.instantiationIdentifier:               PB_Element
@@ -2458,17 +2634,17 @@ class pbcoreInstantiation():
 
         return branch
 
-    def xml(self):
-
-        # branch = etree.ElementTree(self.pbcoreRelationType)
-        XML = self._makeXML()
-        return XML
-
-    def xmlString(self):
-        XML = self._makeXML()
-        return etree.tostring(XML)
+    # def xml(self):
+    #
+    #     # branch = etree.ElementTree(self.pbcoreRelationType)
+    #     XML = self._makeXML()
+    #     return XML
+    #
+    # def xmlString(self):
+    #     XML = self._makeXML()
+    #     return etree.tostring(XML)
 # __________________________________
-class InstantiationEssenceTrack():
+class InstantiationEssenceTrack(XML_PBCore):
     """
     :Description:
     :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/
@@ -3043,18 +3219,18 @@ class InstantiationEssenceTrack():
         # print branch
         return branch
 
-    def xml(self):
-
-        # branch = etree.ElementTree(self.pbcoreRelationType)
-        XML = self._makeXML()
-        return XML
-
-    def xmlString(self):
-        XML = self._makeXML()
+    # def xml(self):
+    #
+    #     # branch = etree.ElementTree(self.pbcoreRelationType)
+    #     XML = self._makeXML()
+    #     return XML
+    #
+    # def xmlString(self):
+    #     XML = self._makeXML()
 
 
 # __________________________________
-class InstantiationRelation():
+class InstantiationRelation(XML_PBCore):
     """
     :Description:
     :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationrelation/
@@ -3136,18 +3312,25 @@ class InstantiationRelation():
             self.instantiationRelationIdentifier = newInstantiationRelationIdentifier
         else:
             raise TypeError("Expected type: PB_Element")
-    # FIXME Add _makeXML method for InstantiationRelation
+    # TODO: TEST _makeXML method for InstantiationRelation
 
-    def xml(self):
+    def _makeXML(self):
+        branch = Element("InstantiationRelation")
+        branch.append(self.instantiationRelationType.get_etree_element())
+        branch.append(self.instantiationRelationIdentifier.get_etree_element())
+        return branch
 
-        # branch = etree.ElementTree(self.pbcoreRelationType)
-        XML = self._makeXML()
-        return XML
+    # def xml(self):
+    #
+    #     # branch = etree.ElementTree(self.pbcoreRelationType)
+    #     XML = self._makeXML()
+    #     return XML
+    #
+    # def xmlString(self):
+    #     XML = self._makeXML()
+    #     return etree.tostring(XML)
 
-    def xmlString(self):
-        XML = self._makeXML()
-
-class InstantiationRights():
+class InstantiationRights(XML_PBCore):
     """
     Description: Instantiation Rights
     URI:                http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationrights/
@@ -3222,16 +3405,30 @@ class InstantiationRights():
 
     def get_rightsEmbedded(self):
         return self.rightsEmbedded
-# FIXME Add _makeXML method for pbcoreRights
 
-    def xml(self):
+# TODO: Test _makeXML method for pbcoreRights
+    def _makeXML(self):
+        branch = Element("pbcoreRights")
+        for node in self.rightsSummary:
+            branch.append(node.get_etree_element())
 
-        # branch = etree.ElementTree(self.pbcoreRelationType)
-        XML = self._makeXML()
-        return XML
+        for node in self.rightsLink:
+            branch.append(node.get_etree_element())
 
-    def xmlString(self):
-        XML = self._makeXML()
+        for node in self.rightsEmbedded:
+            branch.append(node.get_etree_element())
+
+        return branch
+
+    # def xml(self):
+    #
+    #     # branch = etree.ElementTree(self.pbcoreRelationType)
+    #     XML = self._makeXML()
+    #     return XML
+    #
+    # def xmlString(self):
+    #     XML = self._makeXML()
+    #     return etree.tostring(XML)
 
 ##################################
 # Extensions classes
@@ -3250,12 +3447,15 @@ class InstantiationRights():
 #         """
 
 # __________________________________
-class pbcoreExtension():
+class pbcoreExtension(XML_PBCore):
     """
     :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreextension/
     """
     # TODO: Create Docstring for pbcoreExtension
-    def __init__(self):
+    def __init__(self,
+                exElement=None,
+                exValue=None,
+                exAuthority=None):
         """
         @type           self.extensionWrap:                 PB_Element
         @type           self.extensionElement:              PB_Element
@@ -3267,8 +3467,17 @@ class pbcoreExtension():
         """
         self.extensionWrap = []
         self.extensionElement = None
+        if exElement and exElement != "":
+            self.extensionElement =PB_Element(tag="extensionElement", value=exElement)
+
         self.extensionValue = None
+        if exValue and exValue != "":
+            self.extensionValue =PB_Element(tag="extensionValue", value=exValue)
+
         self.extensionAuthorityUsed = None
+        if exAuthority and exAuthority != "":
+            self.extensionAuthorityUsed =PB_Element(tag="extensionAuthorityUsed", value=exAuthority)
+
         self.extensionEmbedded = None
 
     def add_extensionWrap(self, newExtensionWrap):
@@ -3379,16 +3588,25 @@ class pbcoreExtension():
         """
         return self.extensionEmbedded
 
-# FIXME Add _makeXML method for pbcoreExtension
+# TODO: Test _makeXML method for pbcoreExtension
+    def _makeXML(self):
+        longer_branch= Element("pbcoreExtension")
+        branch = Element("extensionWrap")
 
-    def xml(self):
+        # for node in self.extensionWrap:
+        #     branch.append(node.get_etree_element())
 
-        # branch = etree.ElementTree(self.pbcoreRelationType)
-        XML = self._makeXML()
-        return XML
+        if self.extensionElement:
+            branch.append(self.extensionElement.get_etree_element())
+        if self.extensionValue:
+            branch.append(self.extensionValue.get_etree_element())
+        if self.extensionAuthorityUsed:
+            branch.append(self.extensionAuthorityUsed.get_etree_element())
+        if self.extensionEmbedded:
+            branch.append(self.extensionEmbedded.get_etree_element())
+        longer_branch.append(branch)
+        return longer_branch
 
-    def xmlString(self):
-        XML = self._makeXML()
 
 ##################################
 # Other classes
@@ -3593,8 +3811,6 @@ class PB_Element():
         # TODO: Create Docstring for set_value
         self.value = value
 
-
-
     def get_etree_element(self):
         """
         :Description:   Gets a single element as an XML element to be passed down.
@@ -3609,7 +3825,6 @@ class PB_Element():
                 element.set(key, value)
             # print self.attribute
         return element
-        #
 
     def xml_print(self):
         """
