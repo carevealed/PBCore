@@ -3,6 +3,9 @@ import logging
 import argparse
 from time import sleep
 from os.path import isfile
+from xml.dom.minidom import parseString
+from xml.etree import ElementTree
+from modules.PBCore.PBCore import *
 
 __author__ = 'lpsdesk'
 import csv
@@ -99,22 +102,76 @@ class RemoveErrorsFilter(logging.Filter):
 
 def generate_pbcore(record):
     # TODO create XML generatation code here
-    XML = str()
-    rootTag = "XML"
-    XML += "<" + rootTag + ">\n"
+    XML = ""
+    new_XML_file = PBCore(collectionSource=record['Institution'])  #TODO: Find out if collectionSource is the 'Institution'.
+    parts = []
+
+# pbcoreDescriptionDocument
+    obj_ID = ""
+    proj_ID = ""
+    asset_type = ""
+    main_title = ""
+    add_title = ""
+    ser_title = ""
+    descrp = ""
+    obj_ARK = ""
+    inst_ARK = ""
+    inst_URL = ""
+    subjects = ""
+    genre = ""
+    genre_autority= ""
+
+
 
     if record['Object Identifier']:
-        # TODO add Object Identifier to pbcoreDescriptionDocument.pbcoreIdentifier and pbcoreInstantiation.instantiationIdentifier
-        # pbcoreDescriptionDocument.pbcoreIdentifier is part of pbcoreDescriptionDocument class
-        # pbcoreInstantiation.instantiationIdentifier is part of CAVPP_Part class
-        objectIDs = record['Object Identifier'].split(';')
-        for objectID in objectIDs:
-            XML += '\t<ObjectIdentifier>' + objectID.lstrip() + '</ObjectIdentifier>\n'
+        obj_ID = record['Object Identifier'].split(';')[0].split('_t')[0]
 
-    if record['Internet Archive URL']:
-        # TODO add Internet Archive URL to PBCore object
-        # TODO: Find out where Internet Archive URL maps to in PBCore
-        XML += '\t<InternetArchiveURL>' + record['Internet Archive URL'] + '</InternetArchiveURL>\n'
+    if record['Project Identifier']:
+        # pbcoreInstantiation.instantiationIdentifier is part of CAVPP_Part class
+        proj_ID = record['Project Identifier']
+
+    if record['Asset Type']:
+        # pbcoreDescriptionDocument.pbcoreAssetType is in pbcoreDescriptionDocument()
+        # pbcoreInstantiation.pbcoreAssetType is in pbcoreDescriptionDocument()
+        asset_type = record['Asset Type']
+
+    if record['Main or Supplied Title']:
+        # TODO add Main or Supplied Title to pbcoreDescriptionDocument.pbcoreTitle titleType="Main" and pbcorePart.pbcoreTitle titleType="Main"
+        # pbcorePart.pbcoreTitle is in pbcoreDescriptionDocument()
+        main_title = record['Main or Supplied Title']
+
+    if record['Additional Title']:
+        # TODO add Additional Title to PBCore object
+        add_title = record['Additional Title']
+
+    if record['Series Title']:
+        # TODO add Series Title to PBCore object
+        ser_title = record['Series Title']
+
+    if record['Description or Content Summary']:
+        # TODO add Description or Content Summary to PBCore object
+        descrp = record['Description or Content Summary']
+
+    if record['Object ARK']:
+        # TODO add Object ARK to PBCore object
+        obj_ARK = record['Object ARK']
+
+    if record['Institution ARK']:
+        # TODO add Institution ARK to PBCore object
+        inst_ARK = record['Institution ARK']
+
+    if record['Institution URL']:
+        # TODO add Institution URL to PBCore object
+        inst_URL = record['Institution URL']
+
+    if record['Genre']:
+        genre = record['Genre']
+
+    if record['Genre Authority Source']:
+        genre_autority = record['Genre Authority Source']
+
+
+# DO THESE V
 
     if record['Call Number']:
         # TODO add Call Number to pbcoreDescriptionDocument.pbcoreIdentifier and pbcoreInstantiation.instantiationIdentifier
@@ -123,27 +180,183 @@ def generate_pbcore(record):
 
         XML += '\t<CallNumber>' + record['Call Number'] + '</CallNumber>\n'
 
-    if record['Project Identifier']:
-        # TODO add Project Identifier to pbcoreDescriptionDocument.pbcoreIdentifier
+# DO THESE ^
+
+
+
+
+    descritive = pbcoreDescriptionDocument(parentObjectID=obj_ID,
+                                           projectID=proj_ID,
+                                           assetType=asset_type,
+                                           mainTitle=main_title,
+                                           addTitle=add_title,
+                                           seriesTitle=ser_title,
+                                           description=descrp,
+                                           objectARK=obj_ARK,
+                                           genre=genre,
+                                           genreAutority=genre_autority,
+                                           institutionARK=inst_ARK,
+                                           institutionURL=inst_URL,)
+
+    if record['Subject Topic']:
+        # TODO add Subject Topic to PBCore object
+        subjects = record['Subject Topic']
+        subjectTopics = subjects.split(';')
+        for subjectTopic in subjectTopics:
+            descritive.add_pbcoreSubject(PB_Element(tag="pbcoreSubject", value=subjectTopic))
+
+    if record['Date Created']:
+        creation = record['Date Created']
+        creationDates = creation.split(';')
+        for creationDate in creationDates:
+            descritive.add_pbcoreAssetDate(PB_Element(['dateType', 'created'], tag="pbcoreAssetDate", value=creationDate))
+
+    if record['Date Published']:
+        # TODO add Date Published to PBCore object
+        published = record['Date Published']
+        publishedDates = published.split(';')
+        for publishedDate in publishedDates:
+            descritive.add_pbcoreAssetDate(PB_Element(['dateType', 'published'], tag="pbcoreAssetDate", value=publishedDate))
+
+
+    # FIXME: Figure the subject authority, subject entity, Subject Entity Authority Source work in PBCORe
+    if record['Subject Topic Authority Source']:
+        # TODO add Subject Topic Authority Source to PBCore object
+        XML += '\t<SubjectTopicAuthoritySource>' + record['Subject Topic Authority Source'] + '</SubjectTopicAuthoritySource>\n'
+        # descritive.add_pbcoreS
+    if record['Subject Entity']:
+        # TODO add Subject Entity to PBCore object
+        XML += '\t<SubjectEntity>' + record['Subject Entity'] + '</SubjectEntity>\n'
+
+    if record['Subject Entity Authority Source']:
+        # TODO add Subject Entity Authority Source to PBCore object
+        XML += '\t<SubjectEntityAuthoritySource>' + record['Subject Entity Authority Source'] + '</SubjectEntityAuthoritySource>\n'
+
+
+# Descriptive Creator: Producer,Director,Writer,Interviewer,Performer
+
+    producer = ""
+    director = ""
+    writer = ""
+    interviewer = ""
+    performer = ""
+
+    if record['Producer']:
+        producer = record['Producer']
+        creator = pbcoreCreator(name=producer, role="Producer")
+        descritive.add_pbcoreCreator(creator)
+
+    if record['Director']:
+        director = record['Director']
+        creator = pbcoreCreator(name=director, role="Director")
+        descritive.add_pbcoreCreator(creator)
+
+    if record['Writer']:
+        writer = record['Writer']
+        creator = pbcoreCreator(name=writer, role="Writer")
+        descritive.add_pbcoreCreator(creator)
+
+    if record['Interviewer']:
+        interviewer = record['Interviewer']
+        creator = pbcoreCreator(name=interviewer, role="Interviewer")
+        descritive.add_pbcoreCreator(creator)
+
+    if record['Performer']:
+        performer = record['Performer']
+        creator = pbcoreCreator(name=performer, role="Performer")
+        descritive.add_pbcoreCreator(creator)
+
+
+# Descriptive Contributor: Camera,Editor,Sound,Music,Cast,Interviewee,Speaker,Musician
+
+    camera = ""
+    editor = ""
+    sound = ""
+    music = ""
+    cast = ""
+    interviewee = ""
+    speaker = ""
+    musician = ""
+
+    if record['Camera']:
+        camera = record['Camera']
+        contributor = pbcoreContributor(name=camera, role="Camera")
+        descritive.add_pbcoreContributor(contributor)
+
+    if record['Editor']:
+        editor = record['Editor']
+        contributor = pbcoreContributor(name=editor, role="Editor")
+        descritive.add_pbcoreContributor(contributor)
+
+    if record['Sound']:
+        sound = record['Sound']
+        contributor = pbcoreContributor(name=sound, role="Sound")
+        descritive.add_pbcoreContributor(contributor)
+
+    if record['Music']:
+        music = record['Music']
+        contributor = pbcoreContributor(name=music, role="Music")
+        descritive.add_pbcoreContributor(contributor)
+
+    if record['Cast']:
+        cast = record['Cast']
+        contributor = pbcoreContributor(name=cast, role="Cast")
+        descritive.add_pbcoreContributor(contributor)
+
+    if record['Interviewee']:
+        interviewee = record['Interviewee']
+        contributor = pbcoreContributor(name=interviewee, role="Interviewee")
+        descritive.add_pbcoreContributor(contributor)
+
+    if record['Speaker']:
+        speaker = record['Speaker']
+        contributor = pbcoreContributor(name=speaker, role="Speaker")
+        descritive.add_pbcoreContributor(contributor)
+
+    if record['Musician']:
+        musician = record['Musician']
+        contributor = pbcoreContributor(name=musician, role="Musician")
+        descritive.add_pbcoreContributor(contributor)
+
+
+# Descriptive Publisher: Publisher,Distributor
+    publisher = ""
+    distributor = ""
+
+    if record['Publisher']:
+        publisher = record['Publisher']
+        publish = pbcorePublisher(name=publisher, role="Publisher")
+        descritive.add_pbcorePublisher(publish)
+
+    if record['Distributor']:
+        distributor = record['Distributor']
+        publish = pbcorePublisher(name=distributor, role="Distributor")
+        descritive.add_pbcorePublisher(publish)
+
+
+# Descriptive Rights
+    copyright_statement = ""
+    if record['Copyright Statement']:
+        # TODO add Copyright Statement to PBCore object
+        copyright_statement = record['Copyright Statement']
+
+    rights = pbcoreRightsSummary(statement=copyright_statement)
+
+    descritive.add_pbcoreRightsSummary(rights)
+
+    new_XML_file.set_IntellectualContent(descritive)
+# PARTS
+    if record['Object Identifier']:
+        # TODO add Object Identifier to pbcoreDescriptionDocument.pbcoreIdentifier and pbcoreInstantiation.instantiationIdentifier
+        # pbcoreDescriptionDocument.pbcoreIdentifier is part of pbcoreDescriptionDocument class
         # pbcoreInstantiation.instantiationIdentifier is part of CAVPP_Part class
+        if "_t" in record['Object Identifier']:
+            objectIDs = record['Object Identifier'].split(';')
 
-        XML += '\t<ProjectIdentifier>' + record['Project Identifier'] + '</ProjectIdentifier>\n'
-
-    if record['Project Note']:
-        # TODO add Project Note to PBCore object
-        # TODO: Find out where Project Note maps to in PBCore
-        XML += '\t<ProjectNote>' + record['Project Note'] + '</ProjectNote>\n'
-
-    if record['Institution']:
-        # TODO add Institution to PBCore object
-        # TODO: Find out where Institution maps to in PBCore
-        XML += '\t<Institution>' + record['Institution'] + '</Institution>\n'
-
-    if record['Asset Type']:
-        # TODO add Asset Type to pbcoreDescriptionDocument.pbcoreAssetType
-        # pbcoreDescriptionDocument.pbcoreAssetType is in pbcoreDescriptionDocument()
-        # pbcoreInstantiation.pbcoreAssetType is in pbcoreDescriptionDocument()
-        XML += '\t<AssetType>' + record['Asset Type'] + '</AssetType>\n'
+            for objectID in objectIDs:
+                newpart = CAVPP_Part()
+                pass
+                # parts.append()
 
     if record['Media Type']:
         # TODO add Media Type to pbcoreInstantiation.instantiationMediaType
@@ -155,179 +368,13 @@ def generate_pbcore(record):
         # pbcoreInstantiation.instantiationGenerations is in pbcoreInstantiation()
         XML += '\t<Generation>' + record['Generation'] + '</Generation>\n'
 
-    if record['Main or Supplied Title']:
-        # TODO add Main or Supplied Title to pbcoreDescriptionDocument.pbcoreTitle titleType="Main" and pbcorePart.pbcoreTitle titleType="Main"
-        # pbcorePart.pbcoreTitle is in pbcoreDescriptionDocument()
-
-        XML += '\t<MainOrSuppliedTitle>' + record['Main or Supplied Title'] + '</MainOrSuppliedTitle>\n'
-
-    if record['Additional Title']:
-        # TODO add Additional Title to PBCore object
-        XML += '\t<AdditionalTitle>' + record['Additional Title'] + '</AdditionalTitle>\n'
-
-    if record['Series Title']:
-        # TODO add Series Title to PBCore object
-        XML += '\t<SeriesTitle>' + record['Series Title'] + '</SeriesTitle>\n'
-
-    if record['Description or Content Summary']:
-        # TODO add Description or Content Summary to PBCore object
-        XML += '\t<DescriptionOrContentSummary>' + record['Description or Content Summary'] + '</DescriptionOrContentSummary>\n'
-
-    if record['Why the recording is significant to California/local history']:
-        # TODO add Why the recording is significant to California/local history to PBCore object
-        XML += '\t<WhyTheRecordingIsSignificantToCaliforniaLocalHistory>' + record['Why the recording is significant to California/local history'] + '</WhyTheRecordingIsSignificantToCaliforniaLocalHistory>\n'
-
-    if record['Producer']:
-        # TODO add Producer to PBCore object
-        XML += '\t<Producer>' + record['Producer'] + '</Producer>\n'
-
-    if record['Director']:
-        # TODO add Director to PBCore object
-        XML += '\t<Director>' + record['Director'] + '</Director>\n'
-
-    if record['Writer']:
-        # TODO add Writer to PBCore object
-        XML += '\t<Writer>' + record['Writer'] + '</Writer>\n'
-
-    if record['Interviewer']:
-        # TODO add Interviewer to PBCore object
-        XML += '\t<Interviewer>' + record['Interviewer'] + '</Interviewer>\n'
-
-    if record['Performer']:
-        # TODO add Performer to PBCore object
-        XML += '\t<Performer>' + record['Performer'] + '</Performer>\n'
-
-    if record['Country of Creation']:
-        # TODO add Country of Creation to PBCore object
-        XML += '\t<CountryOfCreation>' + record['Country of Creation'] + '</CountryOfCreation>\n'
-
-    if record['Date Created']:
-        # TODO add Date Created to PBCore object
-        creationDates = record['Date Created'].split(';')
-        for creationDate in creationDates:
-            XML += '\t<DateCreated>' + creationDate.lstrip() + '</DateCreated>\n'
-
-    if record['Date Published']:
-        # TODO add Date Published to PBCore object
-        XML += '\t<DatePublished>' + record['Date Published'] + '</DatePublished>\n'
-
-    if record['Copyright Statement']:
-        # TODO add Copyright Statement to PBCore object
-        XML += '\t<CopyrightStatement>' + record['Copyright Statement'] + '</CopyrightStatement>\n'
-
     if record['Gauge and Format']:
         # TODO add Gauge and Format to PBCore object
         XML += '\t<GaugeAndFormat>' + record['Gauge and Format'] + '</GaugeAndFormat>\n'
 
-    if record['Total Number of Reels or Tapes']:
-        # TODO add Total Number of Reels or Tapes to PBCore object
-        XML += '\t<TotalNumberOfReelsOrTapes>' + record['Total Number of Reels or Tapes'] + '</TotalNumberOfReelsOrTapes>\n'
-
     if record['Duration']:
         # TODO add Duration to PBCore object
         XML += '\t<Duration>' + record['Duration'] + '</Duration>\n'
-
-    if record['Silent or Sound']:
-        # TODO add Silent or Sound to PBCore object
-        XML += '\t<SilentOrSound>' + record['Silent or Sound'] + '</SilentOrSound>\n'
-
-    if record['Color and/or Black and White']:
-        # TODO add Color and/or Black and White to PBCore object
-        XML += '\t<ColorAndOrBlackAndWhite>' + record['Color and/or Black and White'] + '</ColorAndOrBlackAndWhite>\n'
-
-    if record['Camera']:
-        # TODO add Camera to PBCore object
-        XML += '\t<Camera>' + record['Camera'] + '</Camera>\n'
-
-    if record['Editor']:
-        # TODO add Editor to PBCore object
-        XML += '\t<Editor>' + record['Editor'] + '</Editor>\n'
-
-    if record['Sound']:
-        # TODO add Sound to PBCore object
-        XML += '\t<Sound>' + record['Sound'] + '</Sound>\n'
-
-    if record['Music']:
-        # TODO add Music to PBCore object
-        XML += '\t<Music>' + record['Music'] + '</Music>\n'
-
-    if record['Cast']:
-        # TODO add Cast to PBCore object
-        XML += '\t<Cast>' + record['Cast'] + '</Cast>\n'
-
-    if record['Interviewee']:
-        # TODO add Interviewee to PBCore object
-        XML += '\t<Interviewee>' + record['Interviewee'] + '</Interviewee>\n'
-
-    if record['Speaker']:
-        # TODO add Speaker to PBCore object
-        XML += '\t<Speaker>' + record['Speaker'] + '</Speaker>\n'
-
-    if record['Musician']:
-        # TODO add Musician to PBCore object
-        XML += '\t<Musician>' + record['Musician'] + '</Musician>\n'
-
-    if record['Publisher']:
-        # TODO add Publisher to PBCore object
-        XML += '\t<Publisher>' + record['Publisher'] + '</Publisher>\n'
-
-    if record['Distributor']:
-        # TODO add Distributor to PBCore object
-        XML += '\t<Distributor>' + record['Distributor'] + '</Distributor>\n'
-
-    if record['Language']:
-        # TODO add Language to PBCore object
-        XML += '\t<Language>' + record['Language'] + '</Language>\n'
-
-    if record['Subject Topic']:
-        # TODO add Subject Topic to PBCore object
-        subjectTopics = record['Subject Topic'].split(';')
-        for subjectTopic in subjectTopics:
-            XML += '\t<SubjectTopic>' + subjectTopic.lstrip() + '</SubjectTopic>\n'
-
-    if record['Subject Topic Authority Source']:
-        # TODO add Subject Topic Authority Source to PBCore object
-        XML += '\t<SubjectTopicAuthoritySource>' + record['Subject Topic Authority Source'] + '</SubjectTopicAuthoritySource>\n'
-
-    if record['Subject Entity']:
-        # TODO add Subject Entity to PBCore object
-        XML += '\t<SubjectEntity>' + record['Subject Entity'] + '</SubjectEntity>\n'
-
-    if record['Subject Entity Authority Source']:
-        # TODO add Subject Entity Authority Source to PBCore object
-        XML += '\t<SubjectEntityAuthoritySource>' + record['Subject Entity Authority Source'] + '</SubjectEntityAuthoritySource>\n'
-
-    if record['Genre']:
-        # TODO add Genre to PBCore object
-        XML += '\t<Genre>' + record['Genre'] + '</Genre>\n'
-
-    if record['Genre Authority Source']:
-        # TODO add Genre Authority Source to PBCore object
-        XML += '\t<GenreAuthoritySource>' + record['Genre Authority Source'] + '</GenreAuthoritySource>\n'
-
-    if record['Spatial Coverage']:
-        # TODO add Spatial Coverage to PBCore object
-        XML += '\t<SpatialCoverage>' + record['Spatial Coverage'] + '</SpatialCoverage>\n'
-
-    if record['Temporal Coverage']:
-        # TODO add Temporal Coverage to PBCore object
-        XML += '\t<TemporalCoverage>' + record['Temporal Coverage'] + '</TemporalCoverage>\n'
-
-    if record['Collection Guide Title']:
-        # TODO add Collection Guide Title to PBCore object
-        XML += '\t<CollectionGuideTitle>' + record['Collection Guide Title'] + '</CollectionGuideTitle>\n'
-
-    if record['Collection Guide URL']:
-        # TODO add Collection Guide URL to PBCore object
-        XML += '\t<CollectionGuideURL>' + record['Collection Guide URL'] + '</CollectionGuideURL>\n'
-
-    if record['Relationship']:
-        # TODO add Relationship to PBCore object
-        XML += '\t<Relationship>' + record['Relationship'] + '</Relationship>\n'
-
-    if record['Relationship Type']:
-        # TODO add Relationship Type to PBCore object
-        XML += '\t<RelationshipType>' + record['Relationship Type'] + '</RelationshipType>\n'
 
     if record['Aspect Ratio']:
         # TODO add Aspect Ratio to PBCore object
@@ -365,6 +412,129 @@ def generate_pbcore(record):
         # TODO add Base Thickness to PBCore object
         XML += '\t<BaseThickness>' + record['Base Thickness'] + '</BaseThickness>\n'
 
+    if record['Quality Control Notes']:
+        # TODO add Quality Control Notes to PBCore object
+        QCNotes = record['Quality Control Notes'].split(';')
+        for QCNote in QCNotes:
+            XML += '\t<QualityControlNotes>' + QCNote.lstrip() + '</QualityControlNotes>\n'
+
+    if record['Additional Descriptive Notes for Overall Work']:
+        # TODO add Additional Descriptive Notes for Overall Work to PBCore object
+        XML += '\t<AdditionalDescriptiveNotesForOverallWork>' + record['Additional Descriptive Notes for Overall Work'] + '</AdditionalDescriptiveNotesForOverallWork>\n'
+
+    if record['Additional Technical Notes for Overall Work']:
+        # TODO add Additional Technical Notes for Overall Work to PBCore object
+        XML += '\t<AdditionalTechnicalNotesForOverallWork>' + record['Additional Technical Notes for Overall Work'] + '</AdditionalTechnicalNotesForOverallWork>\n'
+
+    if record['Transcript']:
+        # TODO add Transcript to PBCore object
+        XML += '\t<Transcript>' + record['Transcript'] + '</Transcript>\n'
+
+    if record['Cataloger Notes']:
+        # TODO add Cataloger Notes to PBCore object
+        XML += '\t<CatalogerNotes>' + record['Cataloger Notes'] + '</CatalogerNotes>\n'
+
+
+# Extension
+    if record['Country of Creation']:
+        exten = pbcoreExtension(exElement="countryOfCreation",
+                                exValue=record['Country of Creation'])
+        new_XML_file.add_extensions(exten)
+
+    if record['Project Note']:
+        exten = pbcoreExtension(exElement="projectNote",
+                                exValue=record['Project Note'])
+        new_XML_file.add_extensions(exten)
+
+# Relationship
+    if record['Relationship']:
+        # TODO add Relationship to PBCore object
+        XML += '\t<Relationship>' + record['Relationship'] + '</Relationship>\n'
+
+    if record['Relationship Type']:
+        # TODO add Relationship Type to PBCore object
+        XML += '\t<RelationshipType>' + record['Relationship Type'] + '</RelationshipType>\n'
+
+# ----Unsorted
+
+
+
+    if record['Internet Archive URL']:
+        # TODO add Internet Archive URL to PBCore object
+        # TODO: Find out where Internet Archive URL maps to in PBCore
+        XML += '\t<InternetArchiveURL>' + record['Internet Archive URL'] + '</InternetArchiveURL>\n'
+
+
+
+        # XML += '\t<ProjectIdentifier>' + record['Project Identifier'] + '</ProjectIdentifier>\n'
+
+
+
+    if record['Institution']:
+        # TODO add Institution to PBCore object
+        # TODO: Find out where Institution maps to in PBCore
+        XML += '\t<Institution>' + record['Institution'] + '</Institution>\n'
+
+
+
+
+
+
+
+
+
+
+    if record['Why the recording is significant to California/local history']:
+        # TODO add Why the recording is significant to California/local history to PBCore object
+        XML += '\t<WhyTheRecordingIsSignificantToCaliforniaLocalHistory>' + record['Why the recording is significant to California/local history'] + '</WhyTheRecordingIsSignificantToCaliforniaLocalHistory>\n'
+
+
+
+
+
+
+
+    if record['Total Number of Reels or Tapes']:
+        # TODO add Total Number of Reels or Tapes to PBCore object
+        XML += '\t<TotalNumberOfReelsOrTapes>' + record['Total Number of Reels or Tapes'] + '</TotalNumberOfReelsOrTapes>\n'
+
+
+
+    if record['Silent or Sound']:
+        # TODO add Silent or Sound to PBCore object
+        XML += '\t<SilentOrSound>' + record['Silent or Sound'] + '</SilentOrSound>\n'
+
+    if record['Color and/or Black and White']:
+        # TODO add Color and/or Black and White to PBCore object
+        XML += '\t<ColorAndOrBlackAndWhite>' + record['Color and/or Black and White'] + '</ColorAndOrBlackAndWhite>\n'
+
+
+    if record['Language']:
+        # TODO add Language to PBCore object
+        XML += '\t<Language>' + record['Language'] + '</Language>\n'
+
+
+
+    if record['Spatial Coverage']:
+        # TODO add Spatial Coverage to PBCore object
+        XML += '\t<SpatialCoverage>' + record['Spatial Coverage'] + '</SpatialCoverage>\n'
+
+    if record['Temporal Coverage']:
+        # TODO add Temporal Coverage to PBCore object
+        XML += '\t<TemporalCoverage>' + record['Temporal Coverage'] + '</TemporalCoverage>\n'
+
+    if record['Collection Guide Title']:
+        # TODO add Collection Guide Title to PBCore object
+        XML += '\t<CollectionGuideTitle>' + record['Collection Guide Title'] + '</CollectionGuideTitle>\n'
+
+    if record['Collection Guide URL']:
+        # TODO add Collection Guide URL to PBCore object
+        XML += '\t<CollectionGuideURL>' + record['Collection Guide URL'] + '</CollectionGuideURL>\n'
+
+
+
+
+
     if record['Copyright Holder']:
         # TODO add Copyright Holder to PBCore object
         XML += '\t<CopyrightHolder>' + record['Copyright Holder'] + '</CopyrightHolder>\n'
@@ -387,39 +557,9 @@ def generate_pbcore(record):
         # TODO add Institutional Rights Statement (URL) to PBCore object
         XML += '\t<InstitutionalRightsStatementURL>' + record['Institutional Rights Statement (URL)'] + '</InstitutionalRightsStatementURL>\n'
 
-    if record['Object ARK']:
-        # TODO add Object ARK to PBCore object
-        XML += '\t<ObjectARK>' + record['Object ARK'] + '</ObjectARK>\n'
 
-    if record['Institution ARK']:
-        # TODO add Institution ARK to PBCore object
-        XML += '\t<InstitutionARK>' + record['Institution ARK'] + '</InstitutionARK>\n'
 
-    if record['Institution URL']:
-        # TODO add Institution URL to PBCore object
-        XML += '\t<InstitutionURL>' + record['Institution URL'] + '</InstitutionURL>\n'
 
-    if record['Quality Control Notes']:
-        # TODO add Quality Control Notes to PBCore object
-        QCNotes = record['Quality Control Notes'].split(';')
-        for QCNote in QCNotes:
-            XML += '\t<QualityControlNotes>' + QCNote.lstrip() + '</QualityControlNotes>\n'
-
-    if record['Additional Descriptive Notes for Overall Work']:
-        # TODO add Additional Descriptive Notes for Overall Work to PBCore object
-        XML += '\t<AdditionalDescriptiveNotesForOverallWork>' + record['Additional Descriptive Notes for Overall Work'] + '</AdditionalDescriptiveNotesForOverallWork>\n'
-
-    if record['Additional Technical Notes for Overall Work']:
-        # TODO add Additional Technical Notes for Overall Work to PBCore object
-        XML += '\t<AdditionalTechnicalNotesForOverallWork>' + record['Additional Technical Notes for Overall Work'] + '</AdditionalTechnicalNotesForOverallWork>\n'
-
-    if record['Transcript']:
-        # TODO add Transcript to PBCore object
-        XML += '\t<Transcript>' + record['Transcript'] + '</Transcript>\n'
-
-    if record['Cataloger Notes']:
-        # TODO add Cataloger Notes to PBCore object
-        XML += '\t<CatalogerNotes>' + record['Cataloger Notes'] + '</CatalogerNotes>\n'
 
     if record['OCLC number']:
         # TODO add OCLC number to PBCore object
@@ -445,8 +585,10 @@ def generate_pbcore(record):
         # TODO add CONTENTdm file path to PBCore object
         XML += '\t<CONTENTdmFilePath>' + record['CONTENTdm file path'] + '</CONTENTdmFilePath>\n'
 
-    XML += "</" + rootTag + ">\n"
-    return XML
+
+
+    return new_XML_file.xmlString()
+    # return ElementTree.tostring(new_XML_file.xml(), encoding='utf8', method='xml')
 
 def validate_col_titles(f):
     mismatched = []
@@ -470,25 +612,24 @@ def main():
     args = parser.parse_args()
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
-    fh = logging.FileHandler('logs/debug.log')
-    eh = logging.StreamHandler(sys.stderr)  # sends any critical errors to standard error
+    fh = logging.FileHandler('logs/debug.log')  # Saves all logs to this file
+    eh = logging.StreamHandler(sys.stderr)      # sends any critical errors to standard error
     eh.setLevel(logging.WARNING)
-    ch = logging.StreamHandler(sys.stdout)  # sends all debug info to the standard out
+    ch = logging.StreamHandler(sys.stdout)      # sends all debug info to the standard out
     ch.setLevel(logging.DEBUG)
     log_filter = RemoveErrorsFilter()
     ch.addFilter(log_filter)  # logger.addFilter(NoParsingFilter())
     if args.debug:
         mode = 'debug'
         print "ENTERING DEBUG MODE!"
-        # logging.basicConfig(filename='logs/debug.log', level=logging.DEBUG)
         fh.setLevel(logging.DEBUG)
     else:
         mode = 'normal'
         fh.setLevel(logging.INFO)
         # logging.basicConfig(filename='logs/debug.log', level=logging.INFO)
-    error_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    stderr_formatter = logging.Formatter('%(levelname)s - %(message)s')
-    stdout_formatter = logging.Formatter('%(message)s')
+    error_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')     # DATE - USERNAME - Message
+    stderr_formatter = logging.Formatter('%(levelname)s - %(message)s')                             # USERNAME - Message
+    stdout_formatter = logging.Formatter('%(message)s')                                             # Message
 
     fh.setFormatter(error_formatter)
     eh.setFormatter(stderr_formatter)
@@ -531,9 +672,13 @@ def main():
         logger.info("Producing PBCore XML for " + str(record['Project Identifier']))
         if isfile(str(record['Project Identifier'])+".xml"):
             logger.warning(str(record['Project Identifier'])+".xml is already a file, overwriting." )
-        out = open(str(record['Project Identifier'])+".xml", 'w')
-        out.write(generate_pbcore(record))
-        out.close()
+        # output = generate_pbcore(record)
+
+        # I'm sending this into because I can't get etree to print a pretty XML
+        buf = parseString(generate_pbcore(record))
+        output_file = open(str(record['Project Identifier'])+".xml", 'w')
+        output_file.write(buf.toprettyxml(encoding='utf-8'))
+        output_file.close()
 
     logger.debug("Closing CSV file:")
     f.close()
