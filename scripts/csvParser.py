@@ -5,6 +5,7 @@ from time import sleep
 from os.path import isfile
 from xml.dom.minidom import parseString
 from xml.etree import ElementTree
+import re
 from modules.PBCore.PBCore import *
 
 __author__ = 'lpsdesk'
@@ -103,7 +104,8 @@ class RemoveErrorsFilter(logging.Filter):
 def generate_pbcore(record):
     # TODO create XML generatation code here
     XML = ""
-    new_XML_file = PBCore(collectionSource=record['Institution'])  #TODO: Find out if collectionSource is the 'Institution'.
+    new_XML_file = PBCore(collectionSource=record['Institution'],
+                          collectionTitle=record['Collection Guide Title'])  #TODO: Find out if collectionSource is the 'Institution'.
     parts = []
 
 # pbcoreDescriptionDocument
@@ -115,11 +117,13 @@ def generate_pbcore(record):
     ser_title = ""
     descrp = ""
     obj_ARK = ""
+    inst_name = ""
     inst_ARK = ""
     inst_URL = ""
-    subjects = ""
+    subjectTops = ""
     genre = ""
     genre_autority= ""
+    IA_URL= ""
 
 
 
@@ -156,6 +160,9 @@ def generate_pbcore(record):
         # TODO add Object ARK to PBCore object
         obj_ARK = record['Object ARK']
 
+    if record['Institution']:
+        inst_name = record['Institution']
+
     if record['Institution ARK']:
         # TODO add Institution ARK to PBCore object
         inst_ARK = record['Institution ARK']
@@ -164,23 +171,8 @@ def generate_pbcore(record):
         # TODO add Institution URL to PBCore object
         inst_URL = record['Institution URL']
 
-    if record['Genre']:
-        genre = record['Genre']
-
-    if record['Genre Authority Source']:
-        genre_autority = record['Genre Authority Source']
 
 
-# DO THESE V
-
-    if record['Call Number']:
-        # TODO add Call Number to pbcoreDescriptionDocument.pbcoreIdentifier and pbcoreInstantiation.instantiationIdentifier
-        # pbcoreDescriptionDocument.pbcoreIdentifier is part of pbcoreDescriptionDocument class
-        # pbcoreInstantiation.instantiationIdentifier is part of CAVPP_Part class
-
-        XML += '\t<CallNumber>' + record['Call Number'] + '</CallNumber>\n'
-
-# DO THESE ^
 
 
 
@@ -193,17 +185,64 @@ def generate_pbcore(record):
                                            seriesTitle=ser_title,
                                            description=descrp,
                                            objectARK=obj_ARK,
-                                           genre=genre,
-                                           genreAutority=genre_autority,
+                                           institutionName=inst_name,
                                            institutionARK=inst_ARK,
                                            institutionURL=inst_URL,)
 
+
+    if record['Internet Archive URL']:
+        # TODO add Internet Archive URL to PBCore object
+        # <pbcoreIdentifier source="CAVPP" annotation="Internet Archive URL">the url</pbcoreIdentifier>
+        IA_URL = record['Internet Archive URL']
+        descritive.add_pbcoreIdentifier(PB_Element(['source','CAVPP'], ['annotation', 'Internet Archive URL'], tag='pbcoreIdentifier', value=IA_URL))
+
     if record['Subject Topic']:
-        # TODO add Subject Topic to PBCore object
-        subjects = record['Subject Topic']
-        subjectTopics = subjects.split(';')
+        subjectTops = record['Subject Topic']
+        subjectTopics = subjectTops.split(';')
+        subjectTopicAuthority = record['Subject Topic Authority Source']
+
         for subjectTopic in subjectTopics:
-            descritive.add_pbcoreSubject(PB_Element(tag="pbcoreSubject", value=subjectTopic))
+            # Unless another subject authority is specified, the source will default to the LOC subject headings
+            if subjectTopicAuthority and subjectTopicAuthority != "":
+                descritive.add_pbcoreSubject(PB_Element(['source', subjectTopicAuthority], tag="pbcoreSubject", value=subjectTopic))
+            else:
+                descritive.add_pbcoreSubject(PB_Element(['source', "Library of Congress Subject Headings"], tag="pbcoreSubject", value=subjectTopic))
+
+    if record['Subject Entity']:
+        subjectEnts = record['Subject Entity']
+        subjectEntities = subjectEnts.split(';')
+        subjectEntityAuthority = record['Subject Entity Authority Source']
+
+        for subjectEntity in subjectEntities:
+            if subjectEntityAuthority and subjectEntityAuthority != "":
+                descritive.add_pbcoreSubject(PB_Element(['source', subjectEntityAuthority], tag="pbcoreSubject", value=subjectEntity))
+            else:
+                descritive.add_pbcoreSubject(PB_Element(tag="pbcoreSubject", value=subjectEntity))
+
+    if record['Spatial Coverage']:
+        spatCoverages = record['Spatial Coverage']
+        spatialCoverages = spatCoverages.split(';')
+        for spatialCoverage in spatialCoverages:
+            descritive.add_pbcoreCoverage(pbcoreCoverage(covItem=spatialCoverage, covType="Spacial"))
+
+
+    if record['Temporal Coverage']:
+        tempCoverages = record['Temporal Coverage']
+        temporalCoverages = tempCoverages.split(';')
+        for temporalCoverage in temporalCoverages:
+            descritive.add_pbcoreCoverage(pbcoreCoverage(covItem=temporalCoverage, covType="Temporal"))
+
+
+    if record['Genre']:
+        genres_data = record['Genre']
+        genres = genres_data.split(';')
+        genreAuthoity = record['Genre Authority Source']
+        for genre in genres:
+            if genreAuthoity and genreAuthoity != "":
+                descritive.add_pbcoreGenre(PB_Element(['source', genreAuthoity], tag="pbcoreGenre", value=genre))
+            else:
+                descritive.add_pbcoreGenre(PB_Element(tag="pbcoreGenre", value=genre))
+
 
     if record['Date Created']:
         creation = record['Date Created']
@@ -218,19 +257,6 @@ def generate_pbcore(record):
         for publishedDate in publishedDates:
             descritive.add_pbcoreAssetDate(PB_Element(['dateType', 'published'], tag="pbcoreAssetDate", value=publishedDate))
 
-
-    # FIXME: Figure the subject authority, subject entity, Subject Entity Authority Source work in PBCORe
-    if record['Subject Topic Authority Source']:
-        # TODO add Subject Topic Authority Source to PBCore object
-        XML += '\t<SubjectTopicAuthoritySource>' + record['Subject Topic Authority Source'] + '</SubjectTopicAuthoritySource>\n'
-        # descritive.add_pbcoreS
-    if record['Subject Entity']:
-        # TODO add Subject Entity to PBCore object
-        XML += '\t<SubjectEntity>' + record['Subject Entity'] + '</SubjectEntity>\n'
-
-    if record['Subject Entity Authority Source']:
-        # TODO add Subject Entity Authority Source to PBCore object
-        XML += '\t<SubjectEntityAuthoritySource>' + record['Subject Entity Authority Source'] + '</SubjectEntityAuthoritySource>\n'
 
 
 # Descriptive Creator: Producer,Director,Writer,Interviewer,Performer
@@ -336,11 +362,40 @@ def generate_pbcore(record):
 
 # Descriptive Rights
     copyright_statement = ""
-    if record['Copyright Statement']:
-        # TODO add Copyright Statement to PBCore object
-        copyright_statement = record['Copyright Statement']
+    copyright_holder = ""
+    copyright_holder_info = ""
+    copyright_dates = []
+    copyright_notice = ""
+    institutional_rights_statement_URL = ""
+    rights = pbcoreRightsSummary()
 
-    rights = pbcoreRightsSummary(statement=copyright_statement)
+    if record['Copyright Statement']:
+        copyright_statement = record['Copyright Statement']
+        rights.add_rightsSummary(PB_Element(['annotation', 'Copyright Statement'], tag="rightsSummary", value=copyright_statement))
+
+
+    if record['Copyright Holder']:
+        copyright_holder = record['Copyright Holder']
+        rights.add_rightsSummary(PB_Element(['annotation', 'Copyright Holder'], tag="rightsSummary", value=copyright_holder))
+
+    if record['Copyright Holder Info']:
+        copyright_holder_info = record['Copyright Holder Info']
+        rights.add_rightsSummary(PB_Element(['annotation', 'Copyright Holder Info'], tag="rightsSummary", value=copyright_holder_info))
+
+    if record['Copyright Date']:
+        copyright_dates = re.split('; |,|and', record['Copyright Date'])
+        for copyright_date in copyright_dates:
+            rights.add_rightsSummary(PB_Element(['annotation', 'Copyright Date'], tag="rightsSummary", value=copyright_date.lstrip()))
+
+    if record['Copyright Notice']:
+        copyright_notice = record['Copyright Notice']
+        rights.add_rightsSummary(PB_Element(['annotation', 'Copyright Notice'], tag="rightsSummary", value=copyright_notice))
+
+    if record['Institutional Rights Statement (URL)']:
+        institutional_rights_statement_URL = record['Institutional Rights Statement (URL)']
+        rights.add_rightsSummary(PB_Element(['annotation', 'Institutional Rights Statement (URL)'], tag="rightsSummary", value=institutional_rights_statement_URL))
+
+
 
     descritive.add_pbcoreRightsSummary(rights)
 
@@ -357,11 +412,29 @@ def generate_pbcore(record):
                 newpart = CAVPP_Part()
                 pass
                 # parts.append()
+    if record['Call Number']:
+        # TODO add Call Number to pbcoreDescriptionDocument.pbcoreIdentifier and pbcoreInstantiation.instantiationIdentifier
+        # pbcoreDescriptionDocument.pbcoreIdentifier is part of pbcoreDescriptionDocument class
+        # pbcoreInstantiation.instantiationIdentifier is part of CAVPP_Part class
 
+        XML += '\t<CallNumber>' + record['Call Number'] + '</CallNumber>\n'
     if record['Media Type']:
         # TODO add Media Type to pbcoreInstantiation.instantiationMediaType
         # pbcoreInstantiation.instantiationMediaType is in pbcoreInstantiation()
         XML += '\t<MediaType>' + record['Media Type'] + '</MediaType>\n'
+
+    if record['Silent or Sound']:
+        # TODO add Silent or Sound to PBCore object
+        XML += '\t<SilentOrSound>' + record['Silent or Sound'] + '</SilentOrSound>\n'
+
+    if record['Color and/or Black and White']:
+        # TODO add Color and/or Black and White to PBCore object
+        XML += '\t<ColorAndOrBlackAndWhite>' + record['Color and/or Black and White'] + '</ColorAndOrBlackAndWhite>\n'
+
+
+    if record['Language']:
+        # TODO add Language to PBCore object
+        XML += '\t<Language>' + record['Language'] + '</Language>\n'
 
     if record['Generation']:
         # TODO add Generation to pbcoreInstantiation.instantiationGenerations
@@ -414,16 +487,19 @@ def generate_pbcore(record):
 
     if record['Quality Control Notes']:
         # TODO add Quality Control Notes to PBCore object
+        # goes with pbCoreDescription
         QCNotes = record['Quality Control Notes'].split(';')
         for QCNote in QCNotes:
             XML += '\t<QualityControlNotes>' + QCNote.lstrip() + '</QualityControlNotes>\n'
 
     if record['Additional Descriptive Notes for Overall Work']:
         # TODO add Additional Descriptive Notes for Overall Work to PBCore object
+        # goes with pbCoreDescription
         XML += '\t<AdditionalDescriptiveNotesForOverallWork>' + record['Additional Descriptive Notes for Overall Work'] + '</AdditionalDescriptiveNotesForOverallWork>\n'
 
     if record['Additional Technical Notes for Overall Work']:
         # TODO add Additional Technical Notes for Overall Work to PBCore object
+        # goes with pbCoreDescription
         XML += '\t<AdditionalTechnicalNotesForOverallWork>' + record['Additional Technical Notes for Overall Work'] + '</AdditionalTechnicalNotesForOverallWork>\n'
 
     if record['Transcript']:
@@ -432,6 +508,7 @@ def generate_pbcore(record):
 
     if record['Cataloger Notes']:
         # TODO add Cataloger Notes to PBCore object
+        # goes with pbCoreDescription
         XML += '\t<CatalogerNotes>' + record['Cataloger Notes'] + '</CatalogerNotes>\n'
 
 
@@ -442,8 +519,13 @@ def generate_pbcore(record):
         new_XML_file.add_extensions(exten)
 
     if record['Project Note']:
-        exten = pbcoreExtension(exElement="projectNote",
-                                exValue=record['Project Note'])
+        if record['Project Note'] == 'California Audiovisual Preservation Project (CAVPP)':
+            exten = pbcoreExtension(exElement="projectNote",
+                                    exValue='California Audiovisual Preservation Project',
+                                    exAuthority='CAVPP')
+        else:  # I don't know if this will be anything other than "California Audiovisual Preservation Project"
+            exten = pbcoreExtension(exElement="projectNote",
+                                    exValue=record['Project Note'])
         new_XML_file.add_extensions(exten)
 
 # Relationship
@@ -459,131 +541,13 @@ def generate_pbcore(record):
 
 
 
-    if record['Internet Archive URL']:
-        # TODO add Internet Archive URL to PBCore object
-        # TODO: Find out where Internet Archive URL maps to in PBCore
-        XML += '\t<InternetArchiveURL>' + record['Internet Archive URL'] + '</InternetArchiveURL>\n'
-
-
-
-        # XML += '\t<ProjectIdentifier>' + record['Project Identifier'] + '</ProjectIdentifier>\n'
-
-
-
-    if record['Institution']:
-        # TODO add Institution to PBCore object
-        # TODO: Find out where Institution maps to in PBCore
-        XML += '\t<Institution>' + record['Institution'] + '</Institution>\n'
-
-
-
-
-
-
-
-
-
-
-    if record['Why the recording is significant to California/local history']:
-        # TODO add Why the recording is significant to California/local history to PBCore object
-        XML += '\t<WhyTheRecordingIsSignificantToCaliforniaLocalHistory>' + record['Why the recording is significant to California/local history'] + '</WhyTheRecordingIsSignificantToCaliforniaLocalHistory>\n'
-
-
-
-
-
-
-
-    if record['Total Number of Reels or Tapes']:
-        # TODO add Total Number of Reels or Tapes to PBCore object
-        XML += '\t<TotalNumberOfReelsOrTapes>' + record['Total Number of Reels or Tapes'] + '</TotalNumberOfReelsOrTapes>\n'
-
-
-
-    if record['Silent or Sound']:
-        # TODO add Silent or Sound to PBCore object
-        XML += '\t<SilentOrSound>' + record['Silent or Sound'] + '</SilentOrSound>\n'
-
-    if record['Color and/or Black and White']:
-        # TODO add Color and/or Black and White to PBCore object
-        XML += '\t<ColorAndOrBlackAndWhite>' + record['Color and/or Black and White'] + '</ColorAndOrBlackAndWhite>\n'
-
-
-    if record['Language']:
-        # TODO add Language to PBCore object
-        XML += '\t<Language>' + record['Language'] + '</Language>\n'
-
-
-
-    if record['Spatial Coverage']:
-        # TODO add Spatial Coverage to PBCore object
-        XML += '\t<SpatialCoverage>' + record['Spatial Coverage'] + '</SpatialCoverage>\n'
-
-    if record['Temporal Coverage']:
-        # TODO add Temporal Coverage to PBCore object
-        XML += '\t<TemporalCoverage>' + record['Temporal Coverage'] + '</TemporalCoverage>\n'
-
-    if record['Collection Guide Title']:
-        # TODO add Collection Guide Title to PBCore object
-        XML += '\t<CollectionGuideTitle>' + record['Collection Guide Title'] + '</CollectionGuideTitle>\n'
 
     if record['Collection Guide URL']:
         # TODO add Collection Guide URL to PBCore object
+        # add to indentifier
         XML += '\t<CollectionGuideURL>' + record['Collection Guide URL'] + '</CollectionGuideURL>\n'
 
 
-
-
-
-    if record['Copyright Holder']:
-        # TODO add Copyright Holder to PBCore object
-        XML += '\t<CopyrightHolder>' + record['Copyright Holder'] + '</CopyrightHolder>\n'
-
-    if record['Copyright Holder Info']:
-        # TODO add Copyright Holder Info to PBCore object
-        XML += '\t<CopyrightHolderInfo>' + record['Copyright Holder Info'] + '</CopyrightHolderInfo>\n'
-
-    if record['Copyright Date']:
-        # TODO add Copyright Date to PBCore object
-        copyrightdates = record['Copyright Date'].split(';')
-        for copyrightdate in copyrightdates:
-            XML += '\t<CopyrightDate>' + copyrightdate.lstrip() + '</CopyrightDate>\n'
-
-    if record['Copyright Notice']:
-        # TODO add Copyright Notice to PBCore object
-        XML += '\t<CopyrightNotice>' + record['Copyright Notice'] + '</CopyrightNotice>\n'
-
-    if record['Institutional Rights Statement (URL)']:
-        # TODO add Institutional Rights Statement (URL) to PBCore object
-        XML += '\t<InstitutionalRightsStatementURL>' + record['Institutional Rights Statement (URL)'] + '</InstitutionalRightsStatementURL>\n'
-
-
-
-
-
-    if record['OCLC number']:
-        # TODO add OCLC number to PBCore object
-        XML += '\t<OCLCnumber>' + record['OCLC number'] + '</OCLCnumber>\n'
-
-    if record['Date modified']:
-        # TODO add Date modified to PBCore object
-        XML += '\t<Datemodified>' + record['Date modified'] + '</Datemodified>\n'
-
-    if record['Reference URL']:
-        # TODO add Reference URL to PBCore object
-        XML += '\t<ReferenceURL>' + record['Reference URL'] + '</ReferenceURL>\n'
-
-    if record['CONTENTdm number']:
-        # TODO add CONTENTdm number to PBCore object
-        XML += '\t<CONTENTdmNumber>' + record['CONTENTdm number'] + '</CONTENTdmNumber>\n'
-
-    if record['CONTENTdm file name']:
-        # TODO add CONTENTdm file name to PBCore object
-        XML += '\t<CONTENTdmFileName>' + record['CONTENTdm file name'] + '</CONTENTdmFileName>\n'
-
-    if record['CONTENTdm file path']:
-        # TODO add CONTENTdm file path to PBCore object
-        XML += '\t<CONTENTdmFilePath>' + record['CONTENTdm file path'] + '</CONTENTdmFilePath>\n'
 
 
 
