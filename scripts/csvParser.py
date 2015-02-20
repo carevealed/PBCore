@@ -102,11 +102,10 @@ class RemoveErrorsFilter(logging.Filter):
 
 
 def generate_pbcore(record):
-    # TODO create XML generatation code here
     XML = ""
     new_XML_file = PBCore(collectionSource=record['Institution'],
                           collectionTitle=record['Collection Guide Title'])  #TODO: Find out if collectionSource is the 'Institution'.
-    parts = []
+
 
 # pbcoreDescriptionDocument
     obj_ID = ""
@@ -140,35 +139,27 @@ def generate_pbcore(record):
         asset_type = record['Asset Type']
 
     if record['Main or Supplied Title']:
-        # TODO add Main or Supplied Title to pbcoreDescriptionDocument.pbcoreTitle titleType="Main" and pbcorePart.pbcoreTitle titleType="Main"
-        # pbcorePart.pbcoreTitle is in pbcoreDescriptionDocument()
         main_title = record['Main or Supplied Title']
 
     if record['Additional Title']:
-        # TODO add Additional Title to PBCore object
         add_title = record['Additional Title']
 
     if record['Series Title']:
-        # TODO add Series Title to PBCore object
         ser_title = record['Series Title']
 
     if record['Description or Content Summary']:
-        # TODO add Description or Content Summary to PBCore object
         descrp = record['Description or Content Summary']
 
     if record['Object ARK']:
-        # TODO add Object ARK to PBCore object
         obj_ARK = record['Object ARK']
 
     if record['Institution']:
         inst_name = record['Institution']
 
     if record['Institution ARK']:
-        # TODO add Institution ARK to PBCore object
         inst_ARK = record['Institution ARK']
 
     if record['Institution URL']:
-        # TODO add Institution URL to PBCore object
         inst_URL = record['Institution URL']
 
 
@@ -191,10 +182,8 @@ def generate_pbcore(record):
 
 
     if record['Internet Archive URL']:
-        # TODO add Internet Archive URL to PBCore object
-        # <pbcoreIdentifier source="CAVPP" annotation="Internet Archive URL">the url</pbcoreIdentifier>
         IA_URL = record['Internet Archive URL']
-        descritive.add_pbcoreIdentifier(PB_Element(['source','CAVPP'], ['annotation', 'Internet Archive URL'], tag='pbcoreIdentifier', value=IA_URL))
+        descritive.add_pbcoreIdentifier(PB_Element(['source', 'CAVPP'], ['annotation', 'Internet Archive URL'], tag='pbcoreIdentifier', value=IA_URL))
 
     if record['Subject Topic']:
         subjectTops = record['Subject Topic']
@@ -251,7 +240,6 @@ def generate_pbcore(record):
             descritive.add_pbcoreAssetDate(PB_Element(['dateType', 'created'], tag="pbcoreAssetDate", value=creationDate))
 
     if record['Date Published']:
-        # TODO add Date Published to PBCore object
         published = record['Date Published']
         publishedDates = published.split(';')
         for publishedDate in publishedDates:
@@ -400,28 +388,88 @@ def generate_pbcore(record):
     descritive.add_pbcoreRightsSummary(rights)
 
     new_XML_file.set_IntellectualContent(descritive)
+
 # PARTS
-    if record['Object Identifier']:
-        # TODO add Object Identifier to pbcoreDescriptionDocument.pbcoreIdentifier and pbcoreInstantiation.instantiationIdentifier
-        # pbcoreDescriptionDocument.pbcoreIdentifier is part of pbcoreDescriptionDocument class
-        # pbcoreInstantiation.instantiationIdentifier is part of CAVPP_Part class
-        if "_t" in record['Object Identifier']:
-            objectIDs = record['Object Identifier'].split(';')
-
-            for objectID in objectIDs:
-                newpart = CAVPP_Part()
-                pass
-                # parts.append()
+    call_number = ""
     if record['Call Number']:
-        # TODO add Call Number to pbcoreDescriptionDocument.pbcoreIdentifier and pbcoreInstantiation.instantiationIdentifier
         # pbcoreDescriptionDocument.pbcoreIdentifier is part of pbcoreDescriptionDocument class
         # pbcoreInstantiation.instantiationIdentifier is part of CAVPP_Part class
+        call_number = record['Call Number']
+    # TODO add Call Number to pbcoreDescriptionDocument.pbcoreIdentifier and pbcoreInstantiation.instantiationIdentifier
 
-        XML += '\t<CallNumber>' + record['Call Number'] + '</CallNumber>\n'
-    if record['Media Type']:
-        # TODO add Media Type to pbcoreInstantiation.instantiationMediaType
-        # pbcoreInstantiation.instantiationMediaType is in pbcoreInstantiation()
-        XML += '\t<MediaType>' + record['Media Type'] + '</MediaType>\n'
+# PBcore Parts
+    for part in record['Object Identifier'].split(';'):
+        newPart = CAVPP_Part(objectID=part.lstrip(),
+                             callNumber=call_number,
+                             mainTitle=main_title,
+                             description=descrp)
+
+        # Preservation Master
+        physical_asset = ""
+        media_type = ""
+        generation = ""
+        timecode_begins = ""
+        durton = ""
+        chan_config = ""
+        lang = ""
+
+        if record['Gauge and Format']:
+            physical_asset = record['Gauge and Format']
+
+        if record['Media Type']:
+            media_type = record['Media Type']
+
+        if record['Generation']:
+            generation = record['Generation']
+
+        if record['Timecode Content Begins']:
+            timecode_begins = record['Timecode Content Begins']
+
+        if record['Duration']:
+            durton = record['Duration']
+
+        if record['Channel Configuration']:
+            chan_config = record['Channel Configuration']
+
+        if record['Language']:
+            lang = record['Language']
+
+
+
+
+
+
+
+        preservationMaster = pbcoreInstantiation(type="Preservation Master",
+                                                 objectID=part.lstrip(),
+                                                 physical=physical_asset,
+                                                 mediaType=media_type,
+                                                 generations=generation,
+                                                 timeStart=timecode_begins,
+                                                 duration=durton,
+                                                 channelConfiguration=chan_config,
+                                                 language=lang)
+        newPart.add_pbcoreInstantiation(preservationMaster)
+        # <!--Preservation Master-->
+
+
+        # <!--Access Copy-->
+        # clean up
+        descritive.add_pbcore_part(newPart)
+
+    # if record['Object Identifier']:
+    #     # TODO add Object Identifier to pbcoreDescriptionDocument.pbcoreIdentifier and pbcoreInstantiation.instantiationIdentifier
+    #     # pbcoreDescriptionDocument.pbcoreIdentifier is part of pbcoreDescriptionDocument class
+    #     # pbcoreInstantiation.instantiationIdentifier is part of CAVPP_Part class
+    #     if "_t" in record['Object Identifier']:
+    #         objectIDs = record['Object Identifier'].split(';')
+    #
+    #         for objectID in objectIDs:
+    #             newpart = CAVPP_Part()
+    #             pass
+    #             # parts.append()
+
+
 
     if record['Silent or Sound']:
         # TODO add Silent or Sound to PBCore object
@@ -432,22 +480,11 @@ def generate_pbcore(record):
         XML += '\t<ColorAndOrBlackAndWhite>' + record['Color and/or Black and White'] + '</ColorAndOrBlackAndWhite>\n'
 
 
-    if record['Language']:
-        # TODO add Language to PBCore object
-        XML += '\t<Language>' + record['Language'] + '</Language>\n'
 
-    if record['Generation']:
-        # TODO add Generation to pbcoreInstantiation.instantiationGenerations
-        # pbcoreInstantiation.instantiationGenerations is in pbcoreInstantiation()
-        XML += '\t<Generation>' + record['Generation'] + '</Generation>\n'
 
-    if record['Gauge and Format']:
-        # TODO add Gauge and Format to PBCore object
-        XML += '\t<GaugeAndFormat>' + record['Gauge and Format'] + '</GaugeAndFormat>\n'
 
-    if record['Duration']:
-        # TODO add Duration to PBCore object
-        XML += '\t<Duration>' + record['Duration'] + '</Duration>\n'
+
+
 
     if record['Aspect Ratio']:
         # TODO add Aspect Ratio to PBCore object
@@ -457,17 +494,11 @@ def generate_pbcore(record):
         # TODO add Running Speed to PBCore object
         XML += '\t<RunningSpeed>' + record['Running Speed'] + '</RunningSpeed>\n'
 
-    if record['Timecode Content Begins']:
-        # TODO add Timecode Content Begins to PBCore object
-        XML += '\t<TimecodeContentBegins>' + record['Timecode Content Begins'] + '</TimecodeContentBegins>\n'
 
     if record['Track Standard']:
         # TODO add Track Standard to PBCore object
         XML += '\t<TrackStandard>' + record['Track Standard'] + '</TrackStandard>\n'
 
-    if record['Channel Configuration']:
-        # TODO add Channel Configuration to PBCore object
-        XML += '\t<ChannelConfiguration>' + record['Channel Configuration'] + '</ChannelConfiguration>\n'
 
     if record['Subtitles/Intertitles/Closed Captions']:
         # TODO add Subtitles/Intertitles/Closed Captions to PBCore object
@@ -536,20 +567,6 @@ def generate_pbcore(record):
     if record['Relationship Type']:
         # TODO add Relationship Type to PBCore object
         XML += '\t<RelationshipType>' + record['Relationship Type'] + '</RelationshipType>\n'
-
-# ----Unsorted
-
-
-
-
-    if record['Collection Guide URL']:
-        # TODO add Collection Guide URL to PBCore object
-        # add to indentifier
-        XML += '\t<CollectionGuideURL>' + record['Collection Guide URL'] + '</CollectionGuideURL>\n'
-
-
-
-
 
     return new_XML_file.xmlString()
     # return ElementTree.tostring(new_XML_file.xml(), encoding='utf8', method='xml')
