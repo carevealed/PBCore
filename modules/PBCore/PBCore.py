@@ -1778,10 +1778,26 @@ class pbcoreRightsSummary(XML_PBCore):
 # instantiation classes
 ##################################
 class CAVPP_Part(XML_PBCore):
-    def __init__(self):
+    def __init__(self,
+                 objectID=None,
+                 callNumber=None,
+                 mainTitle=None,
+                 description=None):
+
         self.pbcoreIdentifier = []
-        self.pbcoreTitle = None
+        if objectID and objectID != "":
+            self.pbcoreIdentifier.append(PB_Element(['source', 'CAVPP'], ['annotation', 'Object Identifier'], tag='pbcoreIdentifier', value=objectID))
+        if callNumber and callNumber != "":
+            self.pbcoreIdentifier.append(PB_Element(['source', 'CAVPP'], ['annotation', 'Call Number'], tag='pbcoreIdentifier', value=callNumber))
+
+        self.pbcoreTitle = []
+        if mainTitle and mainTitle != "":
+            self.pbcoreTitle.append(PB_Element(['titleType', 'Main'], tag='pbcoreTitle', value=mainTitle))
+
         self.pbcoreDescription = []
+        if description and description != "":
+            self.pbcoreDescription.append(PB_Element(tag='pbcoreDescription', value=description))
+
         self.pbcoreInstantiation = []
 
     def get_pbcoreIdentifier(self):
@@ -1818,17 +1834,21 @@ class CAVPP_Part(XML_PBCore):
     def _makeXML(self):
         branch = Element("pbcorePart")
         # branch.append(etree.tostring(self.pbcoreRelationType))
-        for node in self.pbcoreIdentifier:
-            branch.append(node.get_etree_element())
+        if self.pbcoreIdentifier:
+            for node in self.pbcoreIdentifier:
+                branch.append(node.get_etree_element())
 
-        # for pbTitle in self.pbcoreTitle:
-        branch.append(self.pbcoreTitle.get_etree_element())
+        if self.pbcoreTitle:
+            for node in self.pbcoreTitle:
+                branch.append(node.get_etree_element())
 
-        for node in self.pbcoreDescription:
-            branch.append(node.get_etree_element())
+        if self.pbcoreDescription:
+            for node in self.pbcoreDescription:
+                branch.append(node.get_etree_element())
 
-        for node in self.pbcoreInstantiation:
-            branch.append(node.xml())
+        if self.pbcoreInstantiation:
+            for node in self.pbcoreInstantiation:
+                branch.append(node.xml())
         return branch
 
     # def xml(self):
@@ -1847,7 +1867,35 @@ class pbcoreInstantiation(XML_PBCore):
     :Description:
     :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/
     """
-    def __init__(self, instantiationType=""):
+    def __init__(self,
+                 type=None,
+                 objectID=None,
+                 date=None,
+                 dimensions=None,
+                 physical=None,
+                 digital=None,
+                 standard=None,
+                 location=None,
+                 mediaType=None,
+                 generations=None,
+                 fileName=None,
+                 fileSize=None,
+                 checksum=None,
+                 vender='CAVPP',
+                 cataloger='CAVPP',
+                 timeStart=None,
+                 duration=None,
+                 dataRate=None,
+                 colors=None,
+                 tracks=None,
+                 channelConfiguration=None,
+                 language=None,
+                 alternativeModes=None,
+                 essenceTrack=None,
+                 relation=None,
+                 annotation=None,
+                 part=None,
+                 extension=None):
         """
 
         @type           self.instantiationIdentifier:               PB_Element
@@ -1874,29 +1922,69 @@ class pbcoreInstantiation(XML_PBCore):
         @type           self.InstantiationPart:                     PB_Element
         @type           self.instantiationExtension:                PB_Element
 
-        :param instantiationType:
+        :param type:
         :return:
         """
-        self.instantiationAssetType = instantiationType
+        self.instantiationAssetType = None
+        if type and type != "":
+            self.instantiationAssetType = type
         # For example: "Physical Asset" instantiationAssetType
 
         self.instantiationIdentifier = []
+        if objectID and objectID != "":
+            self.instantiationIdentifier.append(PB_Element(['source', cataloger], tag='instantiationIdentifier', value=objectID))
+
+        if fileName and fileName != "":
+            self.instantiationIdentifier.append(PB_Element(['source', vender], tag='instantiationIdentifier', value=fileName))
+
+        if checksum and checksum != "":
+            self.instantiationIdentifier.append(PB_Element(['source', vender], tag='instantiationIdentifier', value=checksum))
+
         self.instantiationDate = []
         self.instantiationDimensions = []
         self.instantiationPhysical = None
+        if physical and physical != "":
+            self.instantiationPhysical = PB_Element(tag="instantiationPhysical", value=physical)
+
         self.instantiationDigital = None
         self.instantiationStandard = None
         self.instantiationLocation = None
+        if location and location != "":
+            self.instantiationLocation = PB_Element(tag="instantiationLocation", value=location)
+
         self.instantiationMediaType = None
+        if mediaType and mediaType != "":
+            self.instantiationMediaType = PB_Element(tag="instantiationMediaType", value=mediaType)
+
         self.instantiationGenerations = None
+        if generations and generations != "":
+            self.instantiationGenerations = PB_Element(tag="instantiationGenerations", value=generations)
+
         self.instantiationFileSize = None
         self.instantiationTimeStart = None
+        if timeStart and timeStart != "":
+            self.instantiationTimeStart = PB_Element(tag="instantiationTimeStart", value=timeStart)
+
         self.instantiationDuration = None
+        if duration and duration != "":
+            self.instantiationDuration = PB_Element(tag="instantiationDuration", value=duration)
+
         self.instantiationDataRate = None
         self.instantiationColors = None
+        if colors and colors != "":
+            self.instantiationColors = PB_Element(tag='instantiationColors', value=colors)
+
         self.instantiationTracks = None
+        if tracks and tracks != "":
+            self.instantiationTracks = PB_Element(tag='instantiationTracks', value=tracks)
+
         self.instantiationChannelConfiguration = None
+        if channelConfiguration and channelConfiguration != None:
+            self.instantiationChannelConfiguration = PB_Element(tag='instantiationChannelConfiguration', value=channelConfiguration)
+
         self.instantiationLanguage = None
+        if language and language != "":
+            self.instantiationLanguage = PB_Element(['source', 'IS0 639.2'], tag='instantiationLanguage', value=language)
         self.instantiationAlternativeModes = None
         self.instantiationEssenceTrack = []
         self.instantiationRelation = []
