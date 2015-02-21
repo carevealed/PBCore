@@ -3,6 +3,7 @@ from collections import OrderedDict
 from abc import ABCMeta, abstractmethod
 from xml.etree.ElementTree import Element
 import xml.etree.ElementTree as etree
+import re
 
 __author__ = 'California Audiovisual Preservation Project'
 # PBCore metadata
@@ -49,6 +50,17 @@ class XML_PBCore(object):
     def xmlString(self):
         XML = self._makeXML()
         return etree.tostring(XML)
+
+    def validFilesize(self, fileSize):
+        valid = True
+        if len(fileSize.split(' ')) != 2:
+            return False
+        if not re.search('\d*(\.\d)?\s[K,M,G,T,P,E,Z,Y]?[B,b]', fileSize):
+            return False
+        return valid
+
+    pass
+
 
 
 
@@ -293,21 +305,21 @@ class pbcoreDescriptionDocument(XML_PBCore):
 
         if objectARK and objectARK != "":
             if institutionName and institutionName != '':
-                self.pbcoreIdentifier.append(PB_Element(['source', institutionName], ['annotation', 'Object ARK '], tag="pbcoreIdentifier", value=objectARK))
+                self.pbcoreIdentifier.append(PB_Element(['source', institutionName], ['annotation', 'Object ARK'], tag="pbcoreIdentifier", value=objectARK))
             else:
                 self.pbcoreIdentifier.append(PB_Element(['annotation', 'Object ARK '], tag="pbcoreIdentifier", value=objectARK))
 
         if institutionARK and institutionARK != "":
             if institutionName and institutionName != '':
-                self.pbcoreIdentifier.append(PB_Element(['source', institutionName], ['annotation', 'Institution ARK '], tag="pbcoreIdentifier", value=institutionARK))
+                self.pbcoreIdentifier.append(PB_Element(['source', institutionName], ['annotation', 'Institution ARK'], tag="pbcoreIdentifier", value=institutionARK))
             else:
-                self.pbcoreIdentifier.append(PB_Element(['annotation', 'Institution ARK '], tag="pbcoreIdentifier", value=institutionARK))
+                self.pbcoreIdentifier.append(PB_Element(['annotation', 'Institution ARK'], tag="pbcoreIdentifier", value=institutionARK))
 
         if institutionURL and institutionURL != "":
             if institutionName and institutionName != '':
-                self.pbcoreIdentifier.append(PB_Element(['source', institutionName], ['annotation', 'Institution URL '], tag="pbcoreIdentifier", value=institutionURL))
+                self.pbcoreIdentifier.append(PB_Element(['source', institutionName], ['annotation', 'Institution URL'], tag="pbcoreIdentifier", value=institutionURL))
             else:
-                self.pbcoreIdentifier.append(PB_Element(['annotation', 'Institution URL '], tag="pbcoreIdentifier", value=institutionURL))
+                self.pbcoreIdentifier.append(PB_Element(['annotation', 'Institution URL'], tag="pbcoreIdentifier", value=institutionURL))
 
 
         self.pbcoreTitle = []
@@ -320,16 +332,14 @@ class pbcoreDescriptionDocument(XML_PBCore):
         if seriesTitle and seriesTitle != "":
             self.pbcoreTitle.append((PB_Element(['titleType', 'Series Title'], tag="pbcoreTitle", value=seriesTitle)))
 
-
-
         self.pbcoreSubject = []
         self.pbcoreDescription = []
         if description and description != "":
             self.pbcoreDescription.append(PB_Element(['descriptionType', 'Content Summary'], tag="pbcoreDescription", value=description))
         self.pbcoreGenre = []
         if genre and genre != "":
-            if genreAutority and genreAutority != "":
-                self.pbcoreGenre.append(PB_Element(['source', genreAutority], tag="pbcoreGenre", value=genre))
+            if self.genreAutority and self.genreAutority != "":
+                self.pbcoreGenre.append(PB_Element(['source', self.genreAutority], tag="pbcoreGenre", value=genre))
             else:
                 self.pbcoreGenre.append(PB_Element(tag="pbcoreGenre", value=genre))
             pass
@@ -717,7 +727,7 @@ class pbcoreDescriptionDocument(XML_PBCore):
         """
 
         :param          newpbcoreRelation:
-        :type           newpbcoreRelation: PB_Element
+        :type           newpbcoreRelation: pbcoreRelation
         :Example Value: ""
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreRelation
         :return:        None
@@ -1055,7 +1065,7 @@ class pbcoreDescriptionDocument(XML_PBCore):
         """
 
         :param          newpbcorePart:
-        :type           newpbcorePart:  PB_Element
+        :type           newpbcorePart:  CAVPP_Part
         :Example Value: ""
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorepart/
         :return:        None
@@ -1089,7 +1099,7 @@ class pbcoreRelation(XML_PBCore):
     :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerelation/
     """
     # TODO: Create Docstring for pbcoreRelation
-    def __init__(self):
+    def __init__(self, reType=None, reID=None):
         """
         @type           self.pbcoreRelationType:            PB_Element
         @type           self.pbcoreRelationIdentifier:      PB_Element
@@ -1097,9 +1107,14 @@ class pbcoreRelation(XML_PBCore):
         :return:    None
         """
         self.pbcoreRelationType = None
-        self.pbcoreRelationIdentifier = None
+        if reType and reType != "":
+            self.pbcoreRelationType = PB_Element(tag='pbcoreRelationType', value=reType)
 
-        self.pbcoreRelationIdentifier = [
+        self.pbcoreRelationIdentifier = None
+        if reID and reID != "":
+            self.pbcoreRelationIdentifier = PB_Element(tag='pbcoreRelationIdentifier', value=reID)
+
+        self.pbcoreRelationIdentifierAttributes = [
             # May Contain:
             # 4 or less optional attributes, specific:
 
@@ -1158,9 +1173,12 @@ class pbcoreRelation(XML_PBCore):
 
     def _makeXML(self):
         branch = Element("pbcoreRelation")
-        # branch.append(etree.tostring(self.pbcoreRelationType))
-        branch.append(self.pbcoreRelationIdentifier.get_etree_element())
-        branch.append(self.pbcoreRelationType.get_etree_element())
+        if self.pbcoreRelationType and self.pbcoreRelationType != "":
+            branch.append(self.pbcoreRelationType.get_etree_element())
+
+        if self.pbcoreRelationIdentifier and self.pbcoreRelationIdentifier != "":
+            branch.append(self.pbcoreRelationIdentifier.get_etree_element())
+
         return branch
 
     # def xml(self):
@@ -1861,6 +1879,8 @@ class CAVPP_Part(XML_PBCore):
     #     XML = self._makeXML()
     #     return etree.tostring(XML)
 
+
+
 class pbcoreInstantiation(XML_PBCore):
     # TODO: Create Docstring for pbcoreInstantiation
     """
@@ -1871,15 +1891,20 @@ class pbcoreInstantiation(XML_PBCore):
                  type=None,
                  objectID=None,
                  date=None,
+                 extent=None,
                  dimensions=None,
                  physical=None,
-                 digital=None,
+                 fileType=None,
+                 fileTypeAuthority=None,
                  standard=None,
                  location=None,
                  mediaType=None,
                  generations=None,
                  fileName=None,
                  fileSize=None,
+                 baseType=None,
+                 stockManufacture=None,
+                 baseThickness=None,
                  checksum=None,
                  vender='CAVPP',
                  cataloger='CAVPP',
@@ -1887,15 +1912,11 @@ class pbcoreInstantiation(XML_PBCore):
                  duration=None,
                  dataRate=None,
                  colors=None,
+                 aspectRatio=None,
                  tracks=None,
                  channelConfiguration=None,
                  language=None,
-                 alternativeModes=None,
-                 essenceTrack=None,
-                 relation=None,
-                 annotation=None,
-                 part=None,
-                 extension=None):
+                 alternativeModes=None):
         """
 
         @type           self.instantiationIdentifier:               PB_Element
@@ -1941,13 +1962,28 @@ class pbcoreInstantiation(XML_PBCore):
             self.instantiationIdentifier.append(PB_Element(['source', vender], tag='instantiationIdentifier', value=checksum))
 
         self.instantiationDate = []
+        if date and date != "":
+            self.instantiationDate.append(PB_Element(tag="instantiationDate", value=date))
+
         self.instantiationDimensions = []
+        if dimensions and dimensions != "":
+            self.instantiationDimensions.append(PB_Element(tag='instantiationDimensions', value=dimensions))
+
         self.instantiationPhysical = None
         if physical and physical != "":
             self.instantiationPhysical = PB_Element(tag="instantiationPhysical", value=physical)
 
         self.instantiationDigital = None
+        if fileType and fileType != "":
+            if fileTypeAuthority:
+                self.instantiationDigital = PB_Element(['source', fileTypeAuthority], tag='instantiationDigital', value=fileType)
+            else:
+                raise ValueError("Using the fileType optional argument requires that you also specifiy a "
+                                 "fileTypeAuthority")
         self.instantiationStandard = None
+        if standard and standard != None:
+            self.instantiationStandard = PB_Element(tag="instantiationStandard", value=standard)
+
         self.instantiationLocation = None
         if location and location != "":
             self.instantiationLocation = PB_Element(tag="instantiationLocation", value=location)
@@ -1961,6 +1997,13 @@ class pbcoreInstantiation(XML_PBCore):
             self.instantiationGenerations = PB_Element(tag="instantiationGenerations", value=generations)
 
         self.instantiationFileSize = None
+        if fileSize and fileSize != "":
+            if self.validFilesize(fileSize):
+                size = fileSize.split(" ")[0]
+                unit = fileSize.split(" ")[1]
+
+                self.instantiationFileSize = PB_Element(['unitsOfMeasure', unit], tag="instantiationFileSize", value=size)
+
         self.instantiationTimeStart = None
         if timeStart and timeStart != "":
             self.instantiationTimeStart = PB_Element(tag="instantiationTimeStart", value=timeStart)
@@ -1970,6 +2013,7 @@ class pbcoreInstantiation(XML_PBCore):
             self.instantiationDuration = PB_Element(tag="instantiationDuration", value=duration)
 
         self.instantiationDataRate = None
+
         self.instantiationColors = None
         if colors and colors != "":
             self.instantiationColors = PB_Element(tag='instantiationColors', value=colors)
@@ -1985,10 +2029,26 @@ class pbcoreInstantiation(XML_PBCore):
         self.instantiationLanguage = None
         if language and language != "":
             self.instantiationLanguage = PB_Element(['source', 'IS0 639.2'], tag='instantiationLanguage', value=language)
+
         self.instantiationAlternativeModes = None
+        if alternativeModes and alternativeModes != None:
+            self.instantiationAlternativeModes = PB_Element(tag='instantiationAlternativeModes', value=alternativeModes)
+
         self.instantiationEssenceTrack = []
         self.instantiationRelation = []
         self.instantiationAnnotation = []
+        if extent and extent != "":
+            self.instantiationAnnotation.append(PB_Element(['annotation', 'Extent'], tag='instantiationAnnotation', value=extent))
+
+        if stockManufacture and stockManufacture != "":
+            self.instantiationAnnotation.append(PB_Element(['annotation', 'StockManufacture'], tag="instantiationAnnotation", value=stockManufacture))
+
+        if baseType and baseType != "":
+            self.instantiationAnnotation.append(PB_Element(['annotation', 'BaseType'], tag="instantiationAnnotation", value=baseType))
+
+        if baseThickness and baseThickness != "":
+            self.instantiationAnnotation.append(PB_Element(['annotation', 'BaseThickness'], tag="instantiationAnnotation", value=baseThickness))
+
         self.instantiationPart = []
         self.instantiationExtension = None
         self.instantiationIdentifierAttributesRequired = [
@@ -2625,7 +2685,7 @@ class pbcoreInstantiation(XML_PBCore):
         """
 
         :param          newInstantiationPart:
-        :type           newInstantiationPart:   PB_Element
+        :type           newInstantiationPart:   InstantiationPart
         :Example Value: ""
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/InstantiationPart/
@@ -2771,7 +2831,7 @@ class InstantiationEssenceTrack(XML_PBCore):
                 standard=None,
                 encoding=None,
                 frameRate=None,
-                playbackSpeed=None,
+                ips=None,
                 samplingRate=None,
                 bitDepth=None,
                 aspectRatio=None,
@@ -2823,8 +2883,8 @@ class InstantiationEssenceTrack(XML_PBCore):
             self.essenceTrackFrameRate = PB_Element(['unitsOfMeasure', 'fps'], tag="essenceTrackFrameRate", value=frameRate)
 
         self.essenceTrackPlaybackSpeed = None
-        if playbackSpeed and playbackSpeed != "":
-            self.essenceTrackPlaybackSpeed = PB_Element(["unitsOfMeasure", "ips"], tag="essenceTrackPlaybackSpeed", value=playbackSpeed)
+        if ips and ips != "":
+            self.essenceTrackPlaybackSpeed = PB_Element(["unitsOfMeasure", "ips"], tag="essenceTrackPlaybackSpeed", value=ips)
 
         self.essenceTrackSamplingRate = None
         if samplingRate and samplingRate != "":
