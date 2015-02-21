@@ -1,6 +1,7 @@
 import sys
 import logging
 import argparse
+import string
 from time import sleep
 from os.path import isfile
 from xml.dom.minidom import parseString
@@ -119,10 +120,13 @@ def generate_pbcore(record):
     inst_name = ""
     inst_ARK = ""
     inst_URL = ""
+    creationDates = []
     subjectTops = ""
     genre = ""
     genre_autority= ""
     IA_URL= ""
+    QC_notes_list = ""
+    transcript = ""
 
 
 
@@ -237,13 +241,25 @@ def generate_pbcore(record):
         creation = record['Date Created']
         creationDates = creation.split(';')
         for creationDate in creationDates:
-            descritive.add_pbcoreAssetDate(PB_Element(['dateType', 'created'], tag="pbcoreAssetDate", value=creationDate))
+            descritive.add_pbcoreAssetDate(PB_Element(['dateType', 'created'], tag="pbcoreAssetDate", value=creationDate.strip()))
 
     if record['Date Published']:
         published = record['Date Published']
         publishedDates = published.split(';')
         for publishedDate in publishedDates:
-            descritive.add_pbcoreAssetDate(PB_Element(['dateType', 'published'], tag="pbcoreAssetDate", value=publishedDate))
+            descritive.add_pbcoreAssetDate(PB_Element(['dateType', 'published'], tag="pbcoreAssetDate", value=publishedDate.strip()))
+
+    if record['Additional Descriptive Notes for Overall Work']:
+        add_desc_notes = record['Additional Descriptive Notes for Overall Work'].split(';')
+        for note in add_desc_notes:
+            descritive.add_pbcoreDescription(PB_Element(['descriptionType', 'Additional Descriptive Notes for Overall Work'], tag='pbcoreDescription', value=note.strip()))
+        # TODO add Additional Descriptive Notes for Overall Work to PBCore object
+        # goes with pbCoreDescription
+
+    if record['Transcript']:
+        # TODO add Transcript to PBCore object
+        transcript = record['Transcript']
+        descritive.add_pbcoreDescription(PB_Element(['descriptionType', 'Transcript'], tag='pbcoreDescription', value=transcript))
 
 
 
@@ -359,35 +375,35 @@ def generate_pbcore(record):
 
     if record['Copyright Statement']:
         copyright_statement = record['Copyright Statement']
-        rights.add_rightsSummary(PB_Element(['annotation', 'Copyright Statement'], tag="rightsSummary", value=copyright_statement))
+        rights.add_rightsSummary(PB_Element(['annotation', 'Copyright Statement'], tag="rightsSummary", value=copyright_statement.strip()))
 
 
     if record['Copyright Holder']:
         copyright_holder = record['Copyright Holder']
-        rights.add_rightsSummary(PB_Element(['annotation', 'Copyright Holder'], tag="rightsSummary", value=copyright_holder))
+        rights.add_rightsSummary(PB_Element(['annotation', 'Copyright Holder'], tag="rightsSummary", value=copyright_holder.strip()))
 
     if record['Copyright Holder Info']:
         copyright_holder_info = record['Copyright Holder Info']
-        rights.add_rightsSummary(PB_Element(['annotation', 'Copyright Holder Info'], tag="rightsSummary", value=copyright_holder_info))
+        rights.add_rightsSummary(PB_Element(['annotation', 'Copyright Holder Info'], tag="rightsSummary", value=copyright_holder_info.strip()))
 
     if record['Copyright Date']:
         copyright_dates = re.split('; |,|and', record['Copyright Date'])
         for copyright_date in copyright_dates:
-            rights.add_rightsSummary(PB_Element(['annotation', 'Copyright Date'], tag="rightsSummary", value=copyright_date.lstrip()))
+            rights.add_rightsSummary(PB_Element(['annotation', 'Copyright Date'], tag="rightsSummary", value=copyright_date.strip()))
 
     if record['Copyright Notice']:
         copyright_notice = record['Copyright Notice']
-        rights.add_rightsSummary(PB_Element(['annotation', 'Copyright Notice'], tag="rightsSummary", value=copyright_notice))
+        rights.add_rightsSummary(PB_Element(['annotation', 'Copyright Notice'], tag="rightsSummary", value=copyright_notice.strip()))
 
     if record['Institutional Rights Statement (URL)']:
         institutional_rights_statement_URL = record['Institutional Rights Statement (URL)']
-        rights.add_rightsSummary(PB_Element(['annotation', 'Institutional Rights Statement (URL)'], tag="rightsSummary", value=institutional_rights_statement_URL))
+        rights.add_rightsSummary(PB_Element(['annotation', 'Institutional Rights Statement (URL)'], tag="rightsSummary", value=institutional_rights_statement_URL.strip()))
 
 
 
     descritive.add_pbcoreRightsSummary(rights)
 
-    new_XML_file.set_IntellectualContent(descritive)
+
 
 # PARTS
     call_number = ""
@@ -399,12 +415,12 @@ def generate_pbcore(record):
 
 # PBcore Parts
     for part in record['Object Identifier'].split(';'):
-        newPart = CAVPP_Part(objectID=part.lstrip(),
-                             callNumber=call_number,
-                             mainTitle=main_title,
-                             description=descrp)
+        newPart = CAVPP_Part(objectID=part.strip(),
+                             callNumber=call_number.strip(),
+                             mainTitle=main_title.strip(),
+                             description=descrp.strip())
 
-        # Preservation Master
+        # physical
         physical_asset = ""
         media_type = ""
         generation = ""
@@ -412,6 +428,17 @@ def generate_pbcore(record):
         durton = ""
         chan_config = ""
         lang = ""
+        track_standard = ""
+        total_number = ""
+        stock = ""
+        base_type = ""
+        bass_thickness = ""
+        cataloger_notes = ""
+        speed = ""
+        sound = ""
+        color = ""
+        aspect = ""
+        run_speed = ""
 
         if record['Gauge and Format']:
             physical_asset = record['Gauge and Format']
@@ -434,27 +461,92 @@ def generate_pbcore(record):
         if record['Language']:
             lang = record['Language']
 
+        if record['Track Standard']:
+            track_standard = record['Track Standard']
+
+        if record['Total Number of Reels or Tapes']:
+            total_number = record['Total Number of Reels or Tapes']
+
+        if record['Stock Manufacturer']:
+            stock = record['Stock Manufacturer']
+
+        if record['Base Type']:
+            base_type = record['Base Type']
+
+        if record['Base Thickness']:
+            bass_thickness = record['Base Thickness']
+
+        if record['Silent or Sound']:
+            sound = record['Silent or Sound']
+
+        if record['Color and/or Black and White']:
+            color = record['Color and/or Black and White']
+
+
+        if record['Aspect Ratio']:
+            aspect = record['Aspect Ratio']
+
+        if record['Running Speed']:
+            run_speed = record['Running Speed']
 
 
 
+        physical = pbcoreInstantiation(type="Physical Asset",
+                                       objectID=part.strip(),
+                                       extent=total_number,
+                                       physical=physical_asset,
+                                       mediaType=media_type,
+                                       generations=generation,
+                                       tracks=sound,
+                                       colors=color,
+                                       timeStart=timecode_begins,
+                                       duration=durton,
+                                       channelConfiguration=chan_config,
+                                       language=lang,
+                                       baseType=stock,
+                                       stockManufacture=base_type,
+                                       baseThickness=bass_thickness)
+
+        for date in creationDates:
+            physical.add_instantiationDate(PB_Element(tag='instantiationDate', value=date))
 
 
 
-        preservationMaster = pbcoreInstantiation(type="Preservation Master",
-                                                 objectID=part.lstrip(),
-                                                 physical=physical_asset,
-                                                 mediaType=media_type,
-                                                 generations=generation,
-                                                 timeStart=timecode_begins,
-                                                 duration=durton,
-                                                 channelConfiguration=chan_config,
-                                                 language=lang)
-        newPart.add_pbcoreInstantiation(preservationMaster)
+        if record['Additional Technical Notes for Overall Work']:
+            tech_notes = record['Additional Technical Notes for Overall Work'].split(";")
+            for note in tech_notes:
+                physical.add_instantiationAnnotation(PB_Element(['annotation', 'Additional Technical Notes for Overall'], tag="instantiationAnnotation", value=note.strip()))
+
+        if record['Cataloger Notes']:
+            cataloger_notes = record['Cataloger Notes'].split(';')
+            for note in cataloger_notes:
+                physical.add_instantiationAnnotation(PB_Element(['annotation', 'Cataloger Notes'], tag="instantiationAnnotation", value=note.strip()))
+
+# instantiationPart
+        if media_type.lower() == 'audio' or media_type.lower() == 'sound':
+            speed = record['Running Speed']
+            newInstPart = InstantiationPart(objectID=part)
+            newEss = InstantiationEssenceTrack(objectID=part, type="Audio", ips=speed)
+            newInstPart.add_instantiationEssenceTrack(newEss)
+            physical.add_instantiationPart(newInstPart)
+
+        elif media_type.lower() == 'moving image':
+            newEss = InstantiationEssenceTrack(objectID=part, frameRate=run_speed)
+            physical.add_instantiationEssenceTrack(newEss)
+
+
+        newPart.add_pbcoreInstantiation(physical)
+
         # <!--Preservation Master-->
+        pres_master = pbcoreInstantiation(type="Preservation Master",
+                                          objectID=(part.strip()+"_prsv"))
+        if record['Quality Control Notes']:
+            QC_notes_list = record['Quality Control Notes'].split(";")
+            for note in QC_notes_list:
+                pres_master.add_instantiationAnnotation(PB_Element(['annotation', 'CAVPP Quality Control/Partner Quality Control'], tag="instantiationAnnotation", value=note.strip()))
 
 
-        # <!--Access Copy-->
-        # clean up
+        newPart.add_pbcoreInstantiation(pres_master)
         descritive.add_pbcore_part(newPart)
 
     # if record['Object Identifier']:
@@ -471,76 +563,18 @@ def generate_pbcore(record):
 
 
 
-    if record['Silent or Sound']:
-        # TODO add Silent or Sound to PBCore object
-        XML += '\t<SilentOrSound>' + record['Silent or Sound'] + '</SilentOrSound>\n'
-
-    if record['Color and/or Black and White']:
-        # TODO add Color and/or Black and White to PBCore object
-        XML += '\t<ColorAndOrBlackAndWhite>' + record['Color and/or Black and White'] + '</ColorAndOrBlackAndWhite>\n'
-
-
-
-
-
-
-
-
-    if record['Aspect Ratio']:
-        # TODO add Aspect Ratio to PBCore object
-        XML += '\t<AspectRatio>' + record['Aspect Ratio'] + '</AspectRatio>\n'
-
-    if record['Running Speed']:
-        # TODO add Running Speed to PBCore object
-        XML += '\t<RunningSpeed>' + record['Running Speed'] + '</RunningSpeed>\n'
-
-
-    if record['Track Standard']:
-        # TODO add Track Standard to PBCore object
-        XML += '\t<TrackStandard>' + record['Track Standard'] + '</TrackStandard>\n'
 
 
     if record['Subtitles/Intertitles/Closed Captions']:
         # TODO add Subtitles/Intertitles/Closed Captions to PBCore object
         XML += '\t<SubtitlesIntertitlesClosedCaptions>' + record['Subtitles/Intertitles/Closed Captions'] + '</SubtitlesIntertitlesClosedCaptions>\n'
 
-    if record['Stock Manufacturer']:
-        # TODO add Stock Manufacturer to PBCore object
-        XML += '\t<StockManufacturer>' + record['Stock Manufacturer'] + '</StockManufacturer>\n'
 
-    if record['Base Type']:
-        # TODO add Base Type to PBCore object
-        XML += '\t<BaseType>' + record['Base Type'] + '</BaseType>\n'
 
-    if record['Base Thickness']:
-        # TODO add Base Thickness to PBCore object
-        XML += '\t<BaseThickness>' + record['Base Thickness'] + '</BaseThickness>\n'
 
-    if record['Quality Control Notes']:
-        # TODO add Quality Control Notes to PBCore object
-        # goes with pbCoreDescription
-        QCNotes = record['Quality Control Notes'].split(';')
-        for QCNote in QCNotes:
-            XML += '\t<QualityControlNotes>' + QCNote.lstrip() + '</QualityControlNotes>\n'
 
-    if record['Additional Descriptive Notes for Overall Work']:
-        # TODO add Additional Descriptive Notes for Overall Work to PBCore object
-        # goes with pbCoreDescription
-        XML += '\t<AdditionalDescriptiveNotesForOverallWork>' + record['Additional Descriptive Notes for Overall Work'] + '</AdditionalDescriptiveNotesForOverallWork>\n'
 
-    if record['Additional Technical Notes for Overall Work']:
-        # TODO add Additional Technical Notes for Overall Work to PBCore object
-        # goes with pbCoreDescription
-        XML += '\t<AdditionalTechnicalNotesForOverallWork>' + record['Additional Technical Notes for Overall Work'] + '</AdditionalTechnicalNotesForOverallWork>\n'
 
-    if record['Transcript']:
-        # TODO add Transcript to PBCore object
-        XML += '\t<Transcript>' + record['Transcript'] + '</Transcript>\n'
-
-    if record['Cataloger Notes']:
-        # TODO add Cataloger Notes to PBCore object
-        # goes with pbCoreDescription
-        XML += '\t<CatalogerNotes>' + record['Cataloger Notes'] + '</CatalogerNotes>\n'
 
 
 # Extension
@@ -560,7 +594,14 @@ def generate_pbcore(record):
         new_XML_file.add_extensions(exten)
 
 # Relationship
-    if record['Relationship']:
+    relation_type = ''
+    if record['Relationship Type']:
+        relation_type = record['Relationship Type']
+
+    for part in record['Object Identifier'].split(';'):
+        newRelation = pbcoreRelation(reID=part.strip(), reType=relation_type.strip())
+        descritive.add_pbcoreRelation(newRelation)
+
         # TODO add Relationship to PBCore object
         XML += '\t<Relationship>' + record['Relationship'] + '</Relationship>\n'
 
@@ -568,15 +609,13 @@ def generate_pbcore(record):
         # TODO add Relationship Type to PBCore object
         XML += '\t<RelationshipType>' + record['Relationship Type'] + '</RelationshipType>\n'
 
+    new_XML_file.set_IntellectualContent(descritive)
     return new_XML_file.xmlString()
-    # return ElementTree.tostring(new_XML_file.xml(), encoding='utf8', method='xml')
 
 def validate_col_titles(f):
     mismatched = []
     valid = True
     for index, heading in enumerate(csv.reader(f).next()):
-
-        # print(index, heading, officialList[index])
         if heading != officialList[index]:
             valid = False
             mismatched.append("CSV title mismatch. At column " + str(index+1) + ", recived: ["+ heading + "]. Expected: [" + officialList[index] + "]")
