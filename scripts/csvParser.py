@@ -197,7 +197,7 @@ def generate_pbcore(record):
         for subjectTopic in subjectTopics:
             # Unless another subject authority is specified, the source will default to the LOC subject headings
             if subjectTopicAuthority and subjectTopicAuthority != "":
-                descritive.add_pbcoreSubject(PB_Element(['source', subjectTopicAuthority], tag="pbcoreSubject", value=subjectTopic))
+                descritive.add_pbcoreSubject(PB_Element(['source', subjectTopicAuthority], tag="pbcoreSubject", value=subjectTopic.strip()))
             else:
                 descritive.add_pbcoreSubject(PB_Element(['source', "Library of Congress Subject Headings"], tag="pbcoreSubject", value=subjectTopic))
 
@@ -208,7 +208,7 @@ def generate_pbcore(record):
 
         for subjectEntity in subjectEntities:
             if subjectEntityAuthority and subjectEntityAuthority != "":
-                descritive.add_pbcoreSubject(PB_Element(['source', subjectEntityAuthority], tag="pbcoreSubject", value=subjectEntity))
+                descritive.add_pbcoreSubject(PB_Element(['source', subjectEntityAuthority], tag="pbcoreSubject", value=subjectEntity.strip()))
             else:
                 descritive.add_pbcoreSubject(PB_Element(tag="pbcoreSubject", value=subjectEntity))
 
@@ -232,7 +232,7 @@ def generate_pbcore(record):
         genreAuthoity = record['Genre Authority Source']
         for genre in genres:
             if genreAuthoity and genreAuthoity != "":
-                descritive.add_pbcoreGenre(PB_Element(['source', genreAuthoity], tag="pbcoreGenre", value=genre))
+                descritive.add_pbcoreGenre(PB_Element(['source', genreAuthoity], tag="pbcoreGenre", value=genre.strip()))
             else:
                 descritive.add_pbcoreGenre(PB_Element(tag="pbcoreGenre", value=genre))
 
