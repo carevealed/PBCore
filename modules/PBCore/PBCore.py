@@ -51,13 +51,19 @@ class XML_PBCore(object):
         XML = self._makeXML()
         return etree.tostring(XML)
 
-    def validFilesize(self, fileSize):
+    def valid_file_size(self, fileSize):
         valid = True
         if len(fileSize.split(' ')) != 2:
             return False
         if not re.search('\d*(\.\d)?\s[K,M,G,T,P,E,Z,Y]?[B,b]', fileSize):
             return False
         return valid
+
+    def valid_entry(self, entry, options):
+        if any(word in entry.lower() for word in options):
+            return True
+        else:
+            return False
 
     pass
 
@@ -757,10 +763,12 @@ class pbcoreDescriptionDocument(XML_PBCore):
         """
         # TODO: Give example value for addpbcoreCoverage
 
+
         if isinstance(newpbcoreCoverage, pbcoreCoverage):
             self.pbcoreCoverage.append(newpbcoreCoverage)
         else:
             raise TypeError("Expected type: pbcoreCoverage")
+
 
     def get_pbcoreAudienceLevel(self):
         """
@@ -1009,12 +1017,12 @@ class pbcoreDescriptionDocument(XML_PBCore):
             for node in self.pbcoreRightsSummary:
                 branch.append(node.xml())
 
-        if self.pbcoreExtension:
-            for node in self.pbcoreExtension:
-                branch.append(node.xml)
-
         if self.pbcorePart:
             for node in self.pbcorePart:
+                branch.append(node.xml())
+
+        if self.pbcoreExtension:
+            for node in self.pbcoreExtension:
                 branch.append(node.xml())
         # branch.append(self.pbcoreRelationIdentifier.get_etree_element())
         # branch.append(self.pbcoreRelationType.get_etree_element())
@@ -1034,7 +1042,7 @@ class pbcoreDescriptionDocument(XML_PBCore):
         """
 
         :param          newpbcoreExtension:
-        :type           newpbcoreExtension: PB_Element
+        :type           newpbcoreExtension: newpbcoreExtension
         :Example Value: ""
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreextension/
         :return:        None
@@ -1175,9 +1183,12 @@ class pbcoreRelation(XML_PBCore):
         branch = Element("pbcoreRelation")
         if self.pbcoreRelationType and self.pbcoreRelationType != "":
             branch.append(self.pbcoreRelationType.get_etree_element())
-
+        else:
+            branch.append(PB_Element(tag="pbcoreRelationType", value="MISSING REQUIRED DATA").get_etree_element())
         if self.pbcoreRelationIdentifier and self.pbcoreRelationIdentifier != "":
             branch.append(self.pbcoreRelationIdentifier.get_etree_element())
+        else:
+            branch.append(PB_Element(tag="pbcoreRelationIdentifier", value="MISSING REQUIRED DATA").get_etree_element())
 
         return branch
 
@@ -1208,13 +1219,16 @@ class pbcoreCoverage(XML_PBCore):
         @type           self.coverageType:      PB_Element
         :return:        None
         """
+
+
         self.coverage = None
         if covItem and covItem != "":
             self.coverage = PB_Element(tag='coverage', value=covItem)
 
         self.coverageType = None
+
         if covType and covType != "":
-            self.coverageType = PB_Element(tag='coverageType', value=covType)
+            self.set_coverageType(PB_Element(tag='coverageType', value=covType))
 
         self.coverageAttributesOptional = [
             # 4 or less optional attributes, specific:
@@ -1271,8 +1285,12 @@ class pbcoreCoverage(XML_PBCore):
         """
         # TODO: Give example value for set_coverageType
         # TODO: Create Docstring for set_coverageType
+        valid_types = ["spatial", "temporal"]
         if isinstance(newCoverageType, PB_Element):
-            self.coverageType = newCoverageType
+            if self.valid_entry(newCoverageType.get_value(), valid_types):
+                self.coverageType = newCoverageType
+            else:
+                raise ValueError("coverageType recieved " + newCoverageType.get_value() +" but can only accept " + str(valid_types))
         else:
             raise TypeError("Expected type: PB_Element")
 
@@ -1518,9 +1536,11 @@ class pbcoreContributor(XML_PBCore):
 # TODO: Test _makeXML method for pbcoreContributor
     def _makeXML(self):
         branch = Element("pbcoreContributor")
-        branch.append(self.contributor.get_etree_element())
-        for node in self.contributorRole:
-            branch.append(node.get_etree_element())
+        if self.contributor:
+            branch.append(self.contributor.get_etree_element())
+        if self.contributorRole:
+            for node in self.contributorRole:
+                branch.append(node.get_etree_element())
         return branch
 
     # def xml(self):
@@ -1651,7 +1671,7 @@ class pbcoreRightsSummary(XML_PBCore):
     :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerightssummary/
     """
     # TODO: Create Docstring for pbcoreRightsSummary
-    def __init__(self, statement=None):
+    def __init__(self, copyright_holder=None, copyright_statement=None, copyright_holder_info=None):
         """
 
         @type           self.rightsSummary:         PB_Element
@@ -1660,9 +1680,16 @@ class pbcoreRightsSummary(XML_PBCore):
 
         :return:        None
         """
-        self.rightsSummary = []
-        if statement and statement != "":
-            self.rightsSummary.append((PB_Element(['annotation', 'Copyright Statement'], tag="rightsSummary", value=statement)))
+        self.rightsSummary = None
+        if copyright_statement and copyright_statement != "":
+            self.rightsSummary = (PB_Element(['annotation', 'Copyright Statement'], tag="rightsSummary", value=copyright_statement))
+
+        if copyright_holder and copyright_holder != "":
+            self.rightsSummary = (PB_Element(['annotation', 'Copyright Holder'], tag="rightsSummary", value=copyright_holder))
+
+        if copyright_holder_info and copyright_holder_info != "":
+            self.rightsSummary = (PB_Element(['annotation', 'Copyright Holder Info'], tag="rightsSummary", value=copyright_holder_info))
+
 
         self.rightsLink = []
         self.rightsEmbedded = []
@@ -1704,7 +1731,7 @@ class pbcoreRightsSummary(XML_PBCore):
         """
         return self.rightsSummary
 
-    def add_rightsSummary(self, newRightsSummary):
+    def set_rightsSummary(self, newRightsSummary):
         """
 
         :param          newRightsSummary:
@@ -1713,11 +1740,11 @@ class pbcoreRightsSummary(XML_PBCore):
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerightssummary/rightssummary/
         """
-        # TODO: Give example of add_rightsSummary
-        # TODO: Create Docstring for add_rightsSummary
+        # TODO: Give example of set_rightsSummary
+        # TODO: Create Docstring for set_rightsSummary
 
         if isinstance(newRightsSummary, PB_Element):
-            self.rightsSummary.append(newRightsSummary)
+            self.rightsSummary = newRightsSummary
         else:
             raise TypeError("Expected type: PB_Element")
 
@@ -1771,8 +1798,8 @@ class pbcoreRightsSummary(XML_PBCore):
     def _makeXML(self):
         branch = Element("pbcoreRightsSummary")
         # branch.append(etree.tostring(self.pbcoreRelationType))
-        for rightsSum in self.rightsSummary:
-            branch.append(rightsSum.get_etree_element())
+        if self.rightsSummary:
+            branch.append(self.rightsSummary.get_etree_element())
 
         for link in self.rightsLink:
             branch.append(link.get_etree_element())
@@ -1855,14 +1882,20 @@ class CAVPP_Part(XML_PBCore):
         if self.pbcoreIdentifier:
             for node in self.pbcoreIdentifier:
                 branch.append(node.get_etree_element())
+        else:
+            branch.append(PB_Element(tag="pbcoreIdentifier", value="MISSING REQUIRED DATA").get_etree_element())
 
         if self.pbcoreTitle:
             for node in self.pbcoreTitle:
                 branch.append(node.get_etree_element())
+        else:
+            branch.append(PB_Element(tag="pbcoreTitle", value="MISSING REQUIRED DATA").get_etree_element())
 
         if self.pbcoreDescription:
             for node in self.pbcoreDescription:
                 branch.append(node.get_etree_element())
+        else:
+            branch.append(PB_Element(tag="pbcoreDescription", value="MISSING REQUIRED DATA").get_etree_element())
 
         if self.pbcoreInstantiation:
             for node in self.pbcoreInstantiation:
@@ -1998,7 +2031,7 @@ class pbcoreInstantiation(XML_PBCore):
 
         self.instantiationFileSize = None
         if fileSize and fileSize != "":
-            if self.validFilesize(fileSize):
+            if self.valid_file_size(fileSize):
                 size = fileSize.split(" ")[0]
                 unit = fileSize.split(" ")[1]
 
@@ -2030,24 +2063,24 @@ class pbcoreInstantiation(XML_PBCore):
         if language and language != "":
             self.instantiationLanguage = PB_Element(['source', 'IS0 639.2'], tag='instantiationLanguage', value=language)
 
-        self.instantiationAlternativeModes = None
+        self.instantiationAlternativeModes = []
         if alternativeModes and alternativeModes != None:
-            self.instantiationAlternativeModes = PB_Element(tag='instantiationAlternativeModes', value=alternativeModes)
+            self.instantiationAlternativeModes.append(PB_Element(tag='instantiationAlternativeModes', value=alternativeModes))
 
         self.instantiationEssenceTrack = []
         self.instantiationRelation = []
         self.instantiationAnnotation = []
         if extent and extent != "":
-            self.instantiationAnnotation.append(PB_Element(['annotation', 'Extent'], tag='instantiationAnnotation', value=extent))
+            self.instantiationAnnotation.append(PB_Element(['annotationType', 'Extent'], tag='instantiationAnnotation', value=extent))
 
         if stockManufacture and stockManufacture != "":
-            self.instantiationAnnotation.append(PB_Element(['annotation', 'StockManufacture'], tag="instantiationAnnotation", value=stockManufacture))
+            self.instantiationAnnotation.append(PB_Element(['annotationType', 'StockManufacture'], tag="instantiationAnnotation", value=stockManufacture))
 
         if baseType and baseType != "":
-            self.instantiationAnnotation.append(PB_Element(['annotation', 'BaseType'], tag="instantiationAnnotation", value=baseType))
+            self.instantiationAnnotation.append(PB_Element(['annotationType', 'BaseType'], tag="instantiationAnnotation", value=baseType))
 
         if baseThickness and baseThickness != "":
-            self.instantiationAnnotation.append(PB_Element(['annotation', 'BaseThickness'], tag="instantiationAnnotation", value=baseThickness))
+            self.instantiationAnnotation.append(PB_Element(['annotationType', 'BaseThickness'], tag="instantiationAnnotation", value=baseThickness))
 
         self.instantiationPart = []
         self.instantiationExtension = None
@@ -2574,7 +2607,7 @@ class pbcoreInstantiation(XML_PBCore):
         """
         return self.instantiationAlternativeModes
 
-    def set_instantiationAlternativeModes(self, newInstantiationAlternativeModes):
+    def add_instantiationAlternativeModes(self, newInstantiationAlternativeModes):
         """
 
         :param          newInstantiationAlternativeModes:
@@ -2585,7 +2618,7 @@ class pbcoreInstantiation(XML_PBCore):
         """
         # TODO: Give example instantiationAlternativeModes
         # TODO: Create Docstring for set_instantiationAlternativeModes
-        self.instantiationAlternativeModes = newInstantiationAlternativeModes
+        self.instantiationAlternativeModes.append(newInstantiationAlternativeModes)
 
     def add_instantiationRelation(self, newinstantiationRelation):
         """
@@ -2786,7 +2819,8 @@ class pbcoreInstantiation(XML_PBCore):
             branch.append(self.instantiationLanguage.get_etree_element())
 
         if self.instantiationAlternativeModes:
-            branch.append(self.instantiationAlternativeModes.get_etree_element())
+            for node in self.instantiationAlternativeModes:
+                branch.append(node.get_etree_element())
 
         if self.instantiationEssenceTrack:
             for node in self.instantiationEssenceTrack:
@@ -2798,7 +2832,6 @@ class pbcoreInstantiation(XML_PBCore):
 
         if self.instantiationAnnotation:
             for instAnnotation in self.instantiationAnnotation:
-                # print instAnnotation.get_etree_element()
                 branch.append(instAnnotation.get_etree_element())
 
         if self.instantiationPart:
@@ -3751,13 +3784,15 @@ class InstantiationPart(XML_PBCore):
 
 
     def _makeXML(self):
-        branch = Element("InstantiationPart")
+        branch = Element("instantiationPart")
         if self.instantiationIdentifier:
             for node in self.instantiationIdentifier:
                 branch.append(node.get_etree_element())
 
         if self.instantiationLocation:
             branch.append(self.instantiationLocation.get_etree_element())
+        else:
+            branch.append(PB_Element(tag="instantiationLocation", value="MISSING REQUIRED DATA").get_etree_element())
 
         if self.instantiationFileSize:
             branch.append(self.instantiationFileSize.get_etree_element())
@@ -3923,12 +3958,22 @@ class pbcoreExtension(XML_PBCore):
 
         if self.extensionElement:
             branch.append(self.extensionElement.get_etree_element())
+        else:
+            branch.append(PB_Element(tag="extensionElement", value="MISSING REQUIRED DATA").get_etree_element())
+
         if self.extensionValue:
             branch.append(self.extensionValue.get_etree_element())
+        else:
+            branch.append(PB_Element(tag="extensionValue", value="MISSING REQUIRED DATA").get_etree_element())
+
         if self.extensionAuthorityUsed:
             branch.append(self.extensionAuthorityUsed.get_etree_element())
+        else:
+            branch.append(PB_Element(tag="extensionAuthorityUsed", value="MISSING REQUIRED DATA").get_etree_element())
+
         if self.extensionEmbedded:
             branch.append(self.extensionEmbedded.get_etree_element())
+
         longer_branch.append(branch)
         return longer_branch
 
