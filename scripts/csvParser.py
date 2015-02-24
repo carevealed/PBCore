@@ -152,14 +152,8 @@ def generate_pbcore(record):
         ser_title = record['Series Title']
 
 
-    if record['Object ARK']:
-        obj_ARK = record['Object ARK']
-
     if record['Institution']:
         inst_name = record['Institution']
-
-    if record['Institution ARK']:
-        inst_ARK = record['Institution ARK']
 
     if record['Institution URL']:
         inst_URL = record['Institution URL']
@@ -176,10 +170,19 @@ def generate_pbcore(record):
                                            mainTitle=main_title,
                                            addTitle=add_title,
                                            seriesTitle=ser_title,
-                                           objectARK=obj_ARK,
+                                           # objectARK=obj_ARK,
                                            institutionName=inst_name,
-                                           institutionARK=inst_ARK,
+                                           # institutionARK=inst_ARK,
                                            institutionURL=inst_URL,)
+
+    if record['Institution ARK']:
+        inst_ARK = record['Institution ARK']
+        descritive.add_pbcoreIdentifier(PB_Element(['source', 'CDL'], ['annotation', 'Institution ARK'], tag='pbcoreIdentifier', value=inst_ARK))
+
+    if record['Object ARK']:
+        obj_ARK = record['Object ARK']
+        descritive.add_pbcoreIdentifier(PB_Element(['source', 'CDL'], ['annotation', 'Object ARK'], tag='pbcoreIdentifier', value=obj_ARK))
+
 
     if record['Description or Content Summary']:
         descriptions = record['Description or Content Summary'].split(";")
@@ -199,9 +202,9 @@ def generate_pbcore(record):
         for subjectTopic in subjectTopics:
             # Unless another subject authority is specified, the source will default to the LOC subject headings
             if subjectTopicAuthority and subjectTopicAuthority != "":
-                descritive.add_pbcoreSubject(PB_Element(['source', subjectTopicAuthority], tag="pbcoreSubject", value=subjectTopic.strip()))
+                descritive.add_pbcoreSubject(PB_Element(['source', subjectTopicAuthority], ['subjectType', 'Topic'], tag="pbcoreSubject", value=subjectTopic.strip()))
             else:
-                descritive.add_pbcoreSubject(PB_Element(['source', "Library of Congress Subject Headings"], tag="pbcoreSubject", value=subjectTopic.strip()))
+                descritive.add_pbcoreSubject(PB_Element(['source', "Library of Congress Subject Headings"], ['subjectType', 'Topic'], tag="pbcoreSubject", value=subjectTopic.strip()))
 
     if record['Subject Entity']:
         subjectEnts = record['Subject Entity']
@@ -210,9 +213,9 @@ def generate_pbcore(record):
 
         for subjectEntity in subjectEntities:
             if subjectEntityAuthority and subjectEntityAuthority != "":
-                descritive.add_pbcoreSubject(PB_Element(['source', subjectEntityAuthority], tag="pbcoreSubject", value=subjectEntity.strip()))
+                descritive.add_pbcoreSubject(PB_Element(['source', subjectEntityAuthority], ['subjectType', 'Entity'], tag="pbcoreSubject", value=subjectEntity.strip()))
             else:
-                descritive.add_pbcoreSubject(PB_Element(tag="pbcoreSubject", value=subjectEntity.strip()))
+                descritive.add_pbcoreSubject(PB_Element(['subjectType', 'Entity'], tag="pbcoreSubject", value=subjectEntity.strip()))
 
     if record['Spatial Coverage']:
         spatCoverages = record['Spatial Coverage']
@@ -435,7 +438,7 @@ def generate_pbcore(record):
                              mainTitle=main_title.strip(),
                              description=descrp.strip())
         for call_number in call_numbers:
-            newPart.add_pbcoreIdentifier(PB_Element(['source', 'CAVPP'], ['annotation', 'Call Number'], tag='pbcoreIdentifier', value=call_number.strip()))
+            newPart.add_pbcoreIdentifier(PB_Element(['source', inst_name], ['annotation', 'Call Number'], tag='pbcoreIdentifier', value=call_number.strip()))
         # physical
         physical_asset = ""
         media_type = ""
@@ -498,7 +501,6 @@ def generate_pbcore(record):
         if record['Color and/or Black and White']:
             color = record['Color and/or Black and White']
 
-
         if record['Aspect Ratio']:
             aspect = record['Aspect Ratio']
 
@@ -521,6 +523,7 @@ def generate_pbcore(record):
                                        language=lang,
                                        baseType=stock,
                                        stockManufacture=base_type,
+                                       location=inst_name,
                                        baseThickness=bass_thickness)
 
         for date in creationDates:
@@ -558,6 +561,7 @@ def generate_pbcore(record):
 
         # <!--Preservation Master-->
         pres_master = pbcoreInstantiation(type="Preservation Master",
+                                          location="CAVPP",
                                           objectID=(part.strip()+"_prsv"))
         if record['Quality Control Notes']:
             QC_notes_list = record['Quality Control Notes'].split(";")
@@ -569,6 +573,7 @@ def generate_pbcore(record):
 
         # access copy
         access_copy = pbcoreInstantiation(type="Access Copy",
+                                          location="CAVPP",
                                           objectID=(part.strip()+"_access"))
         newPart.add_pbcoreInstantiation(access_copy)
 
