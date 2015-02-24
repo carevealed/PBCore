@@ -151,8 +151,6 @@ def generate_pbcore(record):
     if record['Series Title']:
         ser_title = record['Series Title']
 
-    if record['Description or Content Summary']:
-        descrp = record['Description or Content Summary']
 
     if record['Object ARK']:
         obj_ARK = record['Object ARK']
@@ -178,11 +176,15 @@ def generate_pbcore(record):
                                            mainTitle=main_title,
                                            addTitle=add_title,
                                            seriesTitle=ser_title,
-                                           description=descrp,
                                            objectARK=obj_ARK,
                                            institutionName=inst_name,
                                            institutionARK=inst_ARK,
                                            institutionURL=inst_URL,)
+
+    if record['Description or Content Summary']:
+        descriptions = record['Description or Content Summary'].split(";")
+        for description in descriptions:
+            descritive.add_pbcoreDescription(PB_Element(tag="pbcoreDescription", value=description.strip()))
 
 
     if record['Internet Archive URL']:
@@ -199,7 +201,7 @@ def generate_pbcore(record):
             if subjectTopicAuthority and subjectTopicAuthority != "":
                 descritive.add_pbcoreSubject(PB_Element(['source', subjectTopicAuthority], tag="pbcoreSubject", value=subjectTopic.strip()))
             else:
-                descritive.add_pbcoreSubject(PB_Element(['source', "Library of Congress Subject Headings"], tag="pbcoreSubject", value=subjectTopic))
+                descritive.add_pbcoreSubject(PB_Element(['source', "Library of Congress Subject Headings"], tag="pbcoreSubject", value=subjectTopic.strip()))
 
     if record['Subject Entity']:
         subjectEnts = record['Subject Entity']
@@ -210,13 +212,13 @@ def generate_pbcore(record):
             if subjectEntityAuthority and subjectEntityAuthority != "":
                 descritive.add_pbcoreSubject(PB_Element(['source', subjectEntityAuthority], tag="pbcoreSubject", value=subjectEntity.strip()))
             else:
-                descritive.add_pbcoreSubject(PB_Element(tag="pbcoreSubject", value=subjectEntity))
+                descritive.add_pbcoreSubject(PB_Element(tag="pbcoreSubject", value=subjectEntity.strip()))
 
     if record['Spatial Coverage']:
         spatCoverages = record['Spatial Coverage']
         spatialCoverages = spatCoverages.split(';')
         for spatialCoverage in spatialCoverages:
-            descritive.add_pbcoreCoverage(pbcoreCoverage(covItem=spatialCoverage, covType="Spacial"))
+            descritive.add_pbcoreCoverage(pbcoreCoverage(covItem=spatialCoverage, covType="Spatial"))
 
 
     if record['Temporal Coverage']:
@@ -234,7 +236,7 @@ def generate_pbcore(record):
             if genreAuthoity and genreAuthoity != "":
                 descritive.add_pbcoreGenre(PB_Element(['source', genreAuthoity], tag="pbcoreGenre", value=genre.strip()))
             else:
-                descritive.add_pbcoreGenre(PB_Element(tag="pbcoreGenre", value=genre))
+                descritive.add_pbcoreGenre(PB_Element(tag="pbcoreGenre", value=genre.strip()))
 
 
     if record['Date Created']:
@@ -265,88 +267,101 @@ def generate_pbcore(record):
 
 # Descriptive Creator: Producer,Director,Writer,Interviewer,Performer
 
-    producer = ""
-    director = ""
-    writer = ""
-    interviewer = ""
-    performer = ""
+    producers = ""
+    directors = ""
+    writers = ""
+    interviewers = ""
+    performers = ""
 
     if record['Producer']:
-        producer = record['Producer']
-        creator = pbcoreCreator(name=producer, role="Producer")
-        descritive.add_pbcoreCreator(creator)
+        producers = record['Producer'].split(";")
+        for producer in producers:
+            creator = pbcoreCreator(name=producer.strip(), role="Producer")
+            descritive.add_pbcoreCreator(creator)
 
     if record['Director']:
-        director = record['Director']
-        creator = pbcoreCreator(name=director, role="Director")
-        descritive.add_pbcoreCreator(creator)
+        directors = record['Director'].split(";")
+        for director in directors:
+            creator = pbcoreCreator(name=director.strip(), role="Director")
+            descritive.add_pbcoreCreator(creator)
 
     if record['Writer']:
-        writer = record['Writer']
-        creator = pbcoreCreator(name=writer, role="Writer")
-        descritive.add_pbcoreCreator(creator)
+        writers = record['Writer'].split(";")
+        for writer in writers:
+            creator = pbcoreCreator(name=writer.strip(), role="Writer")
+            descritive.add_pbcoreCreator(creator)
 
     if record['Interviewer']:
-        interviewer = record['Interviewer']
-        creator = pbcoreCreator(name=interviewer, role="Interviewer")
-        descritive.add_pbcoreCreator(creator)
+        interviewers = record['Interviewer'].split(";")
+        for interviewer in interviewers:
+            creator = pbcoreCreator(name=interviewer.strip(), role="Interviewer")
+            descritive.add_pbcoreCreator(creator)
 
     if record['Performer']:
-        performer = record['Performer']
-        creator = pbcoreCreator(name=performer, role="Performer")
-        descritive.add_pbcoreCreator(creator)
+        performers = record['Performer'].split(";")
+        for performer in performers:
+            creator = pbcoreCreator(name=performer.strip(), role="Performer")
+            descritive.add_pbcoreCreator(creator)
 
 
 # Descriptive Contributor: Camera,Editor,Sound,Music,Cast,Interviewee,Speaker,Musician
 
-    camera = ""
-    editor = ""
-    sound = ""
-    music = ""
-    cast = ""
-    interviewee = ""
-    speaker = ""
-    musician = ""
+    cameras = ""
+    editors = ""
+    sounds = ""
+    musics = ""
+    cast_members = ""
+    interviewees = ""
+    speakers = ""
+    musicians = ""
 
     if record['Camera']:
-        camera = record['Camera']
-        contributor = pbcoreContributor(name=camera, role="Camera")
-        descritive.add_pbcoreContributor(contributor)
+        cameras = record['Camera'].split(';')
+        for camera in cameras:
+            contributor = pbcoreContributor(name=camera.strip(), role="Camera")
+            descritive.add_pbcoreContributor(contributor)
 
     if record['Editor']:
-        editor = record['Editor']
-        contributor = pbcoreContributor(name=editor, role="Editor")
-        descritive.add_pbcoreContributor(contributor)
+        editors = record['Editor'].split(';')
+        for editor in editors:
+            contributor = pbcoreContributor(name=editor.strip(), role="Editor")
+            descritive.add_pbcoreContributor(contributor)
 
     if record['Sound']:
-        sound = record['Sound']
-        contributor = pbcoreContributor(name=sound, role="Sound")
-        descritive.add_pbcoreContributor(contributor)
+        sounds = record['Sound'].split(';')
+        for sound in sounds:
+            contributor = pbcoreContributor(name=sound.strip(), role="Sound")
+            descritive.add_pbcoreContributor(contributor)
 
     if record['Music']:
-        music = record['Music']
-        contributor = pbcoreContributor(name=music, role="Music")
-        descritive.add_pbcoreContributor(contributor)
+        musics = record['Music'].split(';')
+        for music in musics:
+            contributor = pbcoreContributor(name=music.strip(), role="Music")
+            descritive.add_pbcoreContributor(contributor)
 
     if record['Cast']:
-        cast = record['Cast']
-        contributor = pbcoreContributor(name=cast, role="Cast")
-        descritive.add_pbcoreContributor(contributor)
+        cast_members = record['Cast'].split(';')
+        for cast in cast_members:
+            contributor = pbcoreContributor(name=cast.strip(), role="Cast")
+            descritive.add_pbcoreContributor(contributor)
 
     if record['Interviewee']:
-        interviewee = record['Interviewee']
-        contributor = pbcoreContributor(name=interviewee, role="Interviewee")
-        descritive.add_pbcoreContributor(contributor)
+        interviewees = record['Interviewee'].split(';')
+        for interviewee in interviewees:
+            contributor = pbcoreContributor(name=interviewee.strip(), role="Interviewee")
+            descritive.add_pbcoreContributor(contributor)
 
     if record['Speaker']:
-        speaker = record['Speaker']
-        contributor = pbcoreContributor(name=speaker, role="Speaker")
-        descritive.add_pbcoreContributor(contributor)
+        speakers = record['Speaker'].split(';')
+        for speaker in speakers:
+            contributor = pbcoreContributor(name=speaker.strip(), role="Speaker")
+            descritive.add_pbcoreContributor(contributor)
 
     if record['Musician']:
-        musician = record['Musician']
-        contributor = pbcoreContributor(name=musician, role="Musician")
-        descritive.add_pbcoreContributor(contributor)
+        musicians = record['Musician'].split(';')
+        for musician in musicians:
+            contributor = pbcoreContributor(name=musician.strip(), role="Musician")
+            descritive.add_pbcoreContributor(contributor)
 
 
 # Descriptive Publisher: Publisher,Distributor
@@ -371,55 +386,56 @@ def generate_pbcore(record):
     copyright_dates = []
     copyright_notice = ""
     institutional_rights_statement_URL = ""
-    rights = pbcoreRightsSummary()
 
     if record['Copyright Statement']:
-        copyright_statement = record['Copyright Statement']
-        rights.add_rightsSummary(PB_Element(['annotation', 'Copyright Statement'], tag="rightsSummary", value=copyright_statement.strip()))
-
+        rights = pbcoreRightsSummary(copyright_statement=record['Copyright Statement'].strip())
+        descritive.add_pbcoreRightsSummary(rights)
 
     if record['Copyright Holder']:
-        copyright_holder = record['Copyright Holder']
-        rights.add_rightsSummary(PB_Element(['annotation', 'Copyright Holder'], tag="rightsSummary", value=copyright_holder.strip()))
+        rights = pbcoreRightsSummary(copyright_holder=record['Copyright Holder'].strip())
+        descritive.add_pbcoreRightsSummary(rights)
 
     if record['Copyright Holder Info']:
-        copyright_holder_info = record['Copyright Holder Info']
-        rights.add_rightsSummary(PB_Element(['annotation', 'Copyright Holder Info'], tag="rightsSummary", value=copyright_holder_info.strip()))
+        rights = pbcoreRightsSummary(copyright_holder_info=record['Copyright Holder Info'])
+        descritive.add_pbcoreRightsSummary(rights)
 
     if record['Copyright Date']:
         copyright_dates = re.split('; |,|and', record['Copyright Date'])
         for copyright_date in copyright_dates:
-            rights.add_rightsSummary(PB_Element(['annotation', 'Copyright Date'], tag="rightsSummary", value=copyright_date.strip()))
+            rights = pbcoreRightsSummary()
+            rights.set_rightsSummary(PB_Element(['annotation', 'Copyright Date'], tag="rightsSummary", value=copyright_date.strip()))
+            descritive.add_pbcoreRightsSummary(rights)
 
     if record['Copyright Notice']:
+        rights = pbcoreRightsSummary()
         copyright_notice = record['Copyright Notice']
-        rights.add_rightsSummary(PB_Element(['annotation', 'Copyright Notice'], tag="rightsSummary", value=copyright_notice.strip()))
+        rights.set_rightsSummary(PB_Element(['annotation', 'Copyright Notice'], tag="rightsSummary", value=copyright_notice.strip()))
+        descritive.add_pbcoreRightsSummary(rights)
 
     if record['Institutional Rights Statement (URL)']:
+        rights = pbcoreRightsSummary()
         institutional_rights_statement_URL = record['Institutional Rights Statement (URL)']
-        rights.add_rightsSummary(PB_Element(['annotation', 'Institutional Rights Statement (URL)'], tag="rightsSummary", value=institutional_rights_statement_URL.strip()))
+        rights.set_rightsSummary(PB_Element(['annotation', 'Institutional Rights Statement (URL)'], tag="rightsSummary", value=institutional_rights_statement_URL.strip()))
+        descritive.add_pbcoreRightsSummary(rights)
 
 
 
-    descritive.add_pbcoreRightsSummary(rights)
 
 
 
 # PARTS
-    call_number = ""
+    call_numbers = ""
     if record['Call Number']:
-        # pbcoreDescriptionDocument.pbcoreIdentifier is part of pbcoreDescriptionDocument class
-        # pbcoreInstantiation.instantiationIdentifier is part of CAVPP_Part class
-        call_number = record['Call Number']
+        call_numbers = record['Call Number'].split(';')
     # TODO add Call Number to pbcoreDescriptionDocument.pbcoreIdentifier and pbcoreInstantiation.instantiationIdentifier
 
 # PBcore Parts
     for part in record['Object Identifier'].split(';'):
         newPart = CAVPP_Part(objectID=part.strip(),
-                             callNumber=call_number.strip(),
                              mainTitle=main_title.strip(),
                              description=descrp.strip())
-
+        for call_number in call_numbers:
+            newPart.add_pbcoreIdentifier(PB_Element(['source', 'CAVPP'], ['annotation', 'Call Number'], tag='pbcoreIdentifier', value=call_number.strip()))
         # physical
         physical_asset = ""
         media_type = ""
@@ -510,17 +526,20 @@ def generate_pbcore(record):
         for date in creationDates:
             physical.add_instantiationDate(PB_Element(tag='instantiationDate', value=date))
 
-
-
         if record['Additional Technical Notes for Overall Work']:
             tech_notes = record['Additional Technical Notes for Overall Work'].split(";")
             for note in tech_notes:
-                physical.add_instantiationAnnotation(PB_Element(['annotation', 'Additional Technical Notes for Overall'], tag="instantiationAnnotation", value=note.strip()))
+                physical.add_instantiationAnnotation(PB_Element(['annotationType', 'Additional Technical Notes for Overall'], tag="instantiationAnnotation", value=note.strip()))
 
         if record['Cataloger Notes']:
             cataloger_notes = record['Cataloger Notes'].split(';')
             for note in cataloger_notes:
-                physical.add_instantiationAnnotation(PB_Element(['annotation', 'Cataloger Notes'], tag="instantiationAnnotation", value=note.strip()))
+                physical.add_instantiationAnnotation(PB_Element(['annotationType', 'Cataloger Notes'], tag="instantiationAnnotation", value=note.strip()))
+
+        if record['Subtitles/Intertitles/Closed Captions']:
+            subtitles = record['Subtitles/Intertitles/Closed Captions'].split(';')
+            for subtitle in subtitles:
+                physical.get_instantiationAlternativeModes()
 
 # instantiationPart
         if media_type.lower() == 'audio' or media_type.lower() == 'sound':
@@ -547,27 +566,17 @@ def generate_pbcore(record):
 
 
         newPart.add_pbcoreInstantiation(pres_master)
+
+        # access copy
+        access_copy = pbcoreInstantiation(type="Access Copy",
+                                          objectID=(part.strip()+"_access"))
+        newPart.add_pbcoreInstantiation(access_copy)
+
         descritive.add_pbcore_part(newPart)
 
-    # if record['Object Identifier']:
-    #     # TODO add Object Identifier to pbcoreDescriptionDocument.pbcoreIdentifier and pbcoreInstantiation.instantiationIdentifier
-    #     # pbcoreDescriptionDocument.pbcoreIdentifier is part of pbcoreDescriptionDocument class
-    #     # pbcoreInstantiation.instantiationIdentifier is part of CAVPP_Part class
-    #     if "_t" in record['Object Identifier']:
-    #         objectIDs = record['Object Identifier'].split(';')
-    #
-    #         for objectID in objectIDs:
-    #             newpart = CAVPP_Part()
-    #             pass
-    #             # parts.append()
 
 
 
-
-
-    if record['Subtitles/Intertitles/Closed Captions']:
-        # TODO add Subtitles/Intertitles/Closed Captions to PBCore object
-        XML += '\t<SubtitlesIntertitlesClosedCaptions>' + record['Subtitles/Intertitles/Closed Captions'] + '</SubtitlesIntertitlesClosedCaptions>\n'
 
 
 
@@ -581,7 +590,7 @@ def generate_pbcore(record):
     if record['Country of Creation']:
         exten = pbcoreExtension(exElement="countryOfCreation",
                                 exValue=record['Country of Creation'])
-        new_XML_file.add_extensions(exten)
+        descritive.add_pbcore_extension(exten)
 
     if record['Project Note']:
         if record['Project Note'] == 'California Audiovisual Preservation Project (CAVPP)':
@@ -591,7 +600,7 @@ def generate_pbcore(record):
         else:  # I don't know if this will be anything other than "California Audiovisual Preservation Project"
             exten = pbcoreExtension(exElement="projectNote",
                                     exValue=record['Project Note'])
-        new_XML_file.add_extensions(exten)
+        descritive.add_pbcore_extension(exten)
 
 # Relationship
     relation_type = ''
