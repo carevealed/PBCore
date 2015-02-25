@@ -1,3 +1,4 @@
+import os
 import sys
 import logging
 import argparse
@@ -105,10 +106,10 @@ class RemoveErrorsFilter(logging.Filter):
 def generate_pbcore(record):
     XML = ""
     new_XML_file = PBCore(collectionSource=record['Institution'],
-                          collectionTitle=record['Collection Guide Title'])  #TODO: Find out if collectionSource is the 'Institution'.
+                          collectionTitle=record['Collection Guide Title'])
 
 
-# pbcoreDescriptionDocument
+    # pbcoreDescriptionDocument
     obj_ID = ""
     proj_ID = ""
     asset_type = ""
@@ -170,10 +171,8 @@ def generate_pbcore(record):
                                            mainTitle=main_title,
                                            addTitle=add_title,
                                            seriesTitle=ser_title,
-                                           # objectARK=obj_ARK,
                                            institutionName=inst_name,
-                                           # institutionARK=inst_ARK,
-                                           institutionURL=inst_URL,)
+                                           institutionURL=inst_URL)
 
     if record['Institution ARK']:
         inst_ARK = record['Institution ARK']
@@ -258,11 +257,8 @@ def generate_pbcore(record):
         add_desc_notes = record['Additional Descriptive Notes for Overall Work'].split(';')
         for note in add_desc_notes:
             descritive.add_pbcoreDescription(PB_Element(['descriptionType', 'Additional Descriptive Notes for Overall Work'], tag='pbcoreDescription', value=note.strip()))
-        # TODO add Additional Descriptive Notes for Overall Work to PBCore object
-        # goes with pbCoreDescription
 
     if record['Transcript']:
-        # TODO add Transcript to PBCore object
         transcript = record['Transcript']
         descritive.add_pbcoreDescription(PB_Element(['descriptionType', 'Transcript'], tag='pbcoreDescription', value=transcript))
 
@@ -421,16 +417,10 @@ def generate_pbcore(record):
         rights.set_rightsSummary(PB_Element(['annotation', 'Institutional Rights Statement (URL)'], tag="rightsSummary", value=institutional_rights_statement_URL.strip()))
         descritive.add_pbcoreRightsSummary(rights)
 
-
-
-
-
-
 # PARTS
     call_numbers = ""
     if record['Call Number']:
         call_numbers = record['Call Number'].split(';')
-    # TODO add Call Number to pbcoreDescriptionDocument.pbcoreIdentifier and pbcoreInstantiation.instantiationIdentifier
 
 # PBcore Parts
     for part in record['Object Identifier'].split(';'):
@@ -456,8 +446,10 @@ def generate_pbcore(record):
         speed = ""
         sound = ""
         color = ""
-        aspect = ""
+        aspect_ratio = ""
+        track_standard = ""
         run_speed = ""
+
 
         if record['Gauge and Format']:
             physical_asset = record['Gauge and Format']
@@ -480,8 +472,6 @@ def generate_pbcore(record):
         if record['Language']:
             lang = record['Language']
 
-        if record['Track Standard']:
-            track_standard = record['Track Standard']
 
         if record['Total Number of Reels or Tapes']:
             total_number = record['Total Number of Reels or Tapes']
@@ -502,11 +492,13 @@ def generate_pbcore(record):
             color = record['Color and/or Black and White']
 
         if record['Aspect Ratio']:
-            aspect = record['Aspect Ratio']
+            aspect_ratio = record['Aspect Ratio']
+
+        if record['Track Standard']:
+            track_standard = record['Track Standard']
 
         if record['Running Speed']:
             run_speed = record['Running Speed']
-
 
 
         physical = pbcoreInstantiation(type="Physical Asset",
@@ -521,13 +513,15 @@ def generate_pbcore(record):
                                        duration=durton,
                                        channelConfiguration=chan_config,
                                        language=lang,
-                                       baseType=stock,
-                                       stockManufacture=base_type,
-                                       location=inst_name,
-                                       baseThickness=bass_thickness)
+                                       baseType=base_type,
+                                       baseThickness=bass_thickness,
+                                       stockManufacture=stock,
+                                       location=inst_name)
+
 
         for date in creationDates:
             physical.add_instantiationDate(PB_Element(tag='instantiationDate', value=date))
+
 
         if record['Additional Technical Notes for Overall Work']:
             tech_notes = record['Additional Technical Notes for Overall Work'].split(";")
@@ -548,12 +542,12 @@ def generate_pbcore(record):
         if media_type.lower() == 'audio' or media_type.lower() == 'sound':
             speed = record['Running Speed']
             newInstPart = InstantiationPart(objectID=part)
-            newEss = InstantiationEssenceTrack(objectID=part, type="Audio", ips=speed)
+            newEss = InstantiationEssenceTrack(objectID=part, type="Audio", ips=speed, standard=track_standard)
             newInstPart.add_instantiationEssenceTrack(newEss)
             physical.add_instantiationPart(newInstPart)
 
         elif media_type.lower() == 'moving image':
-            newEss = InstantiationEssenceTrack(objectID=part, frameRate=run_speed)
+            newEss = InstantiationEssenceTrack(objectID=part, frameRate=run_speed, aspectRatio=aspect_ratio, standard=track_standard)
             physical.add_instantiationEssenceTrack(newEss)
 
 
@@ -578,15 +572,6 @@ def generate_pbcore(record):
         newPart.add_pbcoreInstantiation(access_copy)
 
         descritive.add_pbcore_part(newPart)
-
-
-
-
-
-
-
-
-
 
 
 
@@ -616,13 +601,6 @@ def generate_pbcore(record):
         newRelation = pbcoreRelation(reID=part.strip(), reType=relation_type.strip())
         descritive.add_pbcoreRelation(newRelation)
 
-        # TODO add Relationship to PBCore object
-        XML += '\t<Relationship>' + record['Relationship'] + '</Relationship>\n'
-
-    if record['Relationship Type']:
-        # TODO add Relationship Type to PBCore object
-        XML += '\t<RelationshipType>' + record['Relationship Type'] + '</RelationshipType>\n'
-
     new_XML_file.set_IntellectualContent(descritive)
     return new_XML_file.xmlString()
 
@@ -632,7 +610,13 @@ def validate_col_titles(f):
     for index, heading in enumerate(csv.reader(f).next()):
         if heading != officialList[index]:
             valid = False
-            mismatched.append("CSV title mismatch. At column " + str(index+1) + ", recived: ["+ heading + "]. Expected: [" + officialList[index] + "]")
+            mismatched.append("CSV title mismatch. At column "
+                              + str(index+1)
+                              + ", recived: ["
+                              + heading
+                              + "]. Expected: ["
+                              + officialList[index]
+                              + "]")
 
     f.seek(0)
     return valid, mismatched
@@ -646,6 +630,10 @@ def main():
     args = parser.parse_args()
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
+
+    if not os.path.exists('logs'):              # automatically create a logs folder if one doesn't already exist
+        os.makedirs('logs')
+
     fh = logging.FileHandler('logs/debug.log')  # Saves all logs to this file
     eh = logging.StreamHandler(sys.stderr)      # sends any critical errors to standard error
     eh.setLevel(logging.WARNING)
@@ -671,7 +659,7 @@ def main():
     logger.addHandler(ch)
     logger.addHandler(fh)
     logger.addHandler(eh)
-    f = None
+
     if isfile(args.csv):  # checks if the file passed in is a real file):
         try:
             logger.debug("Opening file:" + args.csv)
