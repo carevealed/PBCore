@@ -9,31 +9,6 @@ __author__ = 'California Audiovisual Preservation Project'
 # PBCore metadata
 from xml.dom import minidom
 
-
-# class PBData():
-#     def __init__(self):
-#         self.elements = []
-#         self.addData("dafsd")
-#         pass
-#
-#     def printData(self):
-#         if self.elements:
-#             for element in self.elements:
-#                 print element
-#
-#     def addData(self, newDataMember):
-#         self.elements.append(newDataMember)
-#
-#     def xml(self):
-#
-#         # branch = etree.ElementTree(self.pbcoreRelationType)
-#         XML = self._makeXML()
-#         return XML
-#
-#     def xml_string(self):
-#         XML = self._makeXML()
-#         return etree.tostring(XML)
-
 # Interface
 class XML_PBCore(object):
 
@@ -909,7 +884,6 @@ class pbcoreDescriptionDocument(XML_PBCore):
 
         :return:
         """
-        # TODO: Create Docstring for getpbcorePublisher
         return self.pbcorePublisher
 
     def add_pbcorePublisher(self, newpbcorePublisher):
@@ -917,7 +891,7 @@ class pbcoreDescriptionDocument(XML_PBCore):
 
         :param          newpbcorePublisher:
         :type           newpbcorePublisher: pbcorePublisher
-        :Example Value: ""
+        :Example Value: Canyon Cinema
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorePublisher
         :return:        None
         """
@@ -932,7 +906,6 @@ class pbcoreDescriptionDocument(XML_PBCore):
 
         :return:
         """
-        # TODO: Create Docstring for getpbcoreRightsSummary
         return self.pbcoreRightsSummary
 
     def add_pbcoreRightsSummary(self, newpbcoreRightsSummary):
@@ -944,7 +917,6 @@ class pbcoreDescriptionDocument(XML_PBCore):
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreRightsSummary
         """
-        # TODO: Give example value for addpbcoreRightsSummary
         # TODO: Create an example Value for addpbcoreRightsSummary
 
         if isinstance(newpbcoreRightsSummary, pbcoreRightsSummary):
@@ -1024,19 +996,7 @@ class pbcoreDescriptionDocument(XML_PBCore):
         if self.pbcoreExtension:
             for node in self.pbcoreExtension:
                 branch.append(node.xml())
-        # branch.append(self.pbcoreRelationIdentifier.get_etree_element())
-        # branch.append(self.pbcoreRelationType.get_etree_element())
         return branch
-
-    # def xml(self):
-    #     # branch = etree.ElementTree(self.pbcoreRelationType)
-    #     XML = self._makeXML()
-    #     return XML
-    #
-    # def xml_string(self):
-    #     XML = self._makeXML()
-    #
-    #     return etree.tostring(XML)
 
     def add_pbcore_extension(self, newpbcoreExtension):
         """
@@ -1061,13 +1021,13 @@ class pbcoreDescriptionDocument(XML_PBCore):
 
         return self.pbcoreExtension
 
-    def get_pbcore_extension_element(self):
-        """
-
-        :return:    xml.etree.ElementTree.Element
-        """
-
-        return self.pbcoreExtension.get_etree_element()
+    # def get_pbcore_extension_element(self):
+    #     """
+    #
+    #     :return:    xml.etree.ElementTree.Element
+    #     """
+    #
+    #     return self.pbcoreExtension
 
     def add_pbcore_part(self, newpbcorePart):
         """
@@ -1092,14 +1052,6 @@ class pbcoreDescriptionDocument(XML_PBCore):
         """
         return self.pbcorePart
 
-    # def xml(self):
-    #
-    #     # branch = etree.ElementTree(self.pbcoreRelationType)
-    #     XML = self._makeXML()
-    #     return XML
-
-    # def xmlString(self):
-    #     XML = self._makeXML()
 # __________________________________
 class pbcoreRelation(XML_PBCore):
     """
@@ -1122,17 +1074,6 @@ class pbcoreRelation(XML_PBCore):
         if reID and reID != "":
             self.pbcoreRelationIdentifier = PB_Element(tag='pbcoreRelationIdentifier', value=reID)
 
-        self.pbcoreRelationIdentifierAttributes = [
-            # May Contain:
-            # 4 or less optional attributes, specific:
-
-            "source",                       # (text, may be empty)
-            "ref",                          # (text, may be empty)
-            "version",                      # (text, may be empty)
-            "annotation"                    # (text, may be empty)
-        ]
-
-
     def get_pbcoreRelationType(self):
         """
 
@@ -1149,8 +1090,6 @@ class pbcoreRelation(XML_PBCore):
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerelation/pbcorerelationtype/
         :return:        None
         """
-        # TODO: Create Docstring for setpbcoreRelationType
-        # etree.tostring(newpbcoreRelationType)
 
         if isinstance(newpbcoreRelationType, PB_Element):
             self.pbcoreRelationType = newpbcoreRelationType
@@ -1173,7 +1112,6 @@ class pbcoreRelation(XML_PBCore):
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerelation/pbcoreRelationIdentifier/
         :return:        None
         """
-        # TODO: Create Docstring for set_pbcoreRelationIdentifier
         if isinstance(newpbcoreRelationIdentifier, PB_Element):
             self.pbcoreRelationIdentifier = newpbcoreRelationIdentifier
         else:
@@ -1192,17 +1130,6 @@ class pbcoreRelation(XML_PBCore):
 
         return branch
 
-    # def xml(self):
-    #
-    #     # branch = etree.ElementTree(self.pbcoreRelationType)
-    #     XML = self._makeXML()
-    #     return XML
-    #
-    # def xmlString(self):
-    #     XML = self._makeXML()
-    #     return etree.tostring(XML)
-
-
 # __________________________________
 class pbcoreCoverage(XML_PBCore):
     """
@@ -1220,7 +1147,6 @@ class pbcoreCoverage(XML_PBCore):
         :return:        None
         """
 
-
         self.coverage = None
         if covItem and covItem != "":
             self.coverage = PB_Element(tag='coverage', value=covItem)
@@ -1229,19 +1155,6 @@ class pbcoreCoverage(XML_PBCore):
 
         if covType and covType != "":
             self.set_coverageType(PB_Element(tag='coverageType', value=covType))
-
-        self.coverageAttributesOptional = [
-            # 4 or less optional attributes, specific:
-            "source",                       # (text, may be empty)
-            "ref",                          # (text, may be empty)
-            "version",                      # (text, may be empty)
-            "annotation",                   # (text, may be empty)
-
-            # 3 or less optional attributes, specific:
-            "startTime",                    # (text, may be empty)
-            "endTime",                      # (text, may be empty)
-            "timeAnnotation"                # (text, may be empty)
-        ]
 
     def get_coverage(self):
         """
@@ -1256,12 +1169,11 @@ class pbcoreCoverage(XML_PBCore):
 
         :param          newCoverage:
         :type           newCoverage:    PB_Element
-        :Example Value: ""
+        :Example Value: Berkeley (Calif.)
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecoverage/coverage/
         :return:        None
         """
         # TODO: Give example value for set_coverage
-        # TODO: Create Docstring for set_coverage
         if isinstance(newCoverage, PB_Element):
             self.coverage = newCoverage
         else:
@@ -1279,12 +1191,10 @@ class pbcoreCoverage(XML_PBCore):
 
         :param          newCoverageType:
         :type           newCoverageType:    PB_Element
-        :Example Value: ""
+        :Example Value: spatial
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecoverage/coveragetype/
         :return:        None
         """
-        # TODO: Give example value for set_coverageType
-        # TODO: Create Docstring for set_coverageType
         valid_types = ["spatial", "temporal"]
         if isinstance(newCoverageType, PB_Element):
             if self.valid_entry(newCoverageType.get_value(), valid_types):
@@ -1293,7 +1203,6 @@ class pbcoreCoverage(XML_PBCore):
                 raise ValueError("coverageType recieved " + newCoverageType.get_value() +" but can only accept " + str(valid_types))
         else:
             raise TypeError("Expected type: PB_Element")
-
 
     def _makeXML(self):
         branch = Element("pbcoreCoverage")
@@ -1305,14 +1214,6 @@ class pbcoreCoverage(XML_PBCore):
 
         return branch
 
-    # def xml(self):
-    #
-    #     # branch = etree.ElementTree(self.pbcoreRelationType)
-    #     XML = self._makeXML()
-    #     return XML
-    #
-    # def xmlString(self):
-    #     XML = self._makeXML()
 
 ##################################
 # intellectual Property classes
@@ -1338,7 +1239,6 @@ class pbcoreCreator(XML_PBCore):
     :Description:
     :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecreator/
     """
-    # TODO: Create Docstring for pbcoreCreator
     def __init__(self, name=None, role=None):
         """
         @type           self.creator:           PB_Element
@@ -1351,30 +1251,6 @@ class pbcoreCreator(XML_PBCore):
         self.creatorRole = []
         if role and role != "":
             self.creatorRole.append(PB_Element(tag="creatorRole", value=role))
-        self.creatorAttributesOptional = [
-
-            # May Contain:
-            # 3 or less optional attributes, specific:
-
-            "affiliation",                  # ( may be empty)
-            "ref",                          # ( may be empty)
-            "annotation",                   # ( may be empty)
-            # 3 or less optional attributes, specific:
-
-            "startTime",                    # (text, may be empty)
-            "endTime",                      # (text, may be empty)
-            "timeAnnotation"                # (text, may be empty)
-        ]
-
-        self.creatorRoleAttributesOptional = [
-            # May Contain:
-            # 4 or less optional attributes, specific:
-
-            "source",                       # (text, may be empty)
-            "ref",                          # (text, may be empty)
-            "version",                      # (text, may be empty)
-            "annotation"                    # (text, may be empty)
-        ]
 
     def get_creator(self):
         """
@@ -1389,7 +1265,7 @@ class pbcoreCreator(XML_PBCore):
         :param          newCreator:
         :type           newCreator: PB_Element
         :return:        None
-        :Example Value: Unknown
+        :Example Value: David O. Selznick
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecreator/creator/
         """
         # TODO: Create Docstring for set_creator
@@ -1414,7 +1290,6 @@ class pbcoreCreator(XML_PBCore):
         :Example Value: Producer
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecreator/creatorRole/
         """
-        # TODO: Create Docstring for setCreatorRole
         if isinstance(newCreatorRole, PB_Element):
             self.creatorRole.append(newCreatorRole)
         else:
@@ -1428,23 +1303,12 @@ class pbcoreCreator(XML_PBCore):
             branch.append(role.get_etree_element())
         return branch
 
-    # def xml(self):
-    #
-    #     # branch = etree.ElementTree(self.pbcoreRelationType)
-    #     XML = self._makeXML()
-    #     return XML
-
-    # def xmlString(self):
-    #     XML = self._makeXML()
-    #     return etree.tostring(XML)
-
 # __________________________________
 class pbcoreContributor(XML_PBCore):
     """
     :Description:
     :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecontributor/
     """
-    # TODO: Create Docstring for pbcoreContributor
     def __init__(self, name=None, role=None):
         """
         @type           self.contributor:           PB_Element
@@ -1459,40 +1323,12 @@ class pbcoreContributor(XML_PBCore):
         if role and role != "":
             self.contributorRole.append(PB_Element(tag="contributorRole", value=role))
 
-        self.contributorAttributesOptional = [
-            # May Contain:
-            # 3 or less optional attributes, specific:
-
-            "affiliation",              # ( may be empty)
-            "ref",                      # ( may be empty)
-            "annotation",               # ( may be empty)
-            # 3 or less optional attributes, specific:
-
-            "startTime",                # (text, may be empty)
-            "endTime",                  # (text, may be empty)
-            "timeAnnotation"            # (text, may be empty)
-        ]
-
-        self.contributorRoleAttributesOptional = [
-            # May Contain:
-            # 1 or less optional attributes, specific:
-
-            "portrayal",                # (text, may be empty)
-            # 4 or less optional attributes, specific:
-
-            "source",                   # (text, may be empty)
-            "ref",                      # (text, may be empty)
-            "version",                  # (text, may be empty)
-            "annotation",               # (text, may be empty)
-
-        ]
-
     def set_contributor(self, newContributor):
         """
 
         :param          newContributor:
         :type           newContributor: PB_Element
-        :Example Value: ""
+        :Example Value: Charlie Chaplin
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecontributor/contributor/
         :return:        None
         """
@@ -1515,12 +1351,11 @@ class pbcoreContributor(XML_PBCore):
 
         :param          newContributoRole:
         :type           newContributoRole:  PB_Element
-        :Example Value: ""
+        :Example Value: Cast
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecontributor/contributorrole/
         :return:        None
         """
         # TODO: Give example of contributorRole
-        # TODO: Create Docstring for set_contributorRole
         if isinstance(newContributoRole, PB_Element):
             self.contributorRole.append(newContributoRole)
         else:
@@ -1533,7 +1368,6 @@ class pbcoreContributor(XML_PBCore):
         """
         return self.contributorRole
 
-# TODO: Test _makeXML method for pbcoreContributor
     def _makeXML(self):
         branch = Element("pbcoreContributor")
         if self.contributor:
@@ -1559,7 +1393,7 @@ class pbcorePublisher(XML_PBCore):
     :Description:
     :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorepublisher/
     """
-    # TODO: Create Docstring for pbcorePublisher
+
     def __init__(self, name=None, role=None):
         """
         @type           self.publisher:             PB_Element
@@ -1575,31 +1409,6 @@ class pbcorePublisher(XML_PBCore):
         if role and role != "":
             self.publisherRole.append(PB_Element(tag="publisherRole", value=role))
 
-        self.publisherAttributesOptional = [
-            # May Contain:
-            # 3 or less optional attributes, specific:
-            "affiliation",                  # ( may be empty)
-            "ref",                          # ( may be empty)
-            "annotation",                   # ( may be empty)
-
-            # 3 or less optional attributes, specific:
-            "startTime",                    # (text, may be empty)
-            "endTime",                      # (text, may be empty)
-            "timeAnnotation"                # (text, may be empty)
-        ]
-
-        self.publisherRoleAttributesOptional = [
-            # May Contain:
-            # 4 or less optional attributes, specific:
-            "source",                   # (text, may be empty)
-            "ref",                      # (text, may be empty)
-            "version",                  # (text, may be empty)
-            "annotation"                # (text, may be empty)
-
-        ]
-
-
-
     def get_publisher(self):
         """
         :return:
@@ -1611,7 +1420,7 @@ class pbcorePublisher(XML_PBCore):
         """
         :param          newPublisher:
         :type           newPublisher:   PB_Element
-        :Example Value: ""
+        :Example Value: Canyon Cinema
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorepublisher/publisher/
         :return:        None
         """
@@ -1633,18 +1442,15 @@ class pbcorePublisher(XML_PBCore):
         """
         :param          newPublisherRole:
         :type           newPublisherRole:   PB_Element
-        :Example Value: ""
+        :Example Value: Distributor
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorepublisher/publisherRole/http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorepublisher/publisherRole/
         :return:        None
         """
         # For example: "" TODO: Give example of publisherRole
-        # TODO: Create Docstring for set_publisherRole
         if isinstance(newPublisherRole, PB_Element):
             self.publisherRole.append(newPublisherRole)
         else:
             raise TypeError("Expected type: PB_Element")
-
-# TODO: Test _makeXML method for pbcorePublisher
 
     def _makeXML(self):
         branch = Element("pbcorePublisher")
@@ -1652,17 +1458,6 @@ class pbcorePublisher(XML_PBCore):
         for node in self.publisherRole:
             branch.append(node.get_etree_element())
         return branch
-
-
-    # def xml(self):
-    #
-    #     # branch = etree.ElementTree(self.pbcoreRelationType)
-    #     XML = self._makeXML()
-    #     return XML
-    #
-    # def xmlString(self):
-    #     XML = self._makeXML()
-    #     return etree.tostring(XML)
 
 # __________________________________
 class pbcoreRightsSummary(XML_PBCore):
@@ -1690,38 +1485,8 @@ class pbcoreRightsSummary(XML_PBCore):
         if copyright_holder_info and copyright_holder_info != "":
             self.rightsSummary = (PB_Element(['annotation', 'Copyright Holder Info'], tag="rightsSummary", value=copyright_holder_info))
 
-
         self.rightsLink = []
         self.rightsEmbedded = []
-        self.pbcoreRightsSummaryAttributesOptional = [
-            # 3 or less optional attributes, specific:
-
-            "startTime",                    # (text, may be empty)
-            "endTime",                      # (text, may be empty)
-            "timeAnnotation"                # (text, may be empty)
-        ]
-        self.rightsSummaryAttributesOptional = [
-            # May Contain:
-            # 4 or less optional attributes, specific:
-            "source",                   # (text, may be empty)
-            "ref",                      # (text, may be empty)
-            "version",                  # (text, may be empty)
-            "annotation"                # (text, may be empty)
-        ]
-
-        self.rightsLinkAttributesOptional = [
-            # May Contain:
-            # 1 or less optional attributes, specific:
-
-            "annotation"                # (text, may be empty)
-        ]
-
-        self.rightsEmbeddedAttributes = [
-            # May Contain:
-            # 1 or less optional attributes, specific:
-
-            "annotation"                # (text, may be empty)
-        ]
 
 
     def get_rightsSummary(self):
@@ -1741,7 +1506,6 @@ class pbcoreRightsSummary(XML_PBCore):
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerightssummary/rightssummary/
         """
         # TODO: Give example of set_rightsSummary
-        # TODO: Create Docstring for set_rightsSummary
 
         if isinstance(newRightsSummary, PB_Element):
             self.rightsSummary = newRightsSummary
@@ -1765,7 +1529,6 @@ class pbcoreRightsSummary(XML_PBCore):
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerightssummary/rightsLink/
         """
         # TODO: Give example of rightsLink
-        # TODO: Create Docstring for setRightsLink
 
         if isinstance(newRightsLink, PB_Element):
             self.rightsLink.append(newRightsLink)
@@ -1789,7 +1552,6 @@ class pbcoreRightsSummary(XML_PBCore):
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerightssummary/rightsEmbedded/
         """
         # TODO: Give example of rightsEmbedded
-        # TODO: Create Docstring for setRightsEmbedded
         if isinstance(newRightsEmbedded, PB_Element):
             self.rightsEmbedded.append(newRightsEmbedded)
         else:
@@ -1808,21 +1570,15 @@ class pbcoreRightsSummary(XML_PBCore):
             branch.append(rightsEmb.get_etree_element())
         return branch
 
-    # def xml(self):
-    #
-    #     # branch = etree.ElementTree(self.pbcoreRelationType)
-    #     XML = self._makeXML()
-    #     return XML
-    #
-    # def xmlString(self):
-    #     XML = self._makeXML()
-    #     return etree.tostring(XML)
 
 
 ##################################
 # instantiation classes
 ##################################
 class CAVPP_Part(XML_PBCore):
+    """
+    :Description:
+    """
     def __init__(self,
                  objectID=None,
                  callNumber=None,
@@ -1878,7 +1634,6 @@ class CAVPP_Part(XML_PBCore):
 
     def _makeXML(self):
         branch = Element("pbcorePart")
-        # branch.append(etree.tostring(self.pbcoreRelationType))
         if self.pbcoreIdentifier:
             for node in self.pbcoreIdentifier:
                 branch.append(node.get_etree_element())
@@ -1902,20 +1657,8 @@ class CAVPP_Part(XML_PBCore):
                 branch.append(node.xml())
         return branch
 
-    # def xml(self):
-    #
-    #     # branch = etree.ElementTree(self.pbcoreRelationType)
-    #     XML = self._makeXML()
-    #     return XML
-    #
-    # def xmlString(self):
-    #     XML = self._makeXML()
-    #     return etree.tostring(XML)
-
-
 
 class pbcoreInstantiation(XML_PBCore):
-    # TODO: Create Docstring for pbcoreInstantiation
     """
     :Description:
     :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/
@@ -2084,130 +1827,6 @@ class pbcoreInstantiation(XML_PBCore):
 
         self.instantiationPart = []
         self.instantiationExtension = None
-        self.instantiationIdentifierAttributesRequired = [
-            # Must Contain:
-            # 1 required attribute, specific:
-            "source"                        # (text, may be empty)
-        ]
-
-        self.instantiationIdentifierAttributesOptional = [
-            # May Contain:
-            # 3 or less optional attributes, specific:
-
-            "ref"                           # (text, may be empty)
-            "version"                       # (text, may be empty)
-            "annotation"                    # (text, may be empty)
-        ]
-
-        self.instantiationDateAttributesOptional = [
-            # May Contain:
-            # 1 or less optional attributes, specific:
-            "dateType"                      # ( may be empty)
-        ]
-
-        self.instantiationDimensionsAttributesOptional = [
-            # May Contain:
-            # 2 or less optional attributes, specific:
-
-            "unitsOfMeasure",               # ( may be empty)
-            "annotation"                    # ( may be empty)
-        ]
-
-        self.instantiationPhysicalAttributesOptional = [
-            # May Contain:
-            # 4 or less optional attributes, specific:
-            "source",                       # (text, may be empty)
-            "ref",                          # (text, may be empty)
-            "version",                      # (text, may be empty)
-            "annotation"                    # (text, may be empty)
-
-        ]
-
-        self.instantiationDigitalAttributesOptional = [
-            # 4 or less optional attributes, specific:
-            "source",                       # (text, may be empty)
-            "ref",                          # (text, may be empty)
-            "version",                      # (text, may be empty)
-            "annotation"                    # (text, may be empty)
-        ]
-
-        self.instantiationStandardAttributesOptional = [
-            # May Contain:
-            # 1 or less optional attributes, specific:
-
-            "profile",                      # ( may be empty)
-            # 4 or less optional attributes, specific:
-
-            "source",                       # (text, may be empty)
-            "ref",                          # (text, may be empty)
-            "version",                      # (text, may be empty)
-            "annotation"                    # (text, may be empty)
-        ]
-
-        self.instantiationMediaTypeAttributesOptional = [
-            # May Contain:
-            # 4 or less optional attributes, specific:
-
-            "source",                       # (text, may be empty)
-            "ref",                          # (text, may be empty)
-            "version",                      # (text, may be empty)
-            "annotation"                    # (text, may be empty)
-        ]
-
-        self.instantiationGenerationsAttributesOptional = [
-            # May Contain:
-            # 4 or less optional attributes, specific:
-            "source",                       # (text, may be empty)
-            "ref",                          # (text, may be empty)
-            "version",                      # (text, may be empty)
-            "annotation"                    # (text, may be empty)
-        ]
-
-        self.instantiationFileSizeAttributesOptional = [
-            # May Contain:
-            # 2 or less optional attributes, specific:
-            "unitsOfMeasure",               # ( may be empty)
-            "annotation"                    # ( may be empty)
-        ]
-
-        self.instantiationDataRateAttributesOptional = [
-            # May Contain:
-            # 2 or less optional attributes, specific:
-            "unitsOfMeasure",               # ( may be empty)
-            "annotation"                    # ( may be empty)
-        ]
-
-        self.instantiationColorsAttributesOptional = [
-            # May Contain:
-            # 4 or less optional attributes, specific:
-            "source",                       # (text, may be empty)
-            "ref",                          # (text, may be empty)
-            "version",                      # (text, may be empty)
-            "annotation"                    # (text, may be empty)
-        ]
-
-        self.instantiationLanguageAttributesOptional = [
-            # May Contain:
-            # 4 or less optional attributes, specific:
-            "source",                       # (text, may be empty)
-            "ref",                          # (text, may be empty)
-            "version",                      # (text, may be empty)
-            "annotation"                    # (text, may be empty)
-
-        ]
-        self.instantiationAnnotationOptional = [
-            # May Contain:
-            # 2 or less optional attributes, specific:
-
-            "annotationType",               # ( may be empty)
-            "ref"                           # ( may be empty)
-        ]
-
-        self.instantiationPartOptional = [
-            "startTime",                    # (text, may be empty)
-            "endTime",                      # (text, may be empty)
-            "timeAnnotation"                # (text, may be empty)
-        ]
 
 
     def get_instantiationAssetType(self):
@@ -2224,7 +1843,7 @@ class pbcoreInstantiation(XML_PBCore):
 
         :param          newInstantiationIdentifier:
         :type           newInstantiationIdentifier:     PB_Element
-        :Example Value: ""
+        :Example Value: "cbpf_00002"
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationIdentifier/
         """
@@ -2250,7 +1869,6 @@ class pbcoreInstantiation(XML_PBCore):
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationDate/
         """
-        # TODO: Create Docstring for setInstantiationDate
         if isinstance(newInstantiationDate, PB_Element):
             self.instantiationDate.append(newInstantiationDate)
         else:
@@ -2273,7 +1891,6 @@ class pbcoreInstantiation(XML_PBCore):
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationDimensions/
         """
         # TODO: Give example instantiationDimensions
-        # TODO: Create Docstring for setInstantiationDimensions
         if isinstance(newInstantiationDimensions, PB_Element):
             self.instantiationDimensions.append(newInstantiationDimensions)
         else:
@@ -2295,7 +1912,7 @@ class pbcoreInstantiation(XML_PBCore):
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationPhysical/
         """
-        # TODO: Create Docstring for set_instantiationPhysical
+
         if isinstance(newInstantiationPhysical, PB_Element):
             self.instantiationPhysical = newInstantiationPhysical
         else:
@@ -2339,7 +1956,6 @@ class pbcoreInstantiation(XML_PBCore):
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationStandard/
         """
-        # TODO: Create Docstring for set_instantiationStandard
 
         if isinstance(newInstantiationStandard, PB_Element):
             self.instantiationStandard = newInstantiationStandard
@@ -2362,7 +1978,6 @@ class pbcoreInstantiation(XML_PBCore):
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationLocation/
         """
-        # TODO: Create Docstring for set_instantiationLocation
 
         if isinstance(newInstantiationLocation, PB_Element):
             self.instantiationLocation = newInstantiationLocation
@@ -2385,7 +2000,6 @@ class pbcoreInstantiation(XML_PBCore):
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationMediaType/
         """
-        # TODO: Create Docstring for set_instantiationMediaType
 
         if isinstance(newInstantiationMediaType, PB_Element):
             self.instantiationMediaType = newInstantiationMediaType
@@ -2404,7 +2018,7 @@ class pbcoreInstantiation(XML_PBCore):
 
         :param          newInstantiationGenerations:
         :type           newInstantiationGenerations:    PB_Element
-        :Example Value: Unknown
+        :Example Value: Master
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationGenerations/
         """
@@ -2426,7 +2040,7 @@ class pbcoreInstantiation(XML_PBCore):
 
         :param          newInstantiationFileSize:
         :type           newInstantiationFileSize:   PB_Element
-        :Example Value: ""
+        :Example Value: "425 MB"
         :return:        None
         :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationFileSize/
         """
@@ -2475,7 +2089,6 @@ class pbcoreInstantiation(XML_PBCore):
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationDuration/
         """
-        # TODO: Create Docstring for set_instantiationDuration
 
         if isinstance(newInstantiationDuration, PB_Element):
             self.instantiationDuration = newInstantiationDuration
@@ -2494,12 +2107,10 @@ class pbcoreInstantiation(XML_PBCore):
 
         :param          newInstantiationDataRate:
         :type           newInstantiationDataRate:   PB_Element
-        :Example Value: ""
+        :Example Value: 1975-15-7
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationDataRate/
         """
-        # TODO: Give example instantiationDataRate
-        # TODO: Create Docstring for set_instantiationDataRate
 
         if isinstance(newInstantiationDataRate, PB_Element):
             self.instantiationDataRate = newInstantiationDataRate
@@ -2545,7 +2156,6 @@ class pbcoreInstantiation(XML_PBCore):
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationTracks/
         """
-        # TODO: Create Docstring for set_instantiationTracks
 
         if isinstance(newInstantiationTracks, PB_Element):
             self.instantiationTracks = newInstantiationTracks
@@ -2568,7 +2178,6 @@ class pbcoreInstantiation(XML_PBCore):
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationChannelConfiguration/
         """
-        # TODO: Create Docstring for set_instantiationChannelConfiguration
 
         if isinstance(newInstantiationChannelConfiguration, PB_Element):
             self.instantiationChannelConfiguration = newInstantiationChannelConfiguration
@@ -2587,7 +2196,7 @@ class pbcoreInstantiation(XML_PBCore):
 
         :param          newInstantiationLanguage:
         :type           newInstantiationLanguage:   PB_Element
-        :Example Value: ""
+        :Example Value: "eng"
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationLanguage/
         """
@@ -2617,7 +2226,6 @@ class pbcoreInstantiation(XML_PBCore):
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationAlternativeModes/
         """
         # TODO: Give example instantiationAlternativeModes
-        # TODO: Create Docstring for set_instantiationAlternativeModes
         self.instantiationAlternativeModes.append(newInstantiationAlternativeModes)
 
     def add_instantiationRelation(self, newinstantiationRelation):
@@ -2629,8 +2237,6 @@ class pbcoreInstantiation(XML_PBCore):
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/InstantiationRelation/
         """
-        # TODO: Give example for add_instantiationRelation
-        # TODO: Create Docstring for add_instantiationRelation
 
         if isinstance(newinstantiationRelation, InstantiationRelation):
             self.instantiationRelation.append(newinstantiationRelation)
@@ -2699,8 +2305,6 @@ class pbcoreInstantiation(XML_PBCore):
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationAnnotation/
         """
-        # TODO: Give example for add_instantiationAnnotation
-        # TODO: Create Docstring for add_instantiationAnnotation
 
         if isinstance(newAnnotation, PB_Element):
             self.instantiationAnnotation.append(newAnnotation)
@@ -2723,9 +2327,7 @@ class pbcoreInstantiation(XML_PBCore):
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/InstantiationPart/
         """
-        # TODO: Give example InstantiationPart
-        # FIXME: Change PB_Element to InstantiationPart object for add_add_instantiationPart()
-        # TODO: Create Docstring for set_instantiationPart
+
         if isinstance(newInstantiationPart, InstantiationPart):
             self.instantiationPart.append(newInstantiationPart)
         else:
@@ -2745,8 +2347,6 @@ class pbcoreInstantiation(XML_PBCore):
         :return:        None
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationExtension/
         """
-        # TODO: Give example instantiationExtension
-        # TODO: Create Docstring for set_instantiationExtension
 
         if isinstance(newnstantiationExtension, PB_Element):
             self.instantiationExtension = newnstantiationExtension
@@ -2755,7 +2355,6 @@ class pbcoreInstantiation(XML_PBCore):
 
     def _makeXML(self):
         branch = Element("pbcoreInstantiation")
-        # branch.append(etree.tostring(self.pbcoreRelationType))
         if self.instantiationAssetType:
             branch.append(etree.Comment(text=self.instantiationAssetType))
         if self.instantiationIdentifier:
@@ -2843,15 +2442,7 @@ class pbcoreInstantiation(XML_PBCore):
 
         return branch
 
-    # def xml(self):
-    #
-    #     # branch = etree.ElementTree(self.pbcoreRelationType)
-    #     XML = self._makeXML()
-    #     return XML
-    #
-    # def xmlString(self):
-    #     XML = self._makeXML()
-    #     return etree.tostring(XML)
+
 # __________________________________
 class InstantiationEssenceTrack(XML_PBCore):
     """
@@ -2949,107 +2540,6 @@ class InstantiationEssenceTrack(XML_PBCore):
         self.essenceTrackExtension = []
 
 
-        self.essenceTrackIdentifierAttributesOptional = [
-            # May Contain:
-            # 4 or less optional attributes, specific:
-            "source",                       # (text, may be empty)
-            "ref",                          # (text, may be empty)
-            "version",                      # (text, may be empty)
-            "annotation"                    # (text, may be empty)
-
-        ]
-
-        self.essenceTrackStandardAttributes = [
-            # May Contain:
-            # 4 or less optional attributes, specific:
-            "source",                       # (text, may be empty)
-            "ref",                          # (text, may be empty)
-            "version",                      # (text, may be empty)
-            "annotation"                    # (text, may be empty)
-
-        ]
-
-        self.essenceTrackEncodingAttributes = [
-            # May Contain:
-            # 4 or less optional attributes, specific:
-            "source",                       # (text, may be empty)
-            "ref",                          # (text, may be empty)
-            "version",                      # (text, may be empty)
-            "annotation"                    # (text, may be empty)
-
-        ]
-
-        self.essenceTrackDataRateAttributes = [
-            # May Contain:
-            # 2 or less optional attributes, specific:
-
-            "unitsOfMeasure",               # ( may be empty)
-            "annotation"                    # ( may be empty)
-        ]
-
-        self.essenceTrackFrameRateAttributes = [
-            # May Contain:
-            # 2 or less optional attributes, specific:
-
-            "unitsOfMeasure",               # ( may be empty)
-            "annotation"                    # ( may be empty)
-
-        ]
-
-        self.essenceTrackPlaybackSpeedAttributes = [
-            # May Contain:
-            # 2 or less optional attributes, specific:
-
-            "unitsOfMeasure",               # ( may be empty)
-            "annotation"                    # ( may be empty)
-
-        ]
-
-        self.essenceTrackSamplingRateAttributes = [
-            # May Contain:
-            # 2 or less optional attributes, specific:
-
-            "unitsOfMeasure",               # ( may be empty)
-            "annotation"                    # ( may be empty)
-
-        ]
-
-        self.essenceTrackFrameSizeAttributes = [
-            # May Contain:
-            # 4 or less optional attributes, specific:
-            "source",                       # (text, may be empty)
-            "ref",                          # (text, may be empty)
-            "version",                      # (text, may be empty)
-            "annotation"                    # (text, may be empty)
-
-        ]
-
-        self.essenceTrackAspectRatioAttributes = [
-            # May Contain:
-            # 4 or less optional attributes, specific:
-            "source",                       # (text, may be empty)
-            "ref",                          # (text, may be empty)
-            "version",                      # (text, may be empty)
-            "annotation"                    # (text, may be empty)
-
-        ]
-
-        self.essenceTrackLanguageAttributes = [
-            # May Contain:
-            # 4 or less optional attributes, specific:
-            "source",                       # (text, may be empty)
-            "ref",                          # (text, may be empty)
-            "version",                      # (text, may be empty)
-            "annotation"                    # (text, may be empty)
-        ]
-
-        self.essenceTrackAnnotationAttributes = [
-            # May Contain:
-            # 2 or less optional attributes, specific:
-
-            "annotationType",               # ( may be empty)
-            "ref"                           # ( may be empty)
-        ]
 
     def get_essenceTrackType(self):
 
