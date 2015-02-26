@@ -940,6 +940,10 @@ class pbcoreRelation(XML_PBCore):
     """
     :Description:
     :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorerelation/
+    :parameter  reType: Set the value of the relationship type
+    :type       reType: str
+    :parameter  reID:   Set the value of the name of the relationship
+    :type       reID:   str
     """
     # TODO: Create Docstring for pbcoreRelation
     def __init__(self, reType=None, reID=None):
@@ -1017,9 +1021,12 @@ class pbcoreRelation(XML_PBCore):
 class pbcoreCoverage(XML_PBCore):
     """
     :Description:
-    :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecoverage/
+    :URI:       http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecoverage/
+    :type       covItem: str
+    :parameter  covItem: Sets the value of the coverage
+    :type       covType: str
+    :parameter  covType: Sets the value of the type of Coverage
     """
-    # TODO: Create Docstring for pbcoreCoverage
     def __init__(self,
                  covItem=None,
                  covType=None):
@@ -1056,7 +1063,6 @@ class pbcoreCoverage(XML_PBCore):
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecoverage/coverage/
         :return:        None
         """
-        # TODO: Give example value for set_coverage
         if isinstance(data, PB_Element):
             self.coverage = data
         else:
@@ -1121,9 +1127,15 @@ class pbcoreCreator(XML_PBCore):
     """
     :Description:
     :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecreator/
+    :type name: str
+    :parameter name: Sets the value of the name of the creator
+    :type role: str
+    :parameter role: Sets an initial value for the role of the creator. Additional roles can be added with the add_creatorRole method.
     """
     def __init__(self, name=None, role=None):
         """
+
+
         @type           self.creator:           PB_Element
         @type           self.creatorRole:       PB_Element
         :return:
