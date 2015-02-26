@@ -222,13 +222,11 @@ def generate_pbcore(record):
         for spatialCoverage in spatialCoverages:
             descritive.add_pbcoreCoverage(pbcoreCoverage(covItem=spatialCoverage, covType="Spatial"))
 
-
     if record['Temporal Coverage']:
         tempCoverages = record['Temporal Coverage']
         temporalCoverages = tempCoverages.split(';')
         for temporalCoverage in temporalCoverages:
             descritive.add_pbcoreCoverage(pbcoreCoverage(covItem=temporalCoverage, covType="Temporal"))
-
 
     if record['Genre']:
         genres_data = record['Genre']
@@ -239,7 +237,6 @@ def generate_pbcore(record):
                 descritive.add_pbcoreGenre(PB_Element(['source', genreAuthoity], tag="pbcoreGenre", value=genre.strip()))
             else:
                 descritive.add_pbcoreGenre(PB_Element(tag="pbcoreGenre", value=genre.strip()))
-
 
     if record['Date Created']:
         creation = record['Date Created']
@@ -261,7 +258,6 @@ def generate_pbcore(record):
     if record['Transcript']:
         transcript = record['Transcript']
         descritive.add_pbcoreDescription(PB_Element(['descriptionType', 'Transcript'], tag='pbcoreDescription', value=transcript))
-
 
 
 # Descriptive Creator: Producer,Director,Writer,Interviewer,Performer
@@ -305,14 +301,14 @@ def generate_pbcore(record):
 
 # Descriptive Contributor: Camera,Editor,Sound,Music,Cast,Interviewee,Speaker,Musician
 
-    cameras = ""
-    editors = ""
-    sounds = ""
-    musics = ""
-    cast_members = ""
-    interviewees = ""
-    speakers = ""
-    musicians = ""
+    # cameras = ""
+    # editors = ""
+    # sounds = ""
+    # musics = ""
+    # cast_members = ""
+    # interviewees = ""
+    # speakers = ""
+    # musicians = ""
 
     if record['Camera']:
         cameras = record['Camera'].split(';')
@@ -364,8 +360,8 @@ def generate_pbcore(record):
 
 
 # Descriptive Publisher: Publisher,Distributor
-    publisher = ""
-    distributor = ""
+#     publisher = ""
+#     distributor = ""
 
     if record['Publisher']:
         publisher = record['Publisher']
@@ -379,12 +375,12 @@ def generate_pbcore(record):
 
 
 # Descriptive Rights
-    copyright_statement = ""
-    copyright_holder = ""
-    copyright_holder_info = ""
-    copyright_dates = []
-    copyright_notice = ""
-    institutional_rights_statement_URL = ""
+#     copyright_statement = ""
+#     copyright_holder = ""
+#     copyright_holder_info = ""
+#     copyright_dates = []
+#     copyright_notice = ""
+#     institutional_rights_statement_URL = ""
 
     if record['Copyright Statement']:
         rights = pbcoreRightsSummary(copyright_statement=record['Copyright Statement'].strip())
@@ -500,7 +496,6 @@ def generate_pbcore(record):
         if record['Running Speed']:
             run_speed = record['Running Speed']
 
-
         physical = pbcoreInstantiation(type="Physical Asset",
                                        objectID=part.strip(),
                                        extent=total_number,
@@ -518,10 +513,8 @@ def generate_pbcore(record):
                                        stockManufacture=stock,
                                        location=inst_name)
 
-
         for date in creationDates:
             physical.add_instantiationDate(PB_Element(tag='instantiationDate', value=date))
-
 
         if record['Additional Technical Notes for Overall Work']:
             tech_notes = record['Additional Technical Notes for Overall Work'].split(";")
@@ -533,6 +526,7 @@ def generate_pbcore(record):
             for note in cataloger_notes:
                 physical.add_instantiationAnnotation(PB_Element(['annotationType', 'Cataloger Notes'], tag="instantiationAnnotation", value=note.strip()))
 
+        # FIXME: add subtitles to script
         if record['Subtitles/Intertitles/Closed Captions']:
             subtitles = record['Subtitles/Intertitles/Closed Captions'].split(';')
             for subtitle in subtitles:
@@ -553,7 +547,7 @@ def generate_pbcore(record):
 
         newPart.add_pbcoreInstantiation(physical)
 
-        # <!--Preservation Master-->
+# <!--Preservation Master-->
         pres_master = pbcoreInstantiation(type="Preservation Master",
                                           location="CAVPP",
                                           objectID=(part.strip()+"_prsv"))
@@ -562,19 +556,15 @@ def generate_pbcore(record):
             for note in QC_notes_list:
                 pres_master.add_instantiationAnnotation(PB_Element(['annotation', 'CAVPP Quality Control/Partner Quality Control'], tag="instantiationAnnotation", value=note.strip()))
 
-
         newPart.add_pbcoreInstantiation(pres_master)
 
-        # access copy
+# access copy
         access_copy = pbcoreInstantiation(type="Access Copy",
                                           location="CAVPP",
                                           objectID=(part.strip()+"_access"))
         newPart.add_pbcoreInstantiation(access_copy)
 
         descritive.add_pbcore_part(newPart)
-
-
-
 
 # Extension
     if record['Country of Creation']:
@@ -648,7 +638,7 @@ def main():
     else:
         mode = 'normal'
         fh.setLevel(logging.INFO)
-        # logging.basicConfig(filename='logs/debug.log', level=logging.INFO)
+
     error_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')     # DATE - USERNAME - Message
     stderr_formatter = logging.Formatter('%(levelname)s - %(message)s')                             # USERNAME - Message
     stdout_formatter = logging.Formatter('%(message)s')                                             # Message
@@ -690,15 +680,16 @@ def main():
         quit()
 
     logging.info("Generating PBCore stubs...")
+    file_name_pattern = re.compile("[A-Z,a-z]+_\d+")
     for record in records:
-        logger.info("Producing PBCore XML for " + str(record['Project Identifier']))
+        fileName = re.search(file_name_pattern, record['Object Identifier']).group(0)
+        logger.info("Producing PBCore XML for " + fileName)
         if isfile(str(record['Project Identifier'])+".xml"):
-            logger.warning(str(record['Project Identifier'])+".xml is already a file, overwriting." )
-        # output = generate_pbcore(record)
+            logger.warning(str(record['Project Identifier'])+".xml is already a file, overwriting.")
 
-        # I'm sending this into because I can't get etree to print a pretty XML
+        # I'm sending this into miniDOM because I can't get etree to print a pretty XML
         buf = parseString(generate_pbcore(record))
-        output_file = open(str(record['Project Identifier'])+".xml", 'w')
+        output_file = open(fileName +".xml", 'w')
         output_file.write(buf.toprettyxml(encoding='utf-8'))
         output_file.close()
 
