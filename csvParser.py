@@ -128,6 +128,7 @@ def generate_pbcore(record):
     IA_URL= ""
     QC_notes_list = ""
     transcript = ""
+    parts = record['Object Identifier'].split(';')
 
 
 
@@ -419,7 +420,7 @@ def generate_pbcore(record):
         call_numbers = record['Call Number'].split(';')
 
 # PBcore Parts
-    for part in record['Object Identifier'].split(';'):
+    for part in parts:
         newPart = CAVPP_Part(objectID=part.strip(),
                              mainTitle=main_title.strip(),
                              description=descrp.strip())
@@ -554,7 +555,7 @@ def generate_pbcore(record):
         if record['Quality Control Notes']:
             QC_notes_list = record['Quality Control Notes'].split(";")
             for note in QC_notes_list:
-                pres_master.add_instantiationAnnotation(PB_Element(['annotation', 'CAVPP Quality Control/Partner Quality Control'], tag="instantiationAnnotation", value=note.strip()))
+                pres_master.add_instantiationAnnotation(PB_Element(['annotationType', 'CAVPP Quality Control/Partner Quality Control'], tag="instantiationAnnotation", value=note.strip()))
 
         newPart.add_pbcoreInstantiation(pres_master)
 
@@ -583,15 +584,21 @@ def generate_pbcore(record):
         descritive.add_pbcore_extension(exten)
 
 # Relationship
-    relation_type = ''
-    if record['Relationship Type']:
-        relation_type = record['Relationship Type']
+#     relation_type = ''
+#     if record['Relationship Type']:
+#         relation_type = record['Relationship Type']
+#
+#         newRelation = pbcoreRelation(reID=part.strip(), reType=relation_type.strip())
+#         descritive.add_pbcoreRelation(newRelation)
+    if len(parts) > 1:
+        for part in record['Object Identifier'].split(';'):
+            newRelation = pbcoreRelation(reID=part.strip(), reType="Has Part")
+            descritive.add_pbcoreRelation(newRelation)
 
-    for part in record['Object Identifier'].split(';'):
-        newRelation = pbcoreRelation(reID=part.strip(), reType=relation_type.strip())
-        descritive.add_pbcoreRelation(newRelation)
 
     new_XML_file.set_IntellectualContent(descritive)
+
+
     return new_XML_file.xmlString()
 
 def validate_col_titles(f):
@@ -638,6 +645,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("csv", help="Source CSV file", type=str)
     parser.add_argument("-d", "--debug", help="Debug mode. Writes all messages to debug log.", action='store_true')
+    # TODO: add argument that lets you create pbcore without the files present
     args = parser.parse_args()
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
@@ -709,9 +717,11 @@ def main():
     files_not_found = []
     for record in records:
         fileName = re.search(file_name_pattern, record['Object Identifier']).group(0)
-        logging.debug("Searching for " + fileName)
+        logging.debug("Locating possible files for: " + fileName)
         if not locate_files(args.csv, fileName):
             files_not_found.append(fileName)
+        else:
+            logging.debug("Files located for: " + fileName)
     if files_not_found:
         logger.error("Could not find files for the following records. Makes sure the directory containing the media objects " \
               "is located in the same directory as the csv file. ")
@@ -748,8 +758,10 @@ def main():
     message = "Generated " + str(number_of_records) + " records in total."
     if number_of_new_records >= 1:
         message += " New records: " + str(number_of_new_records) + "."
+
     if number_of_rewritten_records >= 1:
         message += " Records overwritten: " + str(number_of_rewritten_records) + "."
+        
     logger.info(message)
     print "Done"
 
