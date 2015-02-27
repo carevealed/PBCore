@@ -185,9 +185,8 @@ def generate_pbcore(record):
 
 
     if record['Description or Content Summary']:
-        descriptions = record['Description or Content Summary'].split(";")
-        for description in descriptions:
-            descritive.add_pbcoreDescription(PB_Element(tag="pbcoreDescription", value=description.strip()))
+        description = record['Description or Content Summary']
+        descritive.add_pbcoreDescription(PB_Element(tag="pbcoreDescription", value=description.strip()))
 
 
     if record['Internet Archive URL']:
@@ -422,7 +421,7 @@ def generate_pbcore(record):
     for part in parts:
         newPart = CAVPP_Part(objectID=part.strip(),
                              mainTitle=main_title.strip(),
-                             description=descrp.strip())
+                             description=record['Description or Content Summary'])
         for call_number in call_numbers:
             newPart.add_pbcoreIdentifier(PB_Element(['source', inst_name], ['annotation', 'Call Number'], tag='pbcoreIdentifier', value=call_number.strip()))
         # physical
@@ -616,8 +615,42 @@ def validate_col_titles(f):
     return valid, mismatched
 
 
+def valid_date(date):
+    date_re = '(19||20)\d\d-(0[1-9]|1[012])-(0[1-9]|[1|2][0-9]|3[0-1])'
+    if re.match(date_re, date):
+        return True
+    else:
+        return False
+    pass
+
+
+def content_valid(input_record):
+    warnings = []
+    errors = []
+    # Validate all dates
+
+    check_list = []
+    check_list.append(["Date Created", input_record["Date Created"]])
+    check_list.append(["Date Published", input_record["Date Published"]])
+
+    for item in check_list:
+        if item[1] != "":
+            if not valid_date(item[1]):
+                warnings.append("\t\""
+                                + item[1]
+                                + "\" in the \'"
+                                + item[0]
+                                + "\' column is not in the correct date format. Expected YYYY-MM-DD.")
+
+    # for index, error in enumerate(errors):
+    #     errors[index] = "["+ input_record["Object Identifier"] + "] " + errors[index]
+
+    for index, warning in enumerate(warnings):
+        warnings[index] = "["+ input_record["Object Identifier"] + "] " + warnings[index]
+    return warnings, errors
+
 def locate_files(root, fileName):
-    # search for file with fileName in it recursively
+    # search for file with fileName in it
     found_directory = None
     results = []
     # check if a directory matches the file name
@@ -633,6 +666,33 @@ def locate_files(root, fileName):
                 if fileName in file:
                     results.append(os.path.join(roots, file))
     return results
+
+
+def proceed(message, warnings=None):
+    key = ""
+    while True:
+        print "Warnings:"
+        print "\n\t**************************************************************"
+        if warnings:
+            for index, warning in enumerate(warnings):
+                print str(index+1) + ")\t" + warning
+        print "\t**************************************************************"
+        print("\n\t" + message)
+        print "\n\tDo you wish to continue?",
+        key = raw_input("[y/n]:")
+        if key.lower() == "yes":
+            key = 'y'
+        if key.lower() == "no":
+            key = 'n'
+        if key.lower() != 'y' and key.lower() != 'n':
+            print "Not a valid option.\n"
+        else:
+            break
+
+    if key.lower() == 'y':
+        return True
+    if key.lower() == 'n':
+        return False
 
 def main():
     # ----------Setting up the logs----------
@@ -706,6 +766,26 @@ def main():
         logger.critical("Error, cannot load file as a CSV.")
         print "Quitting"
         quit()
+    # ---------- Validate data in CSV file ----------
+    total_warnings = []
+    total_errors = []
+
+    logger.debug("Validating data in CSV")
+    for record in records:
+        data_warnings, data_errors = content_valid(record)
+        total_warnings += data_warnings
+        total_errors += data_errors
+    # if there are any errors print them out with warnings and quit
+    sys.stdout.flush()
+    if total_errors:
+        for error in total_errors:
+            print "Error found: " + error
+        if total_warnings:
+            for warning in total_warnings:
+                print "Warning: " + warning
+        print "Quitting"
+        quit()
+
 
     # ---------- Locate all files mentioned in CSV ----------
 
@@ -718,14 +798,40 @@ def main():
         if not locate_files(args.csv, fileName):
             files_not_found.append(fileName)
         else:
-            logging.debug("Files located for: " + fileName)
+            logger.debug("Files located for: " + fileName)
     if files_not_found:
-        logger.error("Could not find files for the following records. Makes sure the directory containing the media objects " \
-              "is located in the same directory as the csv file. ")
         for file_not_found in files_not_found:
-            logging.error(file_not_found)
-        print "quiting"
+            message = "[" + file_not_found + "]\tCould not find files that match this record. Makes sure the " \
+                                             "directory containing the media objects is located in the same " \
+                                             "directory as the csv file. "
+            logger.warning(message)
+            total_warnings.append(message)
+        # print "quiting"
+        # quit()
+
+# ---------- Report errors and warning. ----------
+    sys.stdout.flush()
+    if total_errors:
+        for error in total_errors:
+            print "Error found: " + error
+        if total_warnings:
+            for warning in total_warnings:
+                print "Warning: " + warning
+        print "Quitting"
         quit()
+
+    # if there are only warnings, print them out and ask if the user wants to continue
+    # if there are only warnings, print them out and ask if the user wants to continue
+    if total_warnings:
+        key = ""
+        for warning in total_warnings:
+            logger.warning(warning)
+        if proceed("Possible problems with the data found", total_warnings) is False:
+            logger.info("Script terminated by user.")
+            print "Quitting"
+            quit()
+        else:
+            logger.info("Warnings ignored")
 
 
     # ---------- Genereate PBCore XML Files ----------
