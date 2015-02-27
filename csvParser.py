@@ -612,8 +612,29 @@ def validate_col_titles(f):
     return valid, mismatched
 
 
+def locate_files(root, fileName):
+    # search for file with fileName in it recursively
+    found_directory = None
+    results = []
+    # check if a directory matches the file name
+    for roots, dirs, files in os.walk(os.path.dirname(root)):
+        for dir in dirs:
+            if fileName == dir:
+                found_directory = os.path.join(roots, dir)
+                break
+    # see of a file in that folder has a file with that name in it
+    if found_directory:
+        for roots, dirs, files, in os.walk(found_directory):
+            for file in files:
+                if fileName in file:
+                    results.append(os.path.join(roots, file))
+    return results
+
 def main():
+    # ----------Setting up the logs----------
     mode = "normal"
+    records = []
+
     parser = argparse.ArgumentParser()
     parser.add_argument("csv", help="Source CSV file", type=str)
     parser.add_argument("-d", "--debug", help="Debug mode. Writes all messages to debug log.", action='store_true')
@@ -650,6 +671,8 @@ def main():
     logger.addHandler(fh)
     logger.addHandler(eh)
 
+# ----------Validation of CSV file----------
+
     if isfile(args.csv):  # checks if the file passed in is a real file):
         try:
             logger.debug("Opening file:" + args.csv)
@@ -661,7 +684,6 @@ def main():
     else:
         logger.critical("Cannot locate " + args.csv + ". Quitting")
         quit()
-
     logger.debug("Validating files column titles")
     valid, errors = validate_col_titles(f)
     if not valid:
@@ -672,29 +694,63 @@ def main():
 
     try:
         logger.debug("Loading file into memory")
-        records = csv.DictReader(f)
+        for item in csv.DictReader(f): # reason: because you can only iterate over a DictReader once
+            records.append(item)
     except ValueError:
         print "FAILED"
         logger.critical("Error, cannot load file as a CSV.")
         print "Quitting"
         quit()
 
-    logging.info("Generating PBCore stubs...")
+    # ---------- Locate all files mentioned in CSV ----------
+
+    logger.debug("Locating files")
     file_name_pattern = re.compile("[A-Z,a-z]+_\d+")
+    files_not_found = []
+    for record in records:
+        fileName = re.search(file_name_pattern, record['Object Identifier']).group(0)
+        logging.debug("Searching for " + fileName)
+        if not locate_files(args.csv, fileName):
+            files_not_found.append(fileName)
+    if files_not_found:
+        logger.error("Could not find files for the following records. Makes sure the directory containing the media objects " \
+              "is located in the same directory as the csv file. ")
+        for file_not_found in files_not_found:
+            logging.error(file_not_found)
+        print "quiting"
+        quit()
+
+
+    # ---------- Genereate PBCore XML Files ----------
+    logging.info("Generating PBCore stubs...")
+    number_of_records = 0
+    number_of_new_records = 0
+    number_of_rewritten_records = 0
+
     for record in records:
         fileName = re.search(file_name_pattern, record['Object Identifier']).group(0)
         logger.info("Producing PBCore XML for " + fileName)
-        if isfile(str(record['Project Identifier'])+".xml"):
+        if isfile(fileName + ".xml"):
             logger.warning(str(record['Project Identifier'])+".xml is already a file, overwriting.")
+            number_of_rewritten_records += 1
+        else:
+            number_of_new_records += 1
 
         # I'm sending this into miniDOM because I can't get etree to print a pretty XML
         buf = parseString(generate_pbcore(record))
         output_file = open(fileName +".xml", 'w')
         output_file.write(buf.toprettyxml(encoding='utf-8'))
         output_file.close()
+        number_of_records += 1
 
     logger.debug("Closing CSV file:")
     f.close()
+    message = "Generated " + str(number_of_records) + " records in total."
+    if number_of_new_records >= 1:
+        message += " New records: " + str(number_of_new_records) + "."
+    if number_of_rewritten_records >= 1:
+        message += " Records overwritten: " + str(number_of_rewritten_records) + "."
+    logger.info(message)
     print "Done"
 
 if __name__ == '__main__':
