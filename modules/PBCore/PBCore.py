@@ -15,7 +15,9 @@ from xml.dom import minidom
 # Interface
 class XML_PBCore(object):
     """
-    Description: XML Utilizes
+
+    :Description: XML Utilizes
+
     """
 
     __metaclass__ = ABCMeta
@@ -55,8 +57,6 @@ class XML_PBCore(object):
     pass
 
 
-
-
 class PBCore(XML_PBCore):
     """
 
@@ -73,7 +73,9 @@ class PBCore(XML_PBCore):
     :type       collectionDate:     str
 
     """
-    def __init__(self, collectionTitle = "", collectionSource = "", collectionRef = "", collectionDate="for institutional reference"):
+
+    def __init__(self, collectionTitle="", collectionSource="", collectionRef="",
+                 collectionDate="for institutional reference"):
         """
         @param      collectionTitle
 
@@ -102,7 +104,7 @@ class PBCore(XML_PBCore):
         :Example Value: ""
         :return:        None
         """
-        
+
         if isinstance(data, pbcoreDescriptionDocument):
             self.intellectualContent = data
         else:
@@ -123,7 +125,7 @@ class PBCore(XML_PBCore):
         :Example Value: ""
         :return:        None
         """
-        
+
         if isinstance(data, IntellectualProperty):
             self.intellectualProperty = data
         else:
@@ -144,7 +146,7 @@ class PBCore(XML_PBCore):
         :Example Value: ""
         :return:        None
         """
-        
+
         if isinstance(data, pbcoreExtension):
             self.extensions.append(data)
         else:
@@ -165,7 +167,7 @@ class PBCore(XML_PBCore):
         :Example Value: ""
         :return:        None
         """
-        
+
         if isinstance(data, pbcoreInstantiation):
             self.instantiation = data
         else:
@@ -174,14 +176,14 @@ class PBCore(XML_PBCore):
     def _makeXML(self):
 
         branch = Element("pbcoreCollection", attrib={
-            "xmlns":                    "http://www.pbcore.org/PBCore/PBCoreNamespace.html",
-            "xmlns:xsi":                "http://www.w3.org/2001/XMLSchema-instance",
-            "xsi:schemaLocation":       "http://www.pbcore.org/PBCore/PBCoreNamespace.html http://pbcore.org/xsd/pbcore-2.0.xsd",
-            "collectionDate":           self.collectionDate,
-            "collectionTitle":          self.collectionTitle,
-            "collectionSource":         self.collectionSource,
-            "collectionRef":            self.collectionRef
-            })
+            "xmlns": "http://www.pbcore.org/PBCore/PBCoreNamespace.html",
+            "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+            "xsi:schemaLocation": "http://www.pbcore.org/PBCore/PBCoreNamespace.html http://pbcore.org/xsd/pbcore-2.0.xsd",
+            "collectionDate": self.collectionDate,
+            "collectionTitle": self.collectionTitle,
+            "collectionSource": self.collectionSource,
+            "collectionRef": self.collectionRef
+        })
         if self.intellectualContent:
             branch.append(self.intellectualContent.xml())
         if self.intellectualProperty:
@@ -200,7 +202,40 @@ class PBCore(XML_PBCore):
 
 class pbcoreDescriptionDocument(XML_PBCore):
     """
+
     :Description:
+        This class produces the following style XML::
+
+            <pbcoreDescriptionDocument>
+                <pbcoreAssetType>Media Object</pbcoreAssetType>
+                <pbcoreAssetDate dateType="created">1965</pbcoreAssetDate>
+                <pbcoreAssetDate dateType="published">1965</pbcoreAssetDate>
+                <pbcoreIdentifier annotation="Object Identifier" source="CAVPP">cbpf_00001</pbcoreIdentifier>
+                <pbcoreIdentifier annotation="Project Identifier" source="CAVPP">cavpp000041</pbcoreIdentifier>
+                <pbcoreIdentifier annotation="Institution URL" source="University of California, Berkeley Art Museum and Pacific Film Archive">http://www.bampfa.berkeley.edu/collection/filmcollection</pbcoreIdentifier>
+                <pbcoreIdentifier annotation="Institution ARK" source="CDL">ark:/13030/tf2580094t</pbcoreIdentifier>
+                <pbcoreIdentifier annotation="Object ARK" source="CDL">ark:/13030/kt6j49r9s3</pbcoreIdentifier>
+                <pbcoreTitle titleType="Main">Vietnam Day Berkeley</pbcoreTitle>
+                <pbcoreSubject source="Library of Congress Subject Headings" subjectType="Topic">Vietnam War, 1961-1975--Protest movements--California--Berkeley</pbcoreSubject>
+                <pbcoreSubject source="Library of Congress Subject Headings" subjectType="Topic">Demonstrations--California--Berkeley</pbcoreSubject>
+                <pbcoreDescription>This film documents the two day anti-Vietnam War rally held in Sproul Plaza at the University of California. There are many scenes of students gathering, activities, carrying signs, collecting money, etc. Identified speakers include Robert Scheer, Dr. Benjamin Spock, Mario Savio, Norman Thomas, Dick Gregory, Norman Mailer. There are many unidentified speakers. The Committee performs a comedy skit and Phil Ochs sings Love me, I'm a liberal. The film concludes with hanging Lyndon Johnson in effigy and burning draft cards.</pbcoreDescription>
+                <pbcoreGenre>Documentary</pbcoreGenre>
+                <pbcoreRelation>
+                </pbcoreRelation>
+                <pbcoreCoverage>
+                </pbcoreCoverage>
+                <pbcoreCreator>
+                </pbcoreCreator>
+                <pbcoreContributor>
+                </pbcoreContributor>
+                <pbcoreRightsSummary>
+                </pbcoreRightsSummary>
+                <pbcorePart>
+                </pbcorePart>
+                <pbcoreExtension>
+                </pbcoreExtension>
+            </pbcoreDescriptionDocument>
+
     :URL: http://pbcore.org/elements/
     :parameter     assetType:
     :type          assetType: str
@@ -257,33 +292,33 @@ class pbcoreDescriptionDocument(XML_PBCore):
     """
 
     def __init__(self,
-                assetType="Media Object",
-                mainTitle=None,
-                parentObjectID=None,
-                projectID=None,
-                addTitle=None,
-                seriesTitle=None,
-                description=None,
-                objectARK=None,
-                institutionName=None,
-                institutionARK=None,
-                institutionURL=None,
-                producer=None,
-                director=None,
-                writer=None,
-                interviewer=None,
-                performer=None,
-                camera=None,
-                editor=None,
-                sound=None,
-                music=None,
-                cast=None,
-                interviewee=None,
-                speaker=None,
-                musician=None,
-                publisher=None,
-                distributor=None,
-                genre=[]):
+                 assetType="Media Object",
+                 mainTitle=None,
+                 parentObjectID=None,
+                 projectID=None,
+                 addTitle=None,
+                 seriesTitle=None,
+                 description=None,
+                 objectARK=None,
+                 institutionName=None,
+                 institutionARK=None,
+                 institutionURL=None,
+                 producer=None,
+                 director=None,
+                 writer=None,
+                 interviewer=None,
+                 performer=None,
+                 camera=None,
+                 editor=None,
+                 sound=None,
+                 music=None,
+                 cast=None,
+                 interviewee=None,
+                 speaker=None,
+                 musician=None,
+                 publisher=None,
+                 distributor=None,
+                 genre=[]):
         """
 
 
@@ -313,29 +348,41 @@ class pbcoreDescriptionDocument(XML_PBCore):
         self.pbcoreAssetDate = []
         self.pbcoreIdentifier = []
         if parentObjectID and parentObjectID != "":
-            self.pbcoreIdentifier.append(PB_Element(['source', 'CAVPP'], ['annotation', 'Object Identifier'], tag="pbcoreIdentifier", value=parentObjectID))
+            self.pbcoreIdentifier.append(
+                PB_Element(['source', 'CAVPP'], ['annotation', 'Object Identifier'], tag="pbcoreIdentifier",
+                           value=parentObjectID))
 
         if projectID and projectID != "":
-            self.pbcoreIdentifier.append(PB_Element(['source', 'CAVPP'], ['annotation', 'Project Identifier'], tag="pbcoreIdentifier", value=projectID))
+            self.pbcoreIdentifier.append(
+                PB_Element(['source', 'CAVPP'], ['annotation', 'Project Identifier'], tag="pbcoreIdentifier",
+                           value=projectID))
 
         if objectARK and objectARK != "":
             if institutionName and institutionName != '':
-                self.pbcoreIdentifier.append(PB_Element(['source', institutionName], ['annotation', 'Object ARK'], tag="pbcoreIdentifier", value=objectARK))
+                self.pbcoreIdentifier.append(
+                    PB_Element(['source', institutionName], ['annotation', 'Object ARK'], tag="pbcoreIdentifier",
+                               value=objectARK))
             else:
-                self.pbcoreIdentifier.append(PB_Element(['annotation', 'Object ARK '], tag="pbcoreIdentifier", value=objectARK))
+                self.pbcoreIdentifier.append(
+                    PB_Element(['annotation', 'Object ARK '], tag="pbcoreIdentifier", value=objectARK))
 
         if institutionARK and institutionARK != "":
             if institutionName and institutionName != '':
-                self.pbcoreIdentifier.append(PB_Element(['source', institutionName], ['annotation', 'Institution ARK'], tag="pbcoreIdentifier", value=institutionARK))
+                self.pbcoreIdentifier.append(
+                    PB_Element(['source', institutionName], ['annotation', 'Institution ARK'], tag="pbcoreIdentifier",
+                               value=institutionARK))
             else:
-                self.pbcoreIdentifier.append(PB_Element(['annotation', 'Institution ARK'], tag="pbcoreIdentifier", value=institutionARK))
+                self.pbcoreIdentifier.append(
+                    PB_Element(['annotation', 'Institution ARK'], tag="pbcoreIdentifier", value=institutionARK))
 
         if institutionURL and institutionURL != "":
             if institutionName and institutionName != '':
-                self.pbcoreIdentifier.append(PB_Element(['source', institutionName], ['annotation', 'Institution URL'], tag="pbcoreIdentifier", value=institutionURL))
+                self.pbcoreIdentifier.append(
+                    PB_Element(['source', institutionName], ['annotation', 'Institution URL'], tag="pbcoreIdentifier",
+                               value=institutionURL))
             else:
-                self.pbcoreIdentifier.append(PB_Element(['annotation', 'Institution URL'], tag="pbcoreIdentifier", value=institutionURL))
-
+                self.pbcoreIdentifier.append(
+                    PB_Element(['annotation', 'Institution URL'], tag="pbcoreIdentifier", value=institutionURL))
 
         self.pbcoreTitle = []
         if mainTitle and mainTitle != "":
@@ -350,7 +397,8 @@ class pbcoreDescriptionDocument(XML_PBCore):
         self.pbcoreSubject = []
         self.pbcoreDescription = []
         if description and description != "":
-            self.pbcoreDescription.append(PB_Element(['descriptionType', 'Content Summary'], tag="pbcoreDescription", value=description))
+            self.pbcoreDescription.append(
+                PB_Element(['descriptionType', 'Content Summary'], tag="pbcoreDescription", value=description))
         self.pbcoreGenre = []
         if genre and genre != "":
             if self.genreAutority and self.genreAutority != "":
@@ -396,7 +444,8 @@ class pbcoreDescriptionDocument(XML_PBCore):
             self.pbcoreContributor.append(PB_Element(["role", "cast"], tag="pbcoreContributor", value=cast))
 
         if interviewee and interviewee != "":
-            self.pbcoreContributor.append(PB_Element(["role", "interviewee"], tag="pbcoreContributor", value=interviewee))
+            self.pbcoreContributor.append(
+                PB_Element(["role", "interviewee"], tag="pbcoreContributor", value=interviewee))
 
         if speaker and speaker != "":
             self.pbcoreContributor.append(PB_Element(["role", "speaker"], tag="pbcoreContributor", value=speaker))
@@ -935,6 +984,7 @@ class pbcoreDescriptionDocument(XML_PBCore):
         """
         return self.pbcorePart
 
+
 # __________________________________
 class pbcoreRelation(XML_PBCore):
     """
@@ -1017,6 +1067,7 @@ class pbcoreRelation(XML_PBCore):
 
         return branch
 
+
 # __________________________________
 class pbcoreCoverage(XML_PBCore):
     """
@@ -1027,6 +1078,7 @@ class pbcoreCoverage(XML_PBCore):
     :type       covType: str
     :parameter  covType: Sets the value of the type of Coverage
     """
+
     def __init__(self,
                  covItem=None,
                  covType=None):
@@ -1089,7 +1141,8 @@ class pbcoreCoverage(XML_PBCore):
             if self.valid_entry(data.get_value(), valid_types):
                 self.coverageType = data
             else:
-                raise ValueError("coverageType recieved " + data.get_value() +" but can only accept " + str(valid_types))
+                raise ValueError(
+                    "coverageType recieved " + data.get_value() + " but can only accept " + str(valid_types))
         else:
             raise TypeError("Expected type: PB_Element")
 
@@ -1109,17 +1162,17 @@ class pbcoreCoverage(XML_PBCore):
 ##################################
 
 
-class IntellectualProperty(XML_PBCore):
-    """
-    :Description:
-    :URL: http://pbcore.org/elements/
-    """
-    # TODO: Create Docstring for IntellectualProperty
-    def __init__(self):
-        """
-
-        :return:        None
-        """
+# class IntellectualProperty(XML_PBCore):
+#     """
+#     :Description:
+#     :URL: http://pbcore.org/elements/
+#     """
+#     # TODO: Create Docstring for IntellectualProperty
+#     def __init__(self):
+#         """
+#
+#         :return:        None
+#         """
 
 
 # __________________________________
@@ -1132,6 +1185,7 @@ class pbcoreCreator(XML_PBCore):
     :type role: str
     :parameter role: Sets an initial value for the role of the creator. Additional roles can be added with the add_creatorRole method.
     """
+
     def __init__(self, name=None, role=None):
         """
 
@@ -1198,12 +1252,14 @@ class pbcoreCreator(XML_PBCore):
             branch.append(role.get_etree_element())
         return branch
 
+
 # __________________________________
 class pbcoreContributor(XML_PBCore):
     """
     :Description:
     :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcorecontributor/
     """
+
     def __init__(self, name=None, role=None):
         """
         @type           self.contributor:           PB_Element
@@ -1345,6 +1401,7 @@ class pbcorePublisher(XML_PBCore):
             branch.append(node.get_etree_element())
         return branch
 
+
 # __________________________________
 class pbcoreRightsSummary(XML_PBCore):
     """
@@ -1363,13 +1420,16 @@ class pbcoreRightsSummary(XML_PBCore):
         """
         self.rightsSummary = None
         if copyright_statement and copyright_statement != "":
-            self.rightsSummary = (PB_Element(['annotation', 'Copyright Statement'], tag="rightsSummary", value=copyright_statement))
+            self.rightsSummary = (
+                PB_Element(['annotation', 'Copyright Statement'], tag="rightsSummary", value=copyright_statement))
 
         if copyright_holder and copyright_holder != "":
-            self.rightsSummary = (PB_Element(['annotation', 'Copyright Holder'], tag="rightsSummary", value=copyright_holder))
+            self.rightsSummary = (
+                PB_Element(['annotation', 'Copyright Holder'], tag="rightsSummary", value=copyright_holder))
 
         if copyright_holder_info and copyright_holder_info != "":
-            self.rightsSummary = (PB_Element(['annotation', 'Copyright Holder Info'], tag="rightsSummary", value=copyright_holder_info))
+            self.rightsSummary = (
+                PB_Element(['annotation', 'Copyright Holder Info'], tag="rightsSummary", value=copyright_holder_info))
 
         self.rightsLink = []
         self.rightsEmbedded = []
@@ -1457,14 +1517,34 @@ class pbcoreRightsSummary(XML_PBCore):
         return branch
 
 
-
 ##################################
 # instantiation classes
 ##################################
 class CAVPP_Part(XML_PBCore):
     """
     :Description:
+        XML produced from this class will look a bit like this::
+
+            <pbcorePart>
+                <pbcoreIdentifier annotation="Object Identifier" source="CAVPP">cbpf_00001</pbcoreIdentifier>
+                <pbcoreIdentifier annotation="Call Number" source="University of California, Berkeley Art Museum and Pacific Film Archive">1616-01-4253</pbcoreIdentifier>
+                <pbcoreIdentifier annotation="Call Number" source="University of California, Berkeley Art Museum and Pacific Film Archive">PM0021335</pbcoreIdentifier>
+                <pbcoreTitle titleType="Main">Vietnam Day Berkeley</pbcoreTitle>
+                <pbcoreDescription>This film documents the two day anti-Vietnam War rally held in Sproul Plaza at the University of California. There are many scenes of students gathering, activities, carrying signs, collecting money, etc. Identified speakers include Robert Scheer, Dr. Benjamin Spock, Mario Savio, Norman Thomas, Dick Gregory, Norman Mailer. There are many unidentified speakers. The Committee performs a comedy skit and Phil Ochs sings Love me, I'm a liberal. The film concludes with hanging Lyndon Johnson in effigy and burning draft cards.</pbcoreDescription>
+                <pbcoreInstantiation>
+                </pbcoreInstantiation>
+            </pbcorePart>
+
+    :parameter  objectID:       Creates a new pbcoreIdentifier element with annotation="Object Identifier" attribute and the value of the argument.
+    :type       objectID:       str
+    :parameter  callNumber:     Creates a new pbcoreIdentifier element with annotation="Call Number" attribute and the value of the argument.
+    :type       callNumber:     str
+    :parameter  mainTitle:      Creates a new pbcoreTitle element with titleType="Main attribute and the value of the argument.
+    :type       mainTitle:      str
+    :parameter  description:
+    :type       description:    str
     """
+
     def __init__(self,
                  objectID=None,
                  callNumber=None,
@@ -1473,9 +1553,13 @@ class CAVPP_Part(XML_PBCore):
 
         self.pbcoreIdentifier = []
         if objectID and objectID != "":
-            self.pbcoreIdentifier.append(PB_Element(['source', 'CAVPP'], ['annotation', 'Object Identifier'], tag='pbcoreIdentifier', value=objectID))
+            self.pbcoreIdentifier.append(
+                PB_Element(['source', 'CAVPP'], ['annotation', 'Object Identifier'], tag='pbcoreIdentifier',
+                           value=objectID))
         if callNumber and callNumber != "":
-            self.pbcoreIdentifier.append(PB_Element(['source', 'CAVPP'], ['annotation', 'Call Number'], tag='pbcoreIdentifier', value=callNumber))
+            self.pbcoreIdentifier.append(
+                PB_Element(['source', 'CAVPP'], ['annotation', 'Call Number'], tag='pbcoreIdentifier',
+                           value=callNumber))
 
         self.pbcoreTitle = []
         if mainTitle and mainTitle != "":
@@ -1488,35 +1572,84 @@ class CAVPP_Part(XML_PBCore):
         self.pbcoreInstantiation = []
 
     def get_pbcoreIdentifier(self):
+        """
+        :return:        pbcoreIdentifier element
+        :rtype:         PB_Element
+
+        """
         return self.pbcoreIdentifier
 
-    def add_pbcoreIdentifier(self, newpbcoreIdentifier):
-        if isinstance(newpbcoreIdentifier, PB_Element):
-            self.pbcoreIdentifier.append(newpbcoreIdentifier)
+    def add_pbcoreIdentifier(self, data):
+        """
+
+        :param          data:
+        :type           data:   PB_Element
+        :Example Value: ""
+        :UTI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreidentifier/
+        :return:        None
+        """
+        if isinstance(data, PB_Element):
+            self.pbcoreIdentifier.append(data)
 
     def get_pbcoreTitle(self):
+        """
+
+        :return:        pbcoreTitle element
+        :rtype:         PB_Element
+        """
         return self.pbcoreTitle
 
-    def set_pbcoreTitle(self, newpbcoreTitle):
-        if isinstance(newpbcoreTitle, PB_Element):
-            self.pbcoreTitle = newpbcoreTitle
+    def set_pbcoreTitle(self, data):
+        """
+
+        :param          data:
+        :type           data:   PB_Element
+        :Example Value  ""
+        :UTI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoretitle/
+        :return:        None
+        """
+        if isinstance(data, PB_Element):
+            self.pbcoreTitle = data
 
     def get_pbcoreDescription(self):
+        """
+
+        :return:        pbcoreDescription
+        :rtype:         PB_Element
+        """
         return self.pbcoreDescription
 
-    def add_pbcoreDescription(self, newpbcoreDescription):
-        if isinstance(newpbcoreDescription, PB_Element):
-            self.pbcoreDescription.append(newpbcoreDescription)
+    def add_pbcoreDescription(self, data):
+        """
+
+        :parameter         data:
+        :type              data:   PB_Element
+        :Example Value      ""
+        :URI:           http://pbcore.org/v2/elements/pbcoreDescription
+        :return:        None
+        """
+        if isinstance(data, PB_Element):
+            self.pbcoreDescription.append(data)
 
     def get_pbcoreInstantiation(self):
         """
-        :return     list of PBCore Elements
+        :return:        list of PBCore Elements
+        :rtype:         PB_Element
         """
         return self.pbcoreInstantiation
 
-    def add_pbcoreInstantiation(self, newpbcoreInstantiation):
-        if isinstance(newpbcoreInstantiation, pbcoreInstantiation):
-            self.pbcoreInstantiation.append(newpbcoreInstantiation)
+    def add_pbcoreInstantiation(self, data):
+        """
+
+        :param          data:
+        :type           data:   PB_Element
+        :Example Value: ""
+        :UTI:           http://pbcore.org/v2/elements/pbcoreInstantiation
+        :return:        None
+        """
+
+        if isinstance(data, pbcoreInstantiation):
+            self.pbcoreInstantiation.append(data)
 
     def _makeXML(self):
         branch = Element("pbcorePart")
@@ -1549,6 +1682,7 @@ class pbcoreInstantiation(XML_PBCore):
     :Description:
     :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/
     """
+
     def __init__(self,
                  type=None,
                  objectID=None,
@@ -1615,13 +1749,16 @@ class pbcoreInstantiation(XML_PBCore):
 
         self.instantiationIdentifier = []
         if objectID and objectID != "":
-            self.instantiationIdentifier.append(PB_Element(['source', cataloger], tag='instantiationIdentifier', value=objectID))
+            self.instantiationIdentifier.append(
+                PB_Element(['source', cataloger], tag='instantiationIdentifier', value=objectID))
 
         if fileName and fileName != "":
-            self.instantiationIdentifier.append(PB_Element(['source', vender], tag='instantiationIdentifier', value=fileName))
+            self.instantiationIdentifier.append(
+                PB_Element(['source', vender], tag='instantiationIdentifier', value=fileName))
 
         if checksum and checksum != "":
-            self.instantiationIdentifier.append(PB_Element(['source', vender], tag='instantiationIdentifier', value=checksum))
+            self.instantiationIdentifier.append(
+                PB_Element(['source', vender], tag='instantiationIdentifier', value=checksum))
 
         self.instantiationDate = []
         if date and date != "":
@@ -1638,7 +1775,8 @@ class pbcoreInstantiation(XML_PBCore):
         self.instantiationDigital = None
         if fileType and fileType != "":
             if fileTypeAuthority:
-                self.instantiationDigital = PB_Element(['source', fileTypeAuthority], tag='instantiationDigital', value=fileType)
+                self.instantiationDigital = PB_Element(['source', fileTypeAuthority], tag='instantiationDigital',
+                                                       value=fileType)
             else:
                 raise ValueError("Using the fileType optional argument requires that you also specifiy a "
                                  "fileTypeAuthority")
@@ -1664,7 +1802,8 @@ class pbcoreInstantiation(XML_PBCore):
                 size = fileSize.split(" ")[0]
                 unit = fileSize.split(" ")[1]
 
-                self.instantiationFileSize = PB_Element(['unitsOfMeasure', unit], tag="instantiationFileSize", value=size)
+                self.instantiationFileSize = PB_Element(['unitsOfMeasure', unit], tag="instantiationFileSize",
+                                                        value=size)
 
         self.instantiationTimeStart = None
         if timeStart and timeStart != "":
@@ -1686,30 +1825,38 @@ class pbcoreInstantiation(XML_PBCore):
 
         self.instantiationChannelConfiguration = None
         if channelConfiguration and channelConfiguration != None:
-            self.instantiationChannelConfiguration = PB_Element(tag='instantiationChannelConfiguration', value=channelConfiguration)
+            self.instantiationChannelConfiguration = PB_Element(tag='instantiationChannelConfiguration',
+                                                                value=channelConfiguration)
 
         self.instantiationLanguage = None
         if language and language != "":
-            self.instantiationLanguage = PB_Element(['source', 'ISO 639.2'], tag='instantiationLanguage', value=language)
+            self.instantiationLanguage = PB_Element(['source', 'ISO 639.2'], tag='instantiationLanguage',
+                                                    value=language)
 
         self.instantiationAlternativeModes = []
         if alternativeModes and alternativeModes != None:
-            self.instantiationAlternativeModes.append(PB_Element(tag='instantiationAlternativeModes', value=alternativeModes))
+            self.instantiationAlternativeModes.append(
+                PB_Element(tag='instantiationAlternativeModes', value=alternativeModes))
 
         self.instantiationEssenceTrack = []
         self.instantiationRelation = []
         self.instantiationAnnotation = []
         if extent and extent != "":
-            self.instantiationAnnotation.append(PB_Element(['annotationType', 'Extent'], tag='instantiationAnnotation', value=extent))
+            self.instantiationAnnotation.append(
+                PB_Element(['annotationType', 'Extent'], tag='instantiationAnnotation', value=extent))
 
         if stockManufacture and stockManufacture != "":
-            self.instantiationAnnotation.append(PB_Element(['annotationType', 'StockManufacture'], tag="instantiationAnnotation", value=stockManufacture))
+            self.instantiationAnnotation.append(
+                PB_Element(['annotationType', 'StockManufacture'], tag="instantiationAnnotation",
+                           value=stockManufacture))
 
         if baseType and baseType != "":
-            self.instantiationAnnotation.append(PB_Element(['annotationType', 'BaseType'], tag="instantiationAnnotation", value=baseType))
+            self.instantiationAnnotation.append(
+                PB_Element(['annotationType', 'BaseType'], tag="instantiationAnnotation", value=baseType))
 
         if baseThickness and baseThickness != "":
-            self.instantiationAnnotation.append(PB_Element(['annotationType', 'BaseThickness'], tag="instantiationAnnotation", value=baseThickness))
+            self.instantiationAnnotation.append(
+                PB_Element(['annotationType', 'BaseThickness'], tag="instantiationAnnotation", value=baseThickness))
 
         self.instantiationPart = []
         self.instantiationExtension = None
@@ -2337,17 +2484,17 @@ class InstantiationEssenceTrack(XML_PBCore):
     """
     # TODO: Create Docstring for InstantiationEssenceTrack
     def __init__(self, type=None,
-                objectID= None,
-                standard=None,
-                encoding=None,
-                frameRate=None,
-                ips=None,
-                samplingRate=None,
-                bitDepth=None,
-                aspectRatio=None,
-                timeStart=None,
-                duration=None,
-                language=None):
+                 objectID=None,
+                 standard=None,
+                 encoding=None,
+                 frameRate=None,
+                 ips=None,
+                 samplingRate=None,
+                 bitDepth=None,
+                 aspectRatio=None,
+                 timeStart=None,
+                 duration=None,
+                 language=None):
         """
         @type           self.essenceTrackType:              PB_Element
         @type           self.essenceTrackIdentifier:        PB_Element
@@ -2376,7 +2523,8 @@ class InstantiationEssenceTrack(XML_PBCore):
 
         self.essenceTrackIdentifier = None
         if objectID and objectID != "":
-            self.essenceTrackIdentifier = PB_Element(['source', 'CAVPP'], ['annotation', 'Object Identifier'], tag="essenceTrackIdentifier", value=objectID)
+            self.essenceTrackIdentifier = PB_Element(['source', 'CAVPP'], ['annotation', 'Object Identifier'],
+                                                     tag="essenceTrackIdentifier", value=objectID)
 
         self.essenceTrackStandard = None
         if standard and standard != "":
@@ -2390,15 +2538,18 @@ class InstantiationEssenceTrack(XML_PBCore):
 
         self.essenceTrackFrameRate = None
         if frameRate and frameRate != "":
-            self.essenceTrackFrameRate = PB_Element(['unitsOfMeasure', 'fps'], tag="essenceTrackFrameRate", value=frameRate)
+            self.essenceTrackFrameRate = PB_Element(['unitsOfMeasure', 'fps'], tag="essenceTrackFrameRate",
+                                                    value=frameRate)
 
         self.essenceTrackPlaybackSpeed = None
         if ips and ips != "":
-            self.essenceTrackPlaybackSpeed = PB_Element(["unitsOfMeasure", "ips"], tag="essenceTrackPlaybackSpeed", value=ips)
+            self.essenceTrackPlaybackSpeed = PB_Element(["unitsOfMeasure", "ips"], tag="essenceTrackPlaybackSpeed",
+                                                        value=ips)
 
         self.essenceTrackSamplingRate = None
         if samplingRate and samplingRate != "":
-            self.essenceTrackSamplingRate = PB_Element(['unitsOfMeasure', 'kHz'], tag="essenceTrackSamplingRate", value=samplingRate)
+            self.essenceTrackSamplingRate = PB_Element(['unitsOfMeasure', 'kHz'], tag="essenceTrackSamplingRate",
+                                                       value=samplingRate)
 
         self.essenceTrackBitDepth = None
         if bitDepth and bitDepth != "":
@@ -2424,7 +2575,6 @@ class InstantiationEssenceTrack(XML_PBCore):
 
         self.essenceTrackAnnotation = []
         self.essenceTrackExtension = []
-
 
 
     def get_essenceTrackType(self):
@@ -2469,7 +2619,7 @@ class InstantiationEssenceTrack(XML_PBCore):
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationessencetrack/essenceTrackIdentifier/
         :return:        None
         """
-        #TODO: add example of essenceTrackIdentifier
+        # TODO: add example of essenceTrackIdentifier
 
         if isinstance(data, PB_Element):
             self.essenceTrackIdentifier = data
@@ -2856,14 +3006,14 @@ class InstantiationEssenceTrack(XML_PBCore):
         # print branch
         return branch
 
-    # def xml(self):
-    #
-    #     # branch = etree.ElementTree(self.pbcoreRelationType)
-    #     XML = self._makeXML()
-    #     return XML
-    #
-    # def xmlString(self):
-    #     XML = self._makeXML()
+        # def xml(self):
+        #
+        # # branch = etree.ElementTree(self.pbcoreRelationType)
+        #     XML = self._makeXML()
+        #     return XML
+        #
+        # def xmlString(self):
+        #     XML = self._makeXML()
 
 
 # __________________________________
@@ -2887,20 +3037,20 @@ class InstantiationRelation(XML_PBCore):
             # May Contain:
             # 4 or less optional attributes, specific:
 
-            "source",                       # (text, may be empty)
-            "ref",                          # (text, may be empty)
-            "version",                      # (text, may be empty)
-            "annotation"                    # (text, may be empty)
+            "source",  # (text, may be empty)
+            "ref",  # (text, may be empty)
+            "version",  # (text, may be empty)
+            "annotation"  # (text, may be empty)
         ]
 
         self.instantiationRelationIdentifierAttributesOptional = [
             # May Contain:
             # 4 or less optional attributes, specific:
 
-            "source",                       # (text, may be empty)
-            "ref",                          # (text, may be empty)
-            "version",                      # (text, may be empty)
-            "annotation"                    # (text, may be empty)
+            "source",  # (text, may be empty)
+            "ref",  # (text, may be empty)
+            "version",  # (text, may be empty)
+            "annotation"  # (text, may be empty)
         ]
 
     def get_instantiationRelationType(self):
@@ -2949,6 +3099,7 @@ class InstantiationRelation(XML_PBCore):
             self.instantiationRelationIdentifier = data
         else:
             raise TypeError("Expected type: PB_Element")
+
     # TODO: TEST _makeXML method for InstantiationRelation
 
     def _makeXML(self):
@@ -2957,28 +3108,29 @@ class InstantiationRelation(XML_PBCore):
         branch.append(self.instantiationRelationIdentifier.get_etree_element())
         return branch
 
-    # def xml(self):
-    #
-    #     # branch = etree.ElementTree(self.pbcoreRelationType)
-    #     XML = self._makeXML()
-    #     return XML
-    #
-    # def xmlString(self):
-    #     XML = self._makeXML()
-    #     return etree.tostring(XML)
+        # def xml(self):
+        #
+        # # branch = etree.ElementTree(self.pbcoreRelationType)
+        #     XML = self._makeXML()
+        #     return XML
+        #
+        # def xmlString(self):
+        #     XML = self._makeXML()
+        #     return etree.tostring(XML)
+
 
 class InstantiationRights(XML_PBCore):
     """
-    Description: Instantiation Rights
-    URI:                http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationrights/
+    :Description:       Instantiation Rights
+    :URI:                http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationrights/
     """
+
     def __init__(self):
         """
         @type           self.rightsSummary:                 list
         @type           self.rightsLink:                    list
         @type           self.rightsEmbedded:                list
 
-        :return:    None
         """
         self.rightsSummary = []
         self.rightsLink = []
@@ -3043,7 +3195,7 @@ class InstantiationRights(XML_PBCore):
     def get_rightsEmbedded(self):
         return self.rightsEmbedded
 
-# TODO: Test _makeXML method for pbcoreRights
+    # TODO: Test _makeXML method for pbcoreRights
     def _makeXML(self):
         branch = Element("pbcoreRights")
         for node in self.rightsSummary:
@@ -3057,22 +3209,23 @@ class InstantiationRights(XML_PBCore):
 
         return branch
 
-    # def xml(self):
-    #
-    #     # branch = etree.ElementTree(self.pbcoreRelationType)
-    #     XML = self._makeXML()
-    #     return XML
-    #
-    # def xmlString(self):
-    #     XML = self._makeXML()
-    #     return etree.tostring(XML)
+        # def xml(self):
+        #
+        # # branch = etree.ElementTree(self.pbcoreRelationType)
+        #     XML = self._makeXML()
+        #     return XML
+        #
+        # def xmlString(self):
+        #     XML = self._makeXML()
+        #     return etree.tostring(XML)
+
 
 ##################################
 # Extensions classes
 ##################################
 
 # class Extensions():
-#     """
+# """
 #     :Description:
 #     :URL: http://pbcore.org/elements/
 #     """
@@ -3088,8 +3241,6 @@ class InstantiationRights(XML_PBCore):
 
 
 class InstantiationPart(XML_PBCore):
-
-
     def __init__(self,
                  objectID=None,
                  location=None,
@@ -3097,7 +3248,9 @@ class InstantiationPart(XML_PBCore):
                  fileSize=None):
         self.instantiationIdentifier = []
         if objectID and objectID != "":
-            self.instantiationIdentifier.append(PB_Element(['source', 'CAVPP'],['annotation', 'Object Identifier'], tag="instantiationIdentifier", value=objectID))
+            self.instantiationIdentifier.append(
+                PB_Element(['source', 'CAVPP'], ['annotation', 'Object Identifier'], tag="instantiationIdentifier",
+                           value=objectID))
 
         self.instantiationLocation = None
         if location and location != "":
@@ -3186,13 +3339,14 @@ class InstantiationPart(XML_PBCore):
 
 class pbcoreExtension(XML_PBCore):
     """
+    :Description:
     :URI: http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreextension/
     """
     # TODO: Create Docstring for pbcoreExtension
     def __init__(self,
-                exElement=None,
-                exValue=None,
-                exAuthority=None):
+                 exElement=None,
+                 exValue=None,
+                 exAuthority=None):
         """
         @type           self.extensionWrap:                 PB_Element
         @type           self.extensionElement:              PB_Element
@@ -3205,15 +3359,15 @@ class pbcoreExtension(XML_PBCore):
         self.extensionWrap = []
         self.extensionElement = None
         if exElement and exElement != "":
-            self.extensionElement =PB_Element(tag="extensionElement", value=exElement)
+            self.extensionElement = PB_Element(tag="extensionElement", value=exElement)
 
         self.extensionValue = None
         if exValue and exValue != "":
-            self.extensionValue =PB_Element(tag="extensionValue", value=exValue)
+            self.extensionValue = PB_Element(tag="extensionValue", value=exValue)
 
         self.extensionAuthorityUsed = None
         if exAuthority and exAuthority != "":
-            self.extensionAuthorityUsed =PB_Element(tag="extensionAuthorityUsed", value=exAuthority)
+            self.extensionAuthorityUsed = PB_Element(tag="extensionAuthorityUsed", value=exAuthority)
 
         self.extensionEmbedded = None
 
@@ -3325,9 +3479,9 @@ class pbcoreExtension(XML_PBCore):
         """
         return self.extensionEmbedded
 
-# TODO: Test _makeXML method for pbcoreExtension
+    # TODO: Test _makeXML method for pbcoreExtension
     def _makeXML(self):
-        longer_branch= Element("pbcoreExtension")
+        longer_branch = Element("pbcoreExtension")
         branch = Element("extensionWrap")
 
         # for node in self.extensionWrap:
@@ -3362,15 +3516,18 @@ class pbcoreExtension(XML_PBCore):
 class PB_Element():
     """
     :Description: Basic element tag
+    :parameter          tag:    Tag name
+    :type           tag:    str
+    :parameter          value:  Value name
+    :type           value:  str
+    :return:        None
     """
 
     # TODO: Create Docstring for PB_Element
     def __init__(self, *args, **kwargs):
         """
 
-        :param          tag:
-        :param          value:
-        :return:        None
+
         """
         self.attributes = OrderedDict()
         self.validTags = [
@@ -3459,39 +3616,40 @@ class PB_Element():
         ]
 
         if kwargs:
-            if isinstance(kwargs.get("tag"), str):      # checks if the tag is a string
+            if isinstance(kwargs.get("tag"), str):  # checks if the tag is a string
                 if kwargs.get("tag") in self.validTags:
                     self.tag = kwargs.get("tag")
                 else:
                     raise ValueError("Expected only PBCore elements. Received: ", kwargs.get("tag"))
             else:
                 raise TypeError("Expected string. Received: " + type(kwargs.get("tag")))
-            if isinstance(kwargs.get("value"), str):    # checks if the value is a string
+            if isinstance(kwargs.get("value"), str):  # checks if the value is a string
                 self.value = kwargs.get("value")
             else:
                 raise TypeError("Expected string. Received: " + type(kwargs.get("value")))
-            # self.attribute = OrderedDict()
+                # self.attribute = OrderedDict()
 
         if args:
             for arg in args:
-                if isinstance(arg[0], str) and isinstance(arg[1], str):     # checks if the attribute name and value are a string
+                if isinstance(arg[0], str) and isinstance(arg[1],
+                                                          str):  # checks if the attribute name and value are a string
                     self.add_attribute(arg[0], arg[1])
                     # print arg[0], arg[1]
                 else:
                     raise ValueError
 
-    def get_attribute(self):
+    def get_attributes(self):
         """
 
         :return:
         """
-        return self.attribute
+        return self.attributes
 
     def add_attribute(self, key, value):
         """
 
-        :param          key: name of the attribute
-        :param          value: value of the attribute
+        :parameter:          key: name of the attribute
+        :parameter:          value: value of the attribute
         :return:        None
         """
         # TODO: Create Docstring for add_attribute
@@ -3515,7 +3673,7 @@ class PB_Element():
                 else:
                     raise ValueError
 
-        # self.attribute[key] = value
+                    # self.attribute[key] = value
 
     def delete_attribute(self, key):
         """
@@ -3570,7 +3728,7 @@ class PB_Element():
             while attributes:
                 key, value = attributes.popitem(last=False)
                 element.set(key, value)
-            # print self.attribute
+                # print self.attribute
         return element
 
     def xml_print(self):
