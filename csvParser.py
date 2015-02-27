@@ -252,9 +252,8 @@ def generate_pbcore(record):
             descritive.add_pbcoreAssetDate(PB_Element(['dateType', 'published'], tag="pbcoreAssetDate", value=publishedDate.strip()))
 
     if record['Additional Descriptive Notes for Overall Work']:
-        add_desc_notes = record['Additional Descriptive Notes for Overall Work'].split(';')
-        for note in add_desc_notes:
-            descritive.add_pbcoreDescription(PB_Element(['descriptionType', 'Additional Descriptive Notes for Overall Work'], tag='pbcoreDescription', value=note.strip()))
+        notes = record['Additional Descriptive Notes for Overall Work']
+        descritive.add_pbcoreDescription(PB_Element(['descriptionType', 'Additional Descriptive Notes for Overall Work'], tag='pbcoreDescription', value=notes.strip()))
 
     if record['Transcript']:
         transcript = record['Transcript']
@@ -518,14 +517,12 @@ def generate_pbcore(record):
             physical.add_instantiationDate(PB_Element(tag='instantiationDate', value=date))
 
         if record['Additional Technical Notes for Overall Work']:
-            tech_notes = record['Additional Technical Notes for Overall Work'].split(";")
-            for note in tech_notes:
-                physical.add_instantiationAnnotation(PB_Element(['annotationType', 'Additional Technical Notes for Overall'], tag="instantiationAnnotation", value=note.strip()))
+            note = record['Additional Technical Notes for Overall Work']
+            physical.add_instantiationAnnotation(PB_Element(['annotationType', 'Additional Technical Notes for Overall'], tag="instantiationAnnotation", value=note.strip()))
 
         if record['Cataloger Notes']:
-            cataloger_notes = record['Cataloger Notes'].split(';')
-            for note in cataloger_notes:
-                physical.add_instantiationAnnotation(PB_Element(['annotationType', 'Cataloger Notes'], tag="instantiationAnnotation", value=note.strip()))
+            note = record['Cataloger Notes']
+            physical.add_instantiationAnnotation(PB_Element(['annotationType', 'Cataloger Notes'], tag="instantiationAnnotation", value=note.strip()))
 
         # FIXME: add subtitles to script
         if record['Subtitles/Intertitles/Closed Captions']:
@@ -553,9 +550,8 @@ def generate_pbcore(record):
                                           location="CAVPP",
                                           objectID=(part.strip()+"_prsv"))
         if record['Quality Control Notes']:
-            QC_notes_list = record['Quality Control Notes'].split(";")
-            for note in QC_notes_list:
-                pres_master.add_instantiationAnnotation(PB_Element(['annotationType', 'CAVPP Quality Control/Partner Quality Control'], tag="instantiationAnnotation", value=note.strip()))
+            note = record['Quality Control Notes']
+            pres_master.add_instantiationAnnotation(PB_Element(['annotationType', 'CAVPP Quality Control/Partner Quality Control'], tag="instantiationAnnotation", value=note.strip()))
 
         newPart.add_pbcoreInstantiation(pres_master)
 
@@ -570,7 +566,8 @@ def generate_pbcore(record):
 # Extension
     if record['Country of Creation']:
         exten = pbcoreExtension(exElement="countryOfCreation",
-                                exValue=record['Country of Creation'])
+                                exValue=record['Country of Creation'],
+                                exAuthority="ISO 3166.1")
         descritive.add_pbcore_extension(exten)
 
     if record['Project Note']:
@@ -761,7 +758,7 @@ def main():
 
     if number_of_rewritten_records >= 1:
         message += " Records overwritten: " + str(number_of_rewritten_records) + "."
-        
+
     logger.info(message)
     print "Done"
 
