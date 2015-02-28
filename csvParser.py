@@ -103,10 +103,12 @@ class RemoveErrorsFilter(logging.Filter):
         # return not record.getMessage().startswith('WARNING')
 
 
-def generate_pbcore(record):
+def generate_pbcore(record, files=None):
     XML = ""
     new_XML_file = PBCore(collectionSource=record['Institution'],
                           collectionTitle=record['Collection Guide Title'])
+
+    preservation_files, access_files = sort_files_by_type(files)
 
 
     # pbcoreDescriptionDocument
@@ -130,7 +132,7 @@ def generate_pbcore(record):
     transcript = ""
     parts = record['Object Identifier'].split(';')
 
-
+    # preservation, access = sort_files_by_type()
 
     if record['Object Identifier']:
         obj_ID = record['Object Identifier'].split(';')[0].split('_t')[0]
@@ -545,20 +547,47 @@ def generate_pbcore(record):
         newPart.add_pbcoreInstantiation(physical)
 
 # <!--Preservation Master-->
-        pres_master = pbcoreInstantiation(type="Preservation Master",
-                                          location="CAVPP",
-                                          objectID=(part.strip()+"_prsv"))
-        if record['Quality Control Notes']:
-            note = record['Quality Control Notes']
-            pres_master.add_instantiationAnnotation(PB_Element(['annotationType', 'CAVPP Quality Control/Partner Quality Control'], tag="instantiationAnnotation", value=note.strip()))
+        # find file and get infomation about
+        # find master file
+        # print part.split()
+        # TODO: calculate MD5 for master file
+        # TODO: calculate Filesize
+        # TODO: Codec standard
 
-        newPart.add_pbcoreInstantiation(pres_master)
+
+        for preservation_file in preservation_files:
+            pres_master = pbcoreInstantiation(type="Preservation Master",
+                                              location="CAVPP",
+                                              language=lang,
+                                              fileName=(os.path.basename(preservation_file)))
+
+
+            if record['Quality Control Notes']:
+                note = record['Quality Control Notes']
+                pres_master.add_instantiationAnnotation(PB_Element(['annotationType', 'CAVPP Quality Control/Partner Quality Control'], tag="instantiationAnnotation", value=note.strip()))
+
+
+            if media_type.lower() == 'audio' or media_type.lower() == 'sound':
+                # TODO Calculate
+                pass
+            elif media_type.lower() == 'moving image':
+                new_ess_track = InstantiationEssenceTrack(type="Video")
+                pres_master.add_instantiationEssenceTrack(new_ess_track)
+
+                # TODO: calculated if there is a sound track
+                new_ess_track = InstantiationEssenceTrack(type="Audio")
+                pres_master.add_instantiationEssenceTrack(new_ess_track)
+                pass
+
+            newPart.add_pbcoreInstantiation(pres_master)
 
 # access copy
-        access_copy = pbcoreInstantiation(type="Access Copy",
-                                          location="CAVPP",
-                                          objectID=(part.strip()+"_access"))
-        newPart.add_pbcoreInstantiation(access_copy)
+        for access_file in access_files:
+            access_copy = pbcoreInstantiation(type="Access Copy",
+                                              location="CAVPP",
+                                              language=lang,
+                                              fileName=os.path.basename(access_file))
+            newPart.add_pbcoreInstantiation(access_copy)
 
         descritive.add_pbcore_part(newPart)
 
@@ -636,7 +665,7 @@ def content_valid(input_record):
     for item in check_list:
         if item[1] != "":
             if not valid_date(item[1]):
-                warnings.append("\t\""
+                warnings.append("\""
                                 + item[1]
                                 + "\" in the \'"
                                 + item[0]
@@ -648,6 +677,7 @@ def content_valid(input_record):
     for index, warning in enumerate(warnings):
         warnings[index] = "["+ input_record["Object Identifier"] + "] " + warnings[index]
     return warnings, errors
+
 
 def locate_files(root, fileName):
     # search for file with fileName in it
@@ -670,12 +700,14 @@ def locate_files(root, fileName):
 
 def proceed(message, warnings=None):
     key = ""
+    print ""
     while True:
-        print "Warnings:"
-        print "\n\t**************************************************************"
+
         if warnings:
+            print "\tWarnings:"
+            print "\n\t**************************************************************\n"
             for index, warning in enumerate(warnings):
-                print str(index+1) + ")\t" + warning
+                print str(index+1) + ")\t" + warning + "\n"
         print "\t**************************************************************"
         print("\n\t" + message)
         print "\n\tDo you wish to continue?",
@@ -694,11 +726,25 @@ def proceed(message, warnings=None):
     if key.lower() == 'n':
         return False
 
+
+def sort_files_by_type(digital_files):
+    preservation = []
+    access = []
+
+    for file in digital_files:
+        if "_prsv" in file and ".md5" not in file:
+            preservation.append(file)
+
+        if "_access" in file and ".md5" not in file:
+            access.append(file)
+    return preservation, access
+
+
 def main():
     # ----------Setting up the logs----------
     mode = "normal"
     records = []
-
+    digital_files = []
     parser = argparse.ArgumentParser()
     parser.add_argument("csv", help="Source CSV file", type=str)
     parser.add_argument("-d", "--debug", help="Debug mode. Writes all messages to debug log.", action='store_true')
@@ -759,7 +805,7 @@ def main():
 
     try:
         logger.debug("Loading file into memory")
-        for item in csv.DictReader(f): # reason: because you can only iterate over a DictReader once
+        for item in csv.DictReader(f):  # reason: because you can only iterate over a DictReader once
             records.append(item)
     except ValueError:
         print "FAILED"
@@ -782,12 +828,14 @@ def main():
             print "Error found: " + error
         if total_warnings:
             for warning in total_warnings:
-                print "Warning: " + warning
+                print "WARNINGS: " + warning
         print "Quitting"
         quit()
 
 
     # ---------- Locate all files mentioned in CSV ----------
+    preservation_files = []
+    access_files = []
 
     logger.debug("Locating files")
     file_name_pattern = re.compile("[A-Z,a-z]+_\d+")
@@ -795,19 +843,31 @@ def main():
     for record in records:
         fileName = re.search(file_name_pattern, record['Object Identifier']).group(0)
         logging.debug("Locating possible files for: " + fileName)
-        if not locate_files(args.csv, fileName):
-            files_not_found.append(fileName)
-        else:
+        digital_files = locate_files(args.csv, fileName)
+        if digital_files:
             logger.debug("Files located for: " + fileName)
+            preservation_files, access_files = sort_files_by_type(digital_files)
+            if not preservation_files:
+                total_warnings.append("No preservation files found for " + fileName)
+            if not access_files:
+                total_warnings.append("No access files found for " + fileName)
+        else:
+            files_not_found.append(fileName)
+
     if files_not_found:
         for file_not_found in files_not_found:
-            message = "[" + file_not_found + "]\tCould not find files that match this record. Makes sure the " \
-                                             "directory containing the media objects is located in the same " \
-                                             "directory as the csv file. "
+            message = "[" + file_not_found + "] Could not find files that match this record."
             logger.warning(message)
             total_warnings.append(message)
         # print "quiting"
         # quit()
+
+
+# ---------- Check if XML file already exists. ----------
+    for record in records:
+        fileName = re.search(file_name_pattern, record['Object Identifier']).group(0)
+        if isfile(fileName + ".xml"):
+            total_warnings.append(fileName + ".xml already exists. Do you wish to overwrite it?")
 
 # ---------- Report errors and warning. ----------
     sys.stdout.flush()
@@ -820,37 +880,38 @@ def main():
         print "Quitting"
         quit()
 
-    # if there are only warnings, print them out and ask if the user wants to continue
-    # if there are only warnings, print them out and ask if the user wants to continue
-    if total_warnings:
-        key = ""
-        for warning in total_warnings:
-            logger.warning(warning)
-        if proceed("Possible problems with the data found", total_warnings) is False:
-            logger.info("Script terminated by user.")
-            print "Quitting"
-            quit()
-        else:
-            logger.info("Warnings ignored")
+    if mode != 'debug':
+        if total_warnings:
+            key = ""
+            for warning in total_warnings:
+                logger.warning(warning)
+            if proceed("Possible problems with the data found.", total_warnings) is False:
+                logger.info("Script terminated by user.")
+                print "Quitting"
+                quit()
+            else:
+                logger.info("Warnings ignored")
 
 
     # ---------- Genereate PBCore XML Files ----------
-    logging.info("Generating PBCore stubs...")
+    print ""
+    logging.info("Generating PBCore...")
     number_of_records = 0
     number_of_new_records = 0
     number_of_rewritten_records = 0
 
     for record in records:
+        print ""
         fileName = re.search(file_name_pattern, record['Object Identifier']).group(0)
-        logger.info("Producing PBCore XML for " + fileName)
+        logger.info("Producing PBCore XML for " + fileName + ".")
         if isfile(fileName + ".xml"):
-            logger.warning(str(record['Project Identifier'])+".xml is already a file, overwriting.")
+            logger.warning(str(record['Project Identifier'])+".xml already exists. Overwriting.")
             number_of_rewritten_records += 1
         else:
             number_of_new_records += 1
-
+        digital_files = locate_files(args.csv, fileName)
         # I'm sending this into miniDOM because I can't get etree to print a pretty XML
-        buf = parseString(generate_pbcore(record))
+        buf = parseString(generate_pbcore(record, digital_files))
         output_file = open(fileName +".xml", 'w')
         output_file.write(buf.toprettyxml(encoding='utf-8'))
         output_file.close()
@@ -858,7 +919,7 @@ def main():
 
     logger.debug("Closing CSV file:")
     f.close()
-    message = "Generated " + str(number_of_records) + " records in total."
+    message = "\nGenerated " + str(number_of_records) + " records in total."
     if number_of_new_records >= 1:
         message += " New records: " + str(number_of_new_records) + "."
 
@@ -866,7 +927,7 @@ def main():
         message += " Records overwritten: " + str(number_of_rewritten_records) + "."
 
     logger.info(message)
-    print "Done"
+    print "Done\n"
 
 if __name__ == '__main__':
     main()
