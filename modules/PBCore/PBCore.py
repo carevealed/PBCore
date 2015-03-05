@@ -1642,7 +1642,7 @@ class CAVPP_Part(XML_PBCore):
         """
 
         :param          data:
-        :type           data:   PB_Element
+        :type           data:   pbcoreInstantiation
         :Example Value: ""
         :UTI:           http://pbcore.org/v2/elements/pbcoreInstantiation
         :return:        None
@@ -1754,7 +1754,7 @@ class pbcoreInstantiation(XML_PBCore):
 
         if fileName and fileName != "":
             self.instantiationIdentifier.append(
-                PB_Element(['source', vender], tag='instantiationIdentifier', value=fileName))
+                PB_Element(['source', vender], ["annotation", "file name"], tag='instantiationIdentifier', value=fileName))
 
         if checksum and checksum != "":
             self.instantiationIdentifier.append(
@@ -3622,11 +3622,18 @@ class PB_Element():
                 else:
                     raise ValueError("Expected only PBCore elements. Received: ", kwargs.get("tag"))
             else:
-                raise TypeError("Expected string. Received: " + type(kwargs.get("tag")))
+                raise TypeError("Expected string. Received: ", type(kwargs.get("tag")))
             if isinstance(kwargs.get("value"), str):  # checks if the value is a string
                 self.value = kwargs.get("value")
+
+            elif isinstance(kwargs.get("value"), int):  # checks if the value is a int
+                self.value = str(kwargs.get("value"))
+
+            elif isinstance(kwargs.get("value"), float):  # checks if the value is a int
+                            self.value = str(kwargs.get("value"))
+
             else:
-                raise TypeError("Expected string. Received: " + type(kwargs.get("value")))
+                raise TypeError("Expected string, integer or float. Received: ", type(kwargs.get("value")))
                 # self.attribute = OrderedDict()
 
         if args:
