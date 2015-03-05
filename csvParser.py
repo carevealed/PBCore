@@ -2,6 +2,8 @@ import os
 import sys
 import logging
 import argparse
+from onesheet.VideoObject import *
+from onesheet.AudioObject import *
 import string
 from time import sleep
 from os.path import isfile
@@ -100,16 +102,23 @@ class RemoveErrorsFilter(logging.Filter):
         # if record.getMessage().startswith('INFO'):
         if record.levelno < logging.WARNING:
             return record.getMessage()
-        # return not record.getMessage().startswith('WARNING')
+            # return not record.getMessage().startswith('WARNING')
 
+def sizeofHuman(num):
+        num = int(num)
+        for x in ['bytes', 'KB', 'MB', 'GB', 'TB']:
+            if num < 1024.0:
+                return "%3.1f %s" % (num, x), x
+            num /= 1024.0
 
 def generate_pbcore(record, files=None):
     XML = ""
     new_XML_file = PBCore(collectionSource=record['Institution'],
                           collectionTitle=record['Collection Guide Title'])
 
-    preservation_files, access_files = sort_files_by_type(files)
-
+    preservation_file_sets, access_files_sets = sep_pres_access(files)
+    preservation_file_sets = group_sides(preservation_file_sets)
+    access_files_sets = group_sides(access_files_sets)
 
     # pbcoreDescriptionDocument
     obj_ID = ""
@@ -126,13 +135,13 @@ def generate_pbcore(record, files=None):
     creationDates = []
     subjectTops = ""
     genre = ""
-    genre_autority= ""
-    IA_URL= ""
+    genre_autority = ""
+    IA_URL = ""
     QC_notes_list = ""
     transcript = ""
     parts = record['Object Identifier'].split(';')
 
-    # preservation, access = sort_files_by_type()
+    # preservation, access = sep_pres_access()
 
     if record['Object Identifier']:
         obj_ID = record['Object Identifier'].split(';')[0].split('_t')[0]
@@ -155,18 +164,11 @@ def generate_pbcore(record, files=None):
     if record['Series Title']:
         ser_title = record['Series Title']
 
-
     if record['Institution']:
         inst_name = record['Institution']
 
     if record['Institution URL']:
         inst_URL = record['Institution URL']
-
-
-
-
-
-
 
     descritive = pbcoreDescriptionDocument(parentObjectID=obj_ID,
                                            projectID=proj_ID,
@@ -179,21 +181,23 @@ def generate_pbcore(record, files=None):
 
     if record['Institution ARK']:
         inst_ARK = record['Institution ARK']
-        descritive.add_pbcoreIdentifier(PB_Element(['source', 'CDL'], ['annotation', 'Institution ARK'], tag='pbcoreIdentifier', value=inst_ARK))
+        descritive.add_pbcoreIdentifier(
+            PB_Element(['source', 'CDL'], ['annotation', 'Institution ARK'], tag='pbcoreIdentifier', value=inst_ARK))
 
     if record['Object ARK']:
         obj_ARK = record['Object ARK']
-        descritive.add_pbcoreIdentifier(PB_Element(['source', 'CDL'], ['annotation', 'Object ARK'], tag='pbcoreIdentifier', value=obj_ARK))
-
+        descritive.add_pbcoreIdentifier(
+            PB_Element(['source', 'CDL'], ['annotation', 'Object ARK'], tag='pbcoreIdentifier', value=obj_ARK))
 
     if record['Description or Content Summary']:
         description = record['Description or Content Summary']
         descritive.add_pbcoreDescription(PB_Element(tag="pbcoreDescription", value=description.strip()))
 
-
     if record['Internet Archive URL']:
         IA_URL = record['Internet Archive URL']
-        descritive.add_pbcoreIdentifier(PB_Element(['source', 'CAVPP'], ['annotation', 'Internet Archive URL'], tag='pbcoreIdentifier', value=IA_URL))
+        descritive.add_pbcoreIdentifier(
+            PB_Element(['source', 'CAVPP'], ['annotation', 'Internet Archive URL'], tag='pbcoreIdentifier',
+                       value=IA_URL))
 
     if record['Subject Topic']:
         subjectTops = record['Subject Topic']
@@ -203,9 +207,13 @@ def generate_pbcore(record, files=None):
         for subjectTopic in subjectTopics:
             # Unless another subject authority is specified, the source will default to the LOC subject headings
             if subjectTopicAuthority and subjectTopicAuthority != "":
-                descritive.add_pbcoreSubject(PB_Element(['source', subjectTopicAuthority], ['subjectType', 'Topic'], tag="pbcoreSubject", value=subjectTopic.strip()))
+                descritive.add_pbcoreSubject(
+                    PB_Element(['source', subjectTopicAuthority], ['subjectType', 'Topic'], tag="pbcoreSubject",
+                               value=subjectTopic.strip()))
             else:
-                descritive.add_pbcoreSubject(PB_Element(['source', "Library of Congress Subject Headings"], ['subjectType', 'Topic'], tag="pbcoreSubject", value=subjectTopic.strip()))
+                descritive.add_pbcoreSubject(
+                    PB_Element(['source', "Library of Congress Subject Headings"], ['subjectType', 'Topic'],
+                               tag="pbcoreSubject", value=subjectTopic.strip()))
 
     if record['Subject Entity']:
         subjectEnts = record['Subject Entity']
@@ -214,9 +222,12 @@ def generate_pbcore(record, files=None):
 
         for subjectEntity in subjectEntities:
             if subjectEntityAuthority and subjectEntityAuthority != "":
-                descritive.add_pbcoreSubject(PB_Element(['source', subjectEntityAuthority], ['subjectType', 'Entity'], tag="pbcoreSubject", value=subjectEntity.strip()))
+                descritive.add_pbcoreSubject(
+                    PB_Element(['source', subjectEntityAuthority], ['subjectType', 'Entity'], tag="pbcoreSubject",
+                               value=subjectEntity.strip()))
             else:
-                descritive.add_pbcoreSubject(PB_Element(['subjectType', 'Entity'], tag="pbcoreSubject", value=subjectEntity.strip()))
+                descritive.add_pbcoreSubject(
+                    PB_Element(['subjectType', 'Entity'], tag="pbcoreSubject", value=subjectEntity.strip()))
 
     if record['Spatial Coverage']:
         spatCoverages = record['Spatial Coverage']
@@ -236,7 +247,8 @@ def generate_pbcore(record, files=None):
         genreAuthoity = record['Genre Authority Source']
         for genre in genres:
             if genreAuthoity and genreAuthoity != "":
-                descritive.add_pbcoreGenre(PB_Element(['source', genreAuthoity], tag="pbcoreGenre", value=genre.strip()))
+                descritive.add_pbcoreGenre(
+                    PB_Element(['source', genreAuthoity], tag="pbcoreGenre", value=genre.strip()))
             else:
                 descritive.add_pbcoreGenre(PB_Element(tag="pbcoreGenre", value=genre.strip()))
 
@@ -244,24 +256,29 @@ def generate_pbcore(record, files=None):
         creation = record['Date Created']
         creationDates = creation.split(';')
         for creationDate in creationDates:
-            descritive.add_pbcoreAssetDate(PB_Element(['dateType', 'created'], tag="pbcoreAssetDate", value=creationDate.strip()))
+            descritive.add_pbcoreAssetDate(
+                PB_Element(['dateType', 'created'], tag="pbcoreAssetDate", value=creationDate.strip()))
 
     if record['Date Published']:
         published = record['Date Published']
         publishedDates = published.split(';')
         for publishedDate in publishedDates:
-            descritive.add_pbcoreAssetDate(PB_Element(['dateType', 'published'], tag="pbcoreAssetDate", value=publishedDate.strip()))
+            descritive.add_pbcoreAssetDate(
+                PB_Element(['dateType', 'published'], tag="pbcoreAssetDate", value=publishedDate.strip()))
 
     if record['Additional Descriptive Notes for Overall Work']:
         notes = record['Additional Descriptive Notes for Overall Work']
-        descritive.add_pbcoreDescription(PB_Element(['descriptionType', 'Additional Descriptive Notes for Overall Work'], tag='pbcoreDescription', value=notes.strip()))
+        descritive.add_pbcoreDescription(
+            PB_Element(['descriptionType', 'Additional Descriptive Notes for Overall Work'], tag='pbcoreDescription',
+                       value=notes.strip()))
 
     if record['Transcript']:
         transcript = record['Transcript']
-        descritive.add_pbcoreDescription(PB_Element(['descriptionType', 'Transcript'], tag='pbcoreDescription', value=transcript))
+        descritive.add_pbcoreDescription(
+            PB_Element(['descriptionType', 'Transcript'], tag='pbcoreDescription', value=transcript))
 
 
-# Descriptive Creator: Producer,Director,Writer,Interviewer,Performer
+    # Descriptive Creator: Producer,Director,Writer,Interviewer,Performer
 
     producers = ""
     directors = ""
@@ -300,7 +317,7 @@ def generate_pbcore(record, files=None):
             descritive.add_pbcoreCreator(creator)
 
 
-# Descriptive Contributor: Camera,Editor,Sound,Music,Cast,Interviewee,Speaker,Musician
+        # Descriptive Contributor: Camera,Editor,Sound,Music,Cast,Interviewee,Speaker,Musician
 
     # cameras = ""
     # editors = ""
@@ -360,9 +377,9 @@ def generate_pbcore(record, files=None):
             descritive.add_pbcoreContributor(contributor)
 
 
-# Descriptive Publisher: Publisher,Distributor
-#     publisher = ""
-#     distributor = ""
+        # Descriptive Publisher: Publisher,Distributor
+        # publisher = ""
+        #     distributor = ""
 
     if record['Publisher']:
         publisher = record['Publisher']
@@ -375,13 +392,13 @@ def generate_pbcore(record, files=None):
         descritive.add_pbcorePublisher(publish)
 
 
-# Descriptive Rights
-#     copyright_statement = ""
-#     copyright_holder = ""
-#     copyright_holder_info = ""
-#     copyright_dates = []
-#     copyright_notice = ""
-#     institutional_rights_statement_URL = ""
+    # Descriptive Rights
+    # copyright_statement = ""
+    #     copyright_holder = ""
+    #     copyright_holder_info = ""
+    #     copyright_dates = []
+    #     copyright_notice = ""
+    #     institutional_rights_statement_URL = ""
 
     if record['Copyright Statement']:
         rights = pbcoreRightsSummary(copyright_statement=record['Copyright Statement'].strip())
@@ -399,33 +416,38 @@ def generate_pbcore(record, files=None):
         copyright_dates = re.split('; |,|and', record['Copyright Date'])
         for copyright_date in copyright_dates:
             rights = pbcoreRightsSummary()
-            rights.set_rightsSummary(PB_Element(['annotation', 'Copyright Date'], tag="rightsSummary", value=copyright_date.strip()))
+            rights.set_rightsSummary(
+                PB_Element(['annotation', 'Copyright Date'], tag="rightsSummary", value=copyright_date.strip()))
             descritive.add_pbcoreRightsSummary(rights)
 
     if record['Copyright Notice']:
         rights = pbcoreRightsSummary()
         copyright_notice = record['Copyright Notice']
-        rights.set_rightsSummary(PB_Element(['annotation', 'Copyright Notice'], tag="rightsSummary", value=copyright_notice.strip()))
+        rights.set_rightsSummary(
+            PB_Element(['annotation', 'Copyright Notice'], tag="rightsSummary", value=copyright_notice.strip()))
         descritive.add_pbcoreRightsSummary(rights)
 
     if record['Institutional Rights Statement (URL)']:
         rights = pbcoreRightsSummary()
         institutional_rights_statement_URL = record['Institutional Rights Statement (URL)']
-        rights.set_rightsSummary(PB_Element(['annotation', 'Institutional Rights Statement (URL)'], tag="rightsSummary", value=institutional_rights_statement_URL.strip()))
+        rights.set_rightsSummary(PB_Element(['annotation', 'Institutional Rights Statement (URL)'], tag="rightsSummary",
+                                            value=institutional_rights_statement_URL.strip()))
         descritive.add_pbcoreRightsSummary(rights)
 
-# PARTS
+    # PARTS
     call_numbers = ""
     if record['Call Number']:
         call_numbers = record['Call Number'].split(';')
 
-# PBcore Parts
+    # PBcore Parts
     for part in parts:
         newPart = CAVPP_Part(objectID=part.strip(),
                              mainTitle=main_title.strip(),
                              description=record['Description or Content Summary'])
         for call_number in call_numbers:
-            newPart.add_pbcoreIdentifier(PB_Element(['source', inst_name], ['annotation', 'Call Number'], tag='pbcoreIdentifier', value=call_number.strip()))
+            newPart.add_pbcoreIdentifier(
+                PB_Element(['source', inst_name], ['annotation', 'Call Number'], tag='pbcoreIdentifier',
+                           value=call_number.strip()))
         # physical
         physical_asset = ""
         media_type = ""
@@ -447,7 +469,6 @@ def generate_pbcore(record, files=None):
         track_standard = ""
         run_speed = ""
 
-
         if record['Gauge and Format']:
             physical_asset = record['Gauge and Format']
 
@@ -468,7 +489,6 @@ def generate_pbcore(record, files=None):
 
         if record['Language']:
             lang = record['Language']
-
 
         if record['Total Number of Reels or Tapes']:
             total_number = record['Total Number of Reels or Tapes']
@@ -519,11 +539,14 @@ def generate_pbcore(record, files=None):
 
         if record['Additional Technical Notes for Overall Work']:
             note = record['Additional Technical Notes for Overall Work']
-            physical.add_instantiationAnnotation(PB_Element(['annotationType', 'Additional Technical Notes for Overall'], tag="instantiationAnnotation", value=note.strip()))
+            physical.add_instantiationAnnotation(
+                PB_Element(['annotationType', 'Additional Technical Notes for Overall'], tag="instantiationAnnotation",
+                           value=note.strip()))
 
         if record['Cataloger Notes']:
             note = record['Cataloger Notes']
-            physical.add_instantiationAnnotation(PB_Element(['annotationType', 'Cataloger Notes'], tag="instantiationAnnotation", value=note.strip()))
+            physical.add_instantiationAnnotation(
+                PB_Element(['annotationType', 'Cataloger Notes'], tag="instantiationAnnotation", value=note.strip()))
 
         # FIXME: add subtitles to script
         if record['Subtitles/Intertitles/Closed Captions']:
@@ -531,7 +554,7 @@ def generate_pbcore(record, files=None):
             for subtitle in subtitles:
                 physical.get_instantiationAlternativeModes()
 
-# instantiationPart
+            # instantiationPart
         if media_type.lower() == 'audio' or media_type.lower() == 'sound':
             speed = record['Running Speed']
             newInstPart = InstantiationPart(objectID=part)
@@ -540,58 +563,153 @@ def generate_pbcore(record, files=None):
             physical.add_instantiationPart(newInstPart)
 
         elif media_type.lower() == 'moving image':
-            newEss = InstantiationEssenceTrack(objectID=part, frameRate=run_speed, aspectRatio=aspect_ratio, standard=track_standard)
+            newEss = InstantiationEssenceTrack(objectID=part, frameRate=run_speed, aspectRatio=aspect_ratio,
+                                               standard=track_standard)
             physical.add_instantiationEssenceTrack(newEss)
-
 
         newPart.add_pbcoreInstantiation(physical)
 
-# <!--Preservation Master-->
+        # <!--Preservation Master-->
         # find file and get infomation about
         # find master file
         # print part.split()
-        # TODO: calculate MD5 for master file
         # TODO: calculate Filesize
         # TODO: Codec standard
 
 
-        for preservation_file in preservation_files:
+        for preservation_file_set in preservation_file_sets:
             pres_master = pbcoreInstantiation(type="Preservation Master",
                                               location="CAVPP",
-                                              language=lang,
-                                              fileName=(os.path.basename(preservation_file)))
+                                              generations="Preservation Master",
+                                              language=lang)
+            # -------------------- Audio only --------------------
+            if media_type.lower() == 'audio' or media_type.lower() == 'sound':
+                pres_master.set_instantiationMediaType(PB_Element(tag='instantiationMediaType', value='Sound'))
+
+                for master_part in preservation_file_set:
+                    f = AudioObject(master_part)
+                    new_mast_part = InstantiationPart(location="CAVPP",duration=f.totalRunningTimeSMPTE)
+                    file_size, file_units = sizeofHuman(f.file_size)
+                    new_mast_part.set_instantiationFileSize(PB_Element(['unitsOfMeasure',file_units], tag="instantiationFileSize", value=str(file_size)))
+                    new_mast_part.add_instantiationIdentifier(PB_Element(['source', 'CAVPP'], ['annotation', 'File Name'], tag="instantiationIdentifier", value=os.path.basename(master_part)))
+                    if not args.nochecksum:
+                        logger.info("Calculating MD5 checksum for " + master_part + ".")
+                        print "This might take some times if the file is large."
+                        new_mast_part.add_instantiationIdentifier(PB_Element(['source', 'CAVPP'], ['version', 'MD5'], ['annotation', 'checksum'], tag="instantiationIdentifier", value=f.calculate_MD5()))
+                    newfile = InstantiationEssenceTrack(type="Audio")
+                    newfile.set_essenceTrackBitDepth(PB_Element(tag="essenceTrackBitDepth", value=str(f.audioBitDepth)))
+                    newfile.set_essenceTrackSamplingRate(PB_Element(["unitsOfMeasure", "kHz"], tag="essenceTrackSamplingRate", value=str(f.audioSampleRate/1000)))
+                    if f.file_extension.lower() == '.wav':
+                        pres_master.set_instantiationDigital(PB_Element(['source', 'PRONOM Technical Registry'], tag='instantiationDigital', value='audio/x-wav'))  # This is really ugly code I don't know a better way
+                        if f.audioCodec == 'PCM 24-bit':
+                            pres_master.set_instantiationStandard(PB_Element(tag='instantiationStandard', value='Linear PCM Audio')) # This is really ugly code I don't know a better way
+
+                        newfile.set_essenceTrackEncoding(PB_Element(tag='essenceTrackEncoding', value='WAV'))
+                    new_mast_part.add_instantiationEssenceTrack(newfile)
+
+                    pres_master.add_instantiationPart(new_mast_part)
+                # f = AudioObject(preservation_file_set)0
+                #
+                pass
+
+            # -------------------- Moving Image --------------------
+            elif media_type.lower() == 'moving image':
+                f = VideoObject(preservation_file_set[0])
+                pres_master.set_instantiationMediaType(PB_Element(tag='instantiationMediaType', value='Video'))
+                pres_master.add_instantiationIdentifier(PB_Element(['source', 'CAVPP'], ['annotation', 'File Name'], tag="instantiationIdentifier", value=os.path.basename(preservation_file_set[0])))
+
+                file_size, file_units = sizeofHuman(f.file_size)
+                pres_master.set_instantiationFileSize(PB_Element(['unitsOfMeasure',file_units], tag="instantiationFileSize", value=str(file_size)))
+
+                if not args.nochecksum:
+                    logger.info("Calculating MD5 checksum for " + preservation_file_set[0] + ".")
+                    if f.file_size > 1065832230:
+                        print f.file_name + " is " + f.file_size_human + " and might take some times to calculate."
+                    pres_master.add_instantiationIdentifier(PB_Element(['source', 'CAVPP'], ['version', 'MD5'], ['annotation', 'checksum'], tag="instantiationIdentifier", value=f.calculate_MD5()))
+
+                # ---------- Video essence track ----------
+                newfile = InstantiationEssenceTrack(type='Video', frameRate=str(f.videoFrameRate), duration=f.totalRunningTimeSMPTE, aspectRatio=str(f.videoAspectRatio))
+                newfile.add_essenceTrackAnnotation(PB_Element(['annotationType', 'Frame Size Vertical'], tag="essenceTrackAnnotation", value=f.videoResolutionHeight))
+                newfile.add_essenceTrackAnnotation(PB_Element(['annotationType', 'Frame Size Horizontal'], tag="essenceTrackAnnotation", value=f.videoRespolutionWidth))
+                pres_master.add_instantiationEssenceTrack(newfile)
+
+                # ---------- Audio essence track ----------
+
+                newfile = InstantiationEssenceTrack(type='Audio', samplingRate=f.audioSampleRate/1000, bitDepth=f.audioBitDepth)
+                # new_ess_track.add_essenceTrackAnnotation(PB_Element(['annotationType', 'Audio Bit Rate'], tag="essenceTrackAnnotation", value=f.a))
+                pres_master.add_instantiationEssenceTrack(newfile)
+
+                pass
 
 
             if record['Quality Control Notes']:
                 note = record['Quality Control Notes']
-                pres_master.add_instantiationAnnotation(PB_Element(['annotationType', 'CAVPP Quality Control/Partner Quality Control'], tag="instantiationAnnotation", value=note.strip()))
-
-
-            if media_type.lower() == 'audio' or media_type.lower() == 'sound':
-                # TODO Calculate
-                pass
-            elif media_type.lower() == 'moving image':
-                new_ess_track = InstantiationEssenceTrack(type="Video")
-                pres_master.add_instantiationEssenceTrack(new_ess_track)
-
-                # TODO: calculated if there is a sound track
-                new_ess_track = InstantiationEssenceTrack(type="Audio")
-                pres_master.add_instantiationEssenceTrack(new_ess_track)
-                pass
+                pres_master.add_instantiationAnnotation(
+                    PB_Element(['annotationType', 'CAVPP Quality Control/Partner Quality Control'],
+                               tag="instantiationAnnotation", value=note.strip()))
 
             newPart.add_pbcoreInstantiation(pres_master)
 
-# access copy
-        for access_file in access_files:
+        # access copy
+        for access_files in access_files_sets:
             access_copy = pbcoreInstantiation(type="Access Copy",
                                               location="CAVPP",
                                               language=lang,
-                                              fileName=os.path.basename(access_file))
+                                              generations="Access Copy")
+            if media_type.lower() == 'audio' or media_type.lower() == 'sound':
+                access_copy.add_instantiationAnnotation(PB_Element(tag="instantiationIdentifier", value=obj_ID+"_access"))
+                for access_file in access_files:
+                    f = AudioObject(access_file)
+                    newAudioFile = InstantiationPart(objectID=f.file_name, location="CAVPP", duration=f.totalRunningTimeSMPTE)
+                    size, units = sizeofHuman(f.file_size)
+                    newAudioFile.set_instantiationFileSize(PB_Element(['unitsOfMeasure', units], tag="instantiationFileSize", value=size))
+                    if not args.nochecksum:
+                        logger.info("Calculating MD5 checksum for " + f.file_name + ".")
+                        print "This might take some times if the file is large."
+                        newAudioFile.add_instantiationIdentifier(
+                            PB_Element(['source', 'CAVPP'], ['version', 'MD5'], ['annotation', 'checksum'],
+                                       tag="instantiationIdentifier", value=f.calculate_MD5()))
+                    newEssTrack = InstantiationEssenceTrack(type="Audio", bitDepth=f.audioBitDepth)
+                    if f.file_extension.lower() == '.mp3':
+                        newEssTrack.set_essenceTrackEncoding(PB_Element(tag='essenceTrackEncoding', value='MP3'))
+                    newAudioFile.add_instantiationEssenceTrack(newEssTrack)
+                    access_copy.add_instantiationPart(newAudioFile)
+            elif media_type.lower() == 'moving image':
+                f = VideoObject(access_files[0])
+                access_copy.add_instantiationIdentifier(PB_Element(['source', 'CAVPP'], ['annotation', 'File Name'], tag="instantiationIdentifier", value=f.file_name))
+                access_copy.set_instantiationDuration(PB_Element(tag="instantiationDuration", value=f.totalRunningTimeSMPTE))
+                size, units = sizeofHuman(f.file_size)
+                access_copy.set_instantiationFileSize(PB_Element(['unitsOfMeasure', units], tag="instantiationFileSize", value=size))
+                if not args.nochecksum:
+                    logger.info("Calculating MD5 checksum for " + f.file_name + ".")
+                    print "This might take some times if the file is large."
+                    access_copy.add_instantiationIdentifier(
+                        PB_Element(['source', 'CAVPP'], ['version', 'MD5'], ['annotation', 'checksum'],
+                                   tag="instantiationIdentifier", value=f.calculate_MD5()))
+                if f.audioChannels == 1:
+                    access_copy.set_instantiationTracks(PB_Element(tag="instantiationTracks", value='Sound'))
+                    access_copy.set_instantiationChannelConfiguration(PB_Element(tag="instantiationChannelConfiguration", value='Mono'))
+                elif f.audioChannels == 2:
+                    access_copy.set_instantiationTracks(PB_Element(tag="instantiationTracks", value='Sound'))
+                    access_copy.set_instantiationChannelConfiguration(PB_Element(tag="instantiationChannelConfiguration", value='Stereo'))
+
+                # ------------------ video ------------------
+                newEssTrack = InstantiationEssenceTrack(type='Video', frameRate=("%.2f" % f.videoFrameRate), aspectRatio=str(f.videoAspectRatio), duration=f.totalRunningTimeSMPTE)  #TODO remove the string typecase
+                newEssTrack.add_essenceTrackAnnotation(PB_Element(['annotationType', 'Frame Size Vertical'], tag="essenceTrackAnnotation", value=f.videoResolutionHeight))
+                newEssTrack.add_essenceTrackAnnotation(PB_Element(['annotationType', 'Frame Size Horizontal'], tag="essenceTrackAnnotation", value=f.videoRespolutionWidth)) # FIX videoRespolutionWidth
+                access_copy.add_instantiationEssenceTrack(newEssTrack)
+
+                # ------------------ Audio ------------------
+                newEssTrack = InstantiationEssenceTrack(type='Audio', standard=f.audioCodec, samplingRate=f.audioSampleRate/1000)
+                # newEssTrack.add_essenceTrackAnnotation(PB_Element(['annotationType', 'Audio Bit Rate'], tag='essenceTrackAnnotation',))
+
+                access_copy.add_instantiationEssenceTrack(newEssTrack)
+
             newPart.add_pbcoreInstantiation(access_copy)
 
         descritive.add_pbcore_part(newPart)
 
-# Extension
+    # Extension
     if record['Country of Creation']:
         exten = pbcoreExtension(exElement="countryOfCreation",
                                 exValue=record['Country of Creation'],
@@ -608,23 +726,22 @@ def generate_pbcore(record, files=None):
                                     exValue=record['Project Note'])
         descritive.add_pbcore_extension(exten)
 
-# Relationship
-#     relation_type = ''
-#     if record['Relationship Type']:
-#         relation_type = record['Relationship Type']
-#
-#         newRelation = pbcoreRelation(reID=part.strip(), reType=relation_type.strip())
-#         descritive.add_pbcoreRelation(newRelation)
+    # Relationship
+    # relation_type = ''
+    #     if record['Relationship Type']:
+    #         relation_type = record['Relationship Type']
+    #
+    #         newRelation = pbcoreRelation(reID=part.strip(), reType=relation_type.strip())
+    #         descritive.add_pbcoreRelation(newRelation)
     if len(parts) > 1:
         for part in record['Object Identifier'].split(';'):
             newRelation = pbcoreRelation(reID=part.strip(), reType="Has Part")
             descritive.add_pbcoreRelation(newRelation)
 
-
     new_XML_file.set_IntellectualContent(descritive)
 
-
     return new_XML_file.xmlString()
+
 
 def validate_col_titles(f):
     mismatched = []
@@ -633,7 +750,7 @@ def validate_col_titles(f):
         if heading != officialList[index]:
             valid = False
             mismatched.append("CSV title mismatch. At column "
-                              + str(index+1)
+                              + str(index + 1)
                               + ", recived: ["
                               + heading
                               + "]. Expected: ["
@@ -672,10 +789,10 @@ def content_valid(input_record):
                                 + "\' column is not in the correct date format. Expected YYYY-MM-DD.")
 
     # for index, error in enumerate(errors):
-    #     errors[index] = "["+ input_record["Object Identifier"] + "] " + errors[index]
+    # errors[index] = "["+ input_record["Object Identifier"] + "] " + errors[index]
 
     for index, warning in enumerate(warnings):
-        warnings[index] = "["+ input_record["Object Identifier"] + "] " + warnings[index]
+        warnings[index] = "[" + input_record["Object Identifier"] + "] " + warnings[index]
     return warnings, errors
 
 
@@ -707,7 +824,7 @@ def proceed(message, warnings=None):
             print "\tWarnings:"
             print "\n\t**************************************************************\n"
             for index, warning in enumerate(warnings):
-                print str(index+1) + ")\t" + warning + "\n"
+                print str(index + 1) + ")\t" + warning + "\n"
         print "\t**************************************************************"
         print("\n\t" + message)
         print "\n\tDo you wish to continue?",
@@ -727,17 +844,54 @@ def proceed(message, warnings=None):
         return False
 
 
-def sort_files_by_type(digital_files):
+def group_sides(digital_files):
+    set = []
+    part = []
+    for file in digital_files:
+        if "_a_" in file:
+            part.append(file)
+        elif "_b_" in file:
+            part.append(file)
+            set.append(part)
+            part = []
+        else:
+            part.append(file)
+            set.append(part)
+            part = []
+    return set
+
+    pass
+
+
+def sep_pres_access(digital_files):
     preservation = []
     access = []
-
+    # part = []
     for file in digital_files:
         if "_prsv" in file and ".md5" not in file:
+            # if "_a_" in file:
+            # part.append(file)
+            # elif "_b_" in file:
+            #     part.append(file)
+            #     # print part
+            #     preservation.append(part)
+            #     part = []
+            # else:
             preservation.append(file)
+            # part = []
 
         if "_access" in file and ".md5" not in file:
             access.append(file)
     return preservation, access
+
+
+logger = logging.getLogger()
+parser = argparse.ArgumentParser()
+parser.add_argument("csv", help="Source CSV file", type=str)
+parser.add_argument("-d", "--debug", help="Debug mode. Writes all messages to debug log.", action='store_true')
+parser.add_argument("-nc", "--nochecksum", help="Bypasse md5 checksum generation for files.", action='store_true')
+# TODO: add argument that lets you create pbcore without the files present
+args = parser.parse_args()
 
 
 def main():
@@ -745,21 +899,16 @@ def main():
     mode = "normal"
     records = []
     digital_files = []
-    parser = argparse.ArgumentParser()
-    parser.add_argument("csv", help="Source CSV file", type=str)
-    parser.add_argument("-d", "--debug", help="Debug mode. Writes all messages to debug log.", action='store_true')
-    # TODO: add argument that lets you create pbcore without the files present
-    args = parser.parse_args()
-    logger = logging.getLogger()
+
     logger.setLevel(logging.DEBUG)
 
-    if not os.path.exists('logs'):              # automatically create a logs folder if one doesn't already exist
+    if not os.path.exists('logs'):  # automatically create a logs folder if one doesn't already exist
         os.makedirs('logs')
 
     fh = logging.FileHandler('logs/debug.log')  # Saves all logs to this file
-    eh = logging.StreamHandler(sys.stderr)      # sends any critical errors to standard error
+    eh = logging.StreamHandler(sys.stderr)  # sends any critical errors to standard error
     eh.setLevel(logging.WARNING)
-    ch = logging.StreamHandler(sys.stdout)      # sends all debug info to the standard out
+    ch = logging.StreamHandler(sys.stdout)  # sends all debug info to the standard out
     ch.setLevel(logging.DEBUG)
     log_filter = RemoveErrorsFilter()
     ch.addFilter(log_filter)  # logger.addFilter(NoParsingFilter())
@@ -770,10 +919,13 @@ def main():
     else:
         mode = 'normal'
         fh.setLevel(logging.INFO)
+    if args.nochecksum:
+        print "Bypassing MD5 checksum generation."
 
-    error_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')     # DATE - USERNAME - Message
-    stderr_formatter = logging.Formatter('%(levelname)s - %(message)s')                             # USERNAME - Message
-    stdout_formatter = logging.Formatter('%(message)s')                                             # Message
+    error_formatter = logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s')  # DATE - USERNAME - Message
+    stderr_formatter = logging.Formatter('%(levelname)s - %(message)s')  # USERNAME - Message
+    stdout_formatter = logging.Formatter('%(message)s')  # Message
 
     fh.setFormatter(error_formatter)
     eh.setFormatter(stderr_formatter)
@@ -782,7 +934,7 @@ def main():
     logger.addHandler(fh)
     logger.addHandler(eh)
 
-# ----------Validation of CSV file----------
+    # ----------Validation of CSV file----------
 
     if isfile(args.csv):  # checks if the file passed in is a real file):
         try:
@@ -795,7 +947,7 @@ def main():
     else:
         logger.critical("Cannot locate " + args.csv + ". Quitting")
         quit()
-    logger.debug("Validating files column titles")
+    logger.debug("Validating files column titles.")
     valid, errors = validate_col_titles(f)
     if not valid:
         sys.stdout.flush()
@@ -804,19 +956,19 @@ def main():
         quit()
 
     try:
-        logger.debug("Loading file into memory")
+        logger.debug("Loading file into memory.")
         for item in csv.DictReader(f):  # reason: because you can only iterate over a DictReader once
             records.append(item)
     except ValueError:
         print "FAILED"
         logger.critical("Error, cannot load file as a CSV.")
-        print "Quitting"
+        print "Quitting."
         quit()
     # ---------- Validate data in CSV file ----------
     total_warnings = []
     total_errors = []
 
-    logger.debug("Validating data in CSV")
+    logger.debug("Validating data in CSV.")
     for record in records:
         data_warnings, data_errors = content_valid(record)
         total_warnings += data_warnings
@@ -846,7 +998,7 @@ def main():
         digital_files = locate_files(args.csv, fileName)
         if digital_files:
             logger.debug("Files located for: " + fileName)
-            preservation_files, access_files = sort_files_by_type(digital_files)
+            preservation_files, access_files = sep_pres_access(digital_files)
             if not preservation_files:
                 total_warnings.append("No preservation files found for " + fileName)
             if not access_files:
@@ -859,17 +1011,17 @@ def main():
             message = "[" + file_not_found + "] Could not find files that match this record."
             logger.warning(message)
             total_warnings.append(message)
-        # print "quiting"
-        # quit()
+            # print "quiting"
+            # quit()
 
 
-# ---------- Check if XML file already exists. ----------
+        # ---------- Check if XML file already exists. ----------
     for record in records:
         fileName = re.search(file_name_pattern, record['Object Identifier']).group(0)
         if isfile(fileName + ".xml"):
             total_warnings.append(fileName + ".xml already exists. Do you wish to overwrite it?")
 
-# ---------- Report errors and warning. ----------
+        # ---------- Report errors and warning. ----------
     sys.stdout.flush()
     if total_errors:
         for error in total_errors:
@@ -905,14 +1057,14 @@ def main():
         fileName = re.search(file_name_pattern, record['Object Identifier']).group(0)
         logger.info("Producing PBCore XML for " + fileName + ".")
         if isfile(fileName + ".xml"):
-            logger.warning(str(record['Project Identifier'])+".xml already exists. Overwriting.")
+            logger.warning(str(record['Project Identifier']) + ".xml already exists. Overwriting.")
             number_of_rewritten_records += 1
         else:
             number_of_new_records += 1
         digital_files = locate_files(args.csv, fileName)
         # I'm sending this into miniDOM because I can't get etree to print a pretty XML
         buf = parseString(generate_pbcore(record, digital_files))
-        output_file = open(fileName +".xml", 'w')
+        output_file = open(fileName + ".xml", 'w')
         output_file.write(buf.toprettyxml(encoding='utf-8'))
         output_file.close()
         number_of_records += 1
@@ -928,6 +1080,7 @@ def main():
 
     logger.info(message)
     print "Done\n"
+
 
 if __name__ == '__main__':
     main()
