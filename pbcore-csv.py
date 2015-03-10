@@ -2,6 +2,7 @@ import os
 import sys
 import logging
 import argparse
+from ConfigParser import ConfigParser
 from onesheet.VideoObject import *
 from onesheet.AudioObject import *
 import string
@@ -542,7 +543,7 @@ def build_preservation_master(record, preservation_file_set):
     if record['Media Type']:
         media_type = record['Media Type']
     pres_master = pbcoreInstantiation(type="Preservation Master",
-                                      location="CAVPP",
+                                      location=SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource'),
                                       generations="Preservation Master",
                                       language=lang)
 
@@ -550,7 +551,7 @@ def build_preservation_master(record, preservation_file_set):
     # ======================== Audio only ======================== #
     # ============================================================ #
     if media_type.lower() == 'audio' or media_type.lower() == 'sound':
-        pres_master.add_instantiationIdentifier(PB_Element(['source', 'CAVPP'],
+        pres_master.add_instantiationIdentifier(PB_Element(['source', SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
                                                            tag="instantiationIdentifier",
                                                            value=obj_ID+"_prsv"))
         pres_master.set_instantiationMediaType(PB_Element(tag='instantiationMediaType',
@@ -558,26 +559,26 @@ def build_preservation_master(record, preservation_file_set):
         pres_master.add_instantiationRelation(InstantiationRelation(derived_from=obj_ID))
         for master_part in preservation_file_set:
             f = AudioObject(master_part)
-            new_mast_part = InstantiationPart(location="CAVPP", duration=f.totalRunningTimeSMPTE)
+            new_mast_part = InstantiationPart(location=SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource'), duration=f.totalRunningTimeSMPTE)
             file_size, file_units = sizeofHuman(f.file_size)
             new_mast_part.set_instantiationFileSize(PB_Element(['unitsOfMeasure',file_units],
                                                                tag="instantiationFileSize",
                                                                value=str(file_size)))
-            new_mast_part.add_instantiationIdentifier(PB_Element(['source', 'CAVPP'],
+            new_mast_part.add_instantiationIdentifier(PB_Element(['source', SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
                                                                  ['annotation', 'File Name'],
                                                                  tag="instantiationIdentifier",
                                                                  value=os.path.basename(master_part)))
-            if not args.nochecksum:
+            if not args.nochecksum and SETTINGS.getboolean('CHECKSUM','CalculateChecksums') is True:
                 print("\t"),
                 logger.info("Calculating MD5 checksum for " + f.file_name + ".")
                 if f.file_size > LARGEFILE:
                     print "\tNote: " + f.file_name + " is " + f.file_size_human + " and might take some times to calculate."
 
-                if args.noprogress:
+                if args.noprogress or SETTINGS.getboolean('CHECKSUM','DisplayProgress') is False:
                     md5 = f.calculate_MD5()
                 else:
                     md5 = f.calculate_MD5(progress=True)
-                new_mast_part.add_instantiationIdentifier(PB_Element(['source', 'CAVPP'],
+                new_mast_part.add_instantiationIdentifier(PB_Element(['source', SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
                                                                      ['version', 'MD5'],
                                                                      ['annotation', 'checksum'],
                                                                      tag="instantiationIdentifier",
@@ -610,7 +611,7 @@ def build_preservation_master(record, preservation_file_set):
     elif media_type.lower() == 'moving image':
         f = VideoObject(preservation_file_set[0])
         pres_master.set_instantiationMediaType(PB_Element(tag='instantiationMediaType', value='Moving Image'))
-        pres_master.add_instantiationIdentifier(PB_Element(['source', 'CAVPP'],
+        pres_master.add_instantiationIdentifier(PB_Element(['source', SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
                                                            ['annotation', 'File Name'],
                                                            tag="instantiationIdentifier",
                                                            value=os.path.basename(preservation_file_set[0])))
@@ -620,17 +621,17 @@ def build_preservation_master(record, preservation_file_set):
                                                          tag="instantiationFileSize",
                                                          value=str(file_size)))
 
-        if not args.nochecksum:
+        if not args.nochecksum and SETTINGS.getboolean('CHECKSUM','CalculateChecksums') is True:
             print("\t"),
             logger.info("Calculating MD5 checksum for " + f.file_name + ".")
             if f.file_size > LARGEFILE:
                 print "\tNote: This file is " + f.file_size_human + " and might take some times to calculate."
 
-            if args.noprogress:
+            if args.noprogress or SETTINGS.getboolean('CHECKSUM','DisplayProgress') is False:
                 md5 = f.calculate_MD5()
             else:
                 md5 = f.calculate_MD5(progress=True)
-            pres_master.add_instantiationIdentifier(PB_Element(['source', 'CAVPP'],
+            pres_master.add_instantiationIdentifier(PB_Element(['source', SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
                                                                ['version', 'MD5'],
                                                                ['annotation', 'checksum'],
                                                                tag="instantiationIdentifier",
@@ -654,7 +655,7 @@ def build_preservation_master(record, preservation_file_set):
         newfile = InstantiationEssenceTrack(type='Audio',
                                             samplingRate=f.audioSampleRate/1000,
                                             bitDepth=f.audioBitDepth)
-        # new_ess_track.add_essenceTrackAnnotation(PB_Element(['annotationType', 'Audio Bit Rate'], tag="essenceTrackAnnotation", value=f.a))
+
         pres_master.add_instantiationEssenceTrack(newfile)
 
         pass
@@ -683,7 +684,7 @@ def build_access_copy(record, access_files_sets):
     for access_files in access_files_sets:
         # print access_files_sets
         access_copy = pbcoreInstantiation(type="Access Copy",
-                                          location="CAVPP",
+                                          location=SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource'),
                                           language=lang,
                                           generations="Access Copy")
 
@@ -691,28 +692,31 @@ def build_access_copy(record, access_files_sets):
     # =========================== Audio ========================== #
     # ============================================================ #
         if media_type.lower() == 'audio' or media_type.lower() == 'sound':
-            access_copy.add_instantiationIdentifier(PB_Element(['source', 'CAVPP'], tag="instantiationIdentifier", value=obj_ID+"_access"))
+            access_copy.add_instantiationIdentifier(
+                PB_Element(['source', SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
+                           tag="instantiationIdentifier",
+                           value=obj_ID+"_access"))
             access_copy.add_instantiationRelation(InstantiationRelation(derived_from=obj_ID+"_prsv"))
             for access_file in access_files:
                 f = AudioObject(access_file)
                 newAudioFile = InstantiationPart(objectID=f.file_name,
-                                                 location="CAVPP",
+                                                 location=SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource'),
                                                  duration=f.totalRunningTimeSMPTE)
                 size, units = sizeofHuman(f.file_size)
                 newAudioFile.set_instantiationFileSize(PB_Element(['unitsOfMeasure', units],
                                                                   tag="instantiationFileSize",
                                                                   value=size))
-                if not args.nochecksum:
+                if not args.nochecksum and SETTINGS.getboolean('CHECKSUM','CalculateChecksums') is True:
                     print("\t"),
                     logger.info("Calculating MD5 checksum for " + f.file_name + ".")
                     if f.file_size > LARGEFILE:
                         print "\tNote: This file is " + f.file_size_human + " and might take some times to calculate."
-                    if args.noprogress:
+                    if args.noprogress or SETTINGS.getboolean('CHECKSUM','DisplayProgress') is False:
                         md5 = f.calculate_MD5()
                     else:
                         md5 = f.calculate_MD5(progress=True)
                     newAudioFile.add_instantiationIdentifier(
-                        PB_Element(['source', 'CAVPP'],
+                        PB_Element(['source', SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
                                    ['version', 'MD5'],
                                    ['annotation', 'checksum'],
                                    tag="instantiationIdentifier",
@@ -737,7 +741,7 @@ def build_access_copy(record, access_files_sets):
         elif media_type.lower() == 'moving image':
             f = VideoObject(access_files)
             # print "audio", f.file_name
-            access_copy.add_instantiationIdentifier(PB_Element(['source', 'CAVPP'],
+            access_copy.add_instantiationIdentifier(PB_Element(['source', SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
                                                                ['annotation', 'File Name'],
                                                                tag="instantiationIdentifier",
                                                                value=f.file_name))
@@ -748,17 +752,17 @@ def build_access_copy(record, access_files_sets):
             access_copy.set_instantiationFileSize(PB_Element(['unitsOfMeasure', units],
                                                              tag="instantiationFileSize",
                                                              value=size))
-            if not args.nochecksum:
+            if not args.nochecksum and SETTINGS.getboolean('CHECKSUM','CalculateChecksums') is True:
                 print("\t"),
                 logger.info("Calculating MD5 checksum for " + f.file_name + ".")
                 if f.file_size > LARGEFILE:
                     print "\tNote: This file is " + f.file_size_human + " and might take some times to calculate."
-                if args.noprogress:
+                if args.noprogress or SETTINGS.getboolean('CHECKSUM','DisplayProgress') is False:
                     md5 = f.calculate_MD5()
                 else:
                     md5 = f.calculate_MD5(progress=True)
                 access_copy.add_instantiationIdentifier(
-                    PB_Element(['source', 'CAVPP'],
+                    PB_Element(['source', SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
                                ['version', 'MD5'],
                                ['annotation', 'checksum'],
                                tag="instantiationIdentifier",
@@ -776,20 +780,19 @@ def build_access_copy(record, access_files_sets):
             newEssTrack = InstantiationEssenceTrack(type='Video',
                                                     frameRate=("%.2f" % f.videoFrameRate),
                                                     aspectRatio=str(f.videoAspectRatio),
-                                                    duration=f.totalRunningTimeSMPTE)  #TODO remove the string typecase
+                                                    duration=f.totalRunningTimeSMPTE)
             newEssTrack.add_essenceTrackAnnotation(PB_Element(['annotationType', 'Frame Size Vertical'],
                                                               tag="essenceTrackAnnotation",
                                                               value=f.videoResolutionHeight))
             newEssTrack.add_essenceTrackAnnotation(PB_Element(['annotationType', 'Frame Size Horizontal'],
                                                               tag="essenceTrackAnnotation",
-                                                              value=f.videoResolutionWidth)) # FIX videoRespolutionWidth
+                                                              value=f.videoResolutionWidth))
             access_copy.add_instantiationEssenceTrack(newEssTrack)
 
             # ------------------ Audio track ------------------
             newEssTrack = InstantiationEssenceTrack(type='Audio',
                                                     standard=f.audioCodec,
                                                     samplingRate=f.audioSampleRate/1000)
-            # newEssTrack.add_essenceTrackAnnotation(PB_Element(['annotationType', 'Audio Bit Rate'], tag='essenceTrackAnnotation',))
 
             access_copy.add_instantiationEssenceTrack(newEssTrack)
     return access_copy
@@ -938,7 +941,7 @@ def generate_pbcore(record, files=None):
     if record['Country of Creation']:
         exten = pbcoreExtension(exElement="countryOfCreation",
                                 exValue=record['Country of Creation'],
-                                exAuthority="ISO 3166.1")
+                                exAuthority=SETTINGS.get('EXTRA', 'DefaultCountryAuthority'))
         descriptive.add_pbcore_extension(exten)
 
     if record['Project Note']:
@@ -950,7 +953,11 @@ def generate_pbcore(record, files=None):
             exten = pbcoreExtension(exElement="projectNote",
                                     exValue=record['Project Note'])
         descriptive.add_pbcore_extension(exten)
-
+    elif SETTINGS.getboolean('EXTRA','UseDefaultProjectNote'):
+        exten = pbcoreExtension(exElement="projectNote",
+                                exValue=SETTINGS.get('EXTRA', 'DefaultProjectNote'),
+                                exAuthority=SETTINGS.get('EXTRA', 'DefaultProjectNoteAuthority'))
+        descriptive.add_pbcore_extension(exten)
 
     if len(parts) > 1:
         for part in record['Object Identifier'].split(';'):
@@ -1121,15 +1128,6 @@ def report(files_created, number_of_new_records, number_of_records, number_of_re
         print str(index + 1) + ")\t" + file_created
     print "\n"
 
-# loggers setup
-logger = logging.getLogger()
-parser = argparse.ArgumentParser()
-parser.add_argument("csv", help="Source CSV file", type=str)
-parser.add_argument("-d", "--debug", help="Debug mode. Writes all messages to debug log.", action='store_true')
-parser.add_argument("-nc", "--nochecksum", help="Bypasses md5 checksum generation for files.", action='store_true')
-parser.add_argument("-np", "--noprogress", help="hides the percentage completed of the md5 checksum calculation.", action='store_true')
-# TODO: add argument that lets you create pbcore without the files present
-args = parser.parse_args()
 
 
 def main():
@@ -1140,37 +1138,40 @@ def main():
 
 
     logger.setLevel(logging.DEBUG)
+    logPath = os.path.dirname(SETTINGS.get('LOGS', 'LogFile'))
+    if not os.path.exists(logPath):  # automatically create a logs folder if one doesn't already exist
+        os.makedirs(logPath)
+    if SETTINGS.getboolean('LOGS','UseLogs'):
+        fh = logging.FileHandler(SETTINGS.get('LOGS', 'LogFile'))  # Saves all logs to this file
 
-    if not os.path.exists('logs'):  # automatically create a logs folder if one doesn't already exist
-        os.makedirs('logs')
-
-    fh = logging.FileHandler('logs/debug.log')  # Saves all logs to this file
     eh = logging.StreamHandler(sys.stderr)  # sends any critical errors to standard error
     eh.setLevel(logging.WARNING)
     ch = logging.StreamHandler(sys.stdout)  # sends all debug info to the standard out
     ch.setLevel(logging.DEBUG)
     log_filter = RemoveErrorsFilter()
     ch.addFilter(log_filter)  # logger.addFilter(NoParsingFilter())
-    if args.debug:
+    if args.debug or SETTINGS.getboolean('EXTRA', 'DebugMode') is True:
         mode = 'debug'
         print "ENTERING DEBUG MODE!"
-        fh.setLevel(logging.DEBUG)
+        if SETTINGS.getboolean('LOGS','UseLogs'):
+            fh.setLevel(logging.DEBUG)
     else:
-        fh.setLevel(logging.INFO)
-    if args.nochecksum:
+        if SETTINGS.getboolean('LOGS','UseLogs'):
+            fh.setLevel(logging.INFO)
+    if args.nochecksum or SETTINGS.getboolean('CHECKSUM','CalculateChecksums') is False:
         print "Bypassing MD5 checksum generation."
 
     error_formatter = logging.Formatter(
         '%(asctime)s - %(name)s - %(levelname)s - %(message)s')             # DATE - USERNAME - Message
     stderr_formatter = logging.Formatter('%(levelname)s - %(message)s')     # USERNAME - Message
     stdout_formatter = logging.Formatter('%(message)s')                     # Message
-
-    fh.setFormatter(error_formatter)
+    if SETTINGS.getboolean('LOGS','UseLogs'):
+        fh.setFormatter(error_formatter)
+        logger.addHandler(fh)
     eh.setFormatter(stderr_formatter)
+    logger.addHandler(eh)
     ch.setFormatter(stdout_formatter)
     logger.addHandler(ch)
-    logger.addHandler(fh)
-    logger.addHandler(eh)
 
     # ----------Validation of CSV file----------
 
@@ -1322,6 +1323,30 @@ def main():
     f.close()
 
     report(files_created, number_of_new_records, number_of_records, number_of_rewritten_records)
+
+
+# load settings
+settingsFileName = 'settings/pbcore-csv-settings.ini'
+SETTINGS = ConfigParser()
+if isfile(settingsFileName):
+    SETTINGS.read(settingsFileName)
+else:
+    sys.stderr.write('Error: cannot find ' + settingsFileName + '. Quiting')
+    quit()
+
+
+# settingsFile.close()
+
+# loggers setup
+logger = logging.getLogger()
+parser = argparse.ArgumentParser()
+parser.add_argument("csv", help="Source CSV file", type=str)
+parser.add_argument("-d", "--debug", help="Debug mode. Writes all messages to debug log.", action='store_true')
+parser.add_argument("-nc", "--nochecksum", help="Bypasses md5 checksum generation for files.", action='store_true')
+parser.add_argument("-np", "--noprogress", help="hides the percentage completed of the md5 checksum calculation.", action='store_true')
+# TODO: add argument that lets you create pbcore without the files present
+args = parser.parse_args()
+
 
 
 if __name__ == '__main__':
