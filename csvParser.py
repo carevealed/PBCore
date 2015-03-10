@@ -112,406 +112,15 @@ def sizeofHuman(num):
             if num < 1024.0:
                 return "%3.1f %s" % (num, x), x
             num /= 1024.0
-
-
-def build_physical(new_part, record):
-    physical_asset = ""
-    media_type = ""
-    generation = ""
-    timecode_begins = ""
-    durton = ""
-    chan_config = ""
-    lang = ""
-    track_standard = ""
-    total_number = ""
-    stock = ""
-    base_type = ""
-    bass_thickness = ""
-    cataloger_notes = ""
-    speed = ""
-    sound = ""
-    color = ""
-    aspect_ratio = ""
-    track_standard = ""
-    run_speed = ""
-    creationDates = []
-    inst_name = ""
-    part = new_part
-    if record['Institution']:
-        inst_name = record['Institution']
-    if record['Date Created']:
-        creation = record['Date Created']
-        creationDates = creation.split(';')
-    if record['Gauge and Format']:
-        physical_asset = record['Gauge and Format']
-    if record['Media Type']:
-        media_type = record['Media Type']
-    if record['Generation']:
-        generation = record['Generation']
-    if record['Timecode Content Begins']:
-        timecode_begins = record['Timecode Content Begins']
-    if record['Duration']:
-        durton = record['Duration']
-    if record['Channel Configuration']:
-        chan_config = record['Channel Configuration']
-    if record['Language']:
-        lang = record['Language']
-    if record['Total Number of Reels or Tapes']:
-        total_number = record['Total Number of Reels or Tapes']
-    if record['Stock Manufacturer']:
-        stock = record['Stock Manufacturer']
-    if record['Base Type']:
-        base_type = record['Base Type']
-    if record['Base Thickness']:
-        bass_thickness = record['Base Thickness']
-    if record['Silent or Sound']:
-        sound = record['Silent or Sound']
-    if record['Color and/or Black and White']:
-        color = record['Color and/or Black and White']
-    if record['Aspect Ratio']:
-        aspect_ratio = record['Aspect Ratio']
-    if record['Track Standard']:
-        track_standard = record['Track Standard']
-    if record['Running Speed']:
-        run_speed = record['Running Speed']
-    physical = pbcoreInstantiation(type="Physical Asset",
-                                   objectID=part.strip(),
-                                   extent=total_number,
-                                   physical=physical_asset,
-                                   mediaType=media_type,
-                                   generations=generation,
-                                   tracks=sound,
-                                   colors=color,
-                                   timeStart=timecode_begins,
-                                   duration=durton,
-                                   channelConfiguration=chan_config,
-                                   language=lang,
-                                   baseType=base_type,
-                                   baseThickness=bass_thickness,
-                                   stockManufacture=stock,
-                                   location=inst_name)
-    for date in creationDates:
-        physical.add_instantiationDate(PB_Element(tag='instantiationDate', value=date))
-    if record['Additional Technical Notes for Overall Work']:
-        note = record['Additional Technical Notes for Overall Work']
-        physical.add_instantiationAnnotation(
-            PB_Element(['annotationType', 'Additional Technical Notes for Overall'], tag="instantiationAnnotation",
-                       value=note.strip()))
-    if record['Cataloger Notes']:
-        note = record['Cataloger Notes']
-        physical.add_instantiationAnnotation(
-            PB_Element(['annotationType', 'Cataloger Notes'], tag="instantiationAnnotation", value=note.strip()))
-
-    # FIXME: add subtitles to script
-    if record['Subtitles/Intertitles/Closed Captions']:
-        subtitles = record['Subtitles/Intertitles/Closed Captions'].split(';')
-        for subtitle in subtitles:
-            physical.get_instantiationAlternativeModes()
-
-            # instantiationPart
-    if media_type.lower() == 'audio' or media_type.lower() == 'sound':
-        speed = record['Running Speed']
-        newInstPart = InstantiationPart(objectID=part, location=inst_name)
-        newEss = InstantiationEssenceTrack(type="Audio", ips=speed, standard=track_standard)
-        newInstPart.add_instantiationEssenceTrack(newEss)
-        physical.add_instantiationPart(newInstPart)
-
-    elif media_type.lower() == 'moving image':
-        newEss = InstantiationEssenceTrack(objectID=part,
-                                           frameRate=run_speed,
-                                           aspectRatio=aspect_ratio,
-                                           standard=track_standard)
-        physical.add_instantiationEssenceTrack(newEss)
-    # return inst_name, physical
-    return physical
-
-
-def build_audio_preservation_master(record, preservation_file_set):
-
-# for preservation_file_set in preservation_file_sets:
-    lang = ''
-    media_type = ''
-    if record['Object Identifier']:
-        obj_ID = record['Object Identifier'].split(';')[0].split('_t')[0]
-
-    if record['Language']:
-        lang = record['Language']
-
-    if record['Media Type']:
-        media_type = record['Media Type']
-    pres_master = pbcoreInstantiation(type="Preservation Master",
-                                      location="CAVPP",
-                                      generations="Preservation Master",
-                                      language=lang)
-
-    # -------------------- Audio only --------------------
-    if media_type.lower() == 'audio' or media_type.lower() == 'sound':
-        pres_master.add_instantiationIdentifier(PB_Element(['source', 'CAVPP'],
-                                                           tag="instantiationIdentifier",
-                                                           value=obj_ID+"_prsv"))
-        pres_master.set_instantiationMediaType(PB_Element(tag='instantiationMediaType',
-                                                          value='Sound'))
-
-        for master_part in preservation_file_set:
-            f = AudioObject(master_part)
-            new_mast_part = InstantiationPart(location="CAVPP", duration=f.totalRunningTimeSMPTE)
-            file_size, file_units = sizeofHuman(f.file_size)
-            new_mast_part.set_instantiationFileSize(PB_Element(['unitsOfMeasure',file_units],
-                                                               tag="instantiationFileSize",
-                                                               value=str(file_size)))
-            new_mast_part.add_instantiationIdentifier(PB_Element(['source', 'CAVPP'],
-                                                                 ['annotation', 'File Name'],
-                                                                 tag="instantiationIdentifier",
-                                                                 value=os.path.basename(master_part)))
-            if not args.nochecksum:
-                print("\t"),
-                logger.info("Calculating MD5 checksum for " + f.file_name + ".")
-                if f.file_size > LARGEFILE:
-                    print "\tNote: " + f.file_name + " is " + f.file_size_human + " and might take some times to calculate."
-
-                if args.progress:
-                    md5 = f.calculate_MD5(progress=True)
-                else:
-                    md5 = f.calculate_MD5()
-                new_mast_part.add_instantiationIdentifier(PB_Element(['source', 'CAVPP'],
-                                                                     ['version', 'MD5'],
-                                                                     ['annotation', 'checksum'],
-                                                                     tag="instantiationIdentifier",
-                                                                     value=md5))
-            newfile = InstantiationEssenceTrack(type="Audio")
-            newfile.set_essenceTrackBitDepth(PB_Element(tag="essenceTrackBitDepth",
-                                                        value=str(f.audioBitDepth)))
-            newfile.set_essenceTrackSamplingRate(PB_Element(["unitsOfMeasure", "kHz"],
-                                                            tag="essenceTrackSamplingRate",
-                                                            value=str(f.audioSampleRate/1000)))
-            if f.file_extension.lower() == '.wav':
-                pres_master.set_instantiationDigital(PB_Element(['source', 'PRONOM Technical Registry'],
-                                                                tag='instantiationDigital',
-                                                                value='audio/x-wav'))  # This is really ugly code I don't know a better way
-                if f.audioCodec == 'PCM 24-bit':
-                    pres_master.set_instantiationStandard(PB_Element(tag='instantiationStandard',
-                                                                     value='Linear PCM Audio')) # This is really ugly code I don't know a better way
-
-                newfile.set_essenceTrackEncoding(PB_Element(tag='essenceTrackEncoding', value='WAV'))
-            new_mast_part.add_instantiationEssenceTrack(newfile)
-
-            pres_master.add_instantiationPart(new_mast_part)
-        # f = AudioObject(preservation_file_set)0
-        #
-        pass
-
-        # -------------------- Moving Image --------------------
-    elif media_type.lower() == 'moving image':
-        f = VideoObject(preservation_file_set[0])
-        pres_master.set_instantiationMediaType(PB_Element(tag='instantiationMediaType', value='Moving Image'))
-        pres_master.add_instantiationIdentifier(PB_Element(['source', 'CAVPP'],
-                                                           ['annotation', 'File Name'],
-                                                           tag="instantiationIdentifier",
-                                                           value=os.path.basename(preservation_file_set[0])))
-
-        file_size, file_units = sizeofHuman(f.file_size)
-        pres_master.set_instantiationFileSize(PB_Element(['unitsOfMeasure', file_units],
-                                                         tag="instantiationFileSize",
-                                                         value=str(file_size)))
-
-        if not args.nochecksum:
-            print("\t"),
-            logger.info("Calculating MD5 checksum for " + f.file_name + ".")
-            if f.file_size > LARGEFILE:
-                print "\tNote: This file is " + f.file_size_human + " and might take some times to calculate."
-
-            if args.progress:
-                md5 = f.calculate_MD5(progress=True)
-            else:
-                md5 = f.calculate_MD5()
-            pres_master.add_instantiationIdentifier(PB_Element(['source', 'CAVPP'],
-                                                               ['version', 'MD5'],
-                                                               ['annotation', 'checksum'],
-                                                               tag="instantiationIdentifier",
-                                                               value=md5))
-
-        # ---------- Video essence track ----------
-        newfile = InstantiationEssenceTrack(type='Video',
-                                            frameRate=str(f.videoFrameRate),
-                                            duration=f.totalRunningTimeSMPTE,
-                                            aspectRatio=str(f.videoAspectRatio))
-        newfile.add_essenceTrackAnnotation(PB_Element(['annotationType', 'Frame Size Vertical'],
-                                                      tag="essenceTrackAnnotation",
-                                                      value=f.videoResolutionHeight))
-        newfile.add_essenceTrackAnnotation(PB_Element(['annotationType', 'Frame Size Horizontal'],
-                                                      tag="essenceTrackAnnotation",
-                                                      value=f.videoResolutionWidth))
-        pres_master.add_instantiationEssenceTrack(newfile)
-
-        # ---------- Audio essence track ----------
-
-        newfile = InstantiationEssenceTrack(type='Audio',
-                                            samplingRate=f.audioSampleRate/1000,
-                                            bitDepth=f.audioBitDepth)
-        # new_ess_track.add_essenceTrackAnnotation(PB_Element(['annotationType', 'Audio Bit Rate'], tag="essenceTrackAnnotation", value=f.a))
-        pres_master.add_instantiationEssenceTrack(newfile)
-
-        pass
-
-
-    if record['Quality Control Notes']:
-        note = record['Quality Control Notes']
-        pres_master.add_instantiationAnnotation(
-            PB_Element(['annotationType', 'CAVPP Quality Control/Partner Quality Control'],
-                       tag="instantiationAnnotation",
-                       value=note.strip()))
-    return pres_master
-
-def build_access_copy(record, access_files_sets):
-    lang = ''
+def build_descriptive(record):
     obj_ID = ''
-    if record['Language']:
-        lang = record['Language']
-    if record['Object Identifier']:
-        obj_ID = record['Object Identifier'].split(';')[0].split('_t')[0]
-
-    media_type = ''
-    if record['Media Type']:
-        media_type = record['Media Type']
-
-    for access_files in access_files_sets:
-        # print access_files_sets
-        access_copy = pbcoreInstantiation(type="Access Copy",
-                                          location="CAVPP",
-                                          language=lang,
-                                          generations="Access Copy")
-        if media_type.lower() == 'audio' or media_type.lower() == 'sound':
-            access_copy.add_instantiationIdentifier(PB_Element(['source', 'CAVPP'], tag="instantiationIdentifier", value=obj_ID+"_access"))
-            for access_file in access_files:
-                f = AudioObject(access_file)
-                newAudioFile = InstantiationPart(objectID=f.file_name,
-                                                 location="CAVPP",
-                                                 duration=f.totalRunningTimeSMPTE)
-                size, units = sizeofHuman(f.file_size)
-                newAudioFile.set_instantiationFileSize(PB_Element(['unitsOfMeasure', units],
-                                                                  tag="instantiationFileSize",
-                                                                  value=size))
-                if not args.nochecksum:
-                    print("\t"),
-                    logger.info("Calculating MD5 checksum for " + f.file_name + ".")
-                    if f.file_size > LARGEFILE:
-                        print "\tNote: This file is " + f.file_size_human + " and might take some times to calculate."
-                    if args.progress:
-                        md5 = f.calculate_MD5(progress=True)
-                    else:
-                        md5 = f.calculate_MD5()
-                    newAudioFile.add_instantiationIdentifier(
-                        PB_Element(['source', 'CAVPP'],
-                                   ['version', 'MD5'],
-                                   ['annotation', 'checksum'],
-                                   tag="instantiationIdentifier",
-                                   value=md5))
-                if f.audioChannels == 1:
-                    access_copy.set_instantiationTracks(PB_Element(tag="instantiationTracks", value='Sound'))
-                    access_copy.set_instantiationChannelConfiguration(PB_Element(tag="instantiationChannelConfiguration",
-                                                                                 value='Mono'))
-                elif f.audioChannels == 2:
-                    access_copy.set_instantiationTracks(PB_Element(tag="instantiationTracks", value='Sound'))
-                    access_copy.set_instantiationChannelConfiguration(PB_Element(tag="instantiationChannelConfiguration",
-                                                                                 value='Stereo'))
-                newEssTrack = InstantiationEssenceTrack(type="Audio", bitDepth=f.audioBitDepth)
-                if f.file_extension.lower() == '.mp3':
-                    newEssTrack.set_essenceTrackEncoding(PB_Element(tag='essenceTrackEncoding', value='MP3'))
-                newAudioFile.add_instantiationEssenceTrack(newEssTrack)
-                access_copy.add_instantiationPart(newAudioFile)
-        elif media_type.lower() == 'moving image':
-            print access_files, "file"
-            f = VideoObject(access_files)
-            print "audio", f.file_name
-            access_copy.add_instantiationIdentifier(PB_Element(['source', 'CAVPP'],
-                                                               ['annotation', 'File Name'],
-                                                               tag="instantiationIdentifier",
-                                                               value=f.file_name))
-            access_copy.set_instantiationMediaType(PB_Element(tag='instantiationMediaType', value='Moving Image'))
-            access_copy.set_instantiationDuration(PB_Element(tag="instantiationDuration",
-                                                             value=f.totalRunningTimeSMPTE))
-            size, units = sizeofHuman(f.file_size)
-            access_copy.set_instantiationFileSize(PB_Element(['unitsOfMeasure', units],
-                                                             tag="instantiationFileSize",
-                                                             value=size))
-            if not args.nochecksum:
-                print("\t"),
-                logger.info("Calculating MD5 checksum for " + f.file_name + ".")
-                if f.file_size > LARGEFILE:
-                    print "\tNote: This file is " + f.file_size_human + " and might take some times to calculate."
-                if args.progress:
-                    md5 = f.calculate_MD5(progress=True)
-                else:
-                    md5 = f.calculate_MD5()
-                access_copy.add_instantiationIdentifier(
-                    PB_Element(['source', 'CAVPP'],
-                               ['version', 'MD5'],
-                               ['annotation', 'checksum'],
-                               tag="instantiationIdentifier",
-                               value=md5))
-            if f.audioChannels == 1:
-                access_copy.set_instantiationTracks(PB_Element(tag="instantiationTracks", value='Sound'))
-                access_copy.set_instantiationChannelConfiguration(PB_Element(tag="instantiationChannelConfiguration",
-                                                                             value='Mono'))
-            elif f.audioChannels == 2:
-                access_copy.set_instantiationTracks(PB_Element(tag="instantiationTracks", value='Sound'))
-                access_copy.set_instantiationChannelConfiguration(PB_Element(tag="instantiationChannelConfiguration",
-                                                                             value='Stereo'))
-
-            # ------------------ video ------------------
-            newEssTrack = InstantiationEssenceTrack(type='Video',
-                                                    frameRate=("%.2f" % f.videoFrameRate),
-                                                    aspectRatio=str(f.videoAspectRatio),
-                                                    duration=f.totalRunningTimeSMPTE)  #TODO remove the string typecase
-            newEssTrack.add_essenceTrackAnnotation(PB_Element(['annotationType', 'Frame Size Vertical'],
-                                                              tag="essenceTrackAnnotation",
-                                                              value=f.videoResolutionHeight))
-            newEssTrack.add_essenceTrackAnnotation(PB_Element(['annotationType', 'Frame Size Horizontal'],
-                                                              tag="essenceTrackAnnotation",
-                                                              value=f.videoResolutionWidth)) # FIX videoRespolutionWidth
-            access_copy.add_instantiationEssenceTrack(newEssTrack)
-
-            # ------------------ Audio ------------------
-            newEssTrack = InstantiationEssenceTrack(type='Audio',
-                                                    standard=f.audioCodec,
-                                                    samplingRate=f.audioSampleRate/1000)
-            # newEssTrack.add_essenceTrackAnnotation(PB_Element(['annotationType', 'Audio Bit Rate'], tag='essenceTrackAnnotation',))
-
-            access_copy.add_instantiationEssenceTrack(newEssTrack)
-    return access_copy
-
-def generate_pbcore(record, files=None):
-    XML = ""
-    new_XML_file = PBCore(collectionSource=record['Institution'],
-                          collectionTitle=record['Collection Guide Title'])
-
-    preservation_file_sets, access_files_sets = sep_pres_access(files)
-    preservation_file_sets = group_sides(preservation_file_sets)
-    access_files_sets = group_sides(access_files_sets)
-
-    # pbcoreDescriptionDocument
-    obj_ID = ""
-    proj_ID = ""
-    asset_type = ""
-    main_title = ""
-    add_title = ""
-    ser_title = ""
-    descrp = ""
-    obj_ARK = ""
-    inst_name = ""
-    inst_ARK = ""
-    inst_URL = ""
-    creationDates = []
-    subjectTops = ""
-    genre = ""
-    genre_autority = ""
-    IA_URL = ""
-    QC_notes_list = ""
-    transcript = ""
-    parts = record['Object Identifier'].split(';')
-
-    # preservation, access = sep_pres_access()
-
+    proj_ID = ''
+    asset_type = ''
+    main_title = ''
+    add_title = ''
+    ser_title = ''
+    inst_name = ''
+    inst_URL = ''
     if record['Object Identifier']:
         obj_ID = record['Object Identifier'].split(';')[0].split('_t')[0]
 
@@ -540,13 +149,13 @@ def generate_pbcore(record, files=None):
         inst_URL = record['Institution URL']
 
     descriptive = pbcoreDescriptionDocument(parentObjectID=obj_ID,
-                                           projectID=proj_ID,
-                                           assetType=asset_type,
-                                           mainTitle=main_title,
-                                           addTitle=add_title,
-                                           seriesTitle=ser_title,
-                                           institutionName=inst_name,
-                                           institutionURL=inst_URL)
+                                            projectID=proj_ID,
+                                            assetType=asset_type,
+                                            mainTitle=main_title,
+                                            addTitle=add_title,
+                                            seriesTitle=ser_title,
+                                            institutionName=inst_name,
+                                            institutionURL=inst_URL)
 
     if record['Institution ARK']:
         inst_ARK = record['Institution ARK']
@@ -803,6 +412,449 @@ def generate_pbcore(record, files=None):
                                             value=institutional_rights_statement_URL.strip()))
         descriptive.add_pbcoreRightsSummary(rights)
 
+    return descriptive
+
+
+def build_physical(new_part, record):
+    physical_asset = ""
+    media_type = ""
+    generation = ""
+    timecode_begins = ""
+    durton = ""
+    chan_config = ""
+    lang = ""
+    track_standard = ""
+    total_number = ""
+    stock = ""
+    base_type = ""
+    bass_thickness = ""
+    cataloger_notes = ""
+    speed = ""
+    sound = ""
+    color = ""
+    aspect_ratio = ""
+    track_standard = ""
+    run_speed = ""
+    creationDates = []
+    inst_name = ""
+    part = new_part
+    if record['Institution']:
+        inst_name = record['Institution']
+    if record['Date Created']:
+        creation = record['Date Created']
+        creationDates = creation.split(';')
+    if record['Gauge and Format']:
+        physical_asset = record['Gauge and Format']
+    if record['Media Type']:
+        media_type = record['Media Type']
+    if record['Generation']:
+        generation = record['Generation']
+    if record['Timecode Content Begins']:
+        timecode_begins = record['Timecode Content Begins']
+    if record['Duration']:
+        durton = record['Duration']
+    if record['Channel Configuration']:
+        chan_config = record['Channel Configuration']
+    if record['Language']:
+        lang = record['Language']
+    if record['Total Number of Reels or Tapes']:
+        total_number = record['Total Number of Reels or Tapes']
+    if record['Stock Manufacturer']:
+        stock = record['Stock Manufacturer']
+    if record['Base Type']:
+        base_type = record['Base Type']
+    if record['Base Thickness']:
+        bass_thickness = record['Base Thickness']
+    if record['Silent or Sound']:
+        sound = record['Silent or Sound']
+    if record['Color and/or Black and White']:
+        color = record['Color and/or Black and White']
+    if record['Aspect Ratio']:
+        aspect_ratio = record['Aspect Ratio']
+    if record['Track Standard']:
+        track_standard = record['Track Standard']
+    if record['Running Speed']:
+        run_speed = record['Running Speed']
+    physical = pbcoreInstantiation(type="Physical Asset",
+                                   objectID=part.strip(),
+                                   extent=total_number,
+                                   physical=physical_asset,
+                                   mediaType=media_type,
+                                   generations=generation,
+                                   tracks=sound,
+                                   colors=color,
+                                   timeStart=timecode_begins,
+                                   duration=durton,
+                                   channelConfiguration=chan_config,
+                                   language=lang,
+                                   baseType=base_type,
+                                   baseThickness=bass_thickness,
+                                   stockManufacture=stock,
+                                   location=inst_name)
+    for date in creationDates:
+        physical.add_instantiationDate(PB_Element(tag='instantiationDate', value=date))
+    if record['Additional Technical Notes for Overall Work']:
+        note = record['Additional Technical Notes for Overall Work']
+        physical.add_instantiationAnnotation(
+            PB_Element(['annotationType', 'Additional Technical Notes for Overall'], tag="instantiationAnnotation",
+                       value=note.strip()))
+    if record['Cataloger Notes']:
+        note = record['Cataloger Notes']
+        physical.add_instantiationAnnotation(
+            PB_Element(['annotationType', 'Cataloger Notes'], tag="instantiationAnnotation", value=note.strip()))
+
+    # FIXME: add subtitles to script
+    if record['Subtitles/Intertitles/Closed Captions']:
+        subtitles = record['Subtitles/Intertitles/Closed Captions'].split(';')
+        for subtitle in subtitles:
+            physical.get_instantiationAlternativeModes()
+
+            # instantiationPart
+    if media_type.lower() == 'audio' or media_type.lower() == 'sound':
+        speed = record['Running Speed']
+        newInstPart = InstantiationPart(objectID=part, location=inst_name)
+        newEss = InstantiationEssenceTrack(type="Audio", ips=speed, standard=track_standard)
+        newInstPart.add_instantiationEssenceTrack(newEss)
+        physical.add_instantiationPart(newInstPart)
+
+    elif media_type.lower() == 'moving image':
+        newEss = InstantiationEssenceTrack(objectID=part,
+                                           frameRate=run_speed,
+                                           aspectRatio=aspect_ratio,
+                                           standard=track_standard)
+        physical.add_instantiationEssenceTrack(newEss)
+    # return inst_name, physical
+    return physical
+
+
+def build_preservation_master(record, preservation_file_set):
+
+# for preservation_file_set in preservation_file_sets:
+    lang = ''
+    media_type = ''
+    obj_ID = ''
+    if record['Object Identifier']:
+        obj_ID = record['Object Identifier'].split(';')[0].split('_t')[0]
+
+    if record['Language']:
+        lang = record['Language']
+
+    if record['Media Type']:
+        media_type = record['Media Type']
+    pres_master = pbcoreInstantiation(type="Preservation Master",
+                                      location="CAVPP",
+                                      generations="Preservation Master",
+                                      language=lang)
+
+    # ============================================================ #
+    # ======================== Audio only ======================== #
+    # ============================================================ #
+    if media_type.lower() == 'audio' or media_type.lower() == 'sound':
+        pres_master.add_instantiationIdentifier(PB_Element(['source', 'CAVPP'],
+                                                           tag="instantiationIdentifier",
+                                                           value=obj_ID+"_prsv"))
+        pres_master.set_instantiationMediaType(PB_Element(tag='instantiationMediaType',
+                                                          value='Sound'))
+        pres_master.add_instantiationRelation(InstantiationRelation(derived_from=obj_ID))
+        for master_part in preservation_file_set:
+            f = AudioObject(master_part)
+            new_mast_part = InstantiationPart(location="CAVPP", duration=f.totalRunningTimeSMPTE)
+            file_size, file_units = sizeofHuman(f.file_size)
+            new_mast_part.set_instantiationFileSize(PB_Element(['unitsOfMeasure',file_units],
+                                                               tag="instantiationFileSize",
+                                                               value=str(file_size)))
+            new_mast_part.add_instantiationIdentifier(PB_Element(['source', 'CAVPP'],
+                                                                 ['annotation', 'File Name'],
+                                                                 tag="instantiationIdentifier",
+                                                                 value=os.path.basename(master_part)))
+            if not args.nochecksum:
+                print("\t"),
+                logger.info("Calculating MD5 checksum for " + f.file_name + ".")
+                if f.file_size > LARGEFILE:
+                    print "\tNote: " + f.file_name + " is " + f.file_size_human + " and might take some times to calculate."
+
+                if args.noprogress:
+                    md5 = f.calculate_MD5()
+                else:
+                    md5 = f.calculate_MD5(progress=True)
+                new_mast_part.add_instantiationIdentifier(PB_Element(['source', 'CAVPP'],
+                                                                     ['version', 'MD5'],
+                                                                     ['annotation', 'checksum'],
+                                                                     tag="instantiationIdentifier",
+                                                                     value=md5))
+            newfile = InstantiationEssenceTrack(type="Audio")
+            newfile.set_essenceTrackBitDepth(PB_Element(tag="essenceTrackBitDepth",
+                                                        value=str(f.audioBitDepth)))
+            newfile.set_essenceTrackSamplingRate(PB_Element(["unitsOfMeasure", "kHz"],
+                                                            tag="essenceTrackSamplingRate",
+                                                            value=str(f.audioSampleRate/1000)))
+            if f.file_extension.lower() == '.wav':
+                pres_master.set_instantiationDigital(PB_Element(['source', 'PRONOM Technical Registry'],
+                                                                tag='instantiationDigital',
+                                                                value='audio/x-wav'))  # This is really ugly code I don't know a better way
+                if f.audioCodec == 'PCM 24-bit':
+                    pres_master.set_instantiationStandard(PB_Element(tag='instantiationStandard',
+                                                                     value='Linear PCM Audio')) # This is really ugly code I don't know a better way
+
+                newfile.set_essenceTrackEncoding(PB_Element(tag='essenceTrackEncoding', value='WAV'))
+            new_mast_part.add_instantiationEssenceTrack(newfile)
+
+            pres_master.add_instantiationPart(new_mast_part)
+        # f = AudioObject(preservation_file_set)0
+        #
+        pass
+
+    # ============================================================ #
+    # ======================= Moving Image ======================= #
+    # ============================================================ #
+    elif media_type.lower() == 'moving image':
+        f = VideoObject(preservation_file_set[0])
+        pres_master.set_instantiationMediaType(PB_Element(tag='instantiationMediaType', value='Moving Image'))
+        pres_master.add_instantiationIdentifier(PB_Element(['source', 'CAVPP'],
+                                                           ['annotation', 'File Name'],
+                                                           tag="instantiationIdentifier",
+                                                           value=os.path.basename(preservation_file_set[0])))
+
+        file_size, file_units = sizeofHuman(f.file_size)
+        pres_master.set_instantiationFileSize(PB_Element(['unitsOfMeasure', file_units],
+                                                         tag="instantiationFileSize",
+                                                         value=str(file_size)))
+
+        if not args.nochecksum:
+            print("\t"),
+            logger.info("Calculating MD5 checksum for " + f.file_name + ".")
+            if f.file_size > LARGEFILE:
+                print "\tNote: This file is " + f.file_size_human + " and might take some times to calculate."
+
+            if args.noprogress:
+                md5 = f.calculate_MD5()
+            else:
+                md5 = f.calculate_MD5(progress=True)
+            pres_master.add_instantiationIdentifier(PB_Element(['source', 'CAVPP'],
+                                                               ['version', 'MD5'],
+                                                               ['annotation', 'checksum'],
+                                                               tag="instantiationIdentifier",
+                                                               value=md5))
+
+        # ---------- Video essence track ----------
+        newfile = InstantiationEssenceTrack(type='Video',
+                                            frameRate=str(f.videoFrameRate),
+                                            duration=f.totalRunningTimeSMPTE,
+                                            aspectRatio=str(f.videoAspectRatio))
+        newfile.add_essenceTrackAnnotation(PB_Element(['annotationType', 'Frame Size Vertical'],
+                                                      tag="essenceTrackAnnotation",
+                                                      value=f.videoResolutionHeight))
+        newfile.add_essenceTrackAnnotation(PB_Element(['annotationType', 'Frame Size Horizontal'],
+                                                      tag="essenceTrackAnnotation",
+                                                      value=f.videoResolutionWidth))
+        pres_master.add_instantiationEssenceTrack(newfile)
+
+        # ---------- Audio essence track ----------
+
+        newfile = InstantiationEssenceTrack(type='Audio',
+                                            samplingRate=f.audioSampleRate/1000,
+                                            bitDepth=f.audioBitDepth)
+        # new_ess_track.add_essenceTrackAnnotation(PB_Element(['annotationType', 'Audio Bit Rate'], tag="essenceTrackAnnotation", value=f.a))
+        pres_master.add_instantiationEssenceTrack(newfile)
+
+        pass
+
+
+    if record['Quality Control Notes']:
+        note = record['Quality Control Notes']
+        pres_master.add_instantiationAnnotation(
+            PB_Element(['annotationType', 'CAVPP Quality Control/Partner Quality Control'],
+                       tag="instantiationAnnotation",
+                       value=note.strip()))
+    return pres_master
+
+def build_access_copy(record, access_files_sets):
+    lang = ''
+    obj_ID = ''
+    if record['Language']:
+        lang = record['Language']
+    if record['Object Identifier']:
+        obj_ID = record['Object Identifier'].split(';')[0].split('_t')[0]
+
+    media_type = ''
+    if record['Media Type']:
+        media_type = record['Media Type']
+
+    for access_files in access_files_sets:
+        # print access_files_sets
+        access_copy = pbcoreInstantiation(type="Access Copy",
+                                          location="CAVPP",
+                                          language=lang,
+                                          generations="Access Copy")
+
+    # ============================================================ #
+    # =========================== Audio ========================== #
+    # ============================================================ #
+        if media_type.lower() == 'audio' or media_type.lower() == 'sound':
+            access_copy.add_instantiationIdentifier(PB_Element(['source', 'CAVPP'], tag="instantiationIdentifier", value=obj_ID+"_access"))
+            access_copy.add_instantiationRelation(InstantiationRelation(derived_from=obj_ID+"_prsv"))
+            for access_file in access_files:
+                f = AudioObject(access_file)
+                newAudioFile = InstantiationPart(objectID=f.file_name,
+                                                 location="CAVPP",
+                                                 duration=f.totalRunningTimeSMPTE)
+                size, units = sizeofHuman(f.file_size)
+                newAudioFile.set_instantiationFileSize(PB_Element(['unitsOfMeasure', units],
+                                                                  tag="instantiationFileSize",
+                                                                  value=size))
+                if not args.nochecksum:
+                    print("\t"),
+                    logger.info("Calculating MD5 checksum for " + f.file_name + ".")
+                    if f.file_size > LARGEFILE:
+                        print "\tNote: This file is " + f.file_size_human + " and might take some times to calculate."
+                    if args.noprogress:
+                        md5 = f.calculate_MD5()
+                    else:
+                        md5 = f.calculate_MD5(progress=True)
+                    newAudioFile.add_instantiationIdentifier(
+                        PB_Element(['source', 'CAVPP'],
+                                   ['version', 'MD5'],
+                                   ['annotation', 'checksum'],
+                                   tag="instantiationIdentifier",
+                                   value=md5))
+                if f.audioChannels == 1:
+                    access_copy.set_instantiationTracks(PB_Element(tag="instantiationTracks", value='Sound'))
+                    access_copy.set_instantiationChannelConfiguration(PB_Element(tag="instantiationChannelConfiguration",
+                                                                                 value='Mono'))
+                elif f.audioChannels == 2:
+                    access_copy.set_instantiationTracks(PB_Element(tag="instantiationTracks", value='Sound'))
+                    access_copy.set_instantiationChannelConfiguration(PB_Element(tag="instantiationChannelConfiguration",
+                                                                                 value='Stereo'))
+                newEssTrack = InstantiationEssenceTrack(type="Audio", bitDepth=f.audioBitDepth)
+                if f.file_extension.lower() == '.mp3':
+                    newEssTrack.set_essenceTrackEncoding(PB_Element(tag='essenceTrackEncoding', value='MP3'))
+                newAudioFile.add_instantiationEssenceTrack(newEssTrack)
+                access_copy.add_instantiationPart(newAudioFile)
+
+    # ============================================================ #
+    # ======================= Moving Image ======================= #
+    # ============================================================ #
+        elif media_type.lower() == 'moving image':
+            f = VideoObject(access_files)
+            # print "audio", f.file_name
+            access_copy.add_instantiationIdentifier(PB_Element(['source', 'CAVPP'],
+                                                               ['annotation', 'File Name'],
+                                                               tag="instantiationIdentifier",
+                                                               value=f.file_name))
+            access_copy.set_instantiationMediaType(PB_Element(tag='instantiationMediaType', value='Moving Image'))
+            access_copy.set_instantiationDuration(PB_Element(tag="instantiationDuration",
+                                                             value=f.totalRunningTimeSMPTE))
+            size, units = sizeofHuman(f.file_size)
+            access_copy.set_instantiationFileSize(PB_Element(['unitsOfMeasure', units],
+                                                             tag="instantiationFileSize",
+                                                             value=size))
+            if not args.nochecksum:
+                print("\t"),
+                logger.info("Calculating MD5 checksum for " + f.file_name + ".")
+                if f.file_size > LARGEFILE:
+                    print "\tNote: This file is " + f.file_size_human + " and might take some times to calculate."
+                if args.noprogress:
+                    md5 = f.calculate_MD5()
+                else:
+                    md5 = f.calculate_MD5(progress=True)
+                access_copy.add_instantiationIdentifier(
+                    PB_Element(['source', 'CAVPP'],
+                               ['version', 'MD5'],
+                               ['annotation', 'checksum'],
+                               tag="instantiationIdentifier",
+                               value=md5))
+            if f.audioChannels == 1:
+                access_copy.set_instantiationTracks(PB_Element(tag="instantiationTracks", value='Sound'))
+                access_copy.set_instantiationChannelConfiguration(PB_Element(tag="instantiationChannelConfiguration",
+                                                                             value='Mono'))
+            elif f.audioChannels == 2:
+                access_copy.set_instantiationTracks(PB_Element(tag="instantiationTracks", value='Sound'))
+                access_copy.set_instantiationChannelConfiguration(PB_Element(tag="instantiationChannelConfiguration",
+                                                                             value='Stereo'))
+
+            # ------------------ video track ------------------
+            newEssTrack = InstantiationEssenceTrack(type='Video',
+                                                    frameRate=("%.2f" % f.videoFrameRate),
+                                                    aspectRatio=str(f.videoAspectRatio),
+                                                    duration=f.totalRunningTimeSMPTE)  #TODO remove the string typecase
+            newEssTrack.add_essenceTrackAnnotation(PB_Element(['annotationType', 'Frame Size Vertical'],
+                                                              tag="essenceTrackAnnotation",
+                                                              value=f.videoResolutionHeight))
+            newEssTrack.add_essenceTrackAnnotation(PB_Element(['annotationType', 'Frame Size Horizontal'],
+                                                              tag="essenceTrackAnnotation",
+                                                              value=f.videoResolutionWidth)) # FIX videoRespolutionWidth
+            access_copy.add_instantiationEssenceTrack(newEssTrack)
+
+            # ------------------ Audio track ------------------
+            newEssTrack = InstantiationEssenceTrack(type='Audio',
+                                                    standard=f.audioCodec,
+                                                    samplingRate=f.audioSampleRate/1000)
+            # newEssTrack.add_essenceTrackAnnotation(PB_Element(['annotationType', 'Audio Bit Rate'], tag='essenceTrackAnnotation',))
+
+            access_copy.add_instantiationEssenceTrack(newEssTrack)
+    return access_copy
+
+def generate_pbcore(record, files=None):
+    XML = ""
+    new_XML_file = PBCore(collectionSource=record['Institution'],
+                          collectionTitle=record['Collection Guide Title'])
+
+    preservation_file_sets, access_files_sets = sep_pres_access(files)
+    preservation_file_sets = group_sides(preservation_file_sets)
+    access_files_sets = group_sides(access_files_sets)
+
+    # pbcoreDescriptionDocument
+    obj_ID = ""
+    proj_ID = ""
+    asset_type = ""
+    main_title = ""
+    add_title = ""
+    ser_title = ""
+    descrp = ""
+    obj_ARK = ""
+    inst_name = ""
+    inst_ARK = ""
+    inst_URL = ""
+    creationDates = []
+    subjectTops = ""
+    genre = ""
+    genre_autority = ""
+    IA_URL = ""
+    QC_notes_list = ""
+    transcript = ""
+    parts = record['Object Identifier'].split(';')
+
+    # preservation, access = sep_pres_access()
+
+    if record['Object Identifier']:
+        obj_ID = record['Object Identifier'].split(';')[0].split('_t')[0]
+
+    if record['Project Identifier']:
+        # pbcoreInstantiation.instantiationIdentifier is part of CAVPP_Part class
+        proj_ID = record['Project Identifier']
+
+    if record['Asset Type']:
+        # pbcoreDescriptionDocument.pbcoreAssetType is in pbcoreDescriptionDocument()
+        # pbcoreInstantiation.pbcoreAssetType is in pbcoreDescriptionDocument()
+        asset_type = record['Asset Type']
+
+    if record['Main or Supplied Title']:
+        main_title = record['Main or Supplied Title']
+
+    if record['Additional Title']:
+        add_title = record['Additional Title']
+
+    if record['Series Title']:
+        ser_title = record['Series Title']
+
+    if record['Institution']:
+        inst_name = record['Institution']
+
+    if record['Institution URL']:
+        inst_URL = record['Institution URL']
+
+
+    descriptive = build_descriptive(record)
     # PARTS
     call_numbers = ""
     if record['Call Number']:
@@ -835,7 +887,7 @@ def generate_pbcore(record, files=None):
     # -----------------------------------------------------
             for preservation_file_set in preservation_file_sets:
                 # print preservation_file_set
-                pres_master = build_audio_preservation_master(record, preservation_file_set)
+                pres_master = build_preservation_master(record, preservation_file_set)
                 newPart.add_pbcoreInstantiation(pres_master)
 
 
@@ -851,7 +903,7 @@ def generate_pbcore(record, files=None):
 # =================
 
     elif record['Media Type'].lower() == 'moving image':
-        print "moving image"
+        # print "moving image"
         for index, part in enumerate(parts):
             newPart = CAVPP_Part(objectID=part.strip(),
                                  mainTitle=main_title.strip(),
@@ -872,7 +924,7 @@ def generate_pbcore(record, files=None):
     #     print preservation_file_sets[index]
     #         for preservation_file_set in preservation_file_sets:
     #             # print preservation_file_set
-            pres_master = build_audio_preservation_master(record, preservation_file_sets[index])
+            pres_master = build_preservation_master(record, preservation_file_sets[index])
             newPart.add_pbcoreInstantiation(pres_master)
     # -----------------------------------------------------
     #           access copy
@@ -899,13 +951,7 @@ def generate_pbcore(record, files=None):
                                     exValue=record['Project Note'])
         descriptive.add_pbcore_extension(exten)
 
-    # Relationship
-    # relation_type = ''
-    #     if record['Relationship Type']:
-    #         relation_type = record['Relationship Type']
-    #
-    #         newRelation = pbcoreRelation(reID=part.strip(), reType=relation_type.strip())
-    #         descriptive.add_pbcoreRelation(newRelation)
+
     if len(parts) > 1:
         for part in record['Object Identifier'].split(';'):
             newRelation = pbcoreRelation(reID=part.strip(), reType="Has Part")
@@ -960,6 +1006,10 @@ def content_valid(input_record):
                                 + "\" in the \'"
                                 + item[0]
                                 + "\' column is not in the correct date format. Expected YYYY-MM-DD.")
+
+    # check that there is a description
+    if input_record['Description or Content Summary'] == '':
+        warnings.append("Missing required \"Description or Content Summary\" field")
 
     # for index, error in enumerate(errors):
     # errors[index] = "["+ input_record["Object Identifier"] + "] " + errors[index]
@@ -1058,16 +1108,6 @@ def sep_pres_access(digital_files):
     return preservation, access
 
 
-logger = logging.getLogger()
-parser = argparse.ArgumentParser()
-parser.add_argument("csv", help="Source CSV file", type=str)
-parser.add_argument("-d", "--debug", help="Debug mode. Writes all messages to debug log.", action='store_true')
-parser.add_argument("-nc", "--nochecksum", help="Bypasses md5 checksum generation for files.", action='store_true')
-parser.add_argument("-p", "--progress", help="Shows percentage completed of the md5 checksum calculation.", action='store_true')
-# TODO: add argument that lets you create pbcore without the files present
-args = parser.parse_args()
-
-
 def report(files_created, number_of_new_records, number_of_records, number_of_rewritten_records):
     message = "\nGenerated " + str(number_of_records) + " PBCore records in total."
     if number_of_new_records >= 1:
@@ -1080,6 +1120,16 @@ def report(files_created, number_of_new_records, number_of_records, number_of_re
     for index, file_created in enumerate(files_created):
         print str(index + 1) + ")\t" + file_created
     print "\n"
+
+# loggers setup
+logger = logging.getLogger()
+parser = argparse.ArgumentParser()
+parser.add_argument("csv", help="Source CSV file", type=str)
+parser.add_argument("-d", "--debug", help="Debug mode. Writes all messages to debug log.", action='store_true')
+parser.add_argument("-nc", "--nochecksum", help="Bypasses md5 checksum generation for files.", action='store_true')
+parser.add_argument("-np", "--noprogress", help="hides the percentage completed of the md5 checksum calculation.", action='store_true')
+# TODO: add argument that lets you create pbcore without the files present
+args = parser.parse_args()
 
 
 def main():
@@ -1111,9 +1161,9 @@ def main():
         print "Bypassing MD5 checksum generation."
 
     error_formatter = logging.Formatter(
-        '%(asctime)s - %(name)s - %(levelname)s - %(message)s')  # DATE - USERNAME - Message
-    stderr_formatter = logging.Formatter('%(levelname)s - %(message)s')  # USERNAME - Message
-    stdout_formatter = logging.Formatter('%(message)s')  # Message
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s')             # DATE - USERNAME - Message
+    stderr_formatter = logging.Formatter('%(levelname)s - %(message)s')     # USERNAME - Message
+    stdout_formatter = logging.Formatter('%(message)s')                     # Message
 
     fh.setFormatter(error_formatter)
     eh.setFormatter(stderr_formatter)
