@@ -2,6 +2,7 @@ import csv
 import os
 from time import sleep
 from tkFileDialog import askopenfilename
+from tkMessageBox import showerror
 import pbcore_csv
 import threading
 
@@ -92,7 +93,8 @@ class MainWindow():
         self.validate_entry.grid(row=3, column=1, sticky=W+E)
         self.validate_details_button = ttk.Button(self.dataEntryFrame, text='Details', command=self.show_details)
         self.validate_details_button.grid(row=3, column=2, sticky=W)
-        # ----------
+
+        # --------------------  Records  --------------------
 
         self.recordsFrame = ttk.Frame(self.panel,
                                                height=200,
@@ -102,9 +104,19 @@ class MainWindow():
 
         self.panel.add(self.recordsFrame)
 
-        self.recordsList = Listbox(self.recordsFrame)
-        self.recordsList.pack(fill=BOTH, expand=True)
-        # ----------
+        # self.recordsList = Listbox(self.recordsFrame)
+        self.recordsTree = ttk.Treeview(self.recordsFrame, columns=('xml', 'title', 'project', 'objectID', ))
+        self.recordsTree.heading('xml', text='XML')
+        self.recordsTree.heading('title', text='Title')
+        self.recordsTree.heading('project', text='Project')
+        self.recordsTree.heading('objectID', text='Objects')
+        self.recordsTree.column('#0', width=40, anchor='center')
+        self.recordsTree.column('xml', width=150)
+        self.recordsTree.column('project', width=150)
+        self.recordsTree.column('title', width=250)
+        self.recordsTree.pack(fill=BOTH, expand=True)
+
+        # --------------------  Feedback  --------------------
         self.feedbackFrame = ttk.Frame(self.panel,
                                        height=200,
                                        width=100,
@@ -123,7 +135,7 @@ class MainWindow():
         self.part_progress_label.grid(row=1, column=0, sticky=E)
         self.part_progress_value_label = ttk.Label(self.feedbackFrame, text="(0/0)")
         self.part_progress_value_label.grid(row=1, column=1, sticky=E)
-        self.part_progress_pbar = ttk.Progressbar(self.feedbackFrame, orient=HORIZONTAL, length=500, mode='determinate')
+        self.part_progress_pbar = ttk.Progressbar(self.feedbackFrame, orient=HORIZONTAL, length=500, mode='determinate', value=self.part_progress.get(), maximum=self.part_total.get())
         self.part_progress_pbar.grid(row=1, column=2, sticky=W)
 
         self.calculation_progress_label = ttk.Label(self.feedbackFrame, text="Calculation Progress:")
@@ -155,7 +167,8 @@ class MainWindow():
             self.file_records.load_records()
             self.load_records_list(self.file_records.records)
         else:
-            self.recordsList.delete(0,END)
+            for i in self.recordsTree.get_children():
+                self.recordsTree.delete(i)
 
     def view_settings(self):
         f = open(self.settings)
@@ -185,23 +198,36 @@ class MainWindow():
         self.warningMessageWindow = Toplevel(self.master)
         self.warningMessageWindow.title(type)
         # warningMessages = Text(warningMessageWindow)
-        warningMessages = Listbox(self.warningMessageWindow, width=75)
+        # warningMessages = Listbox(self.warningMessageWindow, width=75)
+        warningMessages = ttk.Treeview(self.warningMessageWindow)
+        warningMessages.config(columns=('projectID', 'type', 'message'))
+        warningMessages.heading('projectID', text='Project Identifier')
+        warningMessages.heading('type', text='Type')
+        warningMessages.heading('message', text='Message')
         warningMessages.pack(fill=BOTH, expand=True)
         for index, remark in enumerate(messages):
 
             warning_message = ""
             # print warning['record']
-            if 'record' in remark:
-                warning_message += remark['record']
+            # if 'record' in remark:
+            #     warning_message += remark['record']
             if 'received' in remark:
-                warning_message += (": Received \"" + remark['received'] + "\"")
+                warning_message += ("\"" + remark['received'] + "\"")
             if 'location' in remark:
                 warning_message += (" at [" + remark['location'] + "].")
             else:
                 warning_message += "."
             if 'message' in remark:
                 warning_message += remark['message']
-            warningMessages.insert(END, (str(index+1) + ") " + warning_message))
+            warningMessages.insert('', index, index+1, text=index+1)
+            warningMessages.column('#0', width=40, anchor='center')
+            warningMessages.column('projectID', width=150)
+            warningMessages.column('message', width=400)
+            # warningMessages.set(index+1, '#0', index)
+            warningMessages.set(index+1, 'projectID', remark['record'])
+            warningMessages.set(index+1, 'type', remark['type'])
+            warningMessages.set(index+1, 'message', warning_message)
+            # warningMessages.insert(END, (str(index+1) + ") " + warning_message))
 
     def validate(self, in_file):
         if os.path.isfile(in_file):
@@ -245,13 +271,16 @@ class MainWindow():
             else:
                 self.validate_entry.config(state=NORMAL)
                 self.validate_entry.delete(0,END)
-                self.validate_entry.insert(0, "Not Valid CSV file")
+                errorMessage = "Not Valid CSV file"
+                self.validate_entry.insert(0, errorMessage)
                 self.csv_status = "Errors"
                 self.startButton.config(state=DISABLED)
                 self.validate_details_button.config(state=NORMAL)
                 self.validate_entry.config(state=DISABLED)
                 self.alerts(self.remarks, type="Error")
-                self.warningMessageWindow.lift(self.master)
+                showerror('Error', errorMessage)
+
+                # self.warningMessageWindow.lift(self.master)
                 return False
 
         else:
@@ -262,9 +291,29 @@ class MainWindow():
             return False
 
     def load_records_list(self, records):
-        self.recordsList.delete(0, END)
-        for record in records:
-            self.recordsList.insert(END, record['Project Identifier'])
+        # self.recordsList.delete(0, END)
+        for i in self.recordsTree.get_children():
+            self.recordsTree.delete(i)
+        for index, record in enumerate(records):
+            parts = record['Object Identifier'].split(';')
+            # self.recordsList.insert(END, record['Project Identifier'])
+            # if self.recordsTree.exists(index):
+            #     self.recordsTree.delete(index)
+            # outIndex = str(index+1)+"out"
+            outIndex = record['Main or Supplied Title']
+            self.recordsTree.insert('', index, outIndex, text=index+1)
+            self.recordsTree.set(outIndex, 'title', record['Main or Supplied Title'])
+            self.recordsTree.set(outIndex, 'project', record['Project Identifier'])
+            self.recordsTree.set(outIndex, 'objectID', len(parts))
+            # print self.recordsTree.get_children()
+            for a_index, part in enumerate(parts):
+                inIndex = str(a_index)+outIndex
+                self.recordsTree.insert(outIndex, a_index, inIndex)
+                self.recordsTree.set(inIndex, 'objectID', part.strip())
+                # print a_index
+                # self.recordsTree.set(index+1, 'object', part.strip())
+            # self.recordsTree.insert('', index, index, text=record['Project Identifier'])
+            # self.recordsTree.insert('', index, index, text=record['Project Identifier'])
 
     def get_records(self, file_name):
         f = open(file_name, 'rU')
@@ -296,6 +345,7 @@ class MainWindow():
                 savefile = pbcore_csv.pbcoreBuilder(self.csv_filename_entry.get())
 
                 self.generate = observer(savefile)
+                self.generate.daemon = True
                 self.generate.start()
             self.update_progress()
             # self.generate.join()
@@ -314,13 +364,18 @@ class MainWindow():
 
             self.set_total_progress(record_progress, record_total)
             self.set_part_progress(part_progress, part_total)
-            self.set_calculation_progress(calulation_percent+1)
+            self.set_calculation_progress(self.generate.calulation_progress)
+            self.set_calculation_progress(calulation_percent)
+            # parts = str(part_progress) + " : " + str(part_total)
+            # total = str(record_progress) + " : " + str(record_total)
+            # print(parts, total)
             self.master.after(100, self.update_progress)
 
 
     def set_total_progress(self, progress, total=None):
         if total:
             self.item_total.set(total)
+            # print progress
         self.item_progress.set(progress)
 
         self.total_progress_value_label.config(text="(" + str(progress) + "/" + str(self.item_total.get()) + ")")
@@ -328,15 +383,16 @@ class MainWindow():
 
     def set_part_progress(self, progress, total=None):
         if total:
-            self.part_total.set(progress)
-
-        self.part_progress_value_label.config(text="(" + str(progress) + "/" + str(self.item_total.get()) + ")")
+            self.part_total.set(total)
+        self.part_progress.set(progress)
+        # print self.part_total.get()
+        self.part_progress_value_label.config(text="(" + str(progress) + "/" + str(self.part_total.get()) + ")")
         self.part_progress_pbar.config(maximum=total, value=progress)
 
     def set_calculation_progress(self, percent):
         self.calculation_progress_value_label.config(text = (str(percent)+'%'))
         self.calculation_progress_pbar.config(value=percent)
-        percent = self.generate.calulation_progress
+        # percent = self.generate.calulation_progress
 
 
         # print percent
@@ -371,25 +427,37 @@ class observer(threading.Thread):
 
     def run(self):
         self._isRunning = True
-        for index, record in enumerate(self.records.records):
-            print "Record: " + str(index)
-            print self.records.source
-            temp = self.records.generate_pbcore(record)
-            self._record_progress = index + 1
-            # for p_index, part in enumerate(self.records.records):
-            #     print p_index
-            # temp = self.records.generate_pbcore(record)
-            # print "parts" + str(self.records.parts_total)
-            # for part_index in range(1, self.records.parts_total):
-            #     print "part" + part_index
-            #     sleep(.01)
-            #     self._part_progress = part_index + 1
-            # for i in range(0, 100, 1):
-            #     # print i
-            #     self._md5_progress = i
-            #     sleep(.01)
-            # sleep(.25)
-        self._isRunning = False
+        self.records.daemon = True
+        self.records.start()
+        # self.records.build_all_records()
+        while self.records.isAlive():
+            sleep(.1)
+            self._md5_progress =  self.records.calculation_percent
+            self._part_progress = self.records.parts_progress
+            self._part_total = self.records.parts_total
+            self._record_progress = self.records.job_progress
+            self._record_total = self.records.job_total
+
+        # print "\ndone"
+        # for index, record in enumerate(self.records.records):
+        #     print "Record: " + str(index)
+        #     print self.records.source
+        #     temp = self.records.generate_pbcore(record)
+        #     self._record_progress = index + 1
+        #     # for p_index, part in enumerate(self.records.records):
+        #     #     print p_index
+        #     # temp = self.records.generate_pbcore(record)
+        #     # print "parts" + str(self.records.parts_total)
+        #     # for part_index in range(1, self.records.parts_total):
+        #     #     print "part" + part_index
+        #     #     sleep(.01)
+        #     #     self._part_progress = part_index + 1
+        #     # for i in range(0, 100, 1):
+        #     #     # print i
+        #     #     self._md5_progress = i
+        #     #     sleep(.01)
+        #     # sleep(.25)
+        # self._isRunning = False
 
     @property
     def isRunning(self):
