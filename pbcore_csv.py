@@ -112,6 +112,7 @@ class pbcoreBuilder(threading.Thread):
 
     def __init__(self, input_file, verbose=False):
         threading.Thread.__init__(self)
+        self._running = False
         self._source = input_file
         self._job_total = 0
         self._job_progress = 0
@@ -125,6 +126,10 @@ class pbcoreBuilder(threading.Thread):
         self._overwritten_records = []
         self.verbose = verbose
         self.log = ""  # TODO add loging feature
+
+    @property
+    def isRunning(self):
+        return self._running
 
     @property
     def number_of_records(self):
@@ -638,7 +643,11 @@ class pbcoreBuilder(threading.Thread):
                             print "\tNote: " + f.file_name + " is " + f.file_size_human + " and might take some times to calculate."
                         md5 = f.calculate_MD5(progress=True)
                     else:
-                        md5 = f.calculate_MD5()
+                        f.calculate_MD5(threaded=True)
+                        while f.isMD5Calculating:
+                            self._calculation_percent = f.calulation_progresss
+                            sleep(.1)
+                        md5 = f.MD5_hash
                     self._parts_progress += 1
                     new_mast_part.add_instantiationIdentifier(PB_Element(['source', SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
                                                                          ['version', 'MD5'],
@@ -692,7 +701,11 @@ class pbcoreBuilder(threading.Thread):
                         print "\tNote: This file is " + f.file_size_human + " and might take some times to calculate."
                     md5 = f.calculate_MD5(progress=True)
                 else:
-                    md5 = f.calculate_MD5()
+                    f.calculate_MD5(threaded=True)
+                    while f.isMD5Calculating:
+                        self._calculation_percent = f._calculation_progress
+                        sleep(.1)
+                    md5 = f.MD5_hash
                 self._parts_progress += 1
                 pres_master.add_instantiationIdentifier(PB_Element(['source', SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
                                                                    ['version', 'MD5'],
@@ -826,7 +839,11 @@ class pbcoreBuilder(threading.Thread):
                             print "\tNote: This file is " + f.file_size_human + " and might take some times to calculate."
                         md5 = f.calculate_MD5(progress=True)
                     else:
-                        md5 = f.calculate_MD5()
+                        f.calculate_MD5(threaded=True)
+                        while f.isMD5Calculating:
+                            self._calculation_percent = f.calulation_progresss
+                            sleep(.1)
+                        md5 = f.MD5_hash
                     self._parts_progress += 1
                     access_copy.add_instantiationIdentifier(
                         PB_Element(['source', SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
@@ -865,6 +882,7 @@ class pbcoreBuilder(threading.Thread):
         return access_copy
 
     def generate_pbcore(self, record, files=None, verbose=False):
+        self._running = True
         XML = ""
         new_XML_file = PBCore(collectionSource=record['Institution'],
                               collectionTitle=record['Collection Guide Title'])
@@ -1038,7 +1056,7 @@ class pbcoreBuilder(threading.Thread):
                 descriptive.add_pbcoreRelation(newRelation)
 
         new_XML_file.set_IntellectualContent(descriptive)
-
+        self._running = False
         return new_XML_file.xmlString()
 
 
@@ -1046,7 +1064,9 @@ class pbcoreBuilder(threading.Thread):
     def build_all_records(self):
         file_name_pattern = re.compile("[A-Z,a-z]+_\d+")
         self._job_total = len(self._records)
+
         for record in self._records:
+            self._job_progress += 1
             fileName = re.search(file_name_pattern, record['Object Identifier']).group(0)
             file_output_name = fileName + "_ONLYTEST.xml"
             if self.verbose:
@@ -1112,11 +1132,15 @@ class pbcoreBuilder(threading.Thread):
     def is_valid_csv(self):
         try:
             f = open(self.source, 'rU')
+            csv.Sniffer().sniff(f.read(1024))
             csv.DictReader(f)
             f.close()
             return True
         except ValueError:
             return False
+        except csv.Error:
+            return False
+
 
     def check_content_valid(self):
         warnings = []
@@ -1139,10 +1163,11 @@ class pbcoreBuilder(threading.Thread):
                 warning = dict()
                 if item[1] != "":
                     if not self.valid_date(item[1]):
-                        warning['record'] = test_record['Object Identifier']
+                        warning['record'] = test_record['Project Identifier']
                         warning['received'] = item[1]
                         warning['location'] = item[0]
-                        warning['message'] = 'Incorrect date format. Expected YYYY-MM-DD.'
+                        warning['type'] = 'Incorrect Date Format'
+                        warning['message'] = 'Expected YYYY-MM-DD.'
                         # warnings.append("\""
                         #                 + item[1]
                         #                 + "\" in the \'"
@@ -1152,9 +1177,10 @@ class pbcoreBuilder(threading.Thread):
             warning = dict()
             # check that there is a description
             if test_record['Description or Content Summary'] == '':
-                warning['record'] = test_record['Object Identifier']
+                warning['record'] = test_record['Project Identifier']
                 warning['received'] = "No data"
                 warning['location'] = "Description or Content Summary"
+                warning['type'] = 'Missing Required Data'
                 warning['message'] = 'This is a required field for PBCore to validate.'
                 warnings.append(warning)
             #     warnings.append("Missing required \"Description or Content Summary\" field")
@@ -1252,13 +1278,15 @@ class pbcoreBuilder(threading.Thread):
                 preservation_files, access_files = self.sep_pres_access(digital_files)
                 if not preservation_files:
                     warning = dict()
-                    warning['record'] = fileName
+                    warning['record'] = record['Project Identifier']
+                    warning['type'] = 'Missing Files'
                     warning['message'] = "Unable to locate any preservation master files."
                     # warnings.append("No preservation files found for " + fileName)
                     warnings.append(warning)
                 if not access_files:
                     warning = dict()
-                    warning['record'] = fileName
+                    warning['record'] = record['Project Identifier']
+                    warning['type'] = 'Missing Files'
                     warning['message'] = "Unable to locate any access files."
                     warnings.append(warning)
                     # warnings.append("No access files found for " + fileName)
@@ -1269,6 +1297,7 @@ class pbcoreBuilder(threading.Thread):
             for file_not_found in files_not_found:
                 warning = dict()
                 warning['record'] = file_not_found
+                warning['type'] = 'Missing Files'
                 warning['message'] = "Unable to locate any files."
                 warnings.append(warning)
 
@@ -1281,8 +1310,16 @@ class pbcoreBuilder(threading.Thread):
         return warnings
 
     def run(self):
-        print "starting thread"
-        pass
+        # print "starting thread"
+        self._running = True
+        # while self._running:
+        #     parts = str(self._parts_progress) + " : " + str(self._parts_total)
+        #     total = str(self._job_progress) + " : " + str(self._job_total)
+        #     print(parts, total)
+        #     sleep(1)
+        # pass
+        self.build_all_records()
+        self._running = False
 
 
 def report(files_created, number_of_new_records, number_of_records, number_of_rewritten_records):
