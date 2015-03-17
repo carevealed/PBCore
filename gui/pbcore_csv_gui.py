@@ -3,6 +3,7 @@ import os
 from time import sleep
 from tkFileDialog import askopenfilename
 from tkMessageBox import showerror
+import tkMessageBox
 import pbcore_csv
 import threading
 
@@ -27,8 +28,30 @@ class MainWindow():
         self.part_total.set(0)
 
         self.display_records = []
+        # ---------- Menus -----------
+        self.master.option_add('*tearOff', False)
+        self.menu_bar = Menu(master)
+        self.master.config(menu=self.menu_bar)
+        self.fileMenu = Menu(self.menu_bar)
+        self.settingsMenu = Menu(self.menu_bar)
+        self.helpMenu = Menu(self.menu_bar)
 
+        self.menu_bar.add_cascade(menu=self.fileMenu, label="File")
+        self.menu_bar.add_cascade(menu=self.settingsMenu, label="Settings")
+        self.menu_bar.add_cascade(menu=self.helpMenu, label="Help")
 
+        self.fileMenu.add_command(label="Open...", command=self.retrieve_folder)
+        self.fileMenu.entryconfig('Open...', accelerator='Ctrl + O')
+        self.fileMenu.add_separator()
+        self.fileMenu.add_command(label="Exit", command=lambda: quit())
+
+        self.settingsMenu.add_command(label="View Settings...", command=self.view_settings)
+
+        self.helpMenu.add_command(label="About...",
+                                  command=lambda: tkMessageBox.showinfo(title="About",
+                                                                        message="CAVPP PBCore Builder\n"
+                                                                                "2015\n\n"
+                                                                                "Programmed by Henry Borchers"))
 
         # ----------
         self.background = ttk.Frame(self.master, padding=(20,15))
@@ -160,15 +183,16 @@ class MainWindow():
 
     def retrieve_folder(self):
         fileName = askopenfilename()
-        self.csv_filename_entry.delete(0, END)
-        self.csv_filename_entry.insert(0, fileName)
-        if self.validate(fileName):
-            self.file_records = pbcore_csv.pbcoreBuilder(fileName)
-            self.file_records.load_records()
-            self.load_records_list(self.file_records.records)
-        else:
-            for i in self.recordsTree.get_children():
-                self.recordsTree.delete(i)
+        if fileName != "":
+            self.csv_filename_entry.delete(0, END)
+            self.csv_filename_entry.insert(0, fileName)
+            if self.validate(fileName):
+                self.file_records = pbcore_csv.pbcoreBuilder(fileName)
+                self.file_records.load_records()
+                self.load_records_list(self.file_records.records)
+            else:
+                for i in self.recordsTree.get_children():
+                    self.recordsTree.delete(i)
 
     def view_settings(self):
         f = open(self.settings)
@@ -190,6 +214,12 @@ class MainWindow():
 
         self.settingsText.config(state=DISABLED)
 
+    def edit_file(self):
+        print "Editing: " + self.csv_filename_entry.get()
+        command = "open " + self.csv_filename_entry.get()
+        os.system(command)
+
+
     def alerts(self, messages, type="Error"):
         try:
             self.warningMessageWindow.destroy()
@@ -197,14 +227,27 @@ class MainWindow():
             pass
         self.warningMessageWindow = Toplevel(self.master)
         self.warningMessageWindow.title(type)
+        self.warningBackgroundFrame = ttk.Frame(self.warningMessageWindow)
+        self.warningBackgroundFrame.pack(fill=BOTH, expand=True)
+        self.warningFrame = ttk.Frame(self.warningBackgroundFrame)
+        self.warningFrame.pack(fill=BOTH, expand=True, pady=5, padx=5)
         # warningMessages = Text(warningMessageWindow)
         # warningMessages = Listbox(self.warningMessageWindow, width=75)
-        warningMessages = ttk.Treeview(self.warningMessageWindow)
+        warningMessages = ttk.Treeview(self.warningFrame)
         warningMessages.config(columns=('projectID', 'type', 'message'))
         warningMessages.heading('projectID', text='Project Identifier')
         warningMessages.heading('type', text='Type')
         warningMessages.heading('message', text='Message')
         warningMessages.pack(fill=BOTH, expand=True)
+        self.optionsFrame = ttk.Frame(self.warningBackgroundFrame)
+        self.optionsFrame.pack(fill=BOTH, expand=True, pady=5, padx=5)
+
+        closeButton = ttk.Button(self.optionsFrame, text='Close', command=lambda: self.warningMessageWindow.destroy())
+        closeButton.grid(column=0, row=0, sticky=W+E+S)
+
+        editButton = ttk.Button(self.optionsFrame, text='Edit Source in Default Editor', command=self.edit_file)
+        editButton.grid(column=2, row=0, sticky=W+E+S)
+
         for index, remark in enumerate(messages):
 
             warning_message = ""
@@ -233,13 +276,17 @@ class MainWindow():
         if os.path.isfile(in_file):
             testFile = pbcore_csv.pbcoreBuilder(in_file)
             if testFile.is_valid_csv():
-                self.validate_entry.config(state=NORMAL)
-                self.validate_entry.delete(0,END)
-                self.validate_entry.insert(0, "Valid")
-                self.csv_status = "Valid"
-                self.startButton.config(state=NORMAL)
-                self.validate_details_button.config(state=DISABLED)
-                self.validate_entry.config(state=DISABLED)
+
+                valid, messages = testFile.validate_col_titles()
+
+                if valid:
+                    self.validate_entry.config(state=NORMAL)
+                    self.validate_entry.delete(0,END)
+                    self.validate_entry.insert(0, "Valid")
+                    self.csv_status = "Valid"
+                    self.startButton.config(state=NORMAL)
+                    self.validate_details_button.config(state=DISABLED)
+                    self.validate_entry.config(state=DISABLED)
 
                 # f = open(in_file, 'rU')
                 # records = []
@@ -408,6 +455,7 @@ def start_gui(settings, csvfile=None):
         app = MainWindow(root, input_file=csvfile, settings=settings)
     else:
         app = MainWindow(root)
+    # root.option_add('*tearOff', False)
     root.mainloop()
 
 
