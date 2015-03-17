@@ -888,6 +888,8 @@ class pbcoreDescriptionDocument(XML_PBCore):
         if self.pbcoreDescription:
             for node in self.pbcoreDescription:
                 branch.append(node.get_etree_element())
+        else:
+            branch.append(PB_Element(tag="pbcoreDescription", value='MISSING REQUIRED INFORMATION').get_etree_element())
 
         if self.pbcoreGenre:
             for node in self.pbcoreGenre:
@@ -2316,10 +2318,10 @@ class pbcoreInstantiation(XML_PBCore):
         :URI:           http://pbcore.org/v2/elements/pbcoredescriptiondocument/pbcoreinstantiation/instantiationrelation/
         """
 
-        if isinstance(data, PB_Element):
+        if isinstance(data, InstantiationRelation):
             self.instantiationRelation = data
         else:
-            raise TypeError("Expected type: PB_Element")
+            raise TypeError("Expected type: InstantiationRelation")
 
 
     def get_instantiationAnnotation(self):
@@ -2459,8 +2461,8 @@ class pbcoreInstantiation(XML_PBCore):
                 branch.append(node.xml())
 
         if self.instantiationRelation:
-            for instRelation in self.instantiationRelation:
-                branch.append(instRelation.get_etree_element())
+            for node in self.instantiationRelation:
+                branch.append(node.xml())
 
         if self.instantiationAnnotation:
             for instAnnotation in self.instantiationAnnotation:
@@ -2936,7 +2938,7 @@ class InstantiationEssenceTrack(XML_PBCore):
 
         return self.essenceTrackExtension
 
-    def set_essenceTrackExtension(self, data):
+    def add_essenceTrackExtension(self, data):
         """
 
         :param          data:
@@ -2946,9 +2948,9 @@ class InstantiationEssenceTrack(XML_PBCore):
         :return:        None
         """
         # TODO: add example of essenceTrackExtension
-        # TODO: Create Docstring for set_essenceTrackExtension
+        # TODO: Create Docstring for add_essenceTrackExtension
         if isinstance(data, PB_Element):
-            self.essenceTrackExtension = data
+            self.essenceTrackExtension.append(data)
         else:
             raise TypeError("Expected type: PB_Element")
 
@@ -3002,7 +3004,8 @@ class InstantiationEssenceTrack(XML_PBCore):
                 branch.append(node.get_etree_element())
 
         if self.essenceTrackExtension:
-            branch.append(self.essenceTrackExtension.get_etree_element())
+            for node in self.essenceTrackExtension:
+                branch.append(node.get_etree_element())
         # print branch
         return branch
 
@@ -3024,7 +3027,7 @@ class InstantiationRelation(XML_PBCore):
     """
     # TODO: Create Docstring for InstantiationRelation
 
-    def __init__(self):
+    def __init__(self, derived_from=None):
         """
         @type           self.instantiationRelationType:             PB_Element
         @type           self.instantiationRelationIdentifier:       PB_Element
@@ -3032,7 +3035,11 @@ class InstantiationRelation(XML_PBCore):
         :return:    None
         """
         self.instantiationRelationType = None
+        if derived_from and derived_from != "":
+            self.set_instantiationRelationType(PB_Element(['source', 'PBCore relationType'], tag="instantiationRelationType", value='Derived from'))
         self.instantiationRelationIdentifier = None
+        if derived_from and derived_from != "":
+            self.set_instantiationRelationIdentifier(PB_Element(['annotation', 'Object Identifier'], tag="instantiationRelationIdentifier", value=derived_from))
         self.instantiationRelationTypeAttributesOptional = [
             # May Contain:
             # 4 or less optional attributes, specific:
@@ -3103,7 +3110,7 @@ class InstantiationRelation(XML_PBCore):
     # TODO: TEST _makeXML method for InstantiationRelation
 
     def _makeXML(self):
-        branch = Element("InstantiationRelation")
+        branch = Element("instantiationRelation")
         branch.append(self.instantiationRelationType.get_etree_element())
         branch.append(self.instantiationRelationIdentifier.get_etree_element())
         return branch
