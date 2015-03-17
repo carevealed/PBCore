@@ -718,6 +718,16 @@ class pbcoreBuilder(threading.Thread):
                                                 frameRate=str(f.videoFrameRate),
                                                 duration=f.totalRunningTimeSMPTE,
                                                 aspectRatio=str(f.videoAspectRatio))
+            datarate = f.videoBitRateH.split(" ")
+            newfile.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
+                                                        tag="essenceTrackDataRate",
+                                                        value=datarate[0]))
+            newfile.set_essenceTrackBitDepth(PB_Element(tag='essenceTrackBitDepth', value=f.videoColorDepth))
+            colorspace = f.videoColorSpace
+            if colorspace:
+                newfile.add_essenceTrackAnnotation(PB_Element(['annotationType', 'Color Space'],
+                                                              tag="essenceTrackAnnotation",
+                                                              value=colorspace))
             newfile.add_essenceTrackAnnotation(PB_Element(['annotationType', 'Frame Size Vertical'],
                                                           tag="essenceTrackAnnotation",
                                                           value=f.videoResolutionHeight))
@@ -778,6 +788,7 @@ class pbcoreBuilder(threading.Thread):
                     newAudioFile = InstantiationPart(objectID=f.file_name,
                                                      location=SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource'),
                                                      duration=f.totalRunningTimeSMPTE)
+
                     size, units = self.sizeofHuman(f.file_size)
                     newAudioFile.set_instantiationFileSize(PB_Element(['unitsOfMeasure', units],
                                                                       tag="instantiationFileSize",
@@ -810,6 +821,10 @@ class pbcoreBuilder(threading.Thread):
                     newEssTrack = InstantiationEssenceTrack(type="Audio", bitDepth=f.audioBitDepth)
                     if f.file_extension.lower() == '.mp3':
                         newEssTrack.set_essenceTrackEncoding(PB_Element(tag='essenceTrackEncoding', value='MP3'))
+                    datarate = f.audioBitRateH.split(" ")
+                    newEssTrack.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
+                                                                    tag="essenceTrackDataRate",
+                                                                    value=datarate[0]))
                     newAudioFile.add_instantiationEssenceTrack(newEssTrack)
                     access_copy.add_instantiationPart(newAudioFile)
 
@@ -865,6 +880,16 @@ class pbcoreBuilder(threading.Thread):
                                                         frameRate=("%.2f" % f.videoFrameRate),
                                                         aspectRatio=str(f.videoAspectRatio),
                                                         duration=f.totalRunningTimeSMPTE)
+                datarate = f.videoBitRateH.split(" ")
+                newEssTrack.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
+                                                        tag="essenceTrackDataRate",
+                                                        value=datarate[0]))
+                newEssTrack.set_essenceTrackBitDepth(PB_Element(tag='essenceTrackBitDepth', value=f.videoColorDepth))
+                colorspace = f.videoColorSpace
+                if colorspace:
+                    newEssTrack.add_essenceTrackAnnotation(PB_Element(['annotationType', 'Color Space'],
+                                                                      tag="essenceTrackAnnotation",
+                                                                      value=colorspace))
                 newEssTrack.add_essenceTrackAnnotation(PB_Element(['annotationType', 'Frame Size Vertical'],
                                                                   tag="essenceTrackAnnotation",
                                                                   value=f.videoResolutionHeight))
@@ -877,6 +902,10 @@ class pbcoreBuilder(threading.Thread):
                 newEssTrack = InstantiationEssenceTrack(type='Audio',
                                                         standard=f.audioCodec,
                                                         samplingRate=f.audioSampleRate/1000)
+                datarate = f.videoBitRateH.split(" ")
+                newEssTrack.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
+                                                        tag="essenceTrackDataRate",
+                                                        value=datarate[0]))
 
                 access_copy.add_instantiationEssenceTrack(newEssTrack)
         return access_copy
@@ -1625,7 +1654,7 @@ if __name__ == '__main__':
         parser.print_help()
     elif args.csv == "" and args.gui:
         print("Loading graphical user interface")
-        print os.path.abspath(settingsFileName)
+        # print os.path.abspath(settingsFileName)
         gui.pbcore_csv_gui.start_gui(settings=os.path.abspath(settingsFileName))
     elif args.csv != "" and args.gui:
         print("Loading graphical user interface with: "+args.csv)
