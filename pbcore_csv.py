@@ -179,6 +179,11 @@ class pbcoreBuilder(threading.Thread):
                 if num < 1024.0:
                     return "%3.1f %s" % (num, x), x
                 num /= 1024.0
+    def _samplerate_cleanup(self, data):
+
+        data = str(data/float(1000))
+        # print data
+        return data.rstrip('.0')
     def build_descriptive(self, record):
         obj_ID = ''
         proj_ID = ''
@@ -659,16 +664,23 @@ class pbcoreBuilder(threading.Thread):
                                                             value=str(f.audioBitDepth)))
                 newfile.set_essenceTrackSamplingRate(PB_Element(["unitsOfMeasure", "kHz"],
                                                                 tag="essenceTrackSamplingRate",
-                                                                value=str(f.audioSampleRate/1000)))
+                                                                value=self._samplerate_cleanup(f.audioSampleRate)))
+                datarate = f.audioBitRateH.split(" ")
+                newfile.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
+                                                                tag="essenceTrackDataRate",
+                                                                value=datarate[0]))
                 if f.file_extension.lower() == '.wav':
                     pres_master.set_instantiationDigital(PB_Element(['source', 'PRONOM Technical Registry'],
                                                                     tag='instantiationDigital',
                                                                     value='audio/x-wav'))  # This is really ugly code I don't know a better way
-                    if f.audioCodec == 'PCM 24-bit':
-                        pres_master.set_instantiationStandard(PB_Element(tag='instantiationStandard',
-                                                                         value='Linear PCM Audio')) # This is really ugly code I don't know a better way
-
                     newfile.set_essenceTrackEncoding(PB_Element(tag='essenceTrackEncoding', value='WAV'))
+                    # if f.audioCodec == 'PCM 24-bit':
+                    #     pres_master.set_instantiationStandard(PB_Element(tag='instantiationStandard',
+                    #                                                      value='Linear PCM Audio')) # This is really ugly code I don't know a better way
+                audio_codec = f.audioCodec + ": " + f.audioCodecLongName
+                pres_master.set_instantiationStandard(PB_Element(tag='instantiationStandard',
+                                                                 value=audio_codec)) # This is really ugly code I don't know a better way
+
                 new_mast_part.add_instantiationEssenceTrack(newfile)
 
                 pres_master.add_instantiationPart(new_mast_part)
@@ -682,6 +694,8 @@ class pbcoreBuilder(threading.Thread):
         elif media_type.lower() == 'moving image':
             f = VideoObject(preservation_file_set[0])
             pres_master.set_instantiationMediaType(PB_Element(tag='instantiationMediaType', value='Moving Image'))
+            video_codec = str(f.videoCodec + ": " + f.videoCodecLongName)
+            pres_master.set_instantiationStandard(PB_Element(tag='instantiationStandard', value=video_codec))
             pres_master.add_instantiationIdentifier(PB_Element(['source', SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
                                                                ['annotation', 'File Name'],
                                                                tag="instantiationIdentifier",
@@ -692,7 +706,7 @@ class pbcoreBuilder(threading.Thread):
                                                              tag="instantiationFileSize",
                                                              value=str(file_size)))
 
-            if not args.nochecksum and SETTINGS.getboolean('CHECKSUM','CalculateChecksums') is True:
+            if not args.nochecksum and SETTINGS.getboolean('CHECKSUM', 'CalculateChecksums') is True:
                 print("\t"),
                 if self.verbose:
                     print "Part " + str(self._parts_progress) + " of " + str(self._parts_total) + ": ",
@@ -741,7 +755,13 @@ class pbcoreBuilder(threading.Thread):
             newfile = InstantiationEssenceTrack(type='Audio',
                                                 samplingRate=f.audioSampleRate/1000,
                                                 bitDepth=f.audioBitDepth)
-
+            audio_codec = f.audioCodec + ": " + f.audioCodecLongName
+            newfile.set_essenceTrackStandard(PB_Element(tag='essenceTrackStandard',
+                                                        value=audio_codec)) # This is really ugly code I don't know a better way
+            datarate = f.audioBitRateH.split(" ")
+            newfile.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
+                                                                tag="essenceTrackDataRate",
+                                                                value=datarate[0]))
             pres_master.add_instantiationEssenceTrack(newfile)
 
             pass
@@ -789,6 +809,8 @@ class pbcoreBuilder(threading.Thread):
                                                      location=SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource'),
                                                      duration=f.totalRunningTimeSMPTE)
 
+
+
                     size, units = self.sizeofHuman(f.file_size)
                     newAudioFile.set_instantiationFileSize(PB_Element(['unitsOfMeasure', units],
                                                                       tag="instantiationFileSize",
@@ -819,6 +841,9 @@ class pbcoreBuilder(threading.Thread):
                         access_copy.set_instantiationChannelConfiguration(PB_Element(tag="instantiationChannelConfiguration",
                                                                                      value='Stereo'))
                     newEssTrack = InstantiationEssenceTrack(type="Audio", bitDepth=f.audioBitDepth)
+                    newEssTrack.set_essenceTrackSamplingRate(PB_Element(["unitsOfMeasure", "kHz"],
+                                                                        tag="essenceTrackSamplingRate",
+                                                                        value=self._samplerate_cleanup(f.audioSampleRate)))
                     if f.file_extension.lower() == '.mp3':
                         newEssTrack.set_essenceTrackEncoding(PB_Element(tag='essenceTrackEncoding', value='MP3'))
                     datarate = f.audioBitRateH.split(" ")
@@ -841,11 +866,13 @@ class pbcoreBuilder(threading.Thread):
                 access_copy.set_instantiationMediaType(PB_Element(tag='instantiationMediaType', value='Moving Image'))
                 access_copy.set_instantiationDuration(PB_Element(tag="instantiationDuration",
                                                                  value=f.totalRunningTimeSMPTE))
+                video_codec = str(f.videoCodec + ": " + f.videoCodecLongName)
+                access_copy.set_instantiationStandard(PB_Element(tag='instantiationStandard', value=video_codec))
                 size, units = self.sizeofHuman(f.file_size)
                 access_copy.set_instantiationFileSize(PB_Element(['unitsOfMeasure', units],
                                                                  tag="instantiationFileSize",
                                                                  value=size))
-                if not args.nochecksum and SETTINGS.getboolean('CHECKSUM','CalculateChecksums') is True:
+                if not args.nochecksum and SETTINGS.getboolean('CHECKSUM', 'CalculateChecksums') is True:
                     print("\t"),
                     if self.verbose:
                         print "Part " + str(self._parts_progress) + " of " + str(self._parts_total) + ": ",
@@ -899,14 +926,18 @@ class pbcoreBuilder(threading.Thread):
                 access_copy.add_instantiationEssenceTrack(newEssTrack)
 
                 # ------------------ Audio track ------------------
+                audio_codec = f.audioCodec + ": " + f.audioCodecLongName
                 newEssTrack = InstantiationEssenceTrack(type='Audio',
-                                                        standard=f.audioCodec,
+                                                        standard=audio_codec,
                                                         samplingRate=f.audioSampleRate/1000)
-                datarate = f.videoBitRateH.split(" ")
+                datarate = f.audioBitRateH.split(" ")
                 newEssTrack.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
-                                                        tag="essenceTrackDataRate",
-                                                        value=datarate[0]))
-
+                                                                tag="essenceTrackDataRate",
+                                                                value=datarate[0]))
+                bitdepth = f.audioBitDepth
+                if bitdepth == 32:
+                    bitdepth = "32-Bit Float"
+                newEssTrack.set_essenceTrackBitDepth(PB_Element(tag='essenceTrackBitDepth', value=bitdepth))
                 access_copy.add_instantiationEssenceTrack(newEssTrack)
         return access_copy
 
