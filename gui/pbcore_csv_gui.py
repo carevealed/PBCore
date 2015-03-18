@@ -57,7 +57,7 @@ class MainWindow():
         self.fileMenu.add_separator()
         self.fileMenu.add_command(label="Exit", command=lambda: quit())
 
-        self.settingsMenu.add_command(label="View Settings...", command=self.view_settings)
+        self.settingsMenu.add_command(label="View Settings File...", command=self.view_settings)
 
         self.helpMenu.add_command(label="About...",
                                   command=lambda: tkMessageBox.showinfo(title="About",
@@ -219,6 +219,8 @@ class MainWindow():
         self.settingsText = Text(self.settingsFrame, yscrollcommand=self.scrollbar.set)
         self.settingsText.pack(fill=BOTH, expand=True)
         self.scrollbar.config(command=self.settingsText.yview)
+        closeButton = ttk.Button(self.settingsBackgroundFrame, text="Close", command=lambda: self.settingsWindow.destroy())
+        closeButton.pack()
         # print f.name
         for line in f.readlines():
             self.settingsText.insert(END, line)
@@ -493,24 +495,6 @@ class MainWindow():
     def set_calculation_progress(self, percent):
         self.calculation_progress_value_label.config(text = (str(percent)+'%'))
         self.calculation_progress_pbar.config(value=percent)
-        # percent = self.generate.calulation_progress
-
-
-        # print percent
-
-def start_gui(settings, csvfile=None):
-    root = Tk()
-    root.wm_title('PBCore Generator')
-    # global settingsFile
-    # # if settings:
-    # # settingsFile = settings
-    # self.settings = settings
-    if csvfile:
-        app = MainWindow(root, input_file=csvfile, settings=settings)
-    else:
-        app = MainWindow(root)
-    # root.option_add('*tearOff', False)
-    root.mainloop()
 
 
 class observer(threading.Thread):
@@ -535,7 +519,7 @@ class observer(threading.Thread):
         while self.records.isAlive():
             sleep(.1)
             self._md5_progress = self.records.calculation_percent
-            self._part_progress = self.records.parts_progress - 1
+            self._part_progress = self.records.parts_progress
             self._part_total = self.records.parts_total
             self._record_progress = self.records.job_progress
         self.records.join()
@@ -544,10 +528,10 @@ class observer(threading.Thread):
         self._part_progress = self.records.parts_progress
         self._part_total = self.records.parts_total
         self._record_progress = self.records.job_progress
-        print self._md5_progress
-        print self._part_progress
-        print self._part_total
-        print self._record_progress
+        print "md5_progress" + str(self._md5_progress)
+        print "part_progress" + str(self._part_progress)
+        print "part_total" + str(self._part_total)
+        print "record_progress" + str(self._record_progress)
 
         sleep(1)
 
@@ -596,6 +580,21 @@ class observer(threading.Thread):
     def calulation_progress(self):
         # print self._md5_progress
         return self._md5_progress
+
+
+def start_gui(settings, csvfile=None):
+    root = Tk()
+    root.wm_title('PBCore Generator')
+    # global settingsFile
+    # # if settings:
+    # # settingsFile = settings
+    # self.settings = settings
+    if csvfile:
+        app = MainWindow(root, input_file=csvfile, settings=settings)
+    else:
+        app = MainWindow(root)
+    # root.option_add('*tearOff', False)
+    root.mainloop()
 
 
 if __name__ == '__main__':
