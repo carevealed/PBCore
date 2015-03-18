@@ -31,7 +31,10 @@ sys.path.insert(0, os.path.abspath('/Users/lpsdesk/PycharmProjects/PBcore'))
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.todo',
+    'sphinx.ext.autosummary',
 ]
+
+autosummary_generate = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

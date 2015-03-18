@@ -1,6 +1,23 @@
 PBCore Code
 ===========
 
+.. currentmodule:: modules.PBCore.PBCore
 
-.. automodule:: PBCore.PBCore
-   :members:
+.. autosummary::
+    :toctree: generated
+
+    PB_Element
+    PBCore
+    pbcoreDescriptionDocument
+    pbcoreRelation
+    pbcoreCoverage
+    pbcoreCreator
+    pbcoreContributor
+    pbcorePublisher
+    pbcoreRightsSummary
+    CAVPP_Part
+    pbcoreInstantiation
+    InstantiationEssenceTrack
+    InstantiationRelation
+    InstantiationRights
+    pbcoreExtension

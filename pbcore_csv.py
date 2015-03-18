@@ -632,7 +632,7 @@ class pbcoreBuilder(threading.Thread):
                 if not args.nochecksum and SETTINGS.getboolean('CHECKSUM','CalculateChecksums') is True:
                     if self.verbose:
                         print("\t"),
-                        print "Part " + str(self._parts_progress) + " of " + str(self._parts_total) + ": ",
+                        print "Part " + str(self._parts_progress+1) + " of " + str(self._parts_total) + ": ",
                         logger.info("Calculating MD5 checksum for " + f.file_name + ".")
                         if f.file_size > LARGEFILE:
                             print "\tNote: " + f.file_name + " is " + f.file_size_human + " and might take some times to calculate."
@@ -671,8 +671,9 @@ class pbcoreBuilder(threading.Thread):
 
                 new_mast_part.add_instantiationEssenceTrack(newfile)
 
-                self._parts_progress += 1
                 pres_master.add_instantiationPart(new_mast_part)
+                self._parts_progress += 1
+
 
             pass
 
@@ -697,7 +698,7 @@ class pbcoreBuilder(threading.Thread):
             if not args.nochecksum and SETTINGS.getboolean('CHECKSUM', 'CalculateChecksums') is True:
                 if self.verbose:
                     print("\t"),
-                    print "Part " + str(self._parts_progress) + " of " + str(self._parts_total) + ": ",
+                    print "Part " + str(self._parts_progress + 1) + " of " + str(self._parts_total) + ": ",
                     logger.info("Calculating MD5 checksum for " + f.file_name + ".")
                     if f.file_size > LARGEFILE:
                         print "\tNote: This file is " + f.file_size_human + " and might take some times to calculate."
@@ -750,8 +751,9 @@ class pbcoreBuilder(threading.Thread):
             newfile.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
                                                                 tag="essenceTrackDataRate",
                                                                 value=datarate[0]))
-            self._parts_progress += 1
             pres_master.add_instantiationEssenceTrack(newfile)
+            self._parts_progress += 1
+
 
             pass
 
@@ -807,7 +809,7 @@ class pbcoreBuilder(threading.Thread):
                     if not args.nochecksum and SETTINGS.getboolean('CHECKSUM','CalculateChecksums') is True:
                         if self.verbose:
                             print("\t"),
-                            print "Part " + str(self._parts_progress) + " of " + str(self._parts_total) + ": ",
+                            print "Part " + str(self._parts_progress + 1) + " of " + str(self._parts_total) + ": ",
                             logger.info("Calculating MD5 checksum for " + f.file_name + ".")
                             if f.file_size > LARGEFILE:
                                 print "\tNote: This file is " + f.file_size_human + " and might take some times to calculate."
@@ -847,6 +849,7 @@ class pbcoreBuilder(threading.Thread):
                     access_copy.add_instantiationPart(newAudioFile)
                     self._parts_progress += 1
 
+
         # ============================================================ #
         # ======================= Moving Image ======================= #
         # ============================================================ #
@@ -869,7 +872,7 @@ class pbcoreBuilder(threading.Thread):
                 if not args.nochecksum and SETTINGS.getboolean('CHECKSUM', 'CalculateChecksums') is True:
                     if self.verbose:
                         print("\t"),
-                        print "Part " + str(self._parts_progress) + " of " + str(self._parts_total) + ": ",
+                        print "Part " + str(self._parts_progress + 1) + " of " + str(self._parts_total) + ": ",
                         logger.info("Calculating MD5 checksum for " + f.file_name + ".")
                         if f.file_size > LARGEFILE:
                             print "\tNote: This file is " + f.file_size_human + " and might take some times to calculate."
@@ -1016,7 +1019,7 @@ class pbcoreBuilder(threading.Thread):
 
         if record['Media Type'].lower() == 'audio' or record['Media Type'].lower() == 'sound':
         # PBcore Parts
-            self._parts_progress = 1
+            self._parts_progress = 0
             for part in parts:
                 newPart = CAVPP_Part(objectID=part.strip(),
                                      mainTitle=main_title.strip(),
@@ -1058,7 +1061,7 @@ class pbcoreBuilder(threading.Thread):
 
         elif record['Media Type'].lower() == 'moving image':
             # print "moving image"
-            self._parts_progress = 1
+            self._parts_progress = 0
             for index, part in enumerate(parts):
                 newPart = CAVPP_Part(objectID=part.strip(),
                                      mainTitle=main_title.strip(),
@@ -1144,6 +1147,7 @@ class pbcoreBuilder(threading.Thread):
             xmlFile['data'] = self.generate_pbcore(record, digital_files)
             self._xmlFiles.append(xmlFile)
             self._job_progress += 1
+
 
 
     def validate_col_titles(self):
