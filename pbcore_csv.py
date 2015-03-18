@@ -197,12 +197,9 @@ class pbcoreBuilder(threading.Thread):
             obj_ID = record['Object Identifier'].split(';')[0].split('_t')[0]
 
         if record['Project Identifier']:
-            # pbcoreInstantiation.instantiationIdentifier is part of CAVPP_Part class
             proj_ID = record['Project Identifier']
 
         if record['Asset Type']:
-            # pbcoreDescriptionDocument.pbcoreAssetType is in pbcoreDescriptionDocument()
-            # pbcoreInstantiation.pbcoreAssetType is in pbcoreDescriptionDocument()
             asset_type = record['Asset Type']
 
         if record['Main or Supplied Title']:
@@ -428,8 +425,6 @@ class pbcoreBuilder(threading.Thread):
 
 
             # Descriptive Publisher: Publisher,Distributor
-            # publisher = ""
-            #     distributor = ""
 
         if record['Publisher']:
             publisher = record['Publisher']
@@ -443,12 +438,6 @@ class pbcoreBuilder(threading.Thread):
 
 
         # Descriptive Rights
-        # copyright_statement = ""
-        #     copyright_holder = ""
-        #     copyright_holder_info = ""
-        #     copyright_dates = []
-        #     copyright_notice = ""
-        #     institutional_rights_statement_URL = ""
 
         if record['Copyright Statement']:
             rights = pbcoreRightsSummary(copyright_statement=record['Copyright Statement'].strip())
@@ -600,7 +589,7 @@ class pbcoreBuilder(threading.Thread):
 
 
     def build_preservation_master(self, record, preservation_file_set):
-        self._parts_progress = 1
+
     # for preservation_file_set in preservation_file_sets:
         lang = ''
         media_type = ''
@@ -628,6 +617,7 @@ class pbcoreBuilder(threading.Thread):
             pres_master.set_instantiationMediaType(PB_Element(tag='instantiationMediaType',
                                                               value='Sound'))
             pres_master.add_instantiationRelation(InstantiationRelation(derived_from=obj_ID))
+
             for master_part in preservation_file_set:
                 f = AudioObject(master_part)
                 new_mast_part = InstantiationPart(location=SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource'), duration=f.totalRunningTimeSMPTE)
@@ -640,8 +630,8 @@ class pbcoreBuilder(threading.Thread):
                                                                      tag="instantiationIdentifier",
                                                                      value=os.path.basename(master_part)))
                 if not args.nochecksum and SETTINGS.getboolean('CHECKSUM','CalculateChecksums') is True:
-                    print("\t"),
                     if self.verbose:
+                        print("\t"),
                         print "Part " + str(self._parts_progress) + " of " + str(self._parts_total) + ": ",
                         logger.info("Calculating MD5 checksum for " + f.file_name + ".")
                         if f.file_size > LARGEFILE:
@@ -653,12 +643,12 @@ class pbcoreBuilder(threading.Thread):
                             self._calculation_percent = f.calulation_progresss
                             sleep(.1)
                         md5 = f.MD5_hash
-                    self._parts_progress += 1
                     new_mast_part.add_instantiationIdentifier(PB_Element(['source', SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
                                                                          ['version', 'MD5'],
                                                                          ['annotation', 'checksum'],
                                                                          tag="instantiationIdentifier",
                                                                          value=md5))
+                    sleep(.5)
                 newfile = InstantiationEssenceTrack(type="Audio")
                 newfile.set_essenceTrackBitDepth(PB_Element(tag="essenceTrackBitDepth",
                                                             value=str(f.audioBitDepth)))
@@ -674,18 +664,16 @@ class pbcoreBuilder(threading.Thread):
                                                                     tag='instantiationDigital',
                                                                     value='audio/x-wav'))  # This is really ugly code I don't know a better way
                     newfile.set_essenceTrackEncoding(PB_Element(tag='essenceTrackEncoding', value='WAV'))
-                    # if f.audioCodec == 'PCM 24-bit':
-                    #     pres_master.set_instantiationStandard(PB_Element(tag='instantiationStandard',
-                    #                                                      value='Linear PCM Audio')) # This is really ugly code I don't know a better way
+
                 audio_codec = f.audioCodec + ": " + f.audioCodecLongName
                 pres_master.set_instantiationStandard(PB_Element(tag='instantiationStandard',
-                                                                 value=audio_codec)) # This is really ugly code I don't know a better way
+                                                                 value=audio_codec))
 
                 new_mast_part.add_instantiationEssenceTrack(newfile)
 
+                self._parts_progress += 1
                 pres_master.add_instantiationPart(new_mast_part)
-            # f = AudioObject(preservation_file_set)0
-            #
+
             pass
 
         # ============================================================ #
@@ -707,8 +695,8 @@ class pbcoreBuilder(threading.Thread):
                                                              value=str(file_size)))
 
             if not args.nochecksum and SETTINGS.getboolean('CHECKSUM', 'CalculateChecksums') is True:
-                print("\t"),
                 if self.verbose:
+                    print("\t"),
                     print "Part " + str(self._parts_progress) + " of " + str(self._parts_total) + ": ",
                     logger.info("Calculating MD5 checksum for " + f.file_name + ".")
                     if f.file_size > LARGEFILE:
@@ -720,12 +708,12 @@ class pbcoreBuilder(threading.Thread):
                         self._calculation_percent = f._calculation_progress
                         sleep(.1)
                     md5 = f.MD5_hash
-                self._parts_progress += 1
                 pres_master.add_instantiationIdentifier(PB_Element(['source', SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
                                                                    ['version', 'MD5'],
                                                                    ['annotation', 'checksum'],
                                                                    tag="instantiationIdentifier",
                                                                    value=md5))
+                sleep(.5)
 
             # ---------- Video essence track ----------
             newfile = InstantiationEssenceTrack(type='Video',
@@ -757,11 +745,12 @@ class pbcoreBuilder(threading.Thread):
                                                 bitDepth=f.audioBitDepth)
             audio_codec = f.audioCodec + ": " + f.audioCodecLongName
             newfile.set_essenceTrackStandard(PB_Element(tag='essenceTrackStandard',
-                                                        value=audio_codec)) # This is really ugly code I don't know a better way
+                                                        value=audio_codec))
             datarate = f.audioBitRateH.split(" ")
             newfile.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
                                                                 tag="essenceTrackDataRate",
                                                                 value=datarate[0]))
+            self._parts_progress += 1
             pres_master.add_instantiationEssenceTrack(newfile)
 
             pass
@@ -816,22 +805,26 @@ class pbcoreBuilder(threading.Thread):
                                                                       tag="instantiationFileSize",
                                                                       value=size))
                     if not args.nochecksum and SETTINGS.getboolean('CHECKSUM','CalculateChecksums') is True:
-                        print("\t"),
                         if self.verbose:
+                            print("\t"),
                             print "Part " + str(self._parts_progress) + " of " + str(self._parts_total) + ": ",
                             logger.info("Calculating MD5 checksum for " + f.file_name + ".")
                             if f.file_size > LARGEFILE:
                                 print "\tNote: This file is " + f.file_size_human + " and might take some times to calculate."
                             md5 = f.calculate_MD5(progress=True)
                         else:
-                            md5 = f.calculate_MD5()
-                        self._parts_progress += 1
+                            f.calculate_MD5(threaded=True)
+                            while f.isMD5Calculating:
+                                self._calculation_percent = f.calulation_progresss
+                                sleep(.1)
+                            md5 = f.MD5_hash
                         newAudioFile.add_instantiationIdentifier(
                             PB_Element(['source', SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
                                        ['version', 'MD5'],
                                        ['annotation', 'checksum'],
                                        tag="instantiationIdentifier",
                                        value=md5))
+                        sleep(.5)
                     if f.audioChannels == 1:
                         access_copy.set_instantiationTracks(PB_Element(tag="instantiationTracks", value='Sound'))
                         access_copy.set_instantiationChannelConfiguration(PB_Element(tag="instantiationChannelConfiguration",
@@ -852,6 +845,7 @@ class pbcoreBuilder(threading.Thread):
                                                                     value=datarate[0]))
                     newAudioFile.add_instantiationEssenceTrack(newEssTrack)
                     access_copy.add_instantiationPart(newAudioFile)
+                    self._parts_progress += 1
 
         # ============================================================ #
         # ======================= Moving Image ======================= #
@@ -873,8 +867,8 @@ class pbcoreBuilder(threading.Thread):
                                                                  tag="instantiationFileSize",
                                                                  value=size))
                 if not args.nochecksum and SETTINGS.getboolean('CHECKSUM', 'CalculateChecksums') is True:
-                    print("\t"),
                     if self.verbose:
+                        print("\t"),
                         print "Part " + str(self._parts_progress) + " of " + str(self._parts_total) + ": ",
                         logger.info("Calculating MD5 checksum for " + f.file_name + ".")
                         if f.file_size > LARGEFILE:
@@ -886,13 +880,13 @@ class pbcoreBuilder(threading.Thread):
                             self._calculation_percent = f.calulation_progresss
                             sleep(.1)
                         md5 = f.MD5_hash
-                    self._parts_progress += 1
                     access_copy.add_instantiationIdentifier(
                         PB_Element(['source', SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
                                    ['version', 'MD5'],
                                    ['annotation', 'checksum'],
                                    tag="instantiationIdentifier",
                                    value=md5))
+                    sleep(.5)
                 if f.audioChannels == 1:
                     access_copy.set_instantiationTracks(PB_Element(tag="instantiationTracks", value='Sound'))
                     access_copy.set_instantiationChannelConfiguration(PB_Element(tag="instantiationChannelConfiguration",
@@ -939,6 +933,7 @@ class pbcoreBuilder(threading.Thread):
                     bitdepth = "32-Bit Float"
                 newEssTrack.set_essenceTrackBitDepth(PB_Element(tag='essenceTrackBitDepth', value=bitdepth))
                 access_copy.add_instantiationEssenceTrack(newEssTrack)
+                self._parts_progress += 1
         return access_copy
 
     def generate_pbcore(self, record, files=None, verbose=False):
@@ -1021,6 +1016,7 @@ class pbcoreBuilder(threading.Thread):
 
         if record['Media Type'].lower() == 'audio' or record['Media Type'].lower() == 'sound':
         # PBcore Parts
+            self._parts_progress = 1
             for part in parts:
                 newPart = CAVPP_Part(objectID=part.strip(),
                                      mainTitle=main_title.strip(),
@@ -1039,17 +1035,21 @@ class pbcoreBuilder(threading.Thread):
         # -----------------------------------------------------
         #           Preservation Master
         # -----------------------------------------------------
-                for preservation_file_set in preservation_file_sets:
-                    # print preservation_file_set
-                    pres_master = self.build_preservation_master(record, preservation_file_set)
-                    newPart.add_pbcoreInstantiation(pres_master)
+                if files:
+                    # self._parts_progress = 1
+                    if preservation_file_sets:
+                        for preservation_file_set in preservation_file_sets:
+                            # print preservation_file_set
+                            pres_master = self.build_preservation_master(record, preservation_file_set)
+                            newPart.add_pbcoreInstantiation(pres_master)
 
 
         # -----------------------------------------------------
         #           access copy
         # -----------------------------------------------------
-                access_copy = self.build_access_copy(record, access_files_sets)
-                newPart.add_pbcoreInstantiation(access_copy)
+                    access_copy = self.build_access_copy(record, access_files_sets)
+                    newPart.add_pbcoreInstantiation(access_copy)
+
             descriptive.add_pbcore_part(newPart)
 
     # =================
@@ -1058,6 +1058,7 @@ class pbcoreBuilder(threading.Thread):
 
         elif record['Media Type'].lower() == 'moving image':
             # print "moving image"
+            self._parts_progress = 1
             for index, part in enumerate(parts):
                 newPart = CAVPP_Part(objectID=part.strip(),
                                      mainTitle=main_title.strip(),
@@ -1078,15 +1079,16 @@ class pbcoreBuilder(threading.Thread):
         #     print preservation_file_sets[index]
         #         for preservation_file_set in preservation_file_sets:
         #             # print preservation_file_set
-                pres_master = self.build_preservation_master(record, preservation_file_sets[index])
-                newPart.add_pbcoreInstantiation(pres_master)
+                if files:
+                    pres_master = self.build_preservation_master(record, preservation_file_sets[index])
+                    newPart.add_pbcoreInstantiation(pres_master)
         # -----------------------------------------------------
         #           access copy
         # -----------------------------------------------------
         #         print access_files_sets[index][0]
-                access_copy = self.build_access_copy(record, access_files_sets[index])
-                newPart.add_pbcoreInstantiation(access_copy)
-                descriptive.add_pbcore_part(newPart)
+                    access_copy = self.build_access_copy(record, access_files_sets[index])
+                    newPart.add_pbcoreInstantiation(access_copy)
+                    descriptive.add_pbcore_part(newPart)
 
         # Extension
         if record['Country of Creation']:
@@ -1125,8 +1127,8 @@ class pbcoreBuilder(threading.Thread):
         file_name_pattern = re.compile("[A-Z,a-z]+_\d+")
         self._job_total = len(self._records)
 
+        self._job_progress = 0
         for record in self._records:
-            self._job_progress += 1
             fileName = re.search(file_name_pattern, record['Object Identifier']).group(0)
             file_output_name = fileName + "_ONLYTEST.xml"
             if self.verbose:
@@ -1141,6 +1143,7 @@ class pbcoreBuilder(threading.Thread):
             xmlFile['name'] = file_output_name
             xmlFile['data'] = self.generate_pbcore(record, digital_files)
             self._xmlFiles.append(xmlFile)
+            self._job_progress += 1
 
 
     def validate_col_titles(self):
@@ -1300,18 +1303,9 @@ class pbcoreBuilder(threading.Thread):
         # part = []
         for file in digital_files:
             if "_prsv" in file and ".md5" not in file:
-                # if "_a_" in file:
-                # part.append(file)
-                # elif "_b_" in file:
-                #     part.append(file)
-                #     # print part
-                #     preservation.append(part)
-                #     part = []
-                # else:
                 preservation.append(file)
-                # part = []
 
-            if "_access" in file and ".md5" not in file:
+            elif "_access" in file and ".md5" not in file:
                 access.append(file)
         return preservation, access
 
@@ -1622,7 +1616,10 @@ def main():
             number_of_new_records += 1
         digital_files = record_file.locate_files(args.csv, fileName)
         # I'm sending this into miniDOM because I can't get etree to print a pretty XML
-        buf = parseString(record_file.generate_pbcore(record, digital_files))
+        if digital_files:
+            buf = parseString(record_file.generate_pbcore(record, digital_files))
+        else:
+            buf = parseString(record_file.generate_pbcore(record))
         output_file = open(file_output_name, 'w')
         output_file.write(buf.toprettyxml(encoding='utf-8'))
         output_file.close()
