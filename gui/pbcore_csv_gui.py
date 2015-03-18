@@ -12,6 +12,18 @@ __author__ = 'lpsdesk'
 from Tkinter import *
 import ttk
 
+def sep_pres_access(digital_files):
+        preservation = []
+        access = []
+        # part = []
+        for file in digital_files:
+            if "_prsv" in file and ".md5" not in file:
+                preservation.append(file)
+
+            elif "_access" in file and ".md5" not in file:
+                access.append(file)
+        return preservation, access
+
 class MainWindow():
     def __init__(self, master, input_file=None, settings=None):
         self.master = master
@@ -51,7 +63,7 @@ class MainWindow():
                                   command=lambda: tkMessageBox.showinfo(title="About",
                                                                         message="CAVPP PBCore Builder\n"
                                                                                 "2015\n\n"
-                                                                                "Programmed by Henry Borchers"))
+                                                                                "Programmed for CAVPP by Henry Borchers"))
 
         # ----------
         self.background = ttk.Frame(self.master, padding=(20,15))
@@ -128,14 +140,14 @@ class MainWindow():
         self.panel.add(self.recordsFrame)
 
         # self.recordsList = Listbox(self.recordsFrame)
-        self.recordsTree = ttk.Treeview(self.recordsFrame, columns=('xml', 'title', 'project', 'objectID', ))
-        self.recordsTree.heading('xml', text='XML')
+        self.recordsTree = ttk.Treeview(self.recordsFrame, columns=('title', 'project', 'files', 'xml_file'))
+        self.recordsTree.heading('xml_file', text='Save As')
         self.recordsTree.heading('title', text='Title')
         self.recordsTree.heading('project', text='Project')
-        self.recordsTree.heading('objectID', text='Objects')
-        self.recordsTree.column('#0', width=40, anchor='center')
-        self.recordsTree.column('xml', width=150)
-        self.recordsTree.column('project', width=150)
+        self.recordsTree.heading('files', text='Files')
+        self.recordsTree.column('#0', width=20, anchor='center')
+        self.recordsTree.column('xml_file', width=150)
+        self.recordsTree.column('project', width=100)
         self.recordsTree.column('title', width=250)
         self.recordsTree.pack(fill=BOTH, expand=True)
 
@@ -147,21 +159,21 @@ class MainWindow():
                                        relief=SUNKEN)
         # self.feedbackFrame.grid(row=3, column=1, sticky=W)
         self.panel.add(self.feedbackFrame)
-        self.total_progress_label = ttk.Label(self.feedbackFrame, text="Total Progress:")
+        self.total_progress_label = ttk.Label(self.feedbackFrame, text="Total:")
         self.total_progress_label.grid(row=0, column=0, sticky=E)
         self.total_progress_value_label = ttk.Label(self.feedbackFrame, text="(0/0)")
         self.total_progress_value_label.grid(row=0, column=1, sticky=E)
         self.total_progress_pbar = ttk.Progressbar(self.feedbackFrame, orient=HORIZONTAL, length=500, mode='determinate',value=self.item_progress.get(), maximum=self.item_total.get())
         self.total_progress_pbar.grid(row=0, column=2, sticky=W)
 
-        self.part_progress_label = ttk.Label(self.feedbackFrame, text="Part Progress:")
+        self.part_progress_label = ttk.Label(self.feedbackFrame, text="Part:")
         self.part_progress_label.grid(row=1, column=0, sticky=E)
         self.part_progress_value_label = ttk.Label(self.feedbackFrame, text="(0/0)")
         self.part_progress_value_label.grid(row=1, column=1, sticky=E)
         self.part_progress_pbar = ttk.Progressbar(self.feedbackFrame, orient=HORIZONTAL, length=500, mode='determinate', value=self.part_progress.get(), maximum=self.part_total.get())
         self.part_progress_pbar.grid(row=1, column=2, sticky=W)
 
-        self.calculation_progress_label = ttk.Label(self.feedbackFrame, text="Calculation Progress:")
+        self.calculation_progress_label = ttk.Label(self.feedbackFrame, text="Calculation:")
         self.calculation_progress_label.grid(row=2, column=0, sticky=E)
         self.calculation_progress_value_label = ttk.Label(self.feedbackFrame, text="0%")
         self.calculation_progress_value_label.grid(row=2, column=1, sticky=E)
@@ -287,7 +299,13 @@ class MainWindow():
                     self.startButton.config(state=NORMAL)
                     self.validate_details_button.config(state=DISABLED)
                     self.validate_entry.config(state=DISABLED)
-
+                else:
+                    self.validate_entry.config(state=NORMAL)
+                    self.validate_entry.delete(0,END)
+                    self.validate_entry.insert(0, "Error: CSV file not valid.")
+                    self.validate_entry.config(state=DISABLED)
+                    self.startButton.config(state=DISABLED)
+                    return False
                 # f = open(in_file, 'rU')
                 # records = []
                 # for item in csv.DictReader(f):
@@ -342,25 +360,53 @@ class MainWindow():
         for i in self.recordsTree.get_children():
             self.recordsTree.delete(i)
         for index, record in enumerate(records):
+            file_name_pattern = re.compile("[A-Z,a-z]+_\d+")
+            fileName = re.search(file_name_pattern, record['Object Identifier']).group(0)
             parts = record['Object Identifier'].split(';')
-            # self.recordsList.insert(END, record['Project Identifier'])
-            # if self.recordsTree.exists(index):
-            #     self.recordsTree.delete(index)
-            # outIndex = str(index+1)+"out"
+
+            media_files = self.locate_files(root=os.path.dirname(self.csv_filename_entry.get()), fileName=fileName)
+            pres, access = sep_pres_access(media_files)
+            media_files = pres + access
+
             outIndex = record['Main or Supplied Title']
             self.recordsTree.insert('', index, outIndex, text=index+1)
             self.recordsTree.set(outIndex, 'title', record['Main or Supplied Title'])
             self.recordsTree.set(outIndex, 'project', record['Project Identifier'])
-            self.recordsTree.set(outIndex, 'objectID', len(parts))
+            self.recordsTree.set(outIndex, 'files', str(len(media_files)) + " Files Found")
+            # fileName = fileName + "_ONLYTEST.xml"
+            self.recordsTree.set(outIndex, 'xml_file', fileName + "_ONLYTEST.xml")
             # print self.recordsTree.get_children()
-            for a_index, part in enumerate(parts):
+            # for a_index, part in enumerate(parts):
+            #     inIndex = str(a_index)+outIndex
+            #     self.recordsTree.insert(outIndex, a_index, inIndex)
+            #     self.recordsTree.set(inIndex, 'objectID', part.strip())
+            for a_index, media_file in enumerate(media_files):
                 inIndex = str(a_index)+outIndex
                 self.recordsTree.insert(outIndex, a_index, inIndex)
-                self.recordsTree.set(inIndex, 'objectID', part.strip())
+                self.recordsTree.set(inIndex, 'files', os.path.basename(media_file.strip()))
                 # print a_index
                 # self.recordsTree.set(index+1, 'object', part.strip())
             # self.recordsTree.insert('', index, index, text=record['Project Identifier'])
             # self.recordsTree.insert('', index, index, text=record['Project Identifier'])
+
+    def locate_files(self, root, fileName):
+        # search for file with fileName in it
+        found_directory = None
+        results = []
+        # check if a directory matches the file name
+        for roots, dirs, files in os.walk(os.path.dirname(root)):
+            for dir in dirs:
+                if fileName == dir:
+                    found_directory = os.path.join(roots, dir)
+
+                    break
+        # see of a file in that folder has a file with that name in it
+        if found_directory:
+            for roots, dirs, files, in os.walk(found_directory):
+                for file in files:
+                    if fileName in file:
+                        results.append(os.path.join(roots, file))
+        return results
 
     def get_records(self, file_name):
         f = open(file_name, 'rU')
@@ -395,28 +441,36 @@ class MainWindow():
                 self.generate.daemon = True
                 self.generate.start()
             self.update_progress()
-            # self.generate.join()
+
             self.running = True
         else:
             self.total_progress_pbar.stop()
             self.running = False
     def update_progress(self):
-        if self.generate.is_alive():
             # print str(self.generate.item_progress) + "/" + str(self.generate.record_total)
-            record_total = self.generate.record_total
-            record_progress = self.generate.record_progress
-            part_total = self.generate.part_total
-            part_progress = self.generate.part_progress
-            calulation_percent = self.generate.calulation_progress
+        record_total = self.generate.record_total
+        record_progress = self.generate.record_progress
+        part_total = self.generate.part_total
+        part_progress = self.generate.part_progress
+        calulation_percent = self.generate.calulation_progress
 
+        self.set_total_progress(record_progress, record_total)
+        self.set_part_progress(part_progress, part_total)
+        self.set_calculation_progress(self.generate.calulation_progress)
+        self.set_calculation_progress(calulation_percent)
+        # parts = str(part_progress) + " : " + str(part_total)
+        # total = str(record_progress) + " : " + str(record_total)
+        # print(parts, total)
+        if self.generate.is_alive():
+            self.master.after(100, self.update_progress)
+        else:
+        # self.master.after(200)
+            self.generate.join()
+            # print self.generate.calulation_progress
             self.set_total_progress(record_progress, record_total)
             self.set_part_progress(part_progress, part_total)
             self.set_calculation_progress(self.generate.calulation_progress)
             self.set_calculation_progress(calulation_percent)
-            # parts = str(part_progress) + " : " + str(part_total)
-            # total = str(record_progress) + " : " + str(record_total)
-            # print(parts, total)
-            self.master.after(100, self.update_progress)
 
 
     def set_total_progress(self, progress, total=None):
@@ -480,11 +534,22 @@ class observer(threading.Thread):
         # self.records.build_all_records()
         while self.records.isAlive():
             sleep(.1)
-            self._md5_progress =  self.records.calculation_percent
-            self._part_progress = self.records.parts_progress
+            self._md5_progress = self.records.calculation_percent
+            self._part_progress = self.records.parts_progress - 1
             self._part_total = self.records.parts_total
             self._record_progress = self.records.job_progress
-            self._record_total = self.records.job_total
+        self.records.join()
+        self._record_total = self.records.job_total
+        self._md5_progress = self.records.calculation_percent
+        self._part_progress = self.records.parts_progress
+        self._part_total = self.records.parts_total
+        self._record_progress = self.records.job_progress
+        print self._md5_progress
+        print self._part_progress
+        print self._part_total
+        print self._record_progress
+
+        sleep(1)
 
         # print "\ndone"
         # for index, record in enumerate(self.records.records):
