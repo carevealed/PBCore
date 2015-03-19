@@ -1,3 +1,9 @@
+from Queue import Queue
+import copy
+
+__author__ = 'California Audio Visual Preservation Project'
+__copyright__ = "Copyright 2015, California Audiovisual Preservation Project"
+__credits__ = "Henry Borchers"
 import os
 import sys
 import logging
@@ -14,10 +20,9 @@ from xml.dom.minidom import parseString
 from xml.etree import ElementTree
 import re
 from modules.PBCore.PBCore import *
-
+file_name_pattern = re.compile("[A-Z,a-z]+_\d+")
 
 LARGEFILE = 1065832230
-__author__ = 'lpsdesk'
 import csv
 
 officialList = ['Internet Archive URL',
@@ -125,6 +130,7 @@ class pbcoreBuilder(threading.Thread):
         self._new_records = []
         self._overwritten_records = []
         self.verbose = verbose
+        self._queue = Queue()
         self.log = ""  # TODO add loging feature
 
     @property
@@ -184,6 +190,39 @@ class pbcoreBuilder(threading.Thread):
         data = str(data/float(1000))
         # print data
         return data.rstrip('.0')
+
+    def add_job(self, record, file_name=None):
+        id = re.search(file_name_pattern, record['Object Identifier']).group(0)
+        if file_name == None:
+            file_name = os.path.join(os.path.dirname(self.source), str(id + ".xml"))
+        # id = job['Project Identifier']
+        job = dict()
+        path = os.path.dirname(self.source)
+        job['dirname'] = path
+        job['files']  = self.locate_files(path, id)
+        job['xml'] = file_name
+        job['record'] = record
+        # print "id: " + str(id)
+        # print "dirname: " + str(dirname)
+        # files = job
+        self._queue.put(job)
+
+    def show_jobs(self):
+        replacement = Queue()
+        while not self._queue.empty():
+            item = self._queue.get()
+            dirname = item['dirname']
+            files = item['files']
+            xml = item['xml']
+            record = item['record']
+            replacement.put(item)
+            print record['Object Identifier']
+            print dirname
+            print xml
+            for file in files:
+                print file
+            print ""
+        self._queue = replacement
     def build_descriptive(self, record):
         obj_ID = ''
         proj_ID = ''
@@ -589,7 +628,6 @@ class pbcoreBuilder(threading.Thread):
 
 
     def build_preservation_master(self, record, preservation_file_set):
-
     # for preservation_file_set in preservation_file_sets:
         lang = ''
         media_type = ''
@@ -681,6 +719,7 @@ class pbcoreBuilder(threading.Thread):
         # ======================= Moving Image ======================= #
         # ============================================================ #
         elif media_type.lower() == 'moving image':
+
             f = VideoObject(preservation_file_set[0])
             pres_master.set_instantiationMediaType(PB_Element(tag='instantiationMediaType', value='Moving Image'))
             video_codec = str(f.videoCodec + ": " + f.videoCodecLongName)
@@ -940,6 +979,7 @@ class pbcoreBuilder(threading.Thread):
         return access_copy
 
     def generate_pbcore(self, record, files=None, verbose=False):
+
         self._running = True
         XML = ""
         new_XML_file = PBCore(collectionSource=record['Institution'],
@@ -1375,8 +1415,22 @@ class pbcoreBuilder(threading.Thread):
         #     total = str(self._job_progress) + " : " + str(self._job_total)
         #     print(parts, total)
         #     sleep(1)
-        # pass
-        self.build_all_records()
+        for rec in self.records:
+            self.add_job(rec)
+        # self.show_jobs()
+        print "running files"
+        self._job_progress = 0
+        while not self._queue.empty():
+            queue = self._queue.get()
+            record = queue['record']
+            files = queue['files']
+            print (self.generate_pbcore(record, files))
+            print "saving xml file " + queue['xml']
+            self._job_progress += 1
+
+
+            # print self.generate_pbcore(record, files)
+        # self.build_all_records()
         self._running = False
 
 
@@ -1659,10 +1713,13 @@ def main():
 # load settings
 settingsFileName = 'settings/pbcore-csv-settings.ini'
 SETTINGS = ConfigParser()
-if isfile(settingsFileName):
+try:
+    isfile(settingsFileName)
+    f = open(settingsFileName)
+    f.close()
     SETTINGS.read(settingsFileName)
-else:
-    sys.stderr.write('Error: cannot find ' + settingsFileName + '. Quiting')
+except IOError:
+    sys.stderr.write('Error: Cannot find ' + settingsFileName + '. Quiting')
     quit()
 
 
