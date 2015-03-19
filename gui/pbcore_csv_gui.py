@@ -1,28 +1,20 @@
+__author__ = 'California Audio Visual Preservation Project'
+__copyright__ = "California Audiovisual Preservation Project. 2015"
+__credits__ = ["Henry Borchers"]
+__version__ = "0.0.0.1"
+__license__ = 'TBD'
+
 import csv
 import os
 from time import sleep
 from tkFileDialog import askopenfilename
 from tkMessageBox import showerror
-import tkMessageBox
-import pbcore_csv
+
 import threading
-
-__author__ = 'lpsdesk'
-
 from Tkinter import *
 import ttk
 
-def sep_pres_access(digital_files):
-        preservation = []
-        access = []
-        # part = []
-        for file in digital_files:
-            if "_prsv" in file and ".md5" not in file:
-                preservation.append(file)
 
-            elif "_access" in file and ".md5" not in file:
-                access.append(file)
-        return preservation, access
 
 class MainWindow():
     def __init__(self, master, input_file=None, settings=None):
@@ -60,31 +52,22 @@ class MainWindow():
         self.settingsMenu.add_command(label="View Settings File...", command=self.view_settings)
 
         self.helpMenu.add_command(label="About...",
-                                  command=lambda: tkMessageBox.showinfo(title="About",
-                                                                        message="CAVPP PBCore Builder\n"
-                                                                                "2015\n\n"
-                                                                                "Programmed for CAVPP by Henry Borchers"))
+                                  command=self.load_about_window)
 
         # ----------
-        self.background = ttk.Frame(self.master, padding=(20,15))
+        self.background = ttk.Frame(self.master, padding=(20,10))
         self.background.pack(fill=BOTH, expand=True)
         # ----------
         self.titleFrame = ttk.Frame(self.background,
                                     height=100,
                                     width=200,
-                                    padding=(30, 15),
-                                    relief=GROOVE)
+                                    padding=(30, 15))
+                                    # relief=GROOVE)
         self.titleFrame.pack(fill=BOTH)
         self.titleLabel = ttk.Label(self.titleFrame,
                                     text="CAVPP PBCore Generator",
                                     font=('TkDefaultFont', 30, 'bold')).pack()
-        # ----------
 
-        self.settingsButton = ttk.Button(self.background,
-                                         text="View Settings",
-                                         command=self.view_settings)
-        self.settingsButton.pack()
-        # ----------
 
         self.allInfoFrame = ttk.Frame(self.background)
         self.allInfoFrame.pack(fill=BOTH, expand=True)
@@ -179,7 +162,12 @@ class MainWindow():
         self.calculation_progress_value_label.grid(row=2, column=1, sticky=E)
         self.calculation_progress_pbar = ttk.Progressbar(self.feedbackFrame, orient=HORIZONTAL, length=500, maximum=100, mode='determinate')
         self.calculation_progress_pbar.grid(row=2, column=2, sticky=W)
-# ===================================
+# ============================= status bar =============================
+        self.statusBar = Label(self.master, text="test", bd=1, relief=SUNKEN, anchor=W)
+        self.statusBar.pack(side=BOTTOM, fill=X)
+
+
+# ============================= Load the data into tree =============================
         if input_file:
             self.csv_filename_entry.insert(0, input_file)
             if self.validate(input_file):
@@ -188,6 +176,12 @@ class MainWindow():
                 self.load_records_list(self.file_records.records)
 
         self.running = False
+
+    def load_about_window(self):
+        aboutRoot = Toplevel(self.master)
+        aboutRoot.wm_title("About")
+        aboutRoot.resizable(FALSE,FALSE)
+        about = AboutWindow(aboutRoot)
 
     def show_details(self):
         if self.remarks:
@@ -207,26 +201,30 @@ class MainWindow():
                     self.recordsTree.delete(i)
 
     def view_settings(self):
-        f = open(self.settings)
-        self.settingsWindow = Toplevel(self.background)
-        self.settingsWindow.title("Settings")
-        self.settingsBackgroundFrame = ttk.Frame(self.settingsWindow, padding=(5,5))
-        self.settingsBackgroundFrame.pack(fill=BOTH, expand=True)
-        self.settingsFrame = ttk.Labelframe(self.settingsBackgroundFrame, text=f.name, padding=(10,10))
-        self.settingsFrame.pack(padx=5, pady=5, fill=BOTH, expand=True)
-        self.scrollbar = Scrollbar(self.settingsFrame)
-        self.scrollbar.pack(side=RIGHT, fill=Y)
-        self.settingsText = Text(self.settingsFrame, yscrollcommand=self.scrollbar.set)
-        self.settingsText.pack(fill=BOTH, expand=True)
-        self.scrollbar.config(command=self.settingsText.yview)
-        closeButton = ttk.Button(self.settingsBackgroundFrame, text="Close", command=lambda: self.settingsWindow.destroy())
-        closeButton.pack()
-        # print f.name
-        for line in f.readlines():
-            self.settingsText.insert(END, line)
-        f.close()
+        settingsRoot = Toplevel(self.master)
+        settingsRoot.wm_title("Settings")
+        settings = SettingsWindow(settingsRoot, self.settings)
 
-        self.settingsText.config(state=DISABLED)
+        # f = open(self.settings)
+        # self.settingsWindow = Toplevel(self.background)
+        # self.settingsWindow.title("Settings")
+        # self.settingsBackgroundFrame = ttk.Frame(self.settingsWindow, padding=(5,5))
+        # self.settingsBackgroundFrame.pack(fill=BOTH, expand=True)
+        # self.settingsFrame = ttk.Labelframe(self.settingsBackgroundFrame, text=f.name, padding=(10,10))
+        # self.settingsFrame.pack(padx=5, pady=5, fill=BOTH, expand=True)
+        # self.scrollbar = Scrollbar(self.settingsFrame)
+        # self.scrollbar.pack(side=RIGHT, fill=Y)
+        # self.settingsText = Text(self.settingsFrame, yscrollcommand=self.scrollbar.set)
+        # self.settingsText.pack(fill=BOTH, expand=True)
+        # self.scrollbar.config(command=self.settingsText.yview)
+        # closeButton = ttk.Button(self.settingsBackgroundFrame, text="Close", command=lambda: self.settingsWindow.destroy())
+        # closeButton.pack()
+        # # print f.name
+        # for line in f.readlines():
+        #     self.settingsText.insert(END, line)
+        # f.close()
+        #
+        # self.settingsText.config(state=DISABLED)
 
     def edit_file(self):
         print "Editing: " + self.csv_filename_entry.get()
@@ -424,18 +422,9 @@ class MainWindow():
 
         if self.running is False:
             self.display_records = []
-            # if self.validate(self.csv_filename_entry.get()) is False:
-            #     print "not going to happen"
-            # else:
             self.display_records = self.get_records(self.csv_filename_entry.get())
             self.set_total_progress(progress=0, total=10)
-            # self.total_progress_value_label.config(text=len(self.records))
-            # for index, record in enumerate(self.records):
-            #     print record
-            #     print index
-            #     self.update_total_progress(index+1)
-            #     self.master.after(10000)
-            # self.total_progress_pbar.start()
+
             if self.validate(self.csv_filename_entry.get()):
                 savefile = pbcore_csv.pbcoreBuilder(self.csv_filename_entry.get())
 
@@ -495,7 +484,72 @@ class MainWindow():
     def set_calculation_progress(self, percent):
         self.calculation_progress_value_label.config(text = (str(percent)+'%'))
         self.calculation_progress_pbar.config(value=percent)
+class AboutWindow():
+    def __init__(self, master):
+        self.master = master
+        self.master.resizable(width=None, height=None)
+        self.background = ttk.Frame(self.master, width=20, padding=10)
+        self.background.pack(fill=BOTH, expand=True)
 
+# ----------------- Title
+        self.titleFrame = ttk.Frame(self.background, width=20, padding=10, relief=RIDGE)
+        self.titleFrame.pack()
+        self.titleLabel = ttk.Label(self.titleFrame, text="CAVPP PBCore Builder")
+        self.titleLabel.pack()
+        self.versionLabel = ttk.Label(self.titleFrame, text="Version: " + __version__)
+        self.versionLabel.pack()
+
+# ----------------- More info
+        self.moreInfoframe = ttk.Labelframe(self.background, text="Info")
+        self.moreInfoframe.pack(fill=BOTH, expand=True)
+
+        self.copyrightTitleLabel = ttk.Label(self.moreInfoframe, text="Copyright:")
+        self.copyrightTitleLabel.grid(column=0, row=0, sticky=W+N)
+        self.copyrightDataLabel = ttk.Label(self.moreInfoframe, text=__copyright__)
+        self.copyrightDataLabel.grid(column=1, row=0, sticky=W)
+
+        self.LicenseTitleLabel = ttk.Label(self.moreInfoframe, text="License:")
+        self.LicenseTitleLabel.grid(column=0, row=1, sticky=W+N)
+        self.LicenseDataLabel = ttk.Label(self.moreInfoframe, text=__license__)
+        self.LicenseDataLabel.grid(column=1, row=1, sticky=W)
+
+        self.creditsTitleLabel = ttk.Label(self.moreInfoframe, text="Credits:")
+        self.creditsTitleLabel.grid(column=0, row=2, sticky=W+N)
+        names = ""
+        for credit in __credits__:
+            names = names + credit + "\n"
+        self.creditsdataLabel = ttk.Label(self.moreInfoframe, text=names)
+        self.creditsdataLabel.grid(column=1, row=2, sticky=W)
+
+        self.closeButton = ttk.Button(self.background, text="Close", command=lambda: self.master.destroy())
+        self.closeButton.pack()
+
+class SettingsWindow():
+    def __init__(self, master, settingFile):
+        f = open(settingFile)
+        self.master = master
+        self.master.resizable(False, False)
+        self.master.title("Settings")
+        # --------
+        self.settingsBackgroundFrame = ttk.Frame(self.master, padding=(5,5))
+        self.settingsBackgroundFrame.pack(fill=BOTH, expand=True)
+
+        # --------
+        self.settingsFrame = ttk.Labelframe(self.settingsBackgroundFrame, text=settingFile, padding=(10,10))
+        self.settingsFrame.pack(padx=5, pady=5, fill=BOTH, expand=True)
+        self.scrollbar = Scrollbar(self.settingsFrame)
+        self.scrollbar.pack(side=RIGHT, fill=Y)
+        self.settingsText = Text(self.settingsFrame, yscrollcommand=self.scrollbar.set)
+        self.settingsText.pack(fill=BOTH, expand=True)
+        self.scrollbar.config(command=self.settingsText.yview)
+        closeButton = ttk.Button(self.settingsBackgroundFrame, text="Close", command=lambda: self.master.destroy())
+        closeButton.pack()
+
+        for line in f.readlines():
+            self.settingsText.insert(END, line)
+        f.close()
+
+        self.settingsText.config(state=DISABLED)
 
 class observer(threading.Thread):
     def __init__(self, records):
@@ -528,10 +582,7 @@ class observer(threading.Thread):
         self._part_progress = self.records.parts_progress
         self._part_total = self.records.parts_total
         self._record_progress = self.records.job_progress
-        print "md5_progress" + str(self._md5_progress)
-        print "part_progress" + str(self._part_progress)
-        print "part_total" + str(self._part_total)
-        print "record_progress" + str(self._record_progress)
+
 
         sleep(1)
 
@@ -581,6 +632,17 @@ class observer(threading.Thread):
         # print self._md5_progress
         return self._md5_progress
 
+def sep_pres_access(digital_files):
+        preservation = []
+        access = []
+        # part = []
+        for file in digital_files:
+            if "_prsv" in file and ".md5" not in file:
+                preservation.append(file)
+
+            elif "_access" in file and ".md5" not in file:
+                access.append(file)
+        return preservation, access
 
 def start_gui(settings, csvfile=None):
     root = Tk()
@@ -598,4 +660,15 @@ def start_gui(settings, csvfile=None):
 
 
 if __name__ == '__main__':
-    print("Not a standalone program. Please run pbcore-csv.py -g to see the GUI")
+    sys.stderr.write("Not a standalone program. Please run pbcore-csv.py -g to run the GUI")
+    # print()
+    # TODO: Delete when done testing -------#-|
+    root = Tk()                             # |
+    ini_file = "/Users/lpsdesk/PycharmProjects/PBcore/settings/pbcore-csv-settings.ini"
+    root.wm_title('PBCore Generator')       # |
+    root.resizable(FALSE,FALSE)             # |
+    app = SettingsWindow(root, ini_file)    # | <== This can go when done testing --<
+    root.mainloop()                         # |
+    # --------------------------------------#-|
+else:
+    import pbcore_csv
