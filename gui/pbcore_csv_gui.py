@@ -661,14 +661,14 @@ def start_gui(settings, csvfile=None):
 
 if __name__ == '__main__':
     sys.stderr.write("Not a standalone program. Please run pbcore-csv.py -g to run the GUI")
-    # print()
-    # TODO: Delete when done testing -------#-|
-    root = Tk()                             # |
-    ini_file = "/Users/lpsdesk/PycharmProjects/PBcore/settings/pbcore-csv-settings.ini"
-    root.wm_title('PBCore Generator')       # |
-    root.resizable(FALSE,FALSE)             # |
-    app = SettingsWindow(root, ini_file)    # | <== This can go when done testing --<
-    root.mainloop()                         # |
+    # # print()
+    # # TODO: Delete when done testing -------#-|
+    # root = Tk()                             # |
+    # ini_file = "/Users/lpsdesk/PycharmProjects/PBcore/settings/pbcore-csv-settings.ini"
+    # root.wm_title('PBCore Generator')       # |
+    # root.resizable(FALSE,FALSE)             # |
+    # app = SettingsWindow(root, ini_file)    # | <== This can go when done testing --<
+    # root.mainloop()                         # |
     # --------------------------------------#-|
 else:
     import pbcore_csv
