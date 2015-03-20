@@ -20,7 +20,7 @@ from xml.dom.minidom import parseString
 from xml.etree import ElementTree
 import re
 from modules.PBCore.PBCore import *
-file_name_pattern = re.compile("[A-Z,a-z]+_\d+")
+FILE_NAME_PATTERN = re.compile("[A-Z,a-z]+_\d+")
 
 LARGEFILE = 1065832230
 import csv
@@ -203,7 +203,7 @@ class pbcoreBuilder(threading.Thread):
         return data.rstrip('.0')
 
     def add_job(self, record, file_name=None):
-        id = re.search(file_name_pattern, record['Object Identifier']).group(0)
+        id = re.search(FILE_NAME_PATTERN, record['Object Identifier']).group(0)
         if file_name == None:
             file_name = os.path.join(os.path.dirname(self.source), str(id + ".xml"))
         # id = job['Project Identifier']
@@ -245,7 +245,7 @@ class pbcoreBuilder(threading.Thread):
         inst_name = ''
         inst_URL = ''
         if record['Object Identifier']:
-            obj_ID = record['Object Identifier'].split(';')[0].split('_t')[0]
+            obj_ID = record['Object Identifier'].split(';')[0].split('_t')[0].split('_r')[0]
 
         if record['Project Identifier']:
             proj_ID = record['Project Identifier']
@@ -1001,15 +1001,15 @@ class pbcoreBuilder(threading.Thread):
         new_XML_file = PBCore(collectionSource=record['Institution'],
                               collectionTitle=record['Collection Guide Title'])
         if files:
-            preservation_file_sets, access_files_sets = self.sep_pres_access(files)
+            preservation_file_sets, access_files_sets = sep_pres_access(files)
         else:
-            file_name_pattern = re.compile("[A-Z,a-z]+_\d+")
-            fileName = re.search(file_name_pattern, record['Object Identifier']).group(0)
+            # file_name_pattern = re.compile("[A-Z,a-z]+_\d+")
+            fileName = re.search(FILE_NAME_PATTERN, record['Object Identifier']).group(0)
             newfiles = self.locate_files(os.path.abspath(self.source), fileName)
-            preservation_file_sets, access_files_sets = self.sep_pres_access(newfiles)
+            preservation_file_sets, access_files_sets = sep_pres_access(newfiles)
         self._parts_total = len(preservation_file_sets) + len(access_files_sets)
-        preservation_file_sets = self.group_sides(preservation_file_sets)
-        access_files_sets = self.group_sides(access_files_sets)
+        preservation_file_sets = group_sides(preservation_file_sets)
+        access_files_sets = group_sides(access_files_sets)
 
         # pbcoreDescriptionDocument
         obj_ID = ""
@@ -1183,12 +1183,12 @@ class pbcoreBuilder(threading.Thread):
 
 
     def build_all_records(self):
-        file_name_pattern = re.compile("[A-Z,a-z]+_\d+")
+        # file_name_pattern = re.compile("[A-Z,a-z]+_\d+")
         self._job_total = len(self._records)
 
         self._job_progress = 0
         for record in self._records:
-            fileName = re.search(file_name_pattern, record['Object Identifier']).group(0)
+            fileName = re.search(FILE_NAME_PATTERN, record['Object Identifier']).group(0)
             file_output_name = fileName + "_ONLYTEST.xml"
             if self.verbose:
                 logger.info("Producing PBCore XML for " + fileName + ".")
@@ -1335,40 +1335,6 @@ class pbcoreBuilder(threading.Thread):
                         results.append(os.path.join(roots, file))
         return results
 
-
-
-
-    def group_sides(self, digital_files):
-        set = []
-        part = []
-        for file in digital_files:
-            if "_a_" in file:
-                part.append(file)
-            elif "_b_" in file:
-                part.append(file)
-                set.append(part)
-                part = []
-            else:
-                part.append(file)
-                set.append(part)
-                part = []
-        return set
-
-        pass
-
-
-    def sep_pres_access(self, digital_files):
-        preservation = []
-        access = []
-        # part = []
-        for file in digital_files:
-            if "_prsv" in file and ".md5" not in file:
-                preservation.append(file)
-
-            elif "_access" in file and ".md5" not in file:
-                access.append(file)
-        return preservation, access
-
     def load_records(self):
 
         f = open(self.source, 'rU')
@@ -1381,17 +1347,17 @@ class pbcoreBuilder(threading.Thread):
 
 
     def check_files_exist(self):
-        file_name_pattern = re.compile("[A-Z,a-z]+_\d+")
+        # file_name_pattern = re.compile("[A-Z,a-z]+_\d+")
         files_not_found = []
         warnings = []
         self.load_records()
         for record in self._records:
-            fileName = re.search(file_name_pattern, record['Object Identifier']).group(0)
+            fileName = re.search(FILE_NAME_PATTERN, record['Object Identifier']).group(0)
             # logging.debug("Locating possible files for: " + fileName)
             digital_files = self.locate_files(self.source, fileName)
             if digital_files:
                 # logger.debug("Files located for: " + fileName)
-                preservation_files, access_files = self.sep_pres_access(digital_files)
+                preservation_files, access_files = sep_pres_access(digital_files)
                 if not preservation_files:
                     warning = dict()
                     warning['record'] = record['Project Identifier']
@@ -1530,6 +1496,40 @@ def proceed(message, warnings=None):
 
 
 
+
+
+def group_sides(digital_files):
+    set = []
+    part = []
+    for file in digital_files:
+        if "_a_" in file:
+            part.append(file)
+        elif "_b_" in file:
+            part.append(file)
+            set.append(part)
+            part = []
+        else:
+            part.append(file)
+            set.append(part)
+            part = []
+    return set
+
+    pass
+
+
+def sep_pres_access(digital_files):
+    preservation = []
+    access = []
+    # part = []
+    for file in digital_files:
+        if "_prsv" in file and ".md5" not in file:
+            preservation.append(file)
+
+        elif "_access" in file and ".md5" not in file:
+            access.append(file)
+    return preservation, access
+
+
 def main():
     # ----------Setting up the logs----------
     mode = "normal"
@@ -1644,9 +1644,9 @@ def main():
 
         # ---------- Check if XML file already exists. ----------
 
-    file_name_pattern = re.compile("[A-Z,a-z]+_\d+")
+    # file_name_pattern = re.compile("[A-Z,a-z]+_\d+")
     for record in record_file.records:
-        fileName = re.search(file_name_pattern, record['Object Identifier']).group(0)
+        fileName = re.search(FILE_NAME_PATTERN, record['Object Identifier']).group(0)
         file_output_name = fileName + "_ONLYTEST.xml"
         if isfile(file_output_name):
             warning = dict()
@@ -1685,7 +1685,7 @@ def main():
     logging.info("Generating PBCore...")
     # record_file.build_all_records()
     # print record_file.overwritten_records
-    file_name_pattern = re.compile("[A-Z,a-z]+_\d+")
+    # file_name_pattern = re.compile("[A-Z,a-z]+_\d+")
     number_of_records = 0
     number_of_new_records = 0
     number_of_rewritten_records = 0
@@ -1695,7 +1695,7 @@ def main():
     files_created = []
     for record in record_file.records:
         print("")
-        fileName = re.search(file_name_pattern, record['Object Identifier']).group(0)
+        fileName = re.search(FILE_NAME_PATTERN, record['Object Identifier']).group(0)
         logger.info("Producing PBCore XML for " + fileName + ".")
         file_output_name = fileName + "_ONLYTEST.xml"
         if isfile(file_output_name):
