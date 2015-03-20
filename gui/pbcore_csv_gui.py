@@ -105,12 +105,12 @@ class MainWindow():
         self.locateCSVButton = ttk.Button(self.dataEntryFrame,
                                           text='Browse',
                                           command=self.retrieve_folder)
-        self.locateCSVButton.grid(row=2, column=0, sticky=E)
+        self.locateCSVButton.grid(row=2, column=6, sticky=E)
 
         self.startButton = ttk.Button(self.dataEntryFrame,
                                       text='Start',
                                       command=self.start)
-        self.startButton.grid(row=3, column=0, sticky=E)
+        self.startButton.grid(row=3, column=6, sticky=E)
 
         self.validate_label = ttk.Label(self.dataEntryFrame, text='File Status:')
         self.validate_label.grid(row=3, column=0, sticky=W)
