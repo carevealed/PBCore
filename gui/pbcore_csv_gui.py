@@ -4,7 +4,7 @@ import tkFileDialog
 __author__ = 'California Audio Visual Preservation Project'
 __copyright__ = "California Audiovisual Preservation Project. 2015"
 __credits__ = ["Henry Borchers"]
-__version__ = "0.0.0.1"
+__version__ = "0.1"
 __license__ = 'TBD'
 
 import csv
@@ -40,12 +40,18 @@ class MainWindow():
         self.menu_bar = Menu(master)
         self.master.config(menu=self.menu_bar)
         self.fileMenu = Menu(self.menu_bar)
+        self.recordMenu = Menu(self.menu_bar)
         self.settingsMenu = Menu(self.menu_bar)
         self.helpMenu = Menu(self.menu_bar)
 
         self.menu_bar.add_cascade(menu=self.fileMenu, label="File")
+        self.menu_bar.add_cascade(menu=self.recordMenu, label="Record")
         self.menu_bar.add_cascade(menu=self.settingsMenu, label="Settings")
         self.menu_bar.add_cascade(menu=self.helpMenu, label="Help")
+
+        self.recordMenu.add_command(label="Change Export Name...")
+        self.recordMenu.add_command(label="More Info...")
+
 
         self.fileMenu.add_command(label="Open...", command=self.retrieve_folder)
         self.fileMenu.entryconfig('Open...', accelerator='Ctrl + O')
@@ -134,16 +140,18 @@ class MainWindow():
         self.recordsTree.heading('title', text='Title')
         self.recordsTree.heading('project', text='Project')
         self.recordsTree.heading('files', text='Files')
-        self.recordsTree.column('#0', width=20, anchor='center')
+        self.recordsTree.column('#0', width=10, anchor='center')
         self.recordsTree.column('xml_file', width=150)
-        self.recordsTree.column('project', width=100)
-        self.recordsTree.column('title', width=250)
+        self.recordsTree.column('project', width=50)
+        self.recordsTree.column('files', width=50)
+        self.recordsTree.column('title', width=300)
         self.recordsTree.pack(fill=BOTH, expand=True)
 
         if system() == 'Darwin':
             self.recordsTree.bind("<Button-2>", self._popup)
         else:
             self.recordsTree.bind("<Button-3>", self._popup)
+        self.recordsTree.bind("<Double-Button-1>", lambda e: self.view_item_details(self.recordsTree.selection()))
 
         # --------------------  Feedback  --------------------
         self.feedbackFrame = ttk.Frame(self.panel,
@@ -197,16 +205,17 @@ class MainWindow():
     def _popup(self, event):
         # self.propertyMenu.post()
         if self.recordsTree.selection():
-            print "gotcha", self.recordsTree.selection()
+            # print "gotcha", self.recordsTree.selection()
             self.propertyMenu.post(event.x_root, event.y_root)
 
     def view_item_details(self, record):
         item = record[0]
         project_id = self.recordsTree.set(item)['project']
-        print(project_id)
+        xml = self.recordsTree.set(item)['xml_file']
+        # print(project_id)
         itemsRoot = Toplevel(self.master)
         itemsRoot.wm_title("Details: " + project_id)
-        item = RecordDetailsWindow(itemsRoot, self.csv_filename_entry.get(), project_id)
+        item = RecordDetailsWindow(itemsRoot, self.csv_filename_entry.get(), project_id, xml=xml)
 
 
     def change_export(self, record):
@@ -403,7 +412,7 @@ class MainWindow():
             fileName = re.search(FILE_NAME_PATTERN, record['Object Identifier']).group(0)
             parts = record['Object Identifier'].split(';')
 
-            media_files = self.locate_files(root=os.path.dirname(self.csv_filename_entry.get()), fileName=fileName)
+            media_files = locate_files(root=os.path.dirname(self.csv_filename_entry.get()), fileName=fileName)
             pres, access = sep_pres_access(media_files)
             media_files = pres + access
 
@@ -420,24 +429,7 @@ class MainWindow():
             #     self.recordsTree.insert(outIndex, a_index, inIndex)
             #     self.recordsTree.set(inIndex, 'files', os.path.basename(media_file.strip()))
 
-    def locate_files(self, root, fileName):
-        # search for file with fileName in it
-        found_directory = None
-        results = []
-        # check if a directory matches the file name
-        for roots, dirs, files in os.walk(os.path.dirname(root)):
-            for dir in dirs:
-                if fileName == dir:
-                    found_directory = os.path.join(roots, dir)
 
-                    break
-        # see of a file in that folder has a file with that name in it
-        if found_directory:
-            for roots, dirs, files, in os.walk(found_directory):
-                for file in files:
-                    if fileName in file:
-                        results.append(os.path.join(roots, file))
-        return results
 
     def get_records(self, file_name):
         f = open(file_name, 'rU')
@@ -685,6 +677,27 @@ class observer(threading.Thread):
         # print self._md5_progress
         return self._md5_progress
 
+def locate_files(root, fileName):
+
+
+    # search for file with fileName in it
+    found_directory = None
+    results = []
+    # check if a directory matches the file name
+    for roots, dirs, files in os.walk(os.path.dirname(root)):
+        for dir in dirs:
+            if fileName == dir:
+                found_directory = os.path.join(roots, dir)
+
+                break
+    # see of a file in that folder has a file with that name in it
+    if found_directory:
+        for roots, dirs, files, in os.walk(found_directory):
+            for file in files:
+                if fileName in file:
+                    results.append(os.path.join(roots, file))
+    return results
+
 def sep_pres_access(digital_files):
         preservation = []
         access = []
@@ -712,13 +725,17 @@ def start_gui(settings, csvfile=None):
     root.mainloop()
 
 class RecordDetailsWindow():
-    def __init__(self, master, csv, projectID):
+    #TODO Make a singleton
+    def __init__(self, master, csv, projectID, xml=None):
+        self.xml = xml
+        self.csv = csv
+        self.project_id = projectID
         self.style = ttk.Style()
-        self.style.configure('labels.TLabel', wraplength=150)
-        self.style.configure('labels.TEntry', width=300)
+        self.style.configure('labels.TLabel', wraplength=200)
+        self.style.configure('labels.TEntry', width=350)
         self.master = master
         # print "new records details: " + projectID + " in " + csv
-        data = pbcore_csv.pbcoreBuilder(csv)
+        data = pbcore_csv.pbcoreBuilder(self.csv)
         data.load_records()
         self.properties = data.get_record(projectID)
 
@@ -731,13 +748,36 @@ class RecordDetailsWindow():
         self.titleFrame.pack(pady=20)
         self.label = ttk.Label(self.titleFrame, text="Details")
         self.label.pack()
+        # ------------ XML file --------------
+        self.xmlFrame = ttk.Frame(self.background, padding=(10,10))
+        self.xmlFrame.pack(fill=X, expand=True)
+        self.xmlFrame.grid_columnconfigure(0, weight=0)
+        self.xmlFrame.grid_columnconfigure(1, weight=1)
+        self.xmlFrame.grid_columnconfigure(2, weight=0)
+
+
+        self.xmlLabel = ttk.Label(self.xmlFrame, text="Save XML record as:")
+        self.xmlLabel.grid(column=0, row=0, sticky=W)
+
+        self.xmlEntry = ttk.Entry(self.xmlFrame)
+        self.xmlEntry.grid(column=1, row=0, sticky=W+E)
+
+        if xml:
+            self.xmlEntry.insert(0, xml)
+        self.xmlSaveAsButton = ttk.Button(self.xmlFrame, text="Save As", command=self.save_as)
+        self.xmlSaveAsButton.grid(column=2, row=0, sticky=E)
+        # ------------- panel -------------
+
+        self.panel = ttk.PanedWindow(self.background, orient=VERTICAL)
+        self.panel.pack(fill=BOTH, expand=True)
+
 
         # ------------ data --------------
 
         # self.dataOuterFrame = ttk.Frame(self.background, padding=(10,10))
-        self.dataOuterFrame = ttk.LabelFrame(self.background, text="Record Data")
-        self.dataOuterFrame.pack(fill=BOTH, expand=True)
-
+        self.dataOuterFrame = ttk.Frame(self.background, relief=SUNKEN, padding=(2,2))
+        # self.dataOuterFrame.pack(fill=BOTH, expand=True)
+        self.panel.add(self.dataOuterFrame, weight=4)
         self.vscrollbar = Scrollbar(self.dataOuterFrame, orient=VERTICAL)
         self.vscrollbar.pack(fill=Y, side=RIGHT, expand=FALSE)
         self.canvas=Canvas(self.dataOuterFrame, yscrollcommand=self.vscrollbar.set)
@@ -746,10 +786,10 @@ class RecordDetailsWindow():
         self.canvas.yview_moveto(0)
         self.vscrollbar.config(command=self.canvas.yview)
 
-        self.dataFrame = interior = Frame(self.canvas)
-        self.dataFrame.pack()
-        interior_id = self.canvas.create_window(0, 0, window=interior,
-                                           anchor=NW)
+        # self.dataFrame = Frame(self.canvas)
+        self.dataFrame = interior = ttk.Frame(self.canvas)
+        # self.dataFrame.pack()
+        interior_id = self.canvas.create_window(0, 0, window=interior, anchor=NW)
         def _configure_interior(event):
                 # update the scrollbars to match the size of the inner frame
                 size = (interior.winfo_reqwidth(), interior.winfo_reqheight())
@@ -778,464 +818,477 @@ class RecordDetailsWindow():
         #     label.grid(column=column, row=row, sticky=E)
         #     entry.grid(column=column+1, row=row, sticky=E)
         # ---------Column 0+1+3 -------
-        self.Date_Created_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Date Created:")
-        self.Date_Created_Label.grid(row=0, column=0, sticky=N+E)
-
-
-        self.Date_Created_Entry = ttk.Entry(self.dataFrame)
-        self.Date_Created_Entry.grid(row=0, column=1, columnspan=2, sticky=NE+W)
-
-        self.Object_ARK_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Object_ARK:")
-        self.Object_ARK_Label.grid(row=1, column=0, sticky=N+E)
-
-        self.Object_ARK_Entry = ttk.Entry(self.dataFrame)
-        self.Object_ARK_Entry.grid(row=1, column=1, columnspan=2, sticky=N+E+W)
-
-        self.Timecode_Content_Begins_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Timecode Content Begins:")
-        self.Timecode_Content_Begins_Label.grid(row=2, column=0, sticky=N+E)
-
-        self.Timecode_Content_Begins_Entry = ttk.Entry(self.dataFrame)
-        self.Timecode_Content_Begins_Entry.grid(row=2, column=1, columnspan=2, sticky=N+E+W)
-
-        self.Media_Type_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Media Type:")
-        self.Media_Type_Label.grid(row=3, column=0, sticky=N+E)
-
-        self.Media_Type_Entry = ttk.Entry(self.dataFrame)
-        self.Media_Type_Entry.grid(row=3, column=1, columnspan=2, sticky=N+E+W)
-
-        self.Interviewee_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Interviewee:")
-        self.Interviewee_Label.grid(row=4, column=0, sticky=N+E)
-
-        self.Interviewee_Entry = ttk.Entry(self.dataFrame)
-        self.Interviewee_Entry.grid(row=4, column=1, columnspan=2, sticky=N+E+W)
-
-        self.Series_Title_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Series Title:")
-        self.Series_Title_Label.grid(row=5, column=0, sticky=N+E)
-
-        self.Series_Title_Entry = ttk.Entry(self.dataFrame)
-        self.Series_Title_Entry.grid(row=5, column=1, columnspan=2, sticky=N+E+W)
-
-        self.Temporal_Coverage_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Temporal Coverage:")
-        self.Temporal_Coverage_Label.grid(row=6, column=0, sticky=N+E)
-
-        self.Temporal_Coverage_Entry = ttk.Entry(self.dataFrame)
-        self.Temporal_Coverage_Entry.grid(row=6, column=1, columnspan=2, sticky=N+E+W)
-
-        self.Writer_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Writer:")
-        self.Writer_Label.grid(row=7, column=0, sticky=N+E)
-
-        self.Writer_Entry = ttk.Entry(self.dataFrame)
-        self.Writer_Entry.grid(row=7, column=1, columnspan=2, sticky=N+W+E)
-
-        self.Institution_URL_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Institution URL:")
-        self.Institution_URL_Label.grid(row=8, column=0, sticky=N+E)
-
-        self.Institution_URL_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Institution_URL_Entry.grid(row=8, column=1, columnspan=2, sticky=N+E+W)
-
-        self.Project_Identifier_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Project Identifier:")
-        self.Project_Identifier_Label.grid(row=9, column=0, sticky=N+E)
-
-        self.Project_Identifier_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Project_Identifier_Entry.grid(row=9, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Quality_Control_Notes_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Quality Control Notes:")
-        self.Quality_Control_Notes_Label.grid(row=10, column=0, sticky=N+E)
-
-        self.Quality_Control_Notes_Entry = Text(self.dataFrame, width=40, height=10, wrap=WORD)
-        self.Quality_Control_Notes_Entry.grid(row=10, column=1, columnspan=2, rowspan=5, sticky=N+E+W)
-
-        self.Silent_or_Sound_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Silent or Sound:")
-        self.Silent_or_Sound_Label.grid(row=15, column=0, sticky=N+E)
-
-        self.Silent_or_Sound_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Silent_or_Sound_Entry.grid(row=15, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Camera_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Camera:")
-        self.Camera_Label.grid(row=16, column=0, sticky=N+E)
-
-        self.Camera_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Camera_Entry.grid(row=16, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Music_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Music:")
-        self.Music_Label.grid(row=17, column=0, sticky=N+E)
-
-        self.Music_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Music_Entry.grid(row=17, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Editor_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Editor:")
-        self.Editor_Label.grid(row=18, column=0, sticky=N+E)
-
-        self.Editor_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Editor_Entry.grid(row=18, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Track_Standard_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Track Standard:")
-        self.Track_Standard_Label.grid(row=19, column=0, sticky=N+E)
-
-        self.Track_Standard_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Track_Standard_Entry.grid(row=19, column=1, columnspan=2, sticky=N+E+W)
-
-        self.CONTENTdm_number_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="CONTENTdm number:")
-        self.CONTENTdm_number_Label.grid(row=20, column=0, sticky=N+E)
-
-        self.CONTENTdm_number_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.CONTENTdm_number_Entry.grid(row=20, column=1, columnspan=2, sticky=N+E+W)
-
-        self.Subtitles_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Subtitles:")
-        self.Subtitles_Label.grid(row=19, column=0, sticky=N+E)
-
-        self.Subtitles_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Subtitles_Entry.grid(row=19, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Distributor_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Distributor:")
-        self.Distributor_Label.grid(row=20, column=0, sticky=N+E)
-
-        self.Distributor_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Distributor_Entry.grid(row=20, column=1, columnspan=2, sticky=N+E+W)
-
-        self.Date_modified_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Date modified:")
-        self.Date_modified_Label.grid(row=19, column=0, sticky=N+E)
-
-        self.Date_modified_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Date_modified_Entry.grid(row=19, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Subject_Topic_Authority_Source_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Subject Topic Authority Source:")
-        self.Subject_Topic_Authority_Source_Label.grid(row=20, column=0, sticky=N+E)
-
-        self.Subject_Topic_Authority_Source_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Subject_Topic_Authority_Source_Entry.grid(row=20, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Aspect_Ratio_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Aspect Ratio:")
-        self.Aspect_Ratio_Label.grid(row=21, column=0, sticky=N+E)
-
-        self.Aspect_Ratio_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Aspect_Ratio_Entry.grid(row=21, column=1, columnspan=2, sticky=N+E+W)
-
-        self.Total_Number_of_Reels_or_Tapes_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Total Number of Reels or Tapes:")
-        self.Total_Number_of_Reels_or_Tapes_Label.grid(row=22, column=0, sticky=N+E)
-
-        self.Total_Number_of_Reels_or_Tapes_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Total_Number_of_Reels_or_Tapes_Entry.grid(row=22, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Copyright_Holder_Info_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Copyright Holder Info:")
-        self.Copyright_Holder_Info_Label.grid(row=23, column=0, sticky=N+E)
-
-        self.Copyright_Holder_Info_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Copyright_Holder_Info_Entry.grid(row=23, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Running_Speed_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Running Speed")
-        self.Running_Speed_Label.grid(row=24, column=0, sticky=N+E)
-
-        self.Running_Speed_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Running_Speed_Entry.grid(row=24, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Subject_Entity_Authority_Source_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Subject Entity Authority Source:")
-        self.Subject_Entity_Authority_Source_Label.grid(row=25, column=0, sticky=N+E)
-
-        self.Subject_Entity_Authority_Source_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Subject_Entity_Authority_Source_Entry.grid(row=25, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Additional_Technical_Notes_for_Overall_Work_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Additional Technical Notes for Overall Work:")
-        self.Additional_Technical_Notes_for_Overall_Work_Label.grid(row=26, column=0, sticky=N+E)
-
-        # self.Additional_Technical_Notes_for_Overall_Work_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Additional_Technical_Notes_for_Overall_Work_Entry = Text(self.dataFrame, width=40, height=10, wrap=WORD)
-        self.Additional_Technical_Notes_for_Overall_Work_Entry.grid(row=26, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Musician_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Musician")
-        self.Musician_Label.grid(row=27, column=0, sticky=N+E)
-
-        self.Musician_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Musician_Entry.grid(row=27, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Main_or_Supplied_Title_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Main or Supplied Title:")
-        self.Main_or_Supplied_Title_Label.grid(row=28, column=0, sticky=N+E)
-
-        self.Main_or_Supplied_Title_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Main_or_Supplied_Title_Entry.grid(row=28, column=1, columnspan=2, sticky=N+S+E+W)
-
         self.Internet_Archive_URL_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Internet Archive URL:")
-        self.Internet_Archive_URL_Label.grid(row=29, column=0, sticky=N+E)
-
+        self.Internet_Archive_URL_Label.grid(row=0, column=0, sticky=N+W)
         self.Internet_Archive_URL_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Internet_Archive_URL_Entry.grid(row=29, column=1, columnspan=2, sticky=N+S+E+W)
-
-        # ------------ columns 3 + 4 ----------
-        #
-        self.Relationship_Type_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Relationship Type:")
-        self.Relationship_Type_Label.grid(row=30, column=0, stick=S+E)
-        self.Relationship_Type_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Relationship_Type_Entry.grid(row=30, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Director_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Director:")
-        self.Director_Label.grid(row=31, column=0, stick=S+E)
-        self.Director_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Director_Entry.grid(row=31, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Copyright_Statement_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Copyright Statement:")
-        self.Copyright_Statement_Label.grid(row=32, column=0, stick=S+E)
-        self.Copyright_Statement_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Copyright_Statement_Entry.grid(row=32, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Genre_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Genre")
-        self.Genre_Label.grid(row=33, column=0, stick=S+E)
-        self.Genre_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Genre_Entry.grid(row=33, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Cataloger_Notes_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Cataloger Notes:")
-        self.Cataloger_Notes_Label.grid(row=34, column=0, stick=S+E)
-        self.Cataloger_Notes_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Cataloger_Notes_Entry.grid(row=34, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Collection_Guide_URL_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Collection Guide URL:")
-        self.Collection_Guide_URL_Label.grid(row=35, column=0, stick=S+E)
-        self.Collection_Guide_URL_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Collection_Guide_URL_Entry.grid(row=35, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Interviewer_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Interviewer:")
-        self.Interviewer_Label.grid(row=36, column=0, stick=S+E)
-        self.Interviewer_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Interviewer_Entry.grid(row=36, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Description_or_Content_Summary_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Description or Content Summary:")
-        self.Description_or_Content_Summary_Label.grid(row=37, column=0, stick=N+E)
-        # self.Description_or_Content_Summary_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Description_or_Content_Summary_Entry = Text(self.dataFrame, width=40, height=6, wrap=WORD)
-        self.Description_or_Content_Summary_Entry.grid(row=37, column=1, columnspan=2, rowspan=3, sticky=N+E+W)
-
-        self.Institution_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Institution:")
-        self.Institution_Label.grid(row=40, column=0, stick=N+E)
-        self.Institution_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Institution_Entry.grid(row=40, column=1, sticky=N+E+W)
-
-        self.Stock_Manufacturer_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Stock Manufacturer:")
-        self.Stock_Manufacturer_Label.grid(row=41, column=0, stick=N+E)
-        self.Stock_Manufacturer_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Stock_Manufacturer_Entry.grid(row=41, column=1, columnspan=2, sticky=N+E+W)
-
-        self.Sound_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Sound:")
-        self.Sound_Label.grid(row=42, column=0, stick=N+E)
-        self.Sound_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Sound_Entry.grid(row=42, column=1, columnspan=2, sticky=N+E+W)
-
-        self.Publisher_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Publisher:")
-        self.Publisher_Label.grid(row=43, column=0, stick=S+E)
-        self.Publisher_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Publisher_Entry.grid(row=43, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Asset_Type_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Asset Type:")
-        self.Asset_Type_Label.grid(row=46, column=0, stick=S+E)
-        self.Asset_Type_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Asset_Type_Entry.grid(row=46, column=1, columnspan=2, sticky=N+S+E+W)
+        self.Internet_Archive_URL_Entry.grid(row=0, column=1, columnspan=2, sticky=N+E+W)
 
         self.Object_Identifier_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Object Identifier:")
-        self.Object_Identifier_Label.grid(row=43, column=0, stick=N+E)
+        self.Object_Identifier_Label.grid(row=1, column=0, stick=N+W)
         self.Object_Identifier_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Object_Identifier_Entry.grid(row=43, column=1, columnspan=2, sticky=N+E+W)
-
-        self.Copyright_Date_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Copyright Date:")
-        self.Copyright_Date_Label.grid(row=44, column=0, stick=S+E)
-        self.Copyright_Date_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Copyright_Date_Entry.grid(row=44, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Copyright_Holder_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Copyright Holder:")
-        self.Copyright_Holder_Label.grid(row=45, column=0, stick=S+E)
-        self.Copyright_Holder_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Copyright_Holder_Entry.grid(row=45, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Language_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Language")
-        self.Language_Label.grid(row=46, column=0, stick=S+E)
-        self.Language_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Language_Entry.grid(row=46, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Color_and_or_Black_and_White_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Color and or Black and White:")
-        self.Color_and_or_Black_and_White_Label.grid(row=47, column=0, stick=S+E)
-        self.Color_and_or_Black_and_White_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Color_and_or_Black_and_White_Entry.grid(row=47, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Institution_ARK_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Institution ARK:")
-        self.Institution_ARK_Label.grid(row=48, column=0, stick=S+E)
-        self.Institution_ARK_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Institution_ARK_Entry.grid(row=48, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.CONTENTdm_file_name_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="CONTENTdm file name:")
-        self.CONTENTdm_file_name_Label.grid(row=49, column=0, stick=S+E)
-        self.CONTENTdm_file_name_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.CONTENTdm_file_name_Entry.grid(row=49, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.OCLC_number_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="OCLC number:")
-        self.OCLC_number_Label.grid(row=50, column=0, stick=S+E)
-        self.OCLC_number_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.OCLC_number_Entry.grid(row=50, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Why_the_recording_is_significant_to_California_local_history_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Why the recording is significant to California local history:")
-        self.Why_the_recording_is_significant_to_California_local_history_Label.grid(row=51, column=0, stick=N+E)
-        self.Why_the_recording_is_significant_to_California_local_history_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Why_the_recording_is_significant_to_California_local_history_Entry = Text(self.dataFrame, width=40, height=10, wrap=WORD)
-        self.Why_the_recording_is_significant_to_California_local_history_Entry.grid(row=51, column=1, columnspan=2, rowspan=5, sticky=N+S+E+W)
-
-        self.Subject_Entity_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Subject_Entity:")
-        self.Subject_Entity_Label.grid(row=52, column=0, stick=S+E)
-        self.Subject_Entity_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Subject_Entity_Entry.grid(row=52, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Gauge_and_Format_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Gauge and Format:")
-        self.Gauge_and_Format_Label.grid(row=53, column=0, stick=S+E)
-        self.Gauge_and_Format_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Gauge_and_Format_Entry.grid(row=53, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Additional_Descriptive_Notes_for_Overall_Work_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Additional Descriptive Notes for Overall Work:")
-        self.Additional_Descriptive_Notes_for_Overall_Work_Label.grid(row=54, column=0, stick=S+E)
-        self.Additional_Descriptive_Notes_for_Overall_Work_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Additional_Descriptive_Notes_for_Overall_Work_Entry.grid(row=54, column=1, columnspan=2, rowspan=2, sticky=N+S+E+W)
-
-        self.Genre_Authority_Source_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Genre Authority Source:")
-        self.Genre_Authority_Source_Label.grid(row=55, column=0, stick=S+E)
-        self.Genre_Authority_Source_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Genre_Authority_Source_Entry.grid(row=55, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Date_Published_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Date Published:")
-        self.Date_Published_Label.grid(row=56, column=0, stick=S+E)
-        self.Date_Published_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Date_Published_Entry.grid(row=56, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Country_of_Creation_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Country of Creation:")
-        self.Country_of_Creation_Label.grid(row=57, column=0, stick=S+E)
-        self.Country_of_Creation_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Country_of_Creation_Entry.grid(row=57, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Project_Note_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Project Note:")
-        self.Project_Note_Label.grid(row=58, column=0, stick=S+E)
-        self.Project_Note_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Project_Note_Entry.grid(row=58, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Institutional_Rights_Statement_URL_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Institutional Rights Statement URL:")
-        self.Institutional_Rights_Statement_URL_Label.grid(row=59, column=0, stick=S+E)
-        self.Institutional_Rights_Statement_URL_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Institutional_Rights_Statement_URL_Entry.grid(row=59, column=1, columnspan=2, sticky=N+S+E+W)
-        #
-        # # ------ columns 4+5 ------
-        self.Spatial_Coverage_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Spatial Coverage:")
-        self.Spatial_Coverage_Label.grid(row=60, column=0, sticky=S+E)
-        self.Spatial_Coverage_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Spatial_Coverage_Entry.grid(row=60, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Copyright_Notice_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Copyright Notice:")
-        self.Copyright_Notice_Label.grid(row=61, column=0, sticky=S+E)
-        self.Copyright_Notice_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Copyright_Notice_Entry.grid(row=61, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Subject_Topic_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Subject Topic:")
-        self.Subject_Topic_Label.grid(row=62, column=0, sticky=S+E)
-        self.Subject_Topic_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Subject_Topic_Entry.grid(row=62, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Performer_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Performer:")
-        self.Performer_Label.grid(row=63, column=0, sticky=S+E)
-        self.Performer_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Performer_Entry.grid(row=63, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Relationship_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Relationship:")
-        self.Relationship_Label.grid(row=64, column=0, sticky=S+E)
-        self.Relationship_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Relationship_Entry.grid(row=64, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Producer_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Producer:")
-        self.Producer_Label.grid(row=65, column=0, sticky=S+E)
-        self.Producer_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Producer_Entry.grid(row=65, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Cast_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Cast:")
-        self.Cast_Label.grid(row=66, column=0, sticky=S+E)
-        self.Cast_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Cast_Entry.grid(row=66, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Generation_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Generation:")
-        self.Generation_Label.grid(row=67, column=0, sticky=N+E)
-        self.Generation_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Generation_Entry.grid(row=67, column=1, columnspan=2, sticky=N+E+W)
-
-        self.Transcript_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Transcript:")
-        self.Transcript_Label.grid(row=68, column=0, sticky=S+E)
-        self.Transcript_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Transcript_Entry.grid(row=68, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Channel_Configuration_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Channel Configuration:")
-        self.Channel_Configuration_Label.grid(row=69, column=0, sticky=S+E)
-        self.Channel_Configuration_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Channel_Configuration_Entry.grid(row=69, column=1, columnspan=2, sticky=N+S+E+W)
-
-        self.Date_created_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Date created:")
-        self.Date_created_Label.grid(row=70, column=0, sticky=N+E)
-        self.Date_created_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Date_created_Entry.grid(row=70, column=1, columnspan=2, sticky=N+E+W)
-
-        self.Reference_URL_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Reference URL:")
-        self.Reference_URL_Label.grid(row=71, column=0, sticky=S+E)
-        self.Reference_URL_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Reference_URL_Entry.grid(row=71, column=1, columnspan=2, sticky=N+S+E+W)
+        self.Object_Identifier_Entry.grid(row=1, column=1, columnspan=2, sticky=N+E+W)
 
         self.Call_Number_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Call Number:")
-        self.Call_Number_Label.grid(row=72, column=0, sticky=S+E)
+        self.Call_Number_Label.grid(row=2, column=0, sticky=N+W)
         self.Call_Number_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Call_Number_Entry.grid(row=72, column=1, columnspan=2, sticky=N+S+E+W)
+        self.Call_Number_Entry.grid(row=2, column=1, columnspan=2, sticky=N+E+W)
 
-        self.Base_Thickness_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Base Thickness:")
-        self.Base_Thickness_Label.grid(row=73, column=0, sticky=S+E)
-        self.Base_Thickness_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Base_Thickness_Entry.grid(row=73, column=1, columnspan=2, sticky=N+S+E+W)
+        self.Project_Identifier_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Project Identifier:")
+        self.Project_Identifier_Label.grid(row=3, column=0, sticky=N+W)
+        self.Project_Identifier_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Project_Identifier_Entry.grid(row=3, column=1, columnspan=2, sticky=N+E+W)
 
-        self.Base_Type_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Base Type:")
-        self.Base_Type_Label.grid(row=74, column=0, sticky=S+E)
-        self.Base_Type_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Base_Type_Entry.grid(row=74, column=1, columnspan=2, sticky=N+S+E+W)
+        self.Project_Note_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Project Note:")
+        self.Project_Note_Label.grid(row=4, column=0, stick=N+W)
+        self.Project_Note_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Project_Note_Entry.grid(row=4, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Institution_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Institution:")
+        self.Institution_Label.grid(row=5, column=0, stick=N+W)
+        self.Institution_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Institution_Entry.grid(row=5, column=1, sticky=N+E+W)
+
+        self.Asset_Type_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Asset Type:")
+        self.Asset_Type_Label.grid(row=6, column=0, stick=N+W)
+        self.Asset_Type_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Asset_Type_Entry.grid(row=6, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Media_Type_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Media Type:")
+        self.Media_Type_Label.grid(row=7, column=0, sticky=N+W)
+        self.Media_Type_Entry = ttk.Entry(self.dataFrame)
+        self.Media_Type_Entry.grid(row=7, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Generation_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Generation:")
+        self.Generation_Label.grid(row=8, column=0, sticky=N+W)
+        self.Generation_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Generation_Entry.grid(row=8, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Main_or_Supplied_Title_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Main or Supplied Title:")
+        self.Main_or_Supplied_Title_Label.grid(row=9, column=0, sticky=N+W)
+        self.Main_or_Supplied_Title_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Main_or_Supplied_Title_Entry.grid(row=9, column=1, columnspan=2, sticky=N+E+W)
 
         self.Additional_Title_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Additional Title:")
-        self.Additional_Title_Label.grid(row=75, column=0, sticky=S+E)
+        self.Additional_Title_Label.grid(row=10, column=0, sticky=N+W)
         self.Additional_Title_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Additional_Title_Entry.grid(row=75, column=1, columnspan=2, sticky=N+S+E+W)
+        self.Additional_Title_Entry.grid(row=10, column=1, columnspan=2, sticky=N+E+W)
 
-        self.CONTENTdm_file_path_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="CONTENTdm file path:")
-        self.CONTENTdm_file_path_Label.grid(row=76, column=0, sticky=S+E)
-        self.CONTENTdm_file_path_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.CONTENTdm_file_path_Entry.grid(row=76, column=1, columnspan=2, sticky=N+S+E+W)
+        self.Series_Title_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Series Title:")
+        self.Series_Title_Label.grid(row=11, column=0, sticky=N+W)
+        self.Series_Title_Entry = ttk.Entry(self.dataFrame)
+        self.Series_Title_Entry.grid(row=11, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Description_or_Content_Summary_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Description or Content Summary:")
+        self.Description_or_Content_Summary_Label.grid(row=12, column=0, stick=N+W)
+        self.Description_or_Content_Summary_Entry = Text(self.dataFrame, width=40, height=6, wrap=WORD)
+        self.Description_or_Content_Summary_Entry.grid(row=12, column=1, columnspan=2, rowspan=3, sticky=N+E+W)
+
+        self.Why_the_recording_is_significant_to_California_local_history_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Why the recording is significant to California local history:")
+        self.Why_the_recording_is_significant_to_California_local_history_Label.grid(row=16, column=0, stick=N+W)
+        self.Why_the_recording_is_significant_to_California_local_history_Entry = Text(self.dataFrame, width=40, height=10, wrap=WORD)
+        self.Why_the_recording_is_significant_to_California_local_history_Entry.grid(row=16, column=1, columnspan=2, rowspan=5, sticky=N+E+W)
+
+        self.Producer_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Producer:")
+        self.Producer_Label.grid(row=21, column=0, sticky=N+W)
+        self.Producer_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Producer_Entry.grid(row=21, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Director_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Director:")
+        self.Director_Label.grid(row=22, column=0, stick=N+W)
+        self.Director_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Director_Entry.grid(row=22, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Writer_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Writer:")
+        self.Writer_Label.grid(row=23, column=0, sticky=N+W)
+        self.Writer_Entry = ttk.Entry(self.dataFrame)
+        self.Writer_Entry.grid(row=23, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Interviewer_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Interviewer:")
+        self.Interviewer_Label.grid(row=24, column=0, stick=N+W)
+        self.Interviewer_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Interviewer_Entry.grid(row=24, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Performer_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Performer:")
+        self.Performer_Label.grid(row=25, column=0, sticky=N+W)
+        self.Performer_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Performer_Entry.grid(row=25, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Country_of_Creation_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Country of Creation:")
+        self.Country_of_Creation_Label.grid(row=26, column=0, stick=N+W)
+        self.Country_of_Creation_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Country_of_Creation_Entry.grid(row=26, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Date_Created_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Date Created:")
+        self.Date_Created_Label.grid(row=27, column=0, sticky=N+W)
+        self.Date_Created_Entry = ttk.Entry(self.dataFrame)
+        self.Date_Created_Entry.grid(row=27, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Date_Published_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Date Published:")
+        self.Date_Published_Label.grid(row=28, column=0, stick=N+W)
+        self.Date_Published_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Date_Published_Entry.grid(row=28, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Copyright_Statement_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Copyright Statement:")
+        self.Copyright_Statement_Label.grid(row=29, column=0, stick=N+W)
+        self.Copyright_Statement_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Copyright_Statement_Entry.grid(row=29, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Gauge_and_Format_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Gauge and Format:")
+        self.Gauge_and_Format_Label.grid(row=30, column=0, stick=N+W)
+        self.Gauge_and_Format_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Gauge_and_Format_Entry.grid(row=30, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Total_Number_of_Reels_or_Tapes_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Total Number of Reels or Tapes:")
+        self.Total_Number_of_Reels_or_Tapes_Label.grid(row=31, column=0, sticky=N+W)
+        self.Total_Number_of_Reels_or_Tapes_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Total_Number_of_Reels_or_Tapes_Entry.grid(row=31, column=1, columnspan=2, sticky=N+E+W)
 
         self.Duration_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Duration:")
-        self.Duration_Label.grid(row=77, column=0, sticky=S+E)
+        self.Duration_Label.grid(row=32, column=0, sticky=N+W)
         self.Duration_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Duration_Entry.grid(row=77, column=1, columnspan=2, sticky=N+S+E+W)
+        self.Duration_Entry.grid(row=32, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Silent_or_Sound_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Silent or Sound:")
+        self.Silent_or_Sound_Label.grid(row=33, column=0, sticky=N+W)
+        self.Silent_or_Sound_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Silent_or_Sound_Entry.grid(row=33, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Color_and_or_Black_and_White_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Color and or Black and White:")
+        self.Color_and_or_Black_and_White_Label.grid(row=34, column=0, stick=N+W)
+        self.Color_and_or_Black_and_White_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Color_and_or_Black_and_White_Entry.grid(row=34, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Camera_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Camera:")
+        self.Camera_Label.grid(row=35, column=0, sticky=N+W)
+        self.Camera_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Camera_Entry.grid(row=35, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Editor_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Editor:")
+        self.Editor_Label.grid(row=36, column=0, sticky=N+W)
+        self.Editor_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Editor_Entry.grid(row=36, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Sound_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Sound:")
+        self.Sound_Label.grid(row=37, column=0, stick=N+W)
+        self.Sound_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Sound_Entry.grid(row=37, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Music_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Music:")
+        self.Music_Label.grid(row=38, column=0, sticky=N+W)
+        self.Music_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Music_Entry.grid(row=38, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Cast_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Cast:")
+        self.Cast_Label.grid(row=39, column=0, sticky=N+W)
+        self.Cast_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Cast_Entry.grid(row=39, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Interviewee_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Interviewee:")
+        self.Interviewee_Label.grid(row=40, column=0, sticky=N+W)
+        self.Interviewee_Entry = ttk.Entry(self.dataFrame)
+        self.Interviewee_Entry.grid(row=40, column=1, columnspan=2, sticky=N+E+W)
 
         self.Speaker_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Speaker:")
-        self.Speaker_Label.grid(row=78, column=0, sticky=S+E)
+        self.Speaker_Label.grid(row=41, column=0, sticky=N+W)
         self.Speaker_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Speaker_Entry.grid(row=78, column=1, columnspan=2, sticky=N+S+E+W)
+        self.Speaker_Entry.grid(row=41, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Musician_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Musician")
+        self.Musician_Label.grid(row=42, column=0, sticky=N+W)
+        self.Musician_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Musician_Entry.grid(row=42, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Publisher_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Publisher:")
+        self.Publisher_Label.grid(row=43, column=0, stick=N+W)
+        self.Publisher_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Publisher_Entry.grid(row=43, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Distributor_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Distributor:")
+        self.Distributor_Label.grid(row=44, column=0, sticky=N+W)
+        self.Distributor_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Distributor_Entry.grid(row=44, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Language_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Language")
+        self.Language_Label.grid(row=45, column=0, stick=N+W)
+        self.Language_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Language_Entry.grid(row=45, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Subject_Topic_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Subject Topic:")
+        self.Subject_Topic_Label.grid(row=46, column=0, sticky=N+W)
+        self.Subject_Topic_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Subject_Topic_Entry.grid(row=46, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Subject_Topic_Authority_Source_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Subject Topic Authority Source:")
+        self.Subject_Topic_Authority_Source_Label.grid(row=47, column=0, sticky=N+W)
+        self.Subject_Topic_Authority_Source_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Subject_Topic_Authority_Source_Entry.grid(row=47, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Subject_Entity_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Subject_Entity:")
+        self.Subject_Entity_Label.grid(row=48, column=0, stick=N+W)
+        self.Subject_Entity_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Subject_Entity_Entry.grid(row=48, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Subject_Entity_Authority_Source_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Subject Entity Authority Source:")
+        self.Subject_Entity_Authority_Source_Label.grid(row=49, column=0, sticky=N+W)
+        self.Subject_Entity_Authority_Source_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Subject_Entity_Authority_Source_Entry.grid(row=49, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Genre_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Genre")
+        self.Genre_Label.grid(row=50, column=0, stick=N+W)
+        self.Genre_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Genre_Entry.grid(row=50, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Genre_Authority_Source_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Genre Authority Source:")
+        self.Genre_Authority_Source_Label.grid(row=51, column=0, stick=N+W)
+        self.Genre_Authority_Source_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Genre_Authority_Source_Entry.grid(row=51, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Spatial_Coverage_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Spatial Coverage:")
+        self.Spatial_Coverage_Label.grid(row=52, column=0, sticky=N+W)
+        self.Spatial_Coverage_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Spatial_Coverage_Entry.grid(row=52, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Temporal_Coverage_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Temporal Coverage:")
+        self.Temporal_Coverage_Label.grid(row=53, column=0, sticky=N+W)
+        self.Temporal_Coverage_Entry = ttk.Entry(self.dataFrame)
+        self.Temporal_Coverage_Entry.grid(row=53, column=1, columnspan=2, sticky=N+E+W)
 
         self.Collection_Guide_Title_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Collection Guide Title:")
-        self.Collection_Guide_Title_Label.grid(row=79, column=0, sticky=S+E)
+        self.Collection_Guide_Title_Label.grid(row=54, column=0, sticky=N+W)
         self.Collection_Guide_Title_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self.Collection_Guide_Title_Entry.grid(row=79, column=1, columnspan=2, sticky=N+S+E+W)
+        self.Collection_Guide_Title_Entry.grid(row=54, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Collection_Guide_URL_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Collection Guide URL:")
+        self.Collection_Guide_URL_Label.grid(row=55, column=0, stick=N+W)
+        self.Collection_Guide_URL_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Collection_Guide_URL_Entry.grid(row=55, column=1, columnspan=2, sticky=N+S+E+W)
+
+        self.Relationship_Type_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Relationship Type:")
+        self.Relationship_Type_Label.grid(row=56, column=0, stick=N+W)
+        self.Relationship_Type_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Relationship_Type_Entry.grid(row=56, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Relationship_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Relationship:")
+        self.Relationship_Label.grid(row=57, column=0, sticky=N+W)
+        self.Relationship_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Relationship_Entry.grid(row=57, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Aspect_Ratio_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Aspect Ratio:")
+        self.Aspect_Ratio_Label.grid(row=58, column=0, sticky=N+W)
+        self.Aspect_Ratio_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Aspect_Ratio_Entry.grid(row=58, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Running_Speed_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Running Speed")
+        self.Running_Speed_Label.grid(row=59, column=0, sticky=N+W)
+        self.Running_Speed_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Running_Speed_Entry.grid(row=59, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Timecode_Content_Begins_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Timecode Content Begins:")
+        self.Timecode_Content_Begins_Label.grid(row=60, column=0, sticky=N+W)
+        self.Timecode_Content_Begins_Entry = ttk.Entry(self.dataFrame)
+        self.Timecode_Content_Begins_Entry.grid(row=60, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Track_Standard_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Track Standard:")
+        self.Track_Standard_Label.grid(row=61, column=0, sticky=N+W)
+        self.Track_Standard_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Track_Standard_Entry.grid(row=61, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Channel_Configuration_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Channel Configuration:")
+        self.Channel_Configuration_Label.grid(row=62, column=0, sticky=N+W)
+        self.Channel_Configuration_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Channel_Configuration_Entry.grid(row=62, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Subtitles_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Subtitles:")
+        self.Subtitles_Label.grid(row=63, column=0, sticky=N+W)
+        self.Subtitles_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Subtitles_Entry.grid(row=63, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Stock_Manufacturer_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Stock Manufacturer:")
+        self.Stock_Manufacturer_Label.grid(row=64, column=0, stick=N+W)
+        self.Stock_Manufacturer_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Stock_Manufacturer_Entry.grid(row=64, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Base_Type_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Base Type:")
+        self.Base_Type_Label.grid(row=65, column=0, sticky=N+W)
+        self.Base_Type_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Base_Type_Entry.grid(row=65, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Base_Thickness_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Base Thickness:")
+        self.Base_Thickness_Label.grid(row=66, column=0, sticky=N+W)
+        self.Base_Thickness_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Base_Thickness_Entry.grid(row=66, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Copyright_Holder_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Copyright Holder:")
+        self.Copyright_Holder_Label.grid(row=67, column=0, stick=N+W)
+        self.Copyright_Holder_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Copyright_Holder_Entry.grid(row=67, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Copyright_Holder_Info_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Copyright Holder Info:")
+        self.Copyright_Holder_Info_Label.grid(row=68, column=0, sticky=N+W)
+        self.Copyright_Holder_Info_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Copyright_Holder_Info_Entry.grid(row=68, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Copyright_Date_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Copyright Date:")
+        self.Copyright_Date_Label.grid(row=69, column=0, stick=N+W)
+        self.Copyright_Date_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Copyright_Date_Entry.grid(row=69, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Copyright_Notice_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Copyright Notice:")
+        self.Copyright_Notice_Label.grid(row=70, column=0, sticky=N+W)
+        self.Copyright_Notice_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Copyright_Notice_Entry.grid(row=70, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Institutional_Rights_Statement_URL_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Institutional Rights Statement URL:")
+        self.Institutional_Rights_Statement_URL_Label.grid(row=71, column=0, stick=N+W)
+        self.Institutional_Rights_Statement_URL_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Institutional_Rights_Statement_URL_Entry.grid(row=71, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Object_ARK_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Object_ARK:")
+        self.Object_ARK_Label.grid(row=72, column=0, sticky=N+W)
+        self.Object_ARK_Entry = ttk.Entry(self.dataFrame)
+        self.Object_ARK_Entry.grid(row=72, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Institution_ARK_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Institution ARK:")
+        self.Institution_ARK_Label.grid(row=73, column=0, stick=N+W)
+        self.Institution_ARK_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Institution_ARK_Entry.grid(row=73, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Institution_URL_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Institution URL:")
+        self.Institution_URL_Label.grid(row=74, column=0, sticky=N+W)
+        self.Institution_URL_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Institution_URL_Entry.grid(row=74, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Quality_Control_Notes_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Quality Control Notes:")
+        self.Quality_Control_Notes_Label.grid(row=75, column=0, sticky=N+W)
+        self.Quality_Control_Notes_Entry = Text(self.dataFrame, width=40, height=10, wrap=WORD)
+        self.Quality_Control_Notes_Entry.grid(row=75, column=1, columnspan=2, rowspan=5, sticky=N+E+W)
+
+        self.Additional_Descriptive_Notes_for_Overall_Work_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Additional Descriptive Notes for Overall Work:")
+        self.Additional_Descriptive_Notes_for_Overall_Work_Label.grid(row=80, column=0, stick=N+W)
+        self.Additional_Descriptive_Notes_for_Overall_Work_Entry = Text(self.dataFrame, width=40, height=10, wrap=WORD)
+        # self.Additional_Descriptive_Notes_for_Overall_Work_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Additional_Descriptive_Notes_for_Overall_Work_Entry.grid(row=80, column=1, columnspan=2, rowspan=2, sticky=N+E+W)
+
+        self.Additional_Technical_Notes_for_Overall_Work_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Additional Technical Notes for Overall Work:")
+        self.Additional_Technical_Notes_for_Overall_Work_Label.grid(row=82, column=0, sticky=N+W)
+        self.Additional_Technical_Notes_for_Overall_Work_Entry = Text(self.dataFrame, width=40, height=10, wrap=WORD)
+        self.Additional_Technical_Notes_for_Overall_Work_Entry.grid(row=82, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Transcript_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Transcript:")
+        self.Transcript_Label.grid(row=83, column=0, sticky=N+W)
+        self.Transcript_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Transcript_Entry.grid(row=83, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Cataloger_Notes_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Cataloger Notes:")
+        self.Cataloger_Notes_Label.grid(row=84, column=0, stick=N+W)
+        self.Cataloger_Notes_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Cataloger_Notes_Entry.grid(row=84, column=1, columnspan=2, sticky=N+E+W)
+
+        self.OCLC_number_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="OCLC number:")
+        self.OCLC_number_Label.grid(row=85, column=0, stick=N+W)
+        self.OCLC_number_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.OCLC_number_Entry.grid(row=85, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Date_created_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Date created:")
+        self.Date_created_Label.grid(row=86, column=0, sticky=N+W)
+        self.Date_created_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Date_created_Entry.grid(row=86, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Date_modified_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Date modified:")
+        self.Date_modified_Label.grid(row=87, column=0, sticky=N+W)
+        self.Date_modified_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Date_modified_Entry.grid(row=87, column=1, columnspan=2, sticky=N+E+W)
+
+        self.Reference_URL_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Reference URL:")
+        self.Reference_URL_Label.grid(row=88, column=0, sticky=N+W)
+        self.Reference_URL_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.Reference_URL_Entry.grid(row=88, column=1, columnspan=2, sticky=N+E+W)
+
+        self.CONTENTdm_number_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="CONTENTdm number:")
+        self.CONTENTdm_number_Label.grid(row=89, column=0, sticky=N+W)
+        self.CONTENTdm_number_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.CONTENTdm_number_Entry.grid(row=89, column=1, columnspan=2, sticky=N+E+W)
+
+        self.CONTENTdm_file_name_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="CONTENTdm file name:")
+        self.CONTENTdm_file_name_Label.grid(row=90, column=0, stick=N+W)
+        self.CONTENTdm_file_name_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.CONTENTdm_file_name_Entry.grid(row=90, column=1, columnspan=2, sticky=N+E+W)
+
+        self.CONTENTdm_file_path_Label = ttk.Label(self.dataFrame, style='labels.TLabel', text="CONTENTdm file path:")
+        self.CONTENTdm_file_path_Label.grid(row=91, column=0, sticky=N+W)
+        self.CONTENTdm_file_path_Entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
+        self.CONTENTdm_file_path_Entry.grid(row=91, column=1, columnspan=2, sticky=N+E+W)
+
+        # ++++++++++++++++++++++
+        # ++++++++++++++++++++++
+        # ++++++++++++++++++++++
+
+
         #
          # ------------ files  --------------
 
         # self.dataOuterFrame = ttk.Frame(self.background, padding=(10,10))
         self.associated_files_Frame = ttk.LabelFrame(self.background, text="Associated Files")
-        self.associated_files_Frame.pack(fill=BOTH, expand=True)
-        self.associated_files_Tree = ttk.Treeview(self.associated_files_Frame)
-        self.associated_files_Tree.pack(fill=BOTH, expand=True)
+        # self.associated_files_Frame.pack(fill=BOTH, expand=True)
+        self.panel.add(self.associated_files_Frame, weight=1)
+        self.associated_files_Tree = ttk.Treeview(self.associated_files_Frame, height=5, columns=('file', 'type', 'size'))
+        self.associated_files_Tree.heading('file', text='File')
+        self.associated_files_Tree.heading('type', text='Type')
+        self.associated_files_Tree.heading('size', text='Size')
+        self.associated_files_Tree['show'] = 'headings'
 
+        self.associated_files_Tree.pack(fill=BOTH, expand=True)
+        self.associated_files_Tree.column('#0', width=0, anchor='center')
+        self.associated_files_Tree.column('file', width=200, anchor=W)
+        self.associated_files_Tree.column('type', width=100, anchor=W)
+        self.associated_files_Tree.column('size', width=50, anchor=W)
+        # self.associated_files_Tree.config
+        self.load_associated_files()
         
         # ------------ Options --------------
         self.optionsFrame = ttk.LabelFrame(self.background)
-        self.optionsFrame.pack(fill=X, expand=True)
-
-        self.closeButton = ttk.Button(self.optionsFrame, text="Close", command=lambda: self.master.destroy())
+        self.optionsFrame.pack(fill=X)
+        # self.panel.add(self.optionsFrame)
+        self.CancelButton = ttk.Button(self.optionsFrame, text="Cancel", command=lambda: self.master.destroy())
         # self.closeButton.grid(column=0, row=0, sticky=W+S)
-        self.closeButton.pack()
+        self.CancelButton.grid(column=0, row=0, sticky=E)
+        self.okayButton = ttk.Button(self.optionsFrame, text="OK", command=self.applyChanges)
+        self.okayButton.grid(column=1, row=0)
 
         self.loadrecord()
 
+    def applyChanges(self):
+        print "Applying changes"
+
+    def load_associated_files(self):
+        # print "loading associated files"
+        root = os.path.dirname(self.csv)
+        # print root
+        fileName = re.search(FILE_NAME_PATTERN, self.properties['Object Identifier']).group(0)
+        # print fileName
+        files = locate_files(root, fileName)
+        prsv, access = pbcore_csv.sep_pres_access(files)
+
+        for index, file in enumerate(prsv):
+            # self.associated_files_Tree
+            self.associated_files_Tree.insert('', index, file)
+            self.associated_files_Tree.set(file, 'file', os.path.basename(file))
+            self.associated_files_Tree.set(file, 'type', "Preservation Master")
+            self.associated_files_Tree.set(file, 'size', str(os.path.getsize(file)/1048576) + " MB")
+        for index, file in enumerate(access):
+            # self.associated_files_Tree
+            self.associated_files_Tree.insert('', index, file)
+            self.associated_files_Tree.set(file, 'file', os.path.basename(file))
+            self.associated_files_Tree.set(file, 'type', "Access Copy")
+            self.associated_files_Tree.set(file, 'size', str(os.path.getsize(file)/1048576) + " MB")
+        # print locate_files()
+
+    def save_as(self):
+        save_file = tkFileDialog.asksaveasfilename(defaultextension=".xml")
+        if save_file:
+            self.xmlEntry.insert(0,save_file)
     def loadrecord(self):
-        print("loading record")
+        # print("loading record")
         # for index, proper in enumerate(self.properties):
         #     print proper
         self.Date_Created_Entry.insert(0,self.properties['Date Created'])
@@ -1292,7 +1345,7 @@ class RecordDetailsWindow():
         self.Why_the_recording_is_significant_to_California_local_history_Entry.insert('1.0', self.properties['Why the recording is significant to California/local history'])
         self.Subject_Topic_Authority_Source_Entry.insert(0, self.properties['Subject Entity'])
         self.Gauge_and_Format_Entry.insert(0, self.properties['Gauge and Format'])
-        self.Additional_Descriptive_Notes_for_Overall_Work_Entry.insert(0, self.properties['Additional Descriptive Notes for Overall Work'])
+        self.Additional_Descriptive_Notes_for_Overall_Work_Entry.insert('1.0', self.properties['Additional Descriptive Notes for Overall Work'])
         self.Genre_Authority_Source_Entry.insert(0, self.properties['Genre Authority Source'])
         self.Date_Published_Entry.insert(0, self.properties['Date Published'])
         self.Country_of_Creation_Entry.insert(0, self.properties['Country of Creation'])
