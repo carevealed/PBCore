@@ -131,7 +131,18 @@ class pbcoreBuilder(threading.Thread):
         self._overwritten_records = []
         self.verbose = verbose
         self._queue = Queue()
+        self._working_status = ""
+        self._working_file = ""
         self.log = ""  # TODO add loging feature
+
+
+    @property
+    def working_status(self):
+        return self._working_status
+
+    @property
+    def working_file(self):
+        return self._working_file
 
     @property
     def isRunning(self):
@@ -199,7 +210,7 @@ class pbcoreBuilder(threading.Thread):
         job = dict()
         path = os.path.dirname(self.source)
         job['dirname'] = path
-        job['files']  = self.locate_files(path, id)
+        job['files'] = self.locate_files(path, id)
         job['xml'] = file_name
         job['record'] = record
         # print "id: " + str(id)
@@ -223,6 +234,7 @@ class pbcoreBuilder(threading.Thread):
                 print file
             print ""
         self._queue = replacement
+
     def build_descriptive(self, record):
         obj_ID = ''
         proj_ID = ''
@@ -668,6 +680,7 @@ class pbcoreBuilder(threading.Thread):
                                                                      tag="instantiationIdentifier",
                                                                      value=os.path.basename(master_part)))
                 if not args.nochecksum and SETTINGS.getboolean('CHECKSUM','CalculateChecksums') is True:
+                    self._working_status = "Calculating MD5 checksum for " + f.file_name + " (" + f.file_size_human + ")"
                     if self.verbose:
                         print("\t"),
                         print "Part " + str(self._parts_progress+1) + " of " + str(self._parts_total) + ": ",
@@ -735,6 +748,7 @@ class pbcoreBuilder(threading.Thread):
                                                              value=str(file_size)))
 
             if not args.nochecksum and SETTINGS.getboolean('CHECKSUM', 'CalculateChecksums') is True:
+                self._working_status = "Calculating MD5 checksum for " + f.file_name + " (" + f.file_size_human + ")"
                 if self.verbose:
                     print("\t"),
                     print "Part " + str(self._parts_progress + 1) + " of " + str(self._parts_total) + ": ",
@@ -846,6 +860,7 @@ class pbcoreBuilder(threading.Thread):
                                                                       tag="instantiationFileSize",
                                                                       value=size))
                     if not args.nochecksum and SETTINGS.getboolean('CHECKSUM','CalculateChecksums') is True:
+                        self._working_status = "Calculating MD5 checksum for " + f.file_name + " (" + f.file_size_human + ")"
                         if self.verbose:
                             print("\t"),
                             print "Part " + str(self._parts_progress + 1) + " of " + str(self._parts_total) + ": ",
@@ -909,6 +924,7 @@ class pbcoreBuilder(threading.Thread):
                                                                  tag="instantiationFileSize",
                                                                  value=size))
                 if not args.nochecksum and SETTINGS.getboolean('CHECKSUM', 'CalculateChecksums') is True:
+                    self._working_status = "Calculating MD5 checksum for " + f.file_name + " (" + f.file_size_human + ")"
                     if self.verbose:
                         print("\t"),
                         print "Part " + str(self._parts_progress + 1) + " of " + str(self._parts_total) + ": ",
@@ -1357,10 +1373,12 @@ class pbcoreBuilder(threading.Thread):
 
         f = open(self.source, 'rU')
         records = csv.DictReader(f)
+        self._records = []
         for record in records:
             self._records.append(record)
         f.close()
         self._job_total = len(self._records)
+
 
     def check_files_exist(self):
         file_name_pattern = re.compile("[A-Z,a-z]+_\d+")
@@ -1407,6 +1425,13 @@ class pbcoreBuilder(threading.Thread):
                 pass
         return warnings
 
+    def get_record(self, project_id):
+        # print "getting project: " + str(project_id)
+        for record in self._records:
+            if project_id == record['Project Identifier']:
+                return record
+
+
     def run(self):
         # print "starting thread"
         self._running = True
@@ -1415,18 +1440,26 @@ class pbcoreBuilder(threading.Thread):
         #     total = str(self._job_progress) + " : " + str(self._job_total)
         #     print(parts, total)
         #     sleep(1)
-        for rec in self.records:
-            self.add_job(rec)
+        # for rec in self.records:
+        #     self.add_job(rec)
         # self.show_jobs()
-        print "running files"
+        # print "running files"
         self._job_progress = 0
         while not self._queue.empty():
             queue = self._queue.get()
             record = queue['record']
             files = queue['files']
-            print (self.generate_pbcore(record, files))
-            print "saving xml file " + queue['xml']
+            # print record
+            self._working_file = record['Project Identifier']
+            self._working_status = 'Building'
+            new_xml = minidom.parseString(self.generate_pbcore(record, files))
+            self._working_status = "Saving: " + queue['xml']
+            # print "saving xml file " + queue['xml']
+            save_file = open(queue['xml'], 'w')
+            save_file.write(new_xml.toprettyxml(encoding='utf-8'))
+            save_file.close()
             self._job_progress += 1
+
 
 
             # print self.generate_pbcore(record, files)
@@ -1711,7 +1744,10 @@ def main():
 
 
 # load settings
-settingsFileName = 'settings/pbcore-csv-settings.ini'
+# settingsFileName = 'settings/pbcore-csv-settings.ini'
+# FIXME: take this out
+settingsFileName = '/Users/lpsdesk/PycharmProjects/PBcore/settings/pbcore-csv-settings.ini'
+
 SETTINGS = ConfigParser()
 try:
     isfile(settingsFileName)
