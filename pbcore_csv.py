@@ -241,8 +241,9 @@ class pbcoreBuilder(threading.Thread):
         # record_to_update = self.get_record(project_id)
         if self._is_valid_record(new_record):
             for record in self._records:
+                # print "running"
                 if record['Project Identifier'] == project_id:
-                    print "found it"
+                    # print "found it"
                     replacement = OrderedDict()
                     replacement.update({'Date Created': new_record['Date Created']})
                     replacement.update({'Object ARK': new_record['Object ARK']})
@@ -324,20 +325,16 @@ class pbcoreBuilder(threading.Thread):
                     replacement.update({'Duration': new_record['Duration']})
                     replacement.update({'Speaker': new_record['Speaker']})
                     replacement.update({'Collection Guide Title': new_record['Collection Guide Title']})
-                    replacement_records.append(replacement)                else:
+                    replacement_records.append(replacement)
+                else:
+                    # print "not"
                     replacement_records.append(record)
-
-        print "-----old-----"
-        # print self._records
-        for record in self._records:
-            # print("\n********\n" + record['Project Identifier'])
-            print record
+        else:
+            # print "No"
+            pass
+        self._records = replacement_records
 
 
-        print "-----new-----"
-        for record in replacement_records:
-            # print("\n********\n" + record['Project Identifier'])
-            print record
 
     def _build_descriptive(self, record):
         obj_ID = ''
@@ -1098,6 +1095,101 @@ class pbcoreBuilder(threading.Thread):
                 self._parts_progress += 1
         return access_copy
 
+    def save_csv(self, filename):
+        # print "Saving " + filename
+        with open(filename, 'w') as csvfile:
+            # print self._records[0].keys()
+
+            # fieldnames = ['number 1', 'number 2']
+            fieldnames = ['Internet Archive URL',
+                          'Object Identifier',
+                          'Call Number',
+                          'Project Identifier',
+                          'Project Note',
+                          'Institution',
+                          'Asset Type',
+                          'Media Type',
+                          'Generation',
+                          'Main or Supplied Title',
+                          'Additional Title',
+                          'Series Title',
+                          'Description or Content Summary',
+                          'Why the recording is significant to California/local history',
+                          'Producer',
+                          'Director',
+                          'Writer',
+                          'Interviewer',
+                          'Performer',
+                          'Country of Creation',
+                          'Date Created',
+                          'Date Published',
+                          'Copyright Statement',
+                          'Gauge and Format',
+                          'Total Number of Reels or Tapes',
+                          'Duration',
+                          'Silent or Sound',
+                          'Color and/or Black and White',
+                          'Camera',
+                          'Editor',
+                          'Sound',
+                          'Music',
+                          'Cast',
+                          'Interviewee',
+                          'Speaker',
+                          'Musician',
+                          'Publisher',
+                          'Distributor',
+                          'Language',
+                          'Subject Topic',
+                          'Subject Topic Authority Source',
+                          'Subject Entity',
+                          'Subject Entity Authority Source',
+                          'Genre',
+                          'Genre Authority Source',
+                          'Spatial Coverage',
+                          'Temporal Coverage',
+                          'Collection Guide Title',
+                          'Collection Guide URL',
+                          'Relationship',
+                          'Relationship Type',
+                          'Aspect Ratio',
+                          'Running Speed',
+                          'Timecode Content Begins',
+                          'Track Standard',
+                          'Channel Configuration',
+                          'Subtitles/Intertitles/Closed Captions',
+                          'Stock Manufacturer',
+                          'Base Type',
+                          'Base Thickness',
+                          'Copyright Holder',
+                          'Copyright Holder Info',
+                          'Copyright Date',
+                          'Copyright Notice',
+                          'Institutional Rights Statement (URL)',
+                          'Object ARK',
+                          'Institution ARK',
+                          'Institution URL',
+                          'Quality Control Notes',
+                          'Additional Descriptive Notes for Overall Work',
+                          'Additional Technical Notes for Overall Work',
+                          'Transcript',
+                          'Cataloger Notes',
+                          'OCLC number',
+                          'Date created',
+                          'Date modified',
+                          'Reference URL',
+                          'CONTENTdm number',
+                          'CONTENTdm file name',
+                          'CONTENTdm file path']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()
+            for record in self._records:
+                writer.writerow(record)
+                # writer.writerow({"number 1": "asfdasdf", "number 2": "234234324"})
+
+            pass
+
+
     def generate_pbcore(self, record, files=None, verbose=False):
 
         self._running = True
@@ -1337,6 +1429,8 @@ class pbcoreBuilder(threading.Thread):
         pass
 
     def _is_valid_record(self, record):
+        if not isinstance(record, OrderedDict):
+            raise TypeError("Expected OrderedDict. Recieved ", type(record))
         valid = True
         if 'Date Created' not in record:
             valid = False
@@ -1614,23 +1708,25 @@ class pbcoreBuilder(threading.Thread):
             return False
 
 
-    def check_content_valid(self):
+    def check_content_valid(self, test_records=None):
+        if test_records is None:
+            if not self._records:
+                self.load_records()
+            test_records = self._records
+        # print test_records
         warnings = []
         errors = []
         # Validate all dates
-        f = open(self.source, "rU")
+
         # test_record = csv.DictReader(f)
-        test_records = []
-        for record in csv.DictReader(f):
-            test_records.append(record)
-        f.close()
 
-        check_list = []
+
         for test_record in test_records:
-            check_list.append(["Date Created", test_record["Date Created"]])
-            check_list.append(["Date Published", test_record["Date Published"]])
+            check_date_list = []
+            check_date_list.append(["Date Created", test_record["Date Created"]])
+            check_date_list.append(["Date Published", test_record["Date Published"]])
 
-            for item in check_list:
+            for item in check_date_list:
                 # print item
                 warning = dict()
                 if item[1] != "":
@@ -1962,7 +2058,12 @@ def main():
     total_errors = []
 
     logger.debug("Validating data in CSV.")
-    warnings, errors = record_file.check_content_valid()
+    test_records = []
+    f = open(args.csv, "rU")
+    for record in csv.DictReader(f):
+        test_records.append(record)
+    f.close()
+    warnings, errors = record_file.check_content_valid(test_records)
     total_warnings += warnings
     total_errors += errors
     # for warning in warnings:
