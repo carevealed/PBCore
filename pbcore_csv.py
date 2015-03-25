@@ -235,7 +235,111 @@ class pbcoreBuilder(threading.Thread):
             print ""
         self._queue = replacement
 
-    def build_descriptive(self, record):
+    def update_record(self, project_id, new_record):
+        # print "updating project " + project_id
+        replacement_records = []
+        # record_to_update = self.get_record(project_id)
+        if self._is_valid_record(new_record):
+            for record in self._records:
+                if record['Project Identifier'] == project_id:
+                    print "found it"
+                    replacement = OrderedDict()
+                    replacement.update({'Date Created': new_record['Date Created']})
+                    replacement.update({'Object ARK': new_record['Object ARK']})
+                    replacement.update({'Timecode Content Begins': new_record['Timecode Content Begins']})
+                    replacement.update({'Media Type': new_record['Media Type']})
+                    replacement.update({'Interviewee': new_record['Interviewee']})
+                    replacement.update({'Series Title': new_record['Series Title']})
+                    replacement.update({'Temporal Coverage': new_record['Temporal Coverage']})
+                    replacement.update({'Writer': new_record['Writer']})
+                    replacement.update({'Institution URL': new_record['Institution URL']})
+                    replacement.update({'Project Identifier': new_record['Project Identifier']})
+                    replacement.update({'Quality Control Notes': new_record['Quality Control Notes']})
+                    replacement.update({'Silent or Sound': new_record['Silent or Sound']})
+                    replacement.update({'Camera': new_record['Camera']})
+                    replacement.update({'Music': new_record['Music']})
+                    replacement.update({'Editor': new_record['Editor']})
+                    replacement.update({'Track Standard': new_record['Track Standard']})
+                    replacement.update({'CONTENTdm number': new_record['CONTENTdm number']})
+                    replacement.update({'Subtitles/Intertitles/Closed Captions': new_record['Subtitles/Intertitles/Closed Captions']})
+                    replacement.update({'Distributor': new_record['Distributor']})
+                    replacement.update({'Date modified': new_record['Date modified']})
+                    replacement.update({'Subject Topic Authority Source': new_record['Subject Topic Authority Source']})
+                    replacement.update({'Aspect Ratio': new_record['Aspect Ratio']})
+                    replacement.update({'Total Number of Reels or Tapes': new_record['Total Number of Reels or Tapes']})
+                    replacement.update({'Copyright Holder Info': new_record['Copyright Holder Info']})
+                    replacement.update({'Running Speed': new_record['Running Speed']})
+                    replacement.update({'Subject Entity Authority Source': new_record['Subject Entity Authority Source']})
+                    replacement.update({'Additional Technical Notes for Overall Work': new_record['Additional Technical Notes for Overall Work']})
+                    replacement.update({'Musician': new_record['Musician']})
+                    replacement.update({'Main or Supplied Title': new_record['Main or Supplied Title']})
+                    replacement.update({'Internet Archive URL': new_record['Internet Archive URL']})
+                    replacement.update({'Relationship Type': new_record['Relationship Type']})
+                    replacement.update({'Director': new_record['Director']})
+                    replacement.update({'Copyright Statement': new_record['Copyright Statement']})
+                    replacement.update({'Genre': new_record['Genre']})
+                    replacement.update({'Cataloger Notes': new_record['Cataloger Notes']})
+                    replacement.update({'Collection Guide URL': new_record['Collection Guide URL']})
+                    replacement.update({'Interviewer': new_record['Interviewer']})
+                    replacement.update({'Description or Content Summary': new_record['Description or Content Summary']})
+                    replacement.update({'Institution': new_record['Institution']})
+                    replacement.update({'Stock Manufacturer': new_record['Stock Manufacturer']})
+                    replacement.update({'Sound': new_record['Sound']})
+                    replacement.update({'Publisher': new_record['Publisher']})
+                    replacement.update({'Asset Type': new_record['Asset Type']})
+                    replacement.update({'Object Identifier': new_record['Object Identifier']})
+                    replacement.update({'Copyright Date': new_record['Copyright Date']})
+                    replacement.update({'Copyright Holder': new_record['Copyright Holder']})
+                    replacement.update({'Language': new_record['Language']})
+                    replacement.update({'Color and/or Black and White': new_record['Color and/or Black and White']})
+                    replacement.update({'Institution ARK': new_record['Institution ARK']})
+                    replacement.update({'CONTENTdm file name': new_record['CONTENTdm file name']})
+                    replacement.update({'OCLC number': new_record['OCLC number']})
+                    replacement.update({'Why the recording is significant to California/local history': new_record['Why the recording is significant to California/local history']})
+                    replacement.update({'Subject Entity': new_record['Subject Entity']})
+                    replacement.update({'Gauge and Format': new_record['Gauge and Format']})
+                    replacement.update({'Additional Descriptive Notes for Overall Work': new_record['Additional Descriptive Notes for Overall Work']})
+                    replacement.update({'Genre Authority Source': new_record['Genre Authority Source']})
+                    replacement.update({'Date Published': new_record['Date Published']})
+                    replacement.update({'Country of Creation': new_record['Country of Creation']})
+                    replacement.update({'Project Note': new_record['Project Note']})
+                    replacement.update({'Institutional Rights Statement (URL)': new_record['Institutional Rights Statement (URL)']})
+                    replacement.update({'Spatial Coverage': new_record['Spatial Coverage']})
+                    replacement.update({'Copyright Notice': new_record['Copyright Notice']})
+                    replacement.update({'Subject Topic': new_record['Subject Topic']})
+                    replacement.update({'Performer': new_record['Performer']})
+                    replacement.update({'Relationship': new_record['Relationship']})
+                    replacement.update({'Producer': new_record['Producer']})
+                    replacement.update({'Cast': new_record['Cast']})
+                    replacement.update({'Generation': new_record['Generation']})
+                    replacement.update({'Transcript': new_record['Transcript']})
+                    replacement.update({'Channel Configuration': new_record['Channel Configuration']})
+                    replacement.update({'Date created': new_record['Date created']})
+                    replacement.update({'Reference URL': new_record['Reference URL']})
+                    replacement.update({'Call Number': new_record['Call Number']})
+                    replacement.update({'Base Thickness': new_record['Base Thickness']})
+                    replacement.update({'Base Type': new_record['Base Type']})
+                    replacement.update({'Additional Title': new_record['Additional Title']})
+                    replacement.update({'CONTENTdm file path': new_record['CONTENTdm file path']})
+                    replacement.update({'Duration': new_record['Duration']})
+                    replacement.update({'Speaker': new_record['Speaker']})
+                    replacement.update({'Collection Guide Title': new_record['Collection Guide Title']})
+                    replacement_records.append(replacement)                else:
+                    replacement_records.append(record)
+
+        print "-----old-----"
+        # print self._records
+        for record in self._records:
+            # print("\n********\n" + record['Project Identifier'])
+            print record
+
+
+        print "-----new-----"
+        for record in replacement_records:
+            # print("\n********\n" + record['Project Identifier'])
+            print record
+
+    def _build_descriptive(self, record):
         obj_ID = ''
         proj_ID = ''
         asset_type = ''
@@ -527,7 +631,7 @@ class pbcoreBuilder(threading.Thread):
         return descriptive
 
 
-    def build_physical(self, new_part, record):
+    def _build_physical(self, new_part, record):
         physical_asset = ""
         media_type = ""
         generation = ""
@@ -639,7 +743,7 @@ class pbcoreBuilder(threading.Thread):
         return physical
 
 
-    def build_preservation_master(self, record, preservation_file_set):
+    def _build_preservation_master(self, record, preservation_file_set):
     # for preservation_file_set in preservation_file_sets:
         lang = ''
         media_type = ''
@@ -819,7 +923,7 @@ class pbcoreBuilder(threading.Thread):
                            value=note.strip()))
         return pres_master
 
-    def build_access_copy(self, record, access_files_sets):
+    def _build_access_copy(self, record, access_files_sets):
         lang = ''
         obj_ID = ''
         if record['Language']:
@@ -1062,7 +1166,7 @@ class pbcoreBuilder(threading.Thread):
             inst_URL = record['Institution URL']
 
 
-        descriptive = self.build_descriptive(record)
+        descriptive = self._build_descriptive(record)
         # PARTS
         call_numbers = ""
         if record['Call Number']:
@@ -1088,7 +1192,7 @@ class pbcoreBuilder(threading.Thread):
         # -----------------------------------------------------
         #           physical
         # -----------------------------------------------------
-                physical = self.build_physical(part, record)
+                physical = self._build_physical(part, record)
                 newPart.add_pbcoreInstantiation(physical)
 
         # -----------------------------------------------------
@@ -1099,14 +1203,14 @@ class pbcoreBuilder(threading.Thread):
                     if preservation_file_sets:
                         for preservation_file_set in preservation_file_sets:
                             # print preservation_file_set
-                            pres_master = self.build_preservation_master(record, preservation_file_set)
+                            pres_master = self._build_preservation_master(record, preservation_file_set)
                             newPart.add_pbcoreInstantiation(pres_master)
 
 
         # -----------------------------------------------------
         #           access copy
         # -----------------------------------------------------
-                    access_copy = self.build_access_copy(record, access_files_sets)
+                    access_copy = self._build_access_copy(record, access_files_sets)
                     newPart.add_pbcoreInstantiation(access_copy)
 
             descriptive.add_pbcore_part(newPart)
@@ -1129,7 +1233,7 @@ class pbcoreBuilder(threading.Thread):
         # -----------------------------------------------------
         #           physical
         # -----------------------------------------------------
-                physical = self.build_physical(part, record)
+                physical = self._build_physical(part, record)
                 newPart.add_pbcoreInstantiation(physical)
                 # descriptive.add_pbcore_part(newPart)
         # -----------------------------------------------------
@@ -1139,13 +1243,13 @@ class pbcoreBuilder(threading.Thread):
         #         for preservation_file_set in preservation_file_sets:
         #             # print preservation_file_set
                 if files:
-                    pres_master = self.build_preservation_master(record, preservation_file_sets[index])
+                    pres_master = self._build_preservation_master(record, preservation_file_sets[index])
                     newPart.add_pbcoreInstantiation(pres_master)
         # -----------------------------------------------------
         #           access copy
         # -----------------------------------------------------
         #         print access_files_sets[index][0]
-                    access_copy = self.build_access_copy(record, access_files_sets[index])
+                    access_copy = self._build_access_copy(record, access_files_sets[index])
                     newPart.add_pbcoreInstantiation(access_copy)
                     descriptive.add_pbcore_part(newPart)
 
@@ -1231,6 +1335,251 @@ class pbcoreBuilder(threading.Thread):
         else:
             return False
         pass
+
+    def _is_valid_record(self, record):
+        valid = True
+        if 'Date Created' not in record:
+            valid = False
+
+        if 'Object ARK' not in record:
+            valid = False
+
+        if 'Timecode Content Begins' not in record:
+            valid = False
+
+        if 'Media Type' not in record:
+            valid = False
+
+        if 'Interviewee' not in record:
+            valid = False
+
+        if 'Series Title' not in record:
+            valid = False
+
+        if 'Temporal Coverage' not in record:
+            valid = False
+
+        if 'Writer' not in record:
+            valid = False
+
+        if 'Institution URL' not in record:
+            valid = False
+
+        if 'Project Identifier' not in record:
+            valid = False
+
+        if 'Quality Control Notes' not in record:
+            valid = False
+
+        if 'Silent or Sound' not in record:
+            valid = False
+
+        if 'Camera' not in record:
+            valid = False
+
+        if 'Music' not in record:
+            valid = False
+
+        if 'Editor' not in record:
+            valid = False
+
+        if 'Track Standard' not in record:
+            valid = False
+
+        if 'CONTENTdm number' not in record:
+            valid = False
+
+        if 'Subtitles/Intertitles/Closed Captions' not in record:
+            valid = False
+
+        if 'Distributor' not in record:
+            valid = False
+
+        if 'Date modified' not in record:
+            valid = False
+
+        if 'Subject Topic Authority Source' not in record:
+            valid = False
+
+        if 'Aspect Ratio' not in record:
+            valid = False
+
+        if 'Total Number of Reels or Tapes' not in record:
+            valid = False
+
+        if 'Copyright Holder Info' not in record:
+            valid = False
+
+        if 'Running Speed' not in record:
+            valid = False
+
+        if 'Subject Entity Authority Source' not in record:
+            valid = False
+
+        if 'Additional Technical Notes for Overall Work' not in record:
+            valid = False
+
+        if 'Musician' not in record:
+            valid = False
+
+        if 'Main or Supplied Title' not in record:
+            valid = False
+
+        if 'Internet Archive URL' not in record:
+            valid = False
+
+        if 'Relationship Type' not in record:
+            valid = False
+
+        if 'Director' not in record:
+            valid = False
+
+        if 'Copyright Statement' not in record:
+            valid = False
+
+        if 'Genre' not in record:
+            valid = False
+
+        if 'Cataloger Notes' not in record:
+            valid = False
+
+        if 'Collection Guide URL' not in record:
+            valid = False
+
+        if 'Interviewer' not in record:
+            valid = False
+
+        if 'Description or Content Summary' not in record:
+            valid = False
+
+        if 'Institution' not in record:
+            valid = False
+
+        if 'Stock Manufacturer' not in record:
+            valid = False
+
+        if 'Sound' not in record:
+            valid = False
+
+        if 'Publisher' not in record:
+            valid = False
+
+        if 'Asset Type' not in record:
+            valid = False
+
+        if 'Object Identifier' not in record:
+            valid = False
+
+        if 'Copyright Date' not in record:
+            valid = False
+
+        if 'Copyright Holder' not in record:
+            valid = False
+
+        if 'Language' not in record:
+            valid = False
+
+        if 'Color and/or Black and White' not in record:
+            valid = False
+
+        if 'Institution ARK' not in record:
+            valid = False
+
+        if 'CONTENTdm file name' not in record:
+            valid = False
+
+        if 'OCLC number' not in record:
+            valid = False
+
+        if 'Why the recording is significant to California/local history' not in record:
+            valid = False
+
+        if 'Subject Entity' not in record:
+            valid = False
+
+        if 'Gauge and Format' not in record:
+            valid = False
+
+        if 'Additional Descriptive Notes for Overall Work' not in record:
+            valid = False
+
+        if 'Genre Authority Source' not in record:
+            valid = False
+
+        if 'Date Published' not in record:
+            valid = False
+
+        if 'Country of Creation' not in record:
+            valid = False
+
+        if 'Project Note' not in record:
+            valid = False
+
+        if 'Institutional Rights Statement (URL)' not in record:
+            valid = False
+
+        if 'Spatial Coverage' not in record:
+            valid = False
+
+        if 'Copyright Notice' not in record:
+            valid = False
+
+        if 'Subject Topic' not in record:
+            valid = False
+
+        if 'Performer' not in record:
+            valid = False
+
+        if 'Relationship' not in record:
+            valid = False
+
+        if 'Producer' not in record:
+            valid = False
+
+        if 'Cast' not in record:
+            valid = False
+
+        if 'Generation' not in record:
+            valid = False
+
+        if 'Transcript' not in record:
+            valid = False
+
+        if 'Channel Configuration' not in record:
+            valid = False
+
+        if 'Date created' not in record:
+            valid = False
+
+        if 'Reference URL' not in record:
+            valid = False
+
+        if 'Call Number' not in record:
+            valid = False
+
+        if 'Base Thickness' not in record:
+            valid = False
+
+        if 'Base Type' not in record:
+            valid = False
+
+        if 'Additional Title' not in record:
+            valid = False
+
+        if 'CONTENTdm file path' not in record:
+            valid = False
+
+        if 'Duration' not in record:
+            valid = False
+
+        if 'Speaker' not in record:
+            valid = False
+
+        if 'Collection Guide Title' not in record:
+            valid = False
+
+        return valid
+
 
     def is_valid_file(self, testfile):
         if os.path.splitext(testfile)[1] != ".csv":
@@ -1341,6 +1690,7 @@ class pbcoreBuilder(threading.Thread):
         records = csv.DictReader(f)
         self._records = []
         for record in records:
+            record = OrderedDict(record)
             self._records.append(record)
         f.close()
         self._job_total = len(self._records)
