@@ -2,12 +2,13 @@ from collections import OrderedDict
 from platform import system
 import tkFileDialog
 import tkMessageBox
+import webbrowser
 
 __author__ = 'California Audio Visual Preservation Project'
 __copyright__ = "California Audiovisual Preservation Project. 2015"
 __credits__ = ["Henry Borchers"]
 __version__ = "0.1"
-__license__ = 'TBD'
+__license__ = 'GPL'
 
 import csv
 import os
@@ -47,7 +48,7 @@ class MainWindow():
         self.display_records = []
         # -------------------- Menus --------------------
         self.master.option_add('*tearOff', False)
-        self.menu_bar = Menu(master)
+        self.menu_bar = Menu(self.master)
         self.master.config(menu=self.menu_bar)
         self.fileMenu = Menu(self.menu_bar)
         self.recordMenu = Menu(self.menu_bar)
@@ -70,6 +71,14 @@ class MainWindow():
 
         self.settingsMenu.add_command(label="View Settings File...", command=self.view_settings)
 
+        self.helpMenu.add_command(label="PBCore Website",
+                                  command=lambda: webbrowser.open_new("http://pbcore.org/"))
+        self.helpMenu.add_separator()
+        self.helpMenu.add_command(label="CAVPP Website",
+                                  command=lambda: webbrowser.open_new("http://calpreservation.org/projects/audiovisual-preservation/"))
+        self.helpMenu.add_command(label="Github Source",
+                                  command=lambda: webbrowser.open_new("https://github.com/cavpp/PBCore"))
+        self.helpMenu.add_separator()
         self.helpMenu.add_command(label="About...",
                                   command=self.load_about_window)
 
@@ -109,7 +118,7 @@ class MainWindow():
                                         padding=(30, 15),
                                         relief=SUNKEN)
         # self.dataEntryFrame.grid(row=2, column=1)
-        self.panel.add(self.dataEntryFrame, weight=4)
+        self.panel.add(self.dataEntryFrame, weight=0)
 
         self.csv_filename_label = ttk.Label(self.dataEntryFrame,
                                             text="CSV file",
@@ -146,7 +155,7 @@ class MainWindow():
                                                padding=(5, 5),
                                                relief=SUNKEN)
 
-        self.panel.add(self.recordsFrame)
+        self.panel.add(self.recordsFrame, weight=10)
 
         # self.recordsList = Listbox(self.recordsFrame)
         self.recordsTree = ttk.Treeview(self.recordsFrame, columns=('title', 'project', 'files', 'xml_file'))
@@ -154,11 +163,11 @@ class MainWindow():
         self.recordsTree.heading('title', text='Title')
         self.recordsTree.heading('project', text='Project')
         self.recordsTree.heading('files', text='Files')
-        self.recordsTree.column('#0', width=10)
+        self.recordsTree.column('#0', width=30, stretch=NO)
+        self.recordsTree.column('project', minwidth=100, width=100, stretch=NO)
+        self.recordsTree.column('files', minwidth=100, width=100, stretch=NO)
+        self.recordsTree.column('title', minwidth=200,width=250, stretch=NO)
         self.recordsTree.column('xml_file', width=300)
-        self.recordsTree.column('project', width=50)
-        self.recordsTree.column('files', width=50)
-        self.recordsTree.column('title', width=250)
         self.recordsTree.pack(fill=BOTH, expand=True)
 
         if system() == 'Darwin':
@@ -212,8 +221,8 @@ class MainWindow():
      # -------------------- Context Menu --------------------
 
         self.propertyMenu = Menu(self.recordsTree, tearoff=0)
-        self.propertyMenu.add_command(label="Change Export Name", command=lambda: self.change_export(self.recordsTree.selection()))
-        self.propertyMenu.add_command(label="More Info", command=lambda: self.view_item_details(self.recordsTree.selection()))
+        self.propertyMenu.add_command(label="Change Export Name...", command=lambda: self.change_export(self.recordsTree.selection()))
+        self.propertyMenu.add_command(label="Edit...", command=lambda: self.view_item_details(self.recordsTree.selection()))
 
 
 # ============================= Load the data into tree =============================
@@ -233,6 +242,7 @@ class MainWindow():
         if self.recordsTree.selection():
             # print "gotcha", self.recordsTree.selection()
             self.propertyMenu.post(event.x_root, event.y_root)
+
 
     def view_item_details(self, record):
         item_record = record[0]
@@ -545,7 +555,9 @@ class AboutWindow():
 # ----------------- Title
         self.titleFrame = ttk.Frame(self.background, width=20, padding=10, relief=RIDGE)
         self.titleFrame.pack()
-        self.titleLabel = ttk.Label(self.titleFrame, text="CAVPP PBCore Builder")
+        # print os.path.join(os.path.dirname(os.path.realpath(__file__)), 'images/CAVPPcolor.gif')
+        self.logo = PhotoImage(file=os.path.join(os.path.dirname(os.path.realpath(__file__)), 'images/CAVPPcolor.gif'))
+        self.titleLabel = ttk.Label(self.titleFrame, text="CAVPP PBCore Builder", image=self.logo, compound=TOP)
         self.titleLabel.pack()
         self.versionLabel = ttk.Label(self.titleFrame, text="Version: " + __version__)
         self.versionLabel.pack()
@@ -573,7 +585,11 @@ class AboutWindow():
         self.creditsdataLabel.grid(column=1, row=2, sticky=W)
 
         self.closeButton = ttk.Button(self.background, text="Close", command=lambda: self.master.destroy())
-        self.closeButton.pack()
+        self.closeButton.pack(side=BOTTOM)
+
+
+
+
 
 class SettingsWindow():
     def __init__(self, master, settingFile):
@@ -850,7 +866,7 @@ class RecordDetailsWindow():
         self.label.pack()
         # ------------ XML file --------------
         self.xmlFrame = ttk.Frame(self.background, padding=(10,10))
-        self.xmlFrame.pack(fill=X, expand=True)
+        self.xmlFrame.pack(fill=X)
         self.xmlFrame.grid_columnconfigure(0, weight=0)
         self.xmlFrame.grid_columnconfigure(1, weight=1)
         self.xmlFrame.grid_columnconfigure(2, weight=0)
@@ -1341,9 +1357,9 @@ class RecordDetailsWindow():
         self.associated_files_Tree['show'] = 'headings'
 
         self.associated_files_Tree.pack(fill=BOTH, expand=True)
-        self.associated_files_Tree.column('#0', width=0, anchor='center')
-        self.associated_files_Tree.column('file', width=200, anchor=W)
-        self.associated_files_Tree.column('type', width=100, anchor=W)
+        self.associated_files_Tree.column('#0', width=0, stretch=NO, anchor='center')
+        self.associated_files_Tree.column('file', width=250, stretch=NO, anchor=W)
+        self.associated_files_Tree.column('type', width=100, stretch=NO, anchor=W)
         self.associated_files_Tree.column('size', width=50, anchor=W)
         # self.associated_files_Tree.config
         self.load_associated_files()
@@ -1864,7 +1880,7 @@ class AlertWindow(object):
         warningMessages.heading('message', text='Message')
         warningMessages.pack(fill=BOTH, expand=True)
         self.optionsFrame = ttk.Frame(self.warningBackgroundFrame)
-        self.optionsFrame.pack(fill=BOTH, expand=True, pady=5, padx=5)
+        self.optionsFrame.pack(fill=X, pady=5, padx=5)
 
         closeButton = ttk.Button(self.optionsFrame, text='Close', command=lambda: self.master.destroy())
         closeButton.grid(column=0, row=0, sticky=W+E+S)
@@ -1887,8 +1903,9 @@ class AlertWindow(object):
             if 'message' in remark:
                 warning_message += remark['message']
             warningMessages.insert('', index, index+1, text=index+1)
-            warningMessages.column('#0', width=40, anchor='center')
-            warningMessages.column('projectID', width=150)
+            warningMessages.column('#0', width=40, anchor=W, stretch=NO)
+            warningMessages.column('projectID', width=150, stretch=NO)
+            warningMessages.column('type', width=150, stretch=NO)
             warningMessages.column('message', width=400)
             # warningMessages.set(index+1, '#0', index)
             warningMessages.set(index+1, 'projectID', remark['record'])
