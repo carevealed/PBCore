@@ -1,3 +1,5 @@
+import string
+
 __author__ = 'California Audiovisual Preservation Project'
 __copyright__ = "Copyright 2015, California Audiovisual Preservation Project"
 __credits__ = "Henry Borchers"
@@ -32,7 +34,7 @@ class XML_PBCore(object):
 
     def xmlString(self):
         XML = self._makeXML()
-        return etree.tostring(XML)
+        return etree.tostring(XML, encoding="UTF-8")
 
     def valid_file_size(self, fileSize):
         """
@@ -174,7 +176,6 @@ class PBCore(XML_PBCore):
             raise TypeError("setinstantiation expected type: pbcoreInstantiation")
 
     def _makeXML(self):
-
         branch = Element("pbcoreCollection", attrib={
             "xmlns": "http://www.pbcore.org/PBCore/PBCoreNamespace.html",
             "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
@@ -186,6 +187,8 @@ class PBCore(XML_PBCore):
         })
         if self.intellectualContent:
             branch.append(self.intellectualContent.xml())
+
+
         if self.intellectualProperty:
             branch.append(self.intellectualProperty.xml())
         if self.extensions:
@@ -344,6 +347,7 @@ class pbcoreDescriptionDocument(XML_PBCore):
     def getpbcoreAssetType
         :return: None
         """
+
         self.pbcoreAssetType = PB_Element(tag="pbcoreAssetType", value=assetType)
         self.pbcoreAssetDate = []
         self.pbcoreIdentifier = []
@@ -399,6 +403,7 @@ class pbcoreDescriptionDocument(XML_PBCore):
         if description and description != "":
             self.pbcoreDescription.append(
                 PB_Element(['descriptionType', 'Content Summary'], tag="pbcoreDescription", value=description))
+
         self.pbcoreGenre = []
         if genre and genre != "":
             if self.genreAutority and self.genreAutority != "":
@@ -606,6 +611,7 @@ class pbcoreDescriptionDocument(XML_PBCore):
             self.pbcoreDescription.append(data)
         else:
             raise TypeError("Expected Type: PB_Element")
+
 
     def get_pbcoreGenre(self):
         """
@@ -884,6 +890,8 @@ class pbcoreDescriptionDocument(XML_PBCore):
         if self.pbcoreSubject:
             for node in self.pbcoreSubject:
                 branch.append(node.get_etree_element())
+
+        # print "after"
 
         if self.pbcoreDescription:
             for node in self.pbcoreDescription:
@@ -1649,7 +1657,6 @@ class CAVPP_Part(XML_PBCore):
         :UTI:           http://pbcore.org/v2/elements/pbcoreInstantiation
         :return:        None
         """
-
         if isinstance(data, pbcoreInstantiation):
             self.pbcoreInstantiation.append(data)
 
@@ -3000,13 +3007,12 @@ class InstantiationEssenceTrack(XML_PBCore):
 
         if self.essenceTrackAnnotation:
             for node in self.essenceTrackAnnotation:
-                # node.xml_print()
                 branch.append(node.get_etree_element())
 
         if self.essenceTrackExtension:
             for node in self.essenceTrackExtension:
                 branch.append(node.get_etree_element())
-        # print branch
+                branch.append(node.get_etree_element())
         return branch
 
         # def xml(self):
@@ -3529,98 +3535,98 @@ class PB_Element():
     :type           value:  str
     :return:        None
     """
-
+    validTags = [
+                "contributor",
+                "contributorRole",
+                "coverage",
+                "coverageType",
+                "creator",
+                "creatorRole",
+                "essenceTrackAnnotation",
+                "essenceTrackAspectRatio",
+                "essenceTrackBitDepth",
+                "essenceTrackDataRate",
+                "essenceTrackDuration",
+                "essenceTrackEncoding",
+                "essenceTrackExtension",
+                "essenceTrackFrameRate",
+                "essenceTrackFrameSize",
+                "essenceTrackIdentifier",
+                "essenceTrackLanguage",
+                "essenceTrackPlaybackSpeed",
+                "essenceTrackSamplingRate",
+                "essenceTrackStandard",
+                "essenceTrackTimeStart",
+                "essenceTrackType",
+                "extensionAuthorityUsed",
+                "extensionElement",
+                "extensionEmbedded",
+                "extensionValue",
+                "extensionWrap",
+                "instantiationAlternativeModes",
+                "instantiationAnnotation",
+                "instantiationChannelConfiguration",
+                "instantiationColors",
+                "instantiationDataRate",
+                "instantiationDate",
+                "instantiationDigital",
+                "instantiationDimensions",
+                "instantiationDuration",
+                "instantiationEssenceTrack",
+                "instantiationExtension",
+                "instantiationFileSize",
+                "instantiationGenerations",
+                "instantiationIdentifier",
+                "instantiationLanguage",
+                "instantiationLocation",
+                "instantiationMediaType",
+                "InstantiationPart",
+                "instantiationPhysical",
+                "instantiationRelation",
+                "instantiationRelationIdentifier",
+                "instantiationRelationType",
+                "instantiationRights",
+                "instantiationStandard",
+                "instantiationTimeStart",
+                "instantiationTracks",
+                "pbcoreAnnotation",
+                "pbcoreAssetDate",
+                "pbcoreAssetType",
+                "pbcoreAudienceLevel",
+                "pbcoreAudienceRating",
+                "pbcoreCollection",
+                "pbcoreContributor",
+                "pbcoreCoverage",
+                "pbcoreCreator",
+                "pbcoreDescription",
+                "pbcoreDescriptionDocument",
+                "pbcoreExtension",
+                "pbcoreGenre",
+                "pbcoreIdentifier",
+                "pbcoreInstantiation",
+                "pbcoreInstantiationDocument",
+                "pbcorePart",
+                "pbcorePublisher",
+                "pbcoreRelation",
+                "pbcoreRelationIdentifier",
+                "pbcoreRelationType",
+                "pbcoreRightsSummary",
+                "pbcoreSubject",
+                "pbcoreTitle",
+                "publisher",
+                "publisherRole",
+                "rightsEmbedded",
+                "rightsLink",
+                "rightsSummary"
+            ]
     # TODO: Create Docstring for PB_Element
     def __init__(self, *args, **kwargs):
         """
 
 
         """
+
         self.attributes = OrderedDict()
-        self.validTags = [
-            "contributor",
-            "contributorRole",
-            "coverage",
-            "coverageType",
-            "creator",
-            "creatorRole",
-            "essenceTrackAnnotation",
-            "essenceTrackAspectRatio",
-            "essenceTrackBitDepth",
-            "essenceTrackDataRate",
-            "essenceTrackDuration",
-            "essenceTrackEncoding",
-            "essenceTrackExtension",
-            "essenceTrackFrameRate",
-            "essenceTrackFrameSize",
-            "essenceTrackIdentifier",
-            "essenceTrackLanguage",
-            "essenceTrackPlaybackSpeed",
-            "essenceTrackSamplingRate",
-            "essenceTrackStandard",
-            "essenceTrackTimeStart",
-            "essenceTrackType",
-            "extensionAuthorityUsed",
-            "extensionElement",
-            "extensionEmbedded",
-            "extensionValue",
-            "extensionWrap",
-            "instantiationAlternativeModes",
-            "instantiationAnnotation",
-            "instantiationChannelConfiguration",
-            "instantiationColors",
-            "instantiationDataRate",
-            "instantiationDate",
-            "instantiationDigital",
-            "instantiationDimensions",
-            "instantiationDuration",
-            "instantiationEssenceTrack",
-            "instantiationExtension",
-            "instantiationFileSize",
-            "instantiationGenerations",
-            "instantiationIdentifier",
-            "instantiationLanguage",
-            "instantiationLocation",
-            "instantiationMediaType",
-            "InstantiationPart",
-            "instantiationPhysical",
-            "instantiationRelation",
-            "instantiationRelationIdentifier",
-            "instantiationRelationType",
-            "instantiationRights",
-            "instantiationStandard",
-            "instantiationTimeStart",
-            "instantiationTracks",
-            "pbcoreAnnotation",
-            "pbcoreAssetDate",
-            "pbcoreAssetType",
-            "pbcoreAudienceLevel",
-            "pbcoreAudienceRating",
-            "pbcoreCollection",
-            "pbcoreContributor",
-            "pbcoreCoverage",
-            "pbcoreCreator",
-            "pbcoreDescription",
-            "pbcoreDescriptionDocument",
-            "pbcoreExtension",
-            "pbcoreGenre",
-            "pbcoreIdentifier",
-            "pbcoreInstantiation",
-            "pbcoreInstantiationDocument",
-            "pbcorePart",
-            "pbcorePublisher",
-            "pbcoreRelation",
-            "pbcoreRelationIdentifier",
-            "pbcoreRelationType",
-            "pbcoreRightsSummary",
-            "pbcoreSubject",
-            "pbcoreTitle",
-            "publisher",
-            "publisherRole",
-            "rightsEmbedded",
-            "rightsLink",
-            "rightsSummary"
-        ]
 
         if kwargs:
             if isinstance(kwargs.get("tag"), str):  # checks if the tag is a string
@@ -3631,7 +3637,7 @@ class PB_Element():
             else:
                 raise TypeError("Expected string. Received: ", type(kwargs.get("tag")))
             if isinstance(kwargs.get("value"), str):  # checks if the value is a string
-                self.value = kwargs.get("value")
+                self.value = kwargs.get("value").decode('utf-8')
 
             elif isinstance(kwargs.get("value"), int):  # checks if the value is a int
                 self.value = str(kwargs.get("value"))
@@ -3648,9 +3654,9 @@ class PB_Element():
                 if isinstance(arg[0], str) and isinstance(arg[1],
                                                           str):  # checks if the attribute name and value are a string
                     self.add_attribute(arg[0], arg[1])
-                    # print arg[0], arg[1]
                 else:
                     raise ValueError
+
 
     def get_attributes(self):
         """
@@ -3730,6 +3736,7 @@ class PB_Element():
         # TODO: Create Docstring for set_value
         self.value = value
 
+
     def get_etree_element(self):
         """
         :Description:   Gets a single element as an XML element to be passed down.
@@ -3742,7 +3749,7 @@ class PB_Element():
             while attributes:
                 key, value = attributes.popitem(last=False)
                 element.set(key, value)
-                # print self.attribute
+
         return element
 
     def xml_print(self):
@@ -3751,8 +3758,11 @@ class PB_Element():
         :return:        None
         """
         element = Element(self.tag)
+
         element.text = self.value
+
         if self.attributes:
             for key in self.attributes:
                 element.set(key, self.attributes[key])
-        print etree.tostring(element)
+
+        print etree.tostring(element, encoding="UTF-8")
