@@ -389,6 +389,7 @@ class pbcoreBuilder(threading.Thread):
                 PB_Element(['source', 'CDL'], ['annotation', 'Object ARK'], tag='pbcoreIdentifier', value=obj_ARK))
 
         if record['Description or Content Summary']:
+            # description = record['Description or Content Summary']
             description = record['Description or Content Summary']
             descriptive.add_pbcoreDescription(PB_Element(tag="pbcoreDescription", value=description.strip()))
 
@@ -413,7 +414,6 @@ class pbcoreBuilder(threading.Thread):
                     descriptive.add_pbcoreSubject(
                         PB_Element(['source', "Library of Congress Subject Headings"], ['subjectType', 'Topic'],
                                    tag="pbcoreSubject", value=subjectTopic.strip()))
-
         if record['Subject Entity']:
             subjectEnts = record['Subject Entity']
             subjectEntities = subjectEnts.split(';')
@@ -688,6 +688,7 @@ class pbcoreBuilder(threading.Thread):
             track_standard = record['Track Standard']
         if record['Running Speed']:
             run_speed = record['Running Speed']
+
         physical = pbcoreInstantiation(type="Physical Asset",
                                        objectID=part.strip(),
                                        extent=total_number,
@@ -1257,8 +1258,8 @@ class pbcoreBuilder(threading.Thread):
         if record['Institution URL']:
             inst_URL = record['Institution URL']
 
-
         descriptive = self._build_descriptive(record)
+
         # PARTS
         call_numbers = ""
         if record['Call Number']:
@@ -1287,6 +1288,7 @@ class pbcoreBuilder(threading.Thread):
                 physical = self._build_physical(part, record)
                 newPart.add_pbcoreInstantiation(physical)
 
+
         # -----------------------------------------------------
         #           Preservation Master
         # -----------------------------------------------------
@@ -1305,7 +1307,7 @@ class pbcoreBuilder(threading.Thread):
                     access_copy = self._build_access_copy(record, access_files_sets)
                     newPart.add_pbcoreInstantiation(access_copy)
 
-            descriptive.add_pbcore_part(newPart)
+                descriptive.add_pbcore_part(newPart)
 
     # =================
     # Moving Image ONLY
@@ -1371,7 +1373,6 @@ class pbcoreBuilder(threading.Thread):
             for part in record['Object Identifier'].split(';'):
                 newRelation = pbcoreRelation(reID=part.strip(), reType="Has Part")
                 descriptive.add_pbcoreRelation(newRelation)
-
         new_XML_file.set_IntellectualContent(descriptive)
         self._running = False
         return new_XML_file.xmlString()
@@ -2144,6 +2145,7 @@ def main():
     # for record in record_file.records:
     #     print record
     files_created = []
+
     for record in record_file.records:
         print("")
         fileName = re.search(FILE_NAME_PATTERN, record['Object Identifier']).group(0)
@@ -2162,6 +2164,7 @@ def main():
             buf = parseString(record_file.generate_pbcore(record, digital_files))
         else:
             buf = parseString(record_file.generate_pbcore(record))
+
         output_file = open(file_output_name, 'w')
         output_file.write(buf.toprettyxml(encoding='utf-8'))
         output_file.close()
@@ -2219,7 +2222,7 @@ parser.add_argument("csv", help="Source CSV file", nargs='?', default="", type=s
 parser.add_argument("-d", "--debug", help="Debug mode. Writes all messages to debug log.", action='store_true')
 parser.add_argument("-nc", "--nochecksum", help="Bypasses md5 checksum generation for files.", action='store_true')
 parser.add_argument("-np", "--noprogress", help="hides the percentage completed of the md5 checksum calculation.", action='store_true')
-parser.add_argument("-g", "--gui", help="EXPERIMENTAL: Loads the gui interface.", action='store_true')
+parser.add_argument("-g", "--gui", help="EXPERIMENTAL: Loads the graphical user interface.", action='store_true')
 # TODO: add argument that lets you create pbcore without the files present
 args = parser.parse_args()
 
