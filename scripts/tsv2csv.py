@@ -1,5 +1,8 @@
+import codecs
 import os
 import string
+from time import sleep
+import unicodedata
 
 __author__ = 'California Audio Visual Preservation Project'
 __module__ = 'TSV to CSV File Converter'
@@ -27,16 +30,29 @@ def main():
     newname = os.path.splitext(sys.argv[1])[0] + ".csv"
     print "Saving a new csv files as: " + newname
 
+    # import codecs
+    # test = codecs.open(sys.argv[1], encoding='utf-8')
+    # for line in test:
+    #     print line
+    # test.close()
+    # quit()
+    with open(newname, 'w') as output_file:
+        with codecs.open(sys.argv[1], 'r', 'UTF-8') as input_file:
+            cleanstring = input_file.read()
+            cleanstring = cleanstring.encode('UTF-8', errors='ignore')
+            cleanFile = csv.StringIO(cleanstring)
+            #
+            tsv_file = csv.reader(cleanFile, dialect=csv.excel_tab)
+            a = csv.writer(output_file)
 
-    output_file = open(newname, 'w')
-    input_file = open(sys.argv[1], 'r')
-    a = csv.writer(output_file)
-    tsv_file = csv.reader(input_file, dialect=csv.excel_tab)
 
-    for line in tsv_file:
-        print line
-        print len(unicode(line))
-        a.writerow(unicode(line))
+            for n in tsv_file:
+                a.writerow(n)
+                print n
+                print "n"
+
+                # print len(unicode(line))
+                # print len(unicode(line))
 
 
     # input_file.seek(0)
@@ -44,7 +60,7 @@ def main():
 
     # a.writerows(tsv_file)
     # input_file.close()
-    output_file.close()
+    # output_file.close()
 
 
 
