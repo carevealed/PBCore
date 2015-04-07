@@ -1679,7 +1679,7 @@ class RecordDetailsWindow():
         if self._copyright_notice_entry.get() != self._init_copyright_notice:
             changes.append(('Copyright Notice', self._copyright_notice_entry.get()))
 
-        if self._copyright_statement_entry.get() != self._init_copyright_statement:
+        if self._copyright_statement_entry.get().encode('UTF-8') != self._init_copyright_statement:
             changes.append(('Copyright Statement', self._copyright_statement_entry.get()))
 
         if self._country_of_creation_entry.get() != self._init_country_of_creation:
@@ -1697,7 +1697,7 @@ class RecordDetailsWindow():
         if self._date_published_entry.get() != self._init_date_published:
             changes.append(('Date Published', self._date_published_entry.get()))
 
-        if self._description_or_content_summary_entry.get('0.0', END).replace('\n', '') != self._init_description_or_content_summary:
+        if self._description_or_content_summary_entry.get('0.0', END).encode('UTF-8').replace('\n', '') != self._init_description_or_content_summary:
             changes.append(('Description or Content Summary', self._description_or_content_summary_entry.get('0.0', END).replace('\n', '')))
 
         if self._director_entry.get() != self._init_director:
@@ -1784,7 +1784,7 @@ class RecordDetailsWindow():
         if self._publisher_entry.get() != self._init_publisher:
             changes.append(('Publisher', self._publisher_entry.get()))
 
-        if self._quality_control_notes_entry.get('0.0', END).replace('\n', '') != self._init_quality_control_notes:
+        if self._quality_control_notes_entry.get('0.0', END).encode('UTF-8').replace('\n', '') != self._init_quality_control_notes:
             changes.append(('Quality Control Notes', self._quality_control_notes_entry.get('0.0', END).replace('\n', '')))
 
         if self._reference_URL_entry.get() != self._init_reference_url:
