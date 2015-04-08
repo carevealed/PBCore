@@ -25,7 +25,7 @@ FILE_NAME_PATTERN = re.compile("[A-Z,a-z]+_\d+")
 # DEFAULT_PATH = None
 
 class MainWindow():
-    def __init__(self, master, input_file=None, settings=None):
+    def __init__(self, master, settings, input_file=None):
         if input_file:
             self.default_path = os.path.dirname(input_file)
         else:
@@ -229,7 +229,7 @@ class MainWindow():
         if input_file:
             self.csv_filename_entry.insert(0, input_file)
             if self.validate_file(input_file):
-                self.file_records = pbcore_csv.pbcoreBuilder(input_file)
+                self.file_records = pbcoreBuilder(input_file, self.settings)
                 self.file_records.load_records()
                 self.load_records_list(self.file_records.records)
 
@@ -298,7 +298,7 @@ class MainWindow():
             self.csv_filename_entry.delete(0, END)
             self.csv_filename_entry.insert(0, fileName)
             if self.validate_file(fileName):
-                self.file_records = pbcore_csv.pbcoreBuilder(fileName)
+                self.file_records = pbcoreBuilder(fileName, settings=self.settings)
                 self.file_records.load_records()
                 self.load_records_list(self.file_records.records)
 
@@ -348,7 +348,7 @@ class MainWindow():
     def validate_file(self, in_file):
         if os.path.isfile(in_file):
 
-            testFile = pbcore_csv.pbcoreBuilder(in_file)
+            testFile = pbcoreBuilder(in_file, settings=self.settings)
             if testFile.is_valid_csv():
 
                 valid, messages = testFile.validate_col_titles()
@@ -453,7 +453,7 @@ class MainWindow():
             self.set_total_progress(progress=0, total=10)
 
             # if self.validate_file(self.csv_filename_entry.get()):
-            xml_content = pbcore_csv.pbcoreBuilder(self.csv_filename_entry.get())
+            xml_content = pbcoreBuilder(self.csv_filename_entry.get(), settings=self.settings)
             xml_content.load_records()
             for record in self.recordsTree.get_children():
                 output = self.recordsTree.set(record)
@@ -621,7 +621,7 @@ class SettingsWindow():
 class observer(threading.Thread):
     def __init__(self, records):
         threading.Thread.__init__(self)
-        if not isinstance(records, pbcore_csv.pbcoreBuilder):
+        if not isinstance(records, pbcoreBuilder):
             raise TypeError
         self.records = records
         self.records.load_records()
@@ -749,7 +749,7 @@ def start_gui(settings, csvfile=None):
     if csvfile:
         app = MainWindow(root, input_file=csvfile, settings=settings)
     else:
-        app = MainWindow(root)
+        app = MainWindow(root, settings=settings)
     # root.option_add('*tearOff', False)
     root.mainloop()
 
@@ -1497,7 +1497,7 @@ class RecordDetailsWindow():
         fileName = re.search(FILE_NAME_PATTERN, self.current_record['Object Identifier']).group(0)
         # print fileName
         files = locate_files(root, fileName)
-        prsv, access = pbcore_csv.sep_pres_access(files)
+        prsv, access = sep_pres_access(files)
 
         for index, file in enumerate(prsv):
             # self.associated_files_Tree
@@ -1916,8 +1916,8 @@ class AlertWindow(object):
         command = "open " + self.csv
         os.system(command)
 if __name__ == '__main__':
-    from pbcore_csv import pbcoreBuilder
+    # from pbcore.scripts.pbcore_csv import pbcoreBuilder
     sys.stderr.write("Not a standalone program. Please run pbcore-csv.py -g to run the GUI")
 
 else:
-    import pbcore_csv
+    from pbcore.scripts.pbcore_csv import *

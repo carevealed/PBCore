@@ -1,3 +1,4 @@
+#!/usr/local/bin/python
 from Queue import Queue
 import copy
 
@@ -12,7 +13,8 @@ from ConfigParser import ConfigParser
 import threading
 from onesheet.VideoObject import *
 from onesheet.AudioObject import *
-import gui.pbcore_csv_gui
+
+
 import string
 from time import sleep
 from os.path import isfile
@@ -118,9 +120,12 @@ class RemoveErrorsFilter(logging.Filter):
 
 
 class pbcoreBuilder(threading.Thread):
-
-    def __init__(self, input_file, verbose=False):
+    def __init__(self, input_file, settings, verbose=False, calculate_checksums=True):
         threading.Thread.__init__(self)
+        self.calculate_checksums = calculate_checksums
+        self.settings = ConfigParser()
+
+        self.settings.read(settings)
         self._running = False
         self._source = input_file
         self._job_total = 0
@@ -395,7 +400,7 @@ class pbcoreBuilder(threading.Thread):
         if record['Description or Content Summary']:
             # description = record['Description or Content Summary']
             description = record['Description or Content Summary']
-            descriptive.add_pbcoreDescription(PB_Element(tag="pbcoreDescription", value=description.strip()))
+            descriptive.add_pbcoreDescription(PB_Element(['annotation', 'Content Summary'], tag="pbcoreDescription", value=description.strip()))
 
         if record['Internet Archive URL']:
             IA_URL = record['Internet Archive URL']
@@ -761,7 +766,7 @@ class pbcoreBuilder(threading.Thread):
         if record['Media Type']:
             media_type = record['Media Type']
         pres_master = pbcoreInstantiation(type="Preservation Master",
-                                          location=SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource'),
+                                          location=self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource'),
                                           generations="Preservation Master",
                                           language=lang)
 
@@ -771,7 +776,7 @@ class pbcoreBuilder(threading.Thread):
         if media_type.lower() == 'audio' or media_type.lower() == 'sound':
             top_id = obj_ID.split("_a")[0]
             top_id = top_id.split("_b")[0]
-            pres_master.add_instantiationIdentifier(PB_Element(['source', SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
+            pres_master.add_instantiationIdentifier(PB_Element(['source', self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
                                                                tag="instantiationIdentifier",
                                                                value=top_id+"_prsv"))
             pres_master.set_instantiationMediaType(PB_Element(tag='instantiationMediaType',
@@ -780,16 +785,17 @@ class pbcoreBuilder(threading.Thread):
 
             for master_part in preservation_file_set:
                 f = AudioObject(master_part)
-                new_mast_part = InstantiationPart(location=SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource'), duration=f.totalRunningTimeSMPTE)
+                new_mast_part = InstantiationPart(location=self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource'), duration=f.totalRunningTimeSMPTE)
                 file_size, file_units = self.sizeofHuman(f.file_size)
                 new_mast_part.set_instantiationFileSize(PB_Element(['unitsOfMeasure',file_units],
                                                                    tag="instantiationFileSize",
                                                                    value=str(file_size)))
-                new_mast_part.add_instantiationIdentifier(PB_Element(['source', SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
+                new_mast_part.add_instantiationIdentifier(PB_Element(['source', self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
                                                                      ['annotation', 'File Name'],
                                                                      tag="instantiationIdentifier",
                                                                      value=os.path.basename(master_part)))
-                if not args.nochecksum and SETTINGS.getboolean('CHECKSUM','CalculateChecksums') is True:
+                if self.calculate_checksums is True:
+                # if not args.nochecksum and self.settings.getboolean('CHECKSUM','CalculateChecksums') is True:
                     self._working_status = "Calculating MD5 checksum for " + f.file_name + " (" + f.file_size_human + ")"
                     if self.verbose:
                         print("\t"),
@@ -804,7 +810,7 @@ class pbcoreBuilder(threading.Thread):
                             self._calculation_percent = f.calulation_progresss
                             sleep(.1)
                         md5 = f.MD5_hash
-                    new_mast_part.add_instantiationIdentifier(PB_Element(['source', SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
+                    new_mast_part.add_instantiationIdentifier(PB_Element(['source', self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
                                                                          ['version', 'MD5'],
                                                                          ['annotation', 'checksum'],
                                                                          tag="instantiationIdentifier",
@@ -847,7 +853,7 @@ class pbcoreBuilder(threading.Thread):
             pres_master.set_instantiationMediaType(PB_Element(tag='instantiationMediaType', value='Moving Image'))
             video_codec = str(f.videoCodec + ": " + f.videoCodecLongName)
             pres_master.set_instantiationStandard(PB_Element(tag='instantiationStandard', value=video_codec))
-            pres_master.add_instantiationIdentifier(PB_Element(['source', SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
+            pres_master.add_instantiationIdentifier(PB_Element(['source', self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
                                                                ['annotation', 'File Name'],
                                                                tag="instantiationIdentifier",
                                                                value=os.path.basename(preservation_file_set[0])))
@@ -857,7 +863,8 @@ class pbcoreBuilder(threading.Thread):
                                                              tag="instantiationFileSize",
                                                              value=str(file_size)))
 
-            if not args.nochecksum and SETTINGS.getboolean('CHECKSUM', 'CalculateChecksums') is True:
+            if self.calculate_checksums is True:
+            # if not args.nochecksum and self.settings.getboolean('CHECKSUM', 'CalculateChecksums') is True:
                 self._working_status = "Calculating MD5 checksum for " + f.file_name + " (" + f.file_size_human + ")"
                 if self.verbose:
                     print("\t"),
@@ -872,7 +879,7 @@ class pbcoreBuilder(threading.Thread):
                         self._calculation_percent = f._calculation_progress
                         sleep(.1)
                     md5 = f.MD5_hash
-                pres_master.add_instantiationIdentifier(PB_Element(['source', SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
+                pres_master.add_instantiationIdentifier(PB_Element(['source', self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
                                                                    ['version', 'MD5'],
                                                                    ['annotation', 'checksum'],
                                                                    tag="instantiationIdentifier",
@@ -944,7 +951,7 @@ class pbcoreBuilder(threading.Thread):
         for access_files in access_files_sets:
             # print access_files_sets
             access_copy = pbcoreInstantiation(type="Access Copy",
-                                              location=SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource'),
+                                              location=self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource'),
                                               language=lang,
                                               generations="Access Copy")
 
@@ -953,14 +960,14 @@ class pbcoreBuilder(threading.Thread):
         # ============================================================ #
             if media_type.lower() == 'audio' or media_type.lower() == 'sound':
                 access_copy.add_instantiationIdentifier(
-                    PB_Element(['source', SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
+                    PB_Element(['source', self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
                                tag="instantiationIdentifier",
                                value=obj_ID+"_access"))
                 access_copy.add_instantiationRelation(InstantiationRelation(derived_from=obj_ID+"_prsv"))
                 for access_file in access_files:
                     f = AudioObject(access_file)
                     newAudioFile = InstantiationPart(objectID=f.file_name,
-                                                     location=SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource'),
+                                                     location=self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource'),
                                                      duration=f.totalRunningTimeSMPTE)
 
 
@@ -969,7 +976,8 @@ class pbcoreBuilder(threading.Thread):
                     newAudioFile.set_instantiationFileSize(PB_Element(['unitsOfMeasure', units],
                                                                       tag="instantiationFileSize",
                                                                       value=size))
-                    if not args.nochecksum and SETTINGS.getboolean('CHECKSUM','CalculateChecksums') is True:
+                    if self.calculate_checksums is True:
+                    # if not args.nochecksum and self.settings.getboolean('CHECKSUM','CalculateChecksums') is True:
                         self._working_status = "Calculating MD5 checksum for " + f.file_name + " (" + f.file_size_human + ")"
                         if self.verbose:
                             print("\t"),
@@ -985,7 +993,7 @@ class pbcoreBuilder(threading.Thread):
                                 sleep(.1)
                             md5 = f.MD5_hash
                         newAudioFile.add_instantiationIdentifier(
-                            PB_Element(['source', SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
+                            PB_Element(['source', self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
                                        ['version', 'MD5'],
                                        ['annotation', 'checksum'],
                                        tag="instantiationIdentifier",
@@ -1020,7 +1028,7 @@ class pbcoreBuilder(threading.Thread):
             elif media_type.lower() == 'moving image':
                 f = VideoObject(access_files)
                 # print "audio", f.file_name
-                access_copy.add_instantiationIdentifier(PB_Element(['source', SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
+                access_copy.add_instantiationIdentifier(PB_Element(['source', self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
                                                                    ['annotation', 'File Name'],
                                                                    tag="instantiationIdentifier",
                                                                    value=f.file_name))
@@ -1033,7 +1041,8 @@ class pbcoreBuilder(threading.Thread):
                 access_copy.set_instantiationFileSize(PB_Element(['unitsOfMeasure', units],
                                                                  tag="instantiationFileSize",
                                                                  value=size))
-                if not args.nochecksum and SETTINGS.getboolean('CHECKSUM', 'CalculateChecksums') is True:
+                if self.calculate_checksums is True:
+                # if not args.nochecksum and self.settings.getboolean('CHECKSUM', 'CalculateChecksums') is True:
                     self._working_status = "Calculating MD5 checksum for " + f.file_name + " (" + f.file_size_human + ")"
                     if self.verbose:
                         print("\t"),
@@ -1049,7 +1058,7 @@ class pbcoreBuilder(threading.Thread):
                             sleep(.1)
                         md5 = f.MD5_hash
                     access_copy.add_instantiationIdentifier(
-                        PB_Element(['source', SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
+                        PB_Element(['source', self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
                                    ['version', 'MD5'],
                                    ['annotation', 'checksum'],
                                    tag="instantiationIdentifier",
@@ -1200,7 +1209,6 @@ class pbcoreBuilder(threading.Thread):
 
 
     def generate_pbcore(self, record, files=None, verbose=False):
-
         self._running = True
         XML = ""
         new_XML_file = PBCore(collectionSource=record['Institution'],
@@ -1288,16 +1296,17 @@ class pbcoreBuilder(threading.Thread):
             tapes = self._group_tapes(tapes)
 
             for tape in tapes:
-
                 ob_id = tape[0]
+                # print ob_id
                 ob_id = ob_id.split("_a")[0]
-
-                new_physical = CAVPP_Part(objectID=ob_id.strip(),
+                new_part = CAVPP_Part(objectID=ob_id.strip(),
                                           mainTitle=main_title.strip(),
                                           description=record['Description or Content Summary'])
+                # print new_physical.xmlString()
                 # for part in tape:
+                # new_physical.add_pbcoreIdentifier(PB_Element(['source', 'CAVPP'], tag='pbcoreIdentifier', value=ob_id))
                 for call_number in call_numbers:
-                    new_physical.add_pbcoreIdentifier(
+                    new_part.add_pbcoreIdentifier(
                         PB_Element(['source', inst_name], ['annotation', 'Call Number'], tag='pbcoreIdentifier',
                                    value=call_number.strip()))
                 # descriptive.add_pbcore_part(new_physical)
@@ -1306,27 +1315,19 @@ class pbcoreBuilder(threading.Thread):
         # -----------------------------------------------------
         #         print str(tape) + "tape"
                 physical = self._build_physical(tape, record)
-                new_physical.add_pbcoreInstantiation(physical)
-                descriptive.add_pbcore_part(new_physical)
+                physical.add_instantiationIdentifier(PB_Element(['source', 'CAVPP'], tag='instantiationIdentifier', value=ob_id))
+                new_part.add_pbcoreInstantiation(physical)
 
             # -----------------------------------------------------
             #           Preservation Master
             # -----------------------------------------------------
 
-            new_derivatives = CAVPP_Part(objectID=ob_id.strip(),
-                                         mainTitle=main_title.strip(),
-                                         description=record['Description or Content Summary'])
-            # print new_derivatives.xmlString()
-            # new_xml = minidom.parseString(new_derivatives.xmlString())
-            # print new_xml.toprettyxml(encoding='utf-8')
-
             if files:
-                # self._parts_progress = 1
                 if preservation_file_sets:
                     for preservation_file_set in preservation_file_sets:
                         # print preservation_file_set
                         pres_master = self._build_preservation_master(record, preservation_file_set)
-                        new_derivatives.add_pbcoreInstantiation(pres_master)
+                        new_part.add_pbcoreInstantiation(pres_master)
 
     #
     #
@@ -1335,9 +1336,9 @@ class pbcoreBuilder(threading.Thread):
     # # -----------------------------------------------------
 
                 access_copy = self._build_access_copy(record, access_files_sets)
-                new_derivatives.add_pbcoreInstantiation(access_copy)
+                new_part.add_pbcoreInstantiation(access_copy)
     #
-            descriptive.add_pbcore_part(new_derivatives)
+                descriptive.add_pbcore_part(new_part)
 
 
     # =================
@@ -1348,18 +1349,18 @@ class pbcoreBuilder(threading.Thread):
             # print "moving image"
             self._parts_progress = 0
             for index, tape in enumerate(tapes):
-                new_physical = CAVPP_Part(objectID=tape.strip(),
+                new_part = CAVPP_Part(objectID=tape.strip(),
                                      mainTitle=main_title.strip(),
                                      description=record['Description or Content Summary'])
                 for call_number in call_numbers:
-                    new_physical.add_pbcoreIdentifier(
+                    new_part.add_pbcoreIdentifier(
                         PB_Element(['source', inst_name], ['annotation', 'Call Number'], tag='pbcoreIdentifier',
                                    value=call_number.strip()))
         # -----------------------------------------------------
         #           physical
         # -----------------------------------------------------
                 physical = self._build_physical(tape, record)
-                new_physical.add_pbcoreInstantiation(physical)
+                new_part.add_pbcoreInstantiation(physical)
                 # descriptive.add_pbcore_part(newPart)
 
         # -----------------------------------------------------
@@ -1370,7 +1371,7 @@ class pbcoreBuilder(threading.Thread):
         #             # print preservation_file_set
                 if files:
                     pres_master = self._build_preservation_master(record, preservation_file_sets[index])
-                    new_physical.add_pbcoreInstantiation(pres_master)
+                    new_part.add_pbcoreInstantiation(pres_master)
 
 
         # -----------------------------------------------------
@@ -1378,14 +1379,14 @@ class pbcoreBuilder(threading.Thread):
         # -----------------------------------------------------
         #         print access_files_sets[index][0]
                     access_copy = self._build_access_copy(record, access_files_sets[index])
-                    new_physical.add_pbcoreInstantiation(access_copy)
-                    descriptive.add_pbcore_part(new_physical)
+                    new_part.add_pbcoreInstantiation(access_copy)
+                    descriptive.add_pbcore_part(new_part)
 
         # Extension
         if record['Country of Creation']:
             exten = pbcoreExtension(exElement="countryOfCreation",
                                     exValue=record['Country of Creation'],
-                                    exAuthority=SETTINGS.get('EXTRA', 'DefaultCountryAuthority'))
+                                    exAuthority=self.settings.get('EXTRA', 'DefaultCountryAuthority'))
             descriptive.add_pbcore_extension(exten)
 
         if record['Project Note']:
@@ -1397,10 +1398,10 @@ class pbcoreBuilder(threading.Thread):
                 exten = pbcoreExtension(exElement="projectNote",
                                         exValue=record['Project Note'])
             descriptive.add_pbcore_extension(exten)
-        elif SETTINGS.getboolean('EXTRA','UseDefaultProjectNote'):
+        elif self.settings.getboolean('EXTRA','UseDefaultProjectNote'):
             exten = pbcoreExtension(exElement="projectNote",
-                                    exValue=SETTINGS.get('EXTRA', 'DefaultProjectNote'),
-                                    exAuthority=SETTINGS.get('EXTRA', 'DefaultProjectNoteAuthority'))
+                                    exValue=self.settings.get('EXTRA', 'DefaultProjectNote'),
+                                    exAuthority=self.settings.get('EXTRA', 'DefaultProjectNoteAuthority'))
             descriptive.add_pbcore_extension(exten)
 
         if len(tapes) > 1:
@@ -2027,20 +2028,16 @@ def sep_pres_access(digital_files):
     return preservation, access
 
 
-def main():
-    # ----------Setting up the logs----------
+def setup_logs():
     mode = "normal"
     records = []
     digital_files = []
-
-
     logger.setLevel(logging.DEBUG)
     logPath = os.path.dirname(SETTINGS.get('LOGS', 'LogFile'))
     if not os.path.exists(logPath):  # automatically create a logs folder if one doesn't already exist
         os.makedirs(logPath)
-    if SETTINGS.getboolean('LOGS','UseLogs'):
+    if SETTINGS.getboolean('LOGS', 'UseLogs'):
         fh = logging.FileHandler(SETTINGS.get('LOGS', 'LogFile'))  # Saves all logs to this file
-
     eh = logging.StreamHandler(sys.stderr)  # sends any critical errors to standard error
     eh.setLevel(logging.WARNING)
     ch = logging.StreamHandler(sys.stdout)  # sends all debug info to the standard out
@@ -2050,30 +2047,33 @@ def main():
     if args.debug or SETTINGS.getboolean('EXTRA', 'DebugMode') is True:
         mode = 'debug'
         print "ENTERING DEBUG MODE!"
-        if SETTINGS.getboolean('LOGS','UseLogs'):
+        if SETTINGS.getboolean('LOGS', 'UseLogs'):
             fh.setLevel(logging.DEBUG)
     else:
-        if SETTINGS.getboolean('LOGS','UseLogs'):
+        if SETTINGS.getboolean('LOGS', 'UseLogs'):
             fh.setLevel(logging.INFO)
-    if args.nochecksum or SETTINGS.getboolean('CHECKSUM','CalculateChecksums') is False:
+    if args.nochecksum or SETTINGS.getboolean('CHECKSUM', 'CalculateChecksums') is False:
         print "Bypassing MD5 checksum generation."
-
     error_formatter = logging.Formatter(
-        '%(asctime)s - %(name)s - %(levelname)s - %(message)s')             # DATE - USERNAME - Message
-    stderr_formatter = logging.Formatter('%(levelname)s - %(message)s')     # USERNAME - Message
-    stdout_formatter = logging.Formatter('%(message)s')                     # Message
-    if SETTINGS.getboolean('LOGS','UseLogs'):
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s')  # DATE - USERNAME - Message
+    stderr_formatter = logging.Formatter('%(levelname)s - %(message)s')  # USERNAME - Message
+    stdout_formatter = logging.Formatter('%(message)s')  # Message
+    if SETTINGS.getboolean('LOGS', 'UseLogs'):
         fh.setFormatter(error_formatter)
         logger.addHandler(fh)
     eh.setFormatter(stderr_formatter)
     logger.addHandler(eh)
     ch.setFormatter(stdout_formatter)
     logger.addHandler(ch)
+    return mode
 
-    # ----------Validation of CSV file----------
 
+def Validate_csv_file():
     logger.debug("Opening file:" + args.csv)
-    record_file = pbcoreBuilder(args.csv, verbose=True)
+    if args.nochecksum:
+        record_file = pbcoreBuilder(args.csv, verbose=True, settings=settingsFileName, calculate_checksums=False)
+    else:
+        record_file = pbcoreBuilder(args.csv, verbose=True, settings=settingsFileName)
     valid, error_message = record_file.is_valid_file(args.csv)
     if valid:
         logger.debug(args.csv + " successfully opened.")
@@ -2083,7 +2083,6 @@ def main():
         logger.critical(error_message)
         print "Quiting"
         quit()
-
     logger.debug("Validating file is a csv.")
     if record_file.is_valid_csv():
         logger.debug(args.csv + " successfully validated as a CSV.")
@@ -2092,7 +2091,6 @@ def main():
         print "FAILED"
         print "Quitting."
         quit()
-
     logger.debug("Validating files column titles.")
     valid, errors = record_file.validate_col_titles()
     if valid:
@@ -2103,11 +2101,12 @@ def main():
             logger.critical(error)
         quit()
 
+    return record_file
 
-    # ---------- Validate data in CSV file ----------
+
+def validate_csv_data(record_file):
     total_warnings = []
     total_errors = []
-
     logger.debug("Validating data in CSV.")
     test_records = []
     f = open(args.csv, "rU")
@@ -2117,13 +2116,6 @@ def main():
     warnings, errors = record_file.check_content_valid(test_records)
     total_warnings += warnings
     total_errors += errors
-    # for warning in warnings:
-
-    # for record in records:
-    #     data_warnings, data_errors = record_file.check_content_valid(record)
-    #     total_warnings += data_warnings
-    #     total_errors += data_errors
-    # if there are any errors print them out with warnings and quit
     sys.stdout.flush()
     if total_errors:
         for error in total_errors:
@@ -2134,29 +2126,10 @@ def main():
         print "Quitting"
         quit()
 
-
-    # ---------- Locate all files mentioned in CSV ----------
-    preservation_files = []
-    access_files = []
-
-    logger.debug("Locating files")
-    total_warnings += record_file.check_files_exist()
+    return total_errors, total_warnings
 
 
-
-        # ---------- Check if XML file already exists. ----------
-
-    # file_name_pattern = re.compile("[A-Z,a-z]+_\d+")
-    for record in record_file.records:
-        fileName = re.search(FILE_NAME_PATTERN, record['Object Identifier']).group(0)
-        file_output_name = fileName + "_ONLYTEST.xml"
-        if isfile(file_output_name):
-            warning = dict()
-            warning['record'] = file_output_name
-            warning['message'] = "File already exists. Do you wish to overwrite it?"
-            total_warnings.append(warning)
-
-        # ---------- Report errors and warning. ----------
+def report_warnings(mode, total_errors, total_warnings):
     sys.stdout.flush()
     if total_errors:
         for error in total_errors:
@@ -2166,8 +2139,6 @@ def main():
                 print "Warning: " + warning
         print "Quitting"
         quit()
-
-
     if mode != 'debug':
         if total_warnings:
             key = ""
@@ -2182,7 +2153,7 @@ def main():
                 logger.info("Warnings ignored.")
 
 
-    # ---------- Genereate PBCore XML Files ----------
+def generate_pbcore(record_file):
     print("")
     logging.info("Generating PBCore...")
     # record_file.build_all_records()
@@ -2191,11 +2162,9 @@ def main():
     number_of_records = 0
     number_of_new_records = 0
     number_of_rewritten_records = 0
-
     # for record in record_file.records:
-    #     print record
+    # print record
     files_created = []
-
     for record in record_file.records:
         print("")
         fileName = re.search(FILE_NAME_PATTERN, record['Object Identifier']).group(0)
@@ -2223,70 +2192,95 @@ def main():
         files_created.append(file_output_name)
         print("")
         sys.stdout.flush()
-
-
-
-
-
-    # for xml_file in record_file.xml_files:
-    #     print xml_file['name']
-    #     file_output_name = xml_file['name']
-    #     output_file = open(file_output_name, 'w')
-    #     # print xml_file['data']
-    #     dom_buffer = parseString(xml_file['data'])
-    #     output_file.write(dom_buffer.toprettyxml(encoding='utf-8'))
-    #     output_file.close()
-    #     logger.info("Saved XML PBCore metadata record: " + file_output_name)
-
     logger.debug("Closing CSV file:")
     # f.close()
     # files_created = []
     # files_created += record_file.new_records
     # files_created += record_file.overwritten_records
-
     report(files_created, number_of_new_records, number_of_records, number_of_rewritten_records)
 
 
-# load settings
-# settingsFileName = 'settings/pbcore-csv-settings.ini'
-# FIXME: take this out
-settingsFileName = '/Users/lpsdesk/PycharmProjects/PBcore/settings/pbcore-csv-settings.ini'
+def main():
+    global settingsFileName
+    settingsFileName = os.path.join(os.path.dirname(__file__), '../settings/pbcore-csv-settings.ini')
 
-SETTINGS = ConfigParser()
-try:
-    isfile(settingsFileName)
-    f = open(settingsFileName)
-    f.close()
-    SETTINGS.read(settingsFileName)
-except IOError:
-    sys.stderr.write('Error: Cannot find ' + settingsFileName + '. Quiting')
-    quit()
+    global SETTINGS
+    global logger
+    global args
+    SETTINGS = ConfigParser()
+    try:
+        isfile(settingsFileName)
+        f = open(settingsFileName)
+        f.close()
+        SETTINGS.read(settingsFileName)
+    except IOError:
+        sys.stderr.write('Error: Cannot find ' + settingsFileName + '. Quiting')
+        quit()
+
+    logger = logging.getLogger()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("csv", help="Source CSV file", nargs='?', default="", type=str)
+    parser.add_argument("-d", "--debug", help="Debug mode. Writes all messages to debug log.", action='store_true')
+    parser.add_argument("-nc", "--nochecksum", help="Bypasses md5 checksum generation for files.", action='store_true')
+    parser.add_argument("-np", "--noprogress", help="hides the percentage completed of the md5 checksum calculation.", action='store_true')
+    parser.add_argument("-g", "--gui", help="EXPERIMENTAL: Loads the graphical user interface.", action='store_true')
+    # TODO: add argument that lets you create pbcore without the files present
+    args = parser.parse_args()
+
+    if args.csv == "" and not args.gui:
+        parser.print_help()
+    elif args.gui:
+        from gui.pbcore_csv_gui import start_gui
+        if args.csv:
+            print("Loading graphical user interface with: "+args.csv)
+            start_gui(settings=os.path.abspath(settingsFileName), csvfile=args.csv)
+        else:
+            print("Loading graphical user interface")
+            # print os.path.abspath(settingsFileName)
+            start_gui(settings=os.path.abspath(settingsFileName))
+    # elif args.csv != "" and args.gui:
+
+    else:
+        # ----------Setting up the logs----------
+        mode = setup_logs()
+
+        # ----------Validation of CSV file----------
+
+        record_file = Validate_csv_file()
+
+        # ---------- Validate data in CSV file ----------
+        total_errors, total_warnings = validate_csv_data(record_file)
+        # ---------- Locate all files mentioned in CSV ----------
+        preservation_files = []
+        access_files = []
+
+        logger.debug("Locating files")
+        total_warnings += record_file.check_files_exist()
 
 
-# settingsFile.close()
 
-# loggers setup
-logger = logging.getLogger()
-parser = argparse.ArgumentParser()
-parser.add_argument("csv", help="Source CSV file", nargs='?', default="", type=str)
-parser.add_argument("-d", "--debug", help="Debug mode. Writes all messages to debug log.", action='store_true')
-parser.add_argument("-nc", "--nochecksum", help="Bypasses md5 checksum generation for files.", action='store_true')
-parser.add_argument("-np", "--noprogress", help="hides the percentage completed of the md5 checksum calculation.", action='store_true')
-parser.add_argument("-g", "--gui", help="EXPERIMENTAL: Loads the graphical user interface.", action='store_true')
-# TODO: add argument that lets you create pbcore without the files present
-args = parser.parse_args()
+            # ---------- Check if XML file already exists. ----------
+
+        # file_name_pattern = re.compile("[A-Z,a-z]+_\d+")
+        for record in record_file.records:
+            fileName = re.search(FILE_NAME_PATTERN, record['Object Identifier']).group(0)
+            file_output_name = fileName + "_PBCore.xml"
+            if isfile(file_output_name):
+                warning = dict()
+                warning['record'] = file_output_name
+                warning['message'] = "File already exists. Do you wish to overwrite it?"
+                total_warnings.append(warning)
+
+            # ---------- Report errors and warning. ----------
+        report_warnings(mode, total_errors, total_warnings)
+        # ---------- Genereate PBCore XML Files ----------
+        generate_pbcore(record_file)
+
+
+
 
 
 
 if __name__ == '__main__':
-    if args.csv == "" and not args.gui:
-        parser.print_help()
-    elif args.csv == "" and args.gui:
-        print("Loading graphical user interface")
-        # print os.path.abspath(settingsFileName)
-        gui.pbcore_csv_gui.start_gui(settings=os.path.abspath(settingsFileName))
-    elif args.csv != "" and args.gui:
-        print("Loading graphical user interface with: "+args.csv)
-        gui.pbcore_csv_gui.start_gui(settings=os.path.abspath(settingsFileName), csvfile=args.csv)
-    else:
+
         main()
