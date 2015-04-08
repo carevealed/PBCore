@@ -56,7 +56,7 @@ class MainWindow():
         self.helpMenu = Menu(self.menu_bar)
 
         self.menu_bar.add_cascade(menu=self.fileMenu, label="File")
-        self.menu_bar.add_cascade(menu=self.recordMenu, label="Record")
+        self.menu_bar.add_cascade(menu=self.recordMenu, label="Records")
         self.menu_bar.add_cascade(menu=self.settingsMenu, label="Settings")
         self.menu_bar.add_cascade(menu=self.helpMenu, label="Help")
 
@@ -1361,6 +1361,9 @@ class RecordDetailsWindow():
         self.associated_files_Tree.column('file', width=250, stretch=NO, anchor=W)
         self.associated_files_Tree.column('type', width=100, stretch=NO, anchor=W)
         self.associated_files_Tree.column('size', width=50, anchor=W)
+
+        # TODO: Add "open folder in file browser" button.
+        # TODO: Add "Add associated files" button.
         # self.associated_files_Tree.config
         self.load_associated_files()
 
@@ -1862,12 +1865,7 @@ class AlertWindow(object):
         self.master = master
 
         self.csv = csv
-        # try:
-        #     self.master.destroy()
-        # except:
-        #     pass
-        # self.warningMessageWindow = Toplevel(self.master)
-        # self.master.title("warning")
+
         self.warningBackgroundFrame = ttk.Frame(self.master)
         self.warningBackgroundFrame.pack(fill=BOTH, expand=True)
         self.warningFrame = ttk.Frame(self.warningBackgroundFrame)
@@ -1920,14 +1918,6 @@ class AlertWindow(object):
 if __name__ == '__main__':
     from pbcore_csv import pbcoreBuilder
     sys.stderr.write("Not a standalone program. Please run pbcore-csv.py -g to run the GUI")
-    # # print()
-    # # TODO: Delete when done testing -------#-|
-    # root = Tk()                             # |
-    # ini_file = "/Users/lpsdesk/PycharmProjects/PBcore/settings/pbcore-csv-settings.ini"
-    # root.wm_title('Details')       # |
-    # root.resizable(FALSE,FALSE)             # |
-    # app = RecordDetailsWindow(root, "/Users/lpsdesk/PycharmProjects/PBcore/sample_records/casacsh_000048_export.csv", "cavpp002554")    # | <== This can go when done testing --<
-    # root.mainloop()                         # |
-    # --------------------------------------#-|
+
 else:
     import pbcore_csv
