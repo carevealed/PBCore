@@ -113,6 +113,10 @@ class RemoveErrorsFilter(logging.Filter):
         if record.levelno < logging.WARNING:
             return record.getMessage()
             # return not record.getMessage().startswith('WARNING')
+
+
+
+
 class pbcoreBuilder(threading.Thread):
 
     def __init__(self, input_file, verbose=False):
@@ -650,7 +654,7 @@ class pbcoreBuilder(threading.Thread):
         run_speed = ""
         creationDates = []
         inst_name = ""
-        part = new_part
+        parts = new_part
         if record['Institution']:
             inst_name = record['Institution']
         if record['Date Created']:
@@ -690,7 +694,6 @@ class pbcoreBuilder(threading.Thread):
             run_speed = record['Running Speed']
 
         physical = pbcoreInstantiation(type="Physical Asset",
-                                       objectID=part.strip(),
                                        extent=total_number,
                                        physical=physical_asset,
                                        mediaType=media_type,
@@ -726,13 +729,16 @@ class pbcoreBuilder(threading.Thread):
                 # instantiationPart
         if media_type.lower() == 'audio' or media_type.lower() == 'sound':
             speed = record['Running Speed']
-            newInstPart = InstantiationPart(objectID=part, location=inst_name)
-            newEss = InstantiationEssenceTrack(type="Audio", ips=speed, standard=track_standard)
-            newInstPart.add_instantiationEssenceTrack(newEss)
-            physical.add_instantiationPart(newInstPart)
+            for part in parts:
+                newInstPart = InstantiationPart(objectID=part, location=inst_name)
+                newEss = InstantiationEssenceTrack(type="Audio", ips=speed, standard=track_standard)
+                newInstPart.add_instantiationEssenceTrack(newEss)
+                physical.add_instantiationPart(newInstPart)
+            # new_xml = minidom.parseString(physical.xmlString())
+            # print new_xml.toprettyxml(encoding='utf-8')
 
         elif media_type.lower() == 'moving image':
-            newEss = InstantiationEssenceTrack(objectID=part,
+            newEss = InstantiationEssenceTrack(objectID=parts,
                                                frameRate=run_speed,
                                                aspectRatio=aspect_ratio,
                                                standard=track_standard)
@@ -763,12 +769,14 @@ class pbcoreBuilder(threading.Thread):
         # ======================== Audio only ======================== #
         # ============================================================ #
         if media_type.lower() == 'audio' or media_type.lower() == 'sound':
+            top_id = obj_ID.split("_a")[0]
+            top_id = top_id.split("_b")[0]
             pres_master.add_instantiationIdentifier(PB_Element(['source', SETTINGS.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
                                                                tag="instantiationIdentifier",
-                                                               value=obj_ID+"_prsv"))
+                                                               value=top_id+"_prsv"))
             pres_master.set_instantiationMediaType(PB_Element(tag='instantiationMediaType',
                                                               value='Sound'))
-            pres_master.add_instantiationRelation(InstantiationRelation(derived_from=obj_ID))
+            pres_master.add_instantiationRelation(InstantiationRelation(derived_from=top_id))
 
             for master_part in preservation_file_set:
                 f = AudioObject(master_part)
@@ -1199,14 +1207,16 @@ class pbcoreBuilder(threading.Thread):
                               collectionTitle=record['Collection Guide Title'])
         if files:
             preservation_file_sets, access_files_sets = sep_pres_access(files)
+            self._parts_total = len(preservation_file_sets) + len(access_files_sets)
+            preservation_file_sets = group_sides(preservation_file_sets)
+            access_files_sets = group_sides(access_files_sets)
         else:
             # file_name_pattern = re.compile("[A-Z,a-z]+_\d+")
             fileName = re.search(FILE_NAME_PATTERN, record['Object Identifier']).group(0)
             newfiles = self.locate_files(os.path.abspath(self.source), fileName)
             preservation_file_sets, access_files_sets = sep_pres_access(newfiles)
-        self._parts_total = len(preservation_file_sets) + len(access_files_sets)
-        preservation_file_sets = group_sides(preservation_file_sets)
-        access_files_sets = group_sides(access_files_sets)
+
+
 
         # pbcoreDescriptionDocument
         obj_ID = ""
@@ -1227,7 +1237,8 @@ class pbcoreBuilder(threading.Thread):
         IA_URL = ""
         QC_notes_list = ""
         transcript = ""
-        parts = record['Object Identifier'].split(';')
+
+        tapes = record['Object Identifier'].split(';')
 
         # preservation, access = sep_pres_access()
 
@@ -1273,41 +1284,61 @@ class pbcoreBuilder(threading.Thread):
         if record['Media Type'].lower() == 'audio' or record['Media Type'].lower() == 'sound':
         # PBcore Parts
             self._parts_progress = 0
-            for part in parts:
-                newPart = CAVPP_Part(objectID=part.strip(),
-                                     mainTitle=main_title.strip(),
-                                     description=record['Description or Content Summary'])
+
+            tapes = self._group_tapes(tapes)
+
+            for tape in tapes:
+
+                ob_id = tape[0]
+                ob_id = ob_id.split("_a")[0]
+
+                new_physical = CAVPP_Part(objectID=ob_id.strip(),
+                                          mainTitle=main_title.strip(),
+                                          description=record['Description or Content Summary'])
+                # for part in tape:
                 for call_number in call_numbers:
-                    newPart.add_pbcoreIdentifier(
+                    new_physical.add_pbcoreIdentifier(
                         PB_Element(['source', inst_name], ['annotation', 'Call Number'], tag='pbcoreIdentifier',
                                    value=call_number.strip()))
-
+                # descriptive.add_pbcore_part(new_physical)
         # -----------------------------------------------------
         #           physical
         # -----------------------------------------------------
-                physical = self._build_physical(part, record)
-                newPart.add_pbcoreInstantiation(physical)
+        #         print str(tape) + "tape"
+                physical = self._build_physical(tape, record)
+                new_physical.add_pbcoreInstantiation(physical)
+                descriptive.add_pbcore_part(new_physical)
 
+            # -----------------------------------------------------
+            #           Preservation Master
+            # -----------------------------------------------------
 
-        # -----------------------------------------------------
-        #           Preservation Master
-        # -----------------------------------------------------
-                if files:
-                    # self._parts_progress = 1
-                    if preservation_file_sets:
-                        for preservation_file_set in preservation_file_sets:
-                            # print preservation_file_set
-                            pres_master = self._build_preservation_master(record, preservation_file_set)
-                            newPart.add_pbcoreInstantiation(pres_master)
+            new_derivatives = CAVPP_Part(objectID=ob_id.strip(),
+                                         mainTitle=main_title.strip(),
+                                         description=record['Description or Content Summary'])
+            # print new_derivatives.xmlString()
+            # new_xml = minidom.parseString(new_derivatives.xmlString())
+            # print new_xml.toprettyxml(encoding='utf-8')
 
+            if files:
+                # self._parts_progress = 1
+                if preservation_file_sets:
+                    for preservation_file_set in preservation_file_sets:
+                        # print preservation_file_set
+                        pres_master = self._build_preservation_master(record, preservation_file_set)
+                        new_derivatives.add_pbcoreInstantiation(pres_master)
 
-        # -----------------------------------------------------
-        #           access copy
-        # -----------------------------------------------------
-                    access_copy = self._build_access_copy(record, access_files_sets)
-                    newPart.add_pbcoreInstantiation(access_copy)
+    #
+    #
+    # # -----------------------------------------------------
+    # #           access copy
+    # # -----------------------------------------------------
 
-                descriptive.add_pbcore_part(newPart)
+                access_copy = self._build_access_copy(record, access_files_sets)
+                new_derivatives.add_pbcoreInstantiation(access_copy)
+    #
+            descriptive.add_pbcore_part(new_derivatives)
+
 
     # =================
     # Moving Image ONLY
@@ -1316,20 +1347,21 @@ class pbcoreBuilder(threading.Thread):
         elif record['Media Type'].lower() == 'moving image':
             # print "moving image"
             self._parts_progress = 0
-            for index, part in enumerate(parts):
-                newPart = CAVPP_Part(objectID=part.strip(),
+            for index, tape in enumerate(tapes):
+                new_physical = CAVPP_Part(objectID=tape.strip(),
                                      mainTitle=main_title.strip(),
                                      description=record['Description or Content Summary'])
                 for call_number in call_numbers:
-                    newPart.add_pbcoreIdentifier(
+                    new_physical.add_pbcoreIdentifier(
                         PB_Element(['source', inst_name], ['annotation', 'Call Number'], tag='pbcoreIdentifier',
                                    value=call_number.strip()))
         # -----------------------------------------------------
         #           physical
         # -----------------------------------------------------
-                physical = self._build_physical(part, record)
-                newPart.add_pbcoreInstantiation(physical)
+                physical = self._build_physical(tape, record)
+                new_physical.add_pbcoreInstantiation(physical)
                 # descriptive.add_pbcore_part(newPart)
+
         # -----------------------------------------------------
         #           Preservation Master
         # -----------------------------------------------------
@@ -1338,14 +1370,16 @@ class pbcoreBuilder(threading.Thread):
         #             # print preservation_file_set
                 if files:
                     pres_master = self._build_preservation_master(record, preservation_file_sets[index])
-                    newPart.add_pbcoreInstantiation(pres_master)
+                    new_physical.add_pbcoreInstantiation(pres_master)
+
+
         # -----------------------------------------------------
         #           access copy
         # -----------------------------------------------------
         #         print access_files_sets[index][0]
                     access_copy = self._build_access_copy(record, access_files_sets[index])
-                    newPart.add_pbcoreInstantiation(access_copy)
-                    descriptive.add_pbcore_part(newPart)
+                    new_physical.add_pbcoreInstantiation(access_copy)
+                    descriptive.add_pbcore_part(new_physical)
 
         # Extension
         if record['Country of Creation']:
@@ -1369,9 +1403,9 @@ class pbcoreBuilder(threading.Thread):
                                     exAuthority=SETTINGS.get('EXTRA', 'DefaultProjectNoteAuthority'))
             descriptive.add_pbcore_extension(exten)
 
-        if len(parts) > 1:
-            for part in record['Object Identifier'].split(';'):
-                newRelation = pbcoreRelation(reID=part.strip(), reType="Has Part")
+        if len(tapes) > 1:
+            for tape in record['Object Identifier'].split(';'):
+                newRelation = pbcoreRelation(reID=tape.strip(), reType="Has Part")
                 descriptive.add_pbcoreRelation(newRelation)
         new_XML_file.set_IntellectualContent(descriptive)
         self._running = False
@@ -1380,6 +1414,7 @@ class pbcoreBuilder(threading.Thread):
 
 
     def build_all_records(self):
+        raise DeprecationWarning
         # file_name_pattern = re.compile("[A-Z,a-z]+_\d+")
         self._job_total = len(self._records)
 
@@ -1788,6 +1823,7 @@ class pbcoreBuilder(threading.Thread):
         self._records = []
         for record in records:
             record = OrderedDict(record)
+            record['Object Identifier'] = record['Object Identifier'].translate(None, '[]')
             self._records.append(record)
         f.close()
         self._job_total = len(self._records)
@@ -1830,13 +1866,29 @@ class pbcoreBuilder(threading.Thread):
                 warning['message'] = "Unable to locate any files."
                 warnings.append(warning)
 
-                # message = "[" + file_not_found + "] Could not find files that match this record."
-                # # logger.warning(message)
-                # warnings.append(message)
-                # print "quiting"
-                # quit()
                 pass
         return warnings
+
+    def _group_tapes(self, parts):
+        # print "parts: " + str(parts)
+        organized = []
+        multi = []
+        single = []
+        for part in parts:
+            if "_t" in part:
+                if "_a" in part:
+                    raise Exception("PLEASE BRING THIS EXAMPLE TO HENRY! HE'S BEEN LOOKING FOR ONE TO FIX THIS SHORTCOMING!")
+                else:
+                    single = [part]
+                organized.append(single)
+            else:
+                single = parts
+                organized.append(single)
+                break
+        return organized
+
+
+
 
     def get_record(self, project_id):
         # print "getting project: " + str(project_id)
@@ -1848,15 +1900,6 @@ class pbcoreBuilder(threading.Thread):
     def run(self):
         # print "starting thread"
         self._running = True
-        # while self._running:
-        #     parts = str(self._parts_progress) + " : " + str(self._parts_total)
-        #     total = str(self._job_progress) + " : " + str(self._job_total)
-        #     print(parts, total)
-        #     sleep(1)
-        # for rec in self.records:
-        #     self.add_job(rec)
-        # self.show_jobs()
-        # print "running files"
         self._job_progress = 0
         while not self._queue.empty():
             queue = self._queue.get()
@@ -1948,17 +1991,24 @@ def proceed(message, warnings=None):
 def group_sides(digital_files):
     set = []
     part = []
-    for file in digital_files:
-        if "_a_" in file:
-            part.append(file)
-        elif "_b_" in file:
-            part.append(file)
-            set.append(part)
-            part = []
-        else:
-            part.append(file)
-            set.append(part)
-            part = []
+    if not digital_files:
+        raise Exception
+    if isinstance(digital_files, list):
+        for file in digital_files:
+            if "_a_" in file:
+                part.append(file)
+            elif "_b_" in file:
+                part.append(file)
+                set.append(part)
+                part = []
+            else:
+                part.append(file)
+                set.append(part)
+                part = []
+    else:
+        print digital_files
+        raise TypeError("WHY????")
+    # print "Set: " + str(set)
     return set
 
     pass
