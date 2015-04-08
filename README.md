@@ -56,7 +56,7 @@ In a terminal, simply type "makepbcore" followed by a csv files containing the d
 ### Example
 
     
-    makpbcore /Volumes/CAPPS-01/Headlands/Headlands_caps_export.txt
+    makepbcore /Volumes/CAPPS-01/Headlands/Headlands_caps_export.txt
             
   
   
@@ -64,7 +64,7 @@ To use the graphical user interface:
 ------------------------------------
 In a terminal windows, simple type the following command::
   
-    makpbcore -g
+    makepbcore -g
     
     
 To convert ContentDM tab-delimited files to CSV files:
