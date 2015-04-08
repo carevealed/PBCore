@@ -65,6 +65,15 @@ To use the graphical user interface:
 In a terminal windows, simple type the following command::
   
     makpbcore -g
+    
+    
+To convert ContentDM tab-delimited files to CSV files:
+------------------------------------------------------
+In a terminal window, type "tsv2csv" and the file name.
+
+### Example
+
+    tsv2csv /Volumes/CAPPS-01/Headlands/Headlands_caps_export.txt
 
 Credits
 =======
