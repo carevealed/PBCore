@@ -1,5 +1,4 @@
-# audio_convert
-CAVPP PBCore Generator script
+# CAVPP PBCore Generator Script
 
 Description
 ===========
