@@ -1,0 +1,901 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>CAVPP PBCore Generator Script &mdash; PBCore 0.1.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="PBCore 0.1.1 documentation" href="index.html" />
+    <link rel="next" title="Tab-delimited File to CSV File Conversion Script" href="tsv2csv.html" />
+    <link rel="prev" title="Installation" href="Install.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head>
+  <body>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="tsv2csv.html" title="Tab-delimited File to CSV File Conversion Script"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Install.html" title="Installation"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">PBCore 0.1.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="cavpp-pbcore-generator-script">
+<h1>CAVPP PBCore Generator Script<a class="headerlink" href="#cavpp-pbcore-generator-script" title="Permalink to this headline">¶</a></h1>
+<p>This script generates PBCore xml files from data exported from CONTENTdm and derives technical metadata from any audio
+or video files that are located subdirectories of the folder the csv files is located in.</p>
+<img alt="_images/PBC_G_cli_2.png" src="_images/PBC_G_cli_2.png" />
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="command-line">
+<h3>Command Line<a class="headerlink" href="#command-line" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>To use with the command line, simply type &#8220;makepbcore&#8221; followed by a csv files containing the data from a
+CONTENTdm export.</div></blockquote>
+<div class="section" id="example">
+<h4>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><div class="highlight-python"><div class="highlight"><pre><span class="n">makepbcore</span> <span class="o">/</span><span class="n">Volumes</span><span class="o">/</span><span class="n">CAPPS</span><span class="o">-</span><span class="mo">01</span><span class="o">/</span><span class="n">Headlands</span><span class="o">/</span><span class="n">Headlands_caps_export</span><span class="o">.</span><span class="n">csv</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="optional-arguments">
+<h4>Optional Arguments<a class="headerlink" href="#optional-arguments" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><table border="1" class="docutils">
+<colgroup>
+<col width="12%" />
+<col width="17%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Argument</th>
+<th class="head">Setting</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>-d</td>
+<td>Debug mode</td>
+<td>This prints all debug messages to the screen as well the
+log files.</td>
+</tr>
+<tr class="row-odd"><td>-nc</td>
+<td>No checksums</td>
+<td>MD5 Checksum hashes will not be calculated.</td>
+</tr>
+<tr class="row-even"><td>-g</td>
+<td>gui mode</td>
+<td>This open the graphical user interface.</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="starting-the-graphical-user-interface">
+<h3>Starting The Graphical User Interface<a class="headerlink" href="#starting-the-graphical-user-interface" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>To start the graphical user interface, simple type the following command in a terminal window.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">makepbcore</span> <span class="o">-</span><span class="n">g</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="notes">
+<h2>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><div class="admonition note">
+<p class="first admonition-title">Note</p>
+<ul class="last simple">
+<li>This script works with comma-separated values (.csv) files only. Tab-separated values (.tsv) files are currently not supported. To use tsv files, convert them first into csv format using the tsv2csv utility (see below).</li>
+<li>Optional log files are created in a log folder if the options is toggled in the pbcore-csv-settings.ini file.</li>
+</ul>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="mapping">
+<h2>Mapping<a class="headerlink" href="#mapping" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><table border="1" class="docutils">
+<colgroup>
+<col width="36%" />
+<col width="31%" />
+<col width="33%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">CSV Element</th>
+<th class="head">PBCore Mapping</th>
+<th class="head">Notes</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Internet Archive URL</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreIdentifier&gt;
+Attributes: source=&#8221;CAVPP&#8221;
+annotation=&#8221;Internet Archive URL&#8221;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>Object Identifier</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreIdentifier&gt;
+Attributes: annotation=&#8221;Object Identifier&#8221;
+source=&#8221;CAVPP&#8221;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>Call Number</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreIdentifier&gt;
+Attributes: annotation=&#8221;Call Number&#8221;</li>
+</ul>
+</td>
+<td><ul class="first last simple">
+<li>The attribute source is included with the partner
+institution&#8217;s name.</li>
+<li>Data in this field is split up by semicolons(;) with
+each getting a new &lt;pbcoreIdentifier&gt; record.</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td>Project Identifier</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreIdentifier&gt;
+Attributes: annotation=&#8221;Project Identifier&#8221;
+source=&#8221;CAVPP&#8221;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>Project Note</td>
+<td><ul class="first last simple">
+<li>&lt;extensionValue&gt;</li>
+</ul>
+</td>
+<td><ul class="first last simple">
+<li>With the &lt;extensionValue&gt; equal to &#8220;projectNote&#8221;</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td>Institution</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>Asset Type</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreAssetType&gt;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>Media Type</td>
+<td><ul class="first last simple">
+<li>&lt;instantiationMediaType&gt;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>Generation</td>
+<td><ul class="first last simple">
+<li>&lt;instantiationGenerations&gt;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>Main or Supplied Title</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreTitle&gt;
+Attributes: titleType=&#8221;Main&#8221;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>Additional Title</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreTitle&gt;
+Attributes: titleType=&#8221;Alternative&#8221;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>Series Title</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreTitle&gt;
+Attributes: titleType=&#8221;Series&#8221;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>Description or Content Summary</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreDescription&gt;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>Why the recording is significant to California/local history</td>
+<td>x</td>
+<td><ul class="first last simple">
+<li>Element not mapped.</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td>Producer</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreCreator&gt;</li>
+</ul>
+</td>
+<td><ul class="first last simple">
+<li>With the &lt;role&gt; element equal to &#8220;Producer&#8221;</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td>Director</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreCreator&gt;</li>
+</ul>
+</td>
+<td><ul class="first last simple">
+<li>With the &lt;role&gt; element equal to &#8220;Director&#8221;</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td>Writer</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreCreator&gt;</li>
+</ul>
+</td>
+<td><ul class="first last simple">
+<li>With the &lt;role&gt; element equal to &#8220;Writer&#8221;</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td>Interviewer</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreCreator&gt;</li>
+</ul>
+</td>
+<td><ul class="first last simple">
+<li>With the &lt;role&gt; element equal to &#8220;Interviewer&#8221;</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td>Performer</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreCreator&gt;</li>
+</ul>
+</td>
+<td><ul class="first last simple">
+<li>With the &lt;role&gt; element equal to &#8220;Performer&#8221;</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td>Country of Creation</td>
+<td><ul class="first last simple">
+<li>&lt;extensionValue&gt;</li>
+</ul>
+</td>
+<td><ul class="first last simple">
+<li>With the &lt;extensionValue&gt; equal to &#8220;countryOfCreation&#8221;</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td>Date Created</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreAssetDate&gt;
+Attribute: dateType=&#8221;created&#8221;</li>
+<li>&lt;instantiationDate</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>Date Published</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreAssetDate&gt;
+Attribute: dateType=&#8221;published&#8221;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>Copyright Statement</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreRightsSummary&gt;
+Attribute: annotation=&#8221;Copyright Statement&#8221;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>Gauge and Format</td>
+<td><ul class="first last simple">
+<li>&lt;instantiationPhysical&gt;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>Total Number of Reels or Tapes</td>
+<td><ul class="first last simple">
+<li>&lt;instantiationAnnotation&gt;
+Attributes: annotationType=&#8221;Extent&#8221;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>Duration</td>
+<td><ul class="first last simple">
+<li>&lt;instantiationDuration&gt;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>Silent or Sound</td>
+<td><ul class="first last simple">
+<li>&lt;instantiationTracks&gt;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>Color and/or Black and White</td>
+<td><ul class="first last simple">
+<li>&lt;instantiationColors&gt;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>Camera</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreContributor&gt;</li>
+</ul>
+</td>
+<td><ul class="first last simple">
+<li>with &lt;role&gt; element equal to &#8220;Camera&#8221;</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td>Editor</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreContributor&gt;</li>
+</ul>
+</td>
+<td><ul class="first last simple">
+<li>with &lt;role&gt; element equal to &#8220;Editor&#8221;</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td>Sound</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreContributor&gt;</li>
+</ul>
+</td>
+<td><ul class="first last simple">
+<li>with &lt;role&gt; element equal to &#8220;Sound&#8221;</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td>Music</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreContributor&gt;</li>
+</ul>
+</td>
+<td><ul class="first last simple">
+<li>with &lt;role&gt; element equal to &#8220;Music&#8221;</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td>Cast</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreContributor&gt;</li>
+</ul>
+</td>
+<td><ul class="first last simple">
+<li>with &lt;role&gt; element equal to &#8220;Cast&#8221;</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td>Interviewee</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreContributor&gt;</li>
+</ul>
+</td>
+<td><ul class="first last simple">
+<li>with &lt;role&gt; element equal to &#8220;Interviewee&#8221;</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td>Speaker</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreContributor&gt;</li>
+</ul>
+</td>
+<td><ul class="first last simple">
+<li>with &lt;role&gt; element equal to &#8220;Speaker&#8221;</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td>Musician</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreContributor&gt;</li>
+</ul>
+</td>
+<td><ul class="first last simple">
+<li>with &lt;role&gt; element equal to &#8220;Musician&#8221;</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td>Publisher</td>
+<td><ul class="first last simple">
+<li>&lt;pbcorePublisher&gt;</li>
+</ul>
+</td>
+<td><ul class="first last simple">
+<li>with &lt;role&gt; element equal to &#8220;Publisher&#8221;</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td>Distributor</td>
+<td><ul class="first last simple">
+<li>&lt;pbcorePublisher&gt;</li>
+</ul>
+</td>
+<td><ul class="first last simple">
+<li>with &lt;role&gt; element equal to &#8220;Distributor&#8221;</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td>Language</td>
+<td><ul class="first last simple">
+<li>&lt;instantiationLanguage&gt;
+Attribute: source=&#8221;ISO 639.2&#8221;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>Subject Topic</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreSubject&gt;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>Subject Topic Authority Source</td>
+<td>&nbsp;</td>
+<td><ul class="first last simple">
+<li>Located within the source attribute of &lt;pbcoreSubject&gt;</li>
+<li>Unless another subject authority is specified, the
+source will default to the LOC subject headings</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td>Subject Entity</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreSubject&gt;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>Subject Entity Authority Source</td>
+<td>&nbsp;</td>
+<td><ul class="first last simple">
+<li>Located within the source attribute of &lt;pbcoreSubject&gt;</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td>Genre</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreGenre&gt;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>Genre Authority Source</td>
+<td>&nbsp;</td>
+<td><ul class="first last simple">
+<li>Located within the source attribute of &lt;pbcoreGenre&gt;</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td>Spatial Coverage</td>
+<td><ul class="first last simple">
+<li>&lt;coverage&gt;</li>
+</ul>
+</td>
+<td><ul class="first last simple">
+<li>With &lt;coverageType&gt; element equal to &#8220;Spatial&#8221;</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td>Temporal Coverage</td>
+<td><ul class="first last simple">
+<li>&lt;coverage&gt;</li>
+</ul>
+</td>
+<td><ul class="first last simple">
+<li>With &lt;coverageType&gt; element equal to &#8220;Temporal&#8221;</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td>Collection Guide Title</td>
+<td>&nbsp;</td>
+<td><ul class="first last simple">
+<li>mapped to the &lt;collectionTitle&gt; attribute of the
+&lt;pbcoreCollection&gt; element</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td>Collection Guide URL</td>
+<td>x</td>
+<td>Not currently implemented</td>
+</tr>
+<tr class="row-odd"><td>Relationship</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreRelationIdentifier&gt;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>Relationship Type</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreRelationType&gt;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>Aspect Ratio</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>Running Speed</td>
+<td><ul class="first last simple">
+<li>If the media type is moving image, the data will go
+into &lt;essenceTrackFrameRate&gt; with the attribute,
+unitsOfMeasure=&#8221;fps&#8221;</li>
+<li>If the media type is audio, the data will go into
+into &lt;essenceTrackPlaybackSpeed&gt; with the attribute,
+unitsOfMeasure=&#8221;ips&#8221;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>Timecode Content Begins</td>
+<td><ul class="first last simple">
+<li>&lt;instantiationTimeStart&gt;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>Track Standard</td>
+<td><ul class="first last simple">
+<li>&lt;essenceTrackStandard&gt;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>Channel Configuration</td>
+<td><ul class="first last simple">
+<li>&lt;instantiationChannelConfiguration&gt;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>Subtitles/Intertitles/Closed Captions</td>
+<td>x</td>
+<td>Not currently implemented</td>
+</tr>
+<tr class="row-odd"><td>Stock Manufacturer</td>
+<td><ul class="first last simple">
+<li>&lt;instantiationAnnotation&gt;
+Attributes: annotationType=&#8221;StockManufacture&#8221;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>Base Type</td>
+<td><ul class="first last simple">
+<li>&lt;instantiationAnnotation&gt;
+Attributes: annotationType=&#8221;BaseType&#8221;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>Base Thickness</td>
+<td><ul class="first last simple">
+<li>&lt;instantiationAnnotation&gt;
+Attributes: annotationType=&#8221;BaseThickness&#8221;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>Copyright Holder</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreRightsSummary&gt;
+Attributes: annotation=&#8221;Copyright Holder&#8221;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>Copyright Holder Info</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreRightsSummary&gt;
+Attributes: annotation=&#8221;Copyright Holder Info&#8221;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>Copyright Date</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreRightsSummary&gt;
+Attributes: annotation=&#8221;Copyright Date&#8221;</li>
+</ul>
+</td>
+<td><ul class="first last simple">
+<li>The field is split up by a semicolon(;), comma(,), and
+the word &#8220;and&#8221;. Each creates a new &lt;pbcoreRightsSummary&gt;
+record.</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td>Copyright Notice</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreRightsSummary&gt;
+Attributes: annotation=&#8221;Copyright Notice&#8221;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>Institutional Rights Statement (URL)</td>
+<td><ul class="first last simple">
+<li>&lt;instantiationAnnotation&gt;
+Attributes: annotationType=&#8221;Additional Technical
+Notes for Overall&#8221;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>Object ARK</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreIdentifier&gt;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>Institution ARK</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreIdentifier&gt;
+Attributes: annotation=&#8221;Institution ARK&#8221;
+source=&#8221;CDL&#8221;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>Institution URL</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreIdentifier&gt;
+Attributes: annotation=&#8221;Institution URL&#8221;
+source=&#8221;CDL&#8221;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>Quality Control Notes</td>
+<td><ul class="first last simple">
+<li>&lt;instantiationAnnotation&gt;
+Attributes: annotation=&#8221;CAVPP Quality
+Control/Partner Quality Control&#8221;</li>
+</ul>
+</td>
+<td><ul class="first last simple">
+<li>Data in this field is split up by semicolons(;) with
+each getting a new &lt;pbcoreIdentifier&gt; record.</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td>Additional Descriptive Notes for Overall Work</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreDescription&gt;
+Attributes: dateType=&#8221;Additional Descriptive Notes
+for Overall Work&#8221;</li>
+</ul>
+</td>
+<td><ul class="first last simple">
+<li>Data in this field is split up by semicolons(;) with
+each getting a new &lt;pbcoreDescription&gt; record.</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td>Additional Technical Notes for Overall Work</td>
+<td><ul class="first last simple">
+<li>&lt;instantiationAnnotation&gt;
+Attributes: annotationType=&#8221;Additional Technical
+Notes for Overall&#8221;</li>
+</ul>
+</td>
+<td><ul class="first last simple">
+<li>Data in this field is split up by semicolons(;) with
+each getting a new &lt;instantiationAnnotation&gt; record.</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td>Transcript</td>
+<td><ul class="first last simple">
+<li>&lt;pbcoreDescription&gt;
+Attributes: descriptionType=&#8221;Transcript&#8221;</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>Cataloger Notes</td>
+<td><ul class="first last simple">
+<li>&lt;instantiationAnnotation&gt;
+Attributes: annotationType=&#8221;Cataloger Notes&#8221;</li>
+</ul>
+</td>
+<td><ul class="first last simple">
+<li>Data in this field is split up by semicolons(;) with
+each getting a new &lt;pbcoreIdentifier&gt; record.</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td>OCLC number</td>
+<td>x</td>
+<td><ul class="first last simple">
+<li>Element not mapped.</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td>Date created</td>
+<td>x</td>
+<td><ul class="first last simple">
+<li>Element not mapped.</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td>Date modified</td>
+<td>x</td>
+<td><ul class="first last simple">
+<li>Element not mapped.</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td>Reference URL</td>
+<td>x</td>
+<td><ul class="first last simple">
+<li>Element not mapped.</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td>CONTENTdm number</td>
+<td>x</td>
+<td><ul class="first last simple">
+<li>Element not mapped.</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td>CONTENTdm file name</td>
+<td>x</td>
+<td><ul class="first last simple">
+<li>Element not mapped.</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td>CONTENTdm file path</td>
+<td>x</td>
+<td><ul class="first last simple">
+<li>Element not mapped.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">CAVPP PBCore Generator Script</a><ul>
+<li><a class="reference internal" href="#usage">Usage</a><ul>
+<li><a class="reference internal" href="#command-line">Command Line</a><ul>
+<li><a class="reference internal" href="#example">Example</a></li>
+<li><a class="reference internal" href="#optional-arguments">Optional Arguments</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#starting-the-graphical-user-interface">Starting The Graphical User Interface</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#notes">Notes</a></li>
+<li><a class="reference internal" href="#mapping">Mapping</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Install.html"
+                        title="previous chapter">Installation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="tsv2csv.html"
+                        title="next chapter">Tab-delimited File to CSV File Conversion Script</a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="tsv2csv.html" title="Tab-delimited File to CSV File Conversion Script"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Install.html" title="Installation"
+             >previous</a> |</li>
+        <li><a href="index.html">PBCore 0.1.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2015, California Audio Visual Preservation Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

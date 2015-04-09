@@ -355,7 +355,7 @@ class pbcoreBuilder(threading.Thread):
         inst_name = ''
         inst_URL = ''
         if record['Object Identifier']:
-            obj_ID = record['Object Identifier'].split(';')[0].split('_t')[0].split('_r')[0]
+            obj_ID = record['Object Identifier'].split(';')[0].split('_t')[0].split('_r')[0].split('_a')[0]
 
         if record['Project Identifier']:
             proj_ID = record['Project Identifier']
@@ -400,7 +400,10 @@ class pbcoreBuilder(threading.Thread):
         if record['Description or Content Summary']:
             # description = record['Description or Content Summary']
             description = record['Description or Content Summary']
-            descriptive.add_pbcoreDescription(PB_Element(['annotation', 'Content Summary'], tag="pbcoreDescription", value=description.strip()))
+            if not description == "":
+                descriptive.add_pbcoreDescription(PB_Element(['annotation', 'Content Summary'], tag="pbcoreDescription", value=description.strip()))
+            else:
+                descriptive.add_pbcoreDescription(PB_Element(['annotation', 'Content Summary'], tag="pbcoreDescription", value=""))
 
         if record['Internet Archive URL']:
             IA_URL = record['Internet Archive URL']
@@ -1299,12 +1302,15 @@ class pbcoreBuilder(threading.Thread):
                 ob_id = tape[0]
                 # print ob_id
                 ob_id = ob_id.split("_a")[0]
-                new_part = CAVPP_Part(objectID=ob_id.strip(),
-                                          mainTitle=main_title.strip(),
-                                          description=record['Description or Content Summary'])
-                # print new_physical.xmlString()
-                # for part in tape:
-                # new_physical.add_pbcoreIdentifier(PB_Element(['source', 'CAVPP'], tag='pbcoreIdentifier', value=ob_id))
+                if not record['Description or Content Summary'] == "":
+                    new_part = CAVPP_Part(objectID=ob_id.strip(),
+                                              mainTitle=main_title.strip(),
+                                              description=record['Description or Content Summary'])
+                else:
+                    new_part = CAVPP_Part(objectID=ob_id.strip(),
+                                              mainTitle=main_title.strip(),
+                                              description="")
+
                 for call_number in call_numbers:
                     new_part.add_pbcoreIdentifier(
                         PB_Element(['source', inst_name], ['annotation', 'Call Number'], tag='pbcoreIdentifier',
@@ -1349,9 +1355,14 @@ class pbcoreBuilder(threading.Thread):
             # print "moving image"
             self._parts_progress = 0
             for index, tape in enumerate(tapes):
-                new_part = CAVPP_Part(objectID=tape.strip(),
-                                     mainTitle=main_title.strip(),
-                                     description=record['Description or Content Summary'])
+                if not record['Description or Content Summary'] == "":
+                    new_part = CAVPP_Part(objectID=tape.strip(),
+                                         mainTitle=main_title.strip(),
+                                         description=record['Description or Content Summary'])
+                else:
+                    new_part = CAVPP_Part(objectID=tape.strip(),
+                                         mainTitle=main_title.strip(),
+                                         description="")
                 for call_number in call_numbers:
                     new_part.add_pbcoreIdentifier(
                         PB_Element(['source', inst_name], ['annotation', 'Call Number'], tag='pbcoreIdentifier',
@@ -1422,7 +1433,7 @@ class pbcoreBuilder(threading.Thread):
         self._job_progress = 0
         for record in self._records:
             fileName = re.search(FILE_NAME_PATTERN, record['Object Identifier']).group(0)
-            file_output_name = fileName + "_ONLYTEST.xml"
+            file_output_name = fileName + "_PBCore.xml"
             if self.verbose:
                 logger.info("Producing PBCore XML for " + fileName + ".")
             if isfile(file_output_name):
@@ -2169,7 +2180,7 @@ def generate_pbcore(record_file):
         print("")
         fileName = re.search(FILE_NAME_PATTERN, record['Object Identifier']).group(0)
         logger.info("Producing PBCore XML for " + fileName + ".")
-        file_output_name = fileName + "_ONLYTEST.xml"
+        file_output_name = fileName + "_PBCore.xml"
         if isfile(file_output_name):
             sys.stdout.write("\t")
             sys.stdout.flush()

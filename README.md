@@ -2,7 +2,7 @@
 
 Description
 ===========
-Generates PBCore xml files from data exported from CONTENTdm and derivates technical metadata from any data files 
+Generates PBCore xml files from data exported from CONTENTdm and derives technical metadata from any data files 
 that are located in the same folder.
 
 To Install

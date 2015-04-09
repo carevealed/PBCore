@@ -897,7 +897,7 @@ class pbcoreDescriptionDocument(XML_PBCore):
             for node in self.pbcoreDescription:
                 branch.append(node.get_etree_element())
         else:
-            branch.append(PB_Element(tag="pbcoreDescription", value='MISSING REQUIRED INFORMATION').get_etree_element())
+            branch.append(PB_Element(tag="pbcoreDescription", value="").get_etree_element())
 
         if self.pbcoreGenre:
             for node in self.pbcoreGenre:
@@ -1678,7 +1678,7 @@ class CAVPP_Part(XML_PBCore):
             for node in self.pbcoreDescription:
                 branch.append(node.get_etree_element())
         else:
-            branch.append(PB_Element(tag="pbcoreDescription", value="MISSING REQUIRED DATA").get_etree_element())
+            branch.append(PB_Element(tag="pbcoreDescription", value="").get_etree_element())
 
         if self.pbcoreInstantiation:
             for node in self.pbcoreInstantiation:
@@ -3642,7 +3642,7 @@ class PB_Element():
             elif isinstance(kwargs.get("value"), int):  # checks if the value is a int
                 self.value = str(kwargs.get("value"))
 
-            elif isinstance(kwargs.get("value"), float):  # checks if the value is a int
+            elif isinstance(kwargs.get("value"), float):  # checks if the value is a float
                             self.value = str(kwargs.get("value"))
 
             else:
