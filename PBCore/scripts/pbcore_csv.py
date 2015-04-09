@@ -1407,8 +1407,7 @@ class pbcoreBuilder(threading.Thread):
                                         exAuthority='CAVPP')
             else:  # I don't know if this will be anything other than "California Audiovisual Preservation Project"
                 exten = pbcoreExtension(exElement="projectNote",
-                                        exValue=record['Project Note'],
-                                        exAuthority='CAPS')
+                                        exValue=record['Project Note'])
             descriptive.add_pbcore_extension(exten)
         elif self.settings.getboolean('EXTRA','UseDefaultProjectNote'):
             exten = pbcoreExtension(exElement="projectNote",
