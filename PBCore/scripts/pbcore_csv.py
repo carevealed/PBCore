@@ -1407,7 +1407,8 @@ class pbcoreBuilder(threading.Thread):
                                         exAuthority='CAVPP')
             else:  # I don't know if this will be anything other than "California Audiovisual Preservation Project"
                 exten = pbcoreExtension(exElement="projectNote",
-                                        exValue=record['Project Note'])
+                                        exValue=record['Project Note'],
+                                        exAuthority='CAPS')
             descriptive.add_pbcore_extension(exten)
         elif self.settings.getboolean('EXTRA','UseDefaultProjectNote'):
             exten = pbcoreExtension(exElement="projectNote",
@@ -1837,8 +1838,9 @@ class pbcoreBuilder(threading.Thread):
             record = OrderedDict(record)
             record['Object Identifier'] = record['Object Identifier'].translate(None, '[]')
             self._records.append(record)
+
         f.close()
-        self._job_total = len(self._records)
+        # self._job_total = len(self._records)
 
 
     def check_files_exist(self):

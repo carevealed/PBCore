@@ -7,7 +7,7 @@ import webbrowser
 __author__ = 'California Audio Visual Preservation Project'
 __copyright__ = "California Audiovisual Preservation Project. 2015"
 __credits__ = ["Henry Borchers"]
-__version__ = "0.1"
+__version__ = "0.1.1"
 __license__ = 'GPL'
 
 import csv
@@ -103,8 +103,10 @@ class MainWindow():
         self.allInfoFrame.pack(fill=BOTH, expand=True)
 
 
-        self.panel = ttk.Panedwindow(self.allInfoFrame, orient=VERTICAL)
+        # self.panel = ttk.Panedwindow(self.allInfoFrame, orient=VERTICAL)
+        self.panel = ttk.Frame(self.allInfoFrame)
         self.panel.pack(fill=BOTH, expand=True)
+
         # self.panel.grid(row=2, column=0, sticky=W+E+S+N)
         #
         # self.testButton = ttk.Button(self.background, text='test', command=self.test)
@@ -118,7 +120,8 @@ class MainWindow():
                                         padding=(30, 15),
                                         relief=SUNKEN)
         # self.dataEntryFrame.grid(row=2, column=1)
-        self.panel.add(self.dataEntryFrame, weight=0)
+        self.dataEntryFrame.pack(fill=X, expand=False)
+        # self.panel.add(self.dataEntryFrame, weight=0)
 
         self.csv_filename_label = ttk.Label(self.dataEntryFrame,
                                             text="CSV file",
@@ -155,25 +158,40 @@ class MainWindow():
                                                padding=(5, 5),
                                                relief=SUNKEN)
 
-        self.panel.add(self.recordsFrame, weight=10)
+        # self.panel.add(self.recordsFrame, weight=10)
+        self.recordsFrame.pack(fill=BOTH, expand=True)
 
         # self.recordsList = Listbox(self.recordsFrame)
-        self.recordsTree = ttk.Treeview(self.recordsFrame, columns=('title', 'project', 'files', 'xml_file'))
-        self.recordsTree.heading('xml_file', text='Save As')
+        self.recordsTree = ttk.Treeview(self.recordsFrame, height=10, columns=('title', 'project', 'files', 'xml_file', 'status'))
         self.recordsTree.heading('title', text='Title')
         self.recordsTree.heading('project', text='Project')
-        self.recordsTree.heading('files', text='Files')
+        self.recordsTree.heading('files', text='Files Located')
+        self.recordsTree.heading('status', text='Status')
+        self.recordsTree.heading('xml_file', text='Save As')
         self.recordsTree.column('#0', width=30, stretch=NO)
         self.recordsTree.column('project', minwidth=100, width=100, stretch=NO)
-        self.recordsTree.column('files', minwidth=100, width=100, stretch=NO)
-        self.recordsTree.column('title', minwidth=200,width=250, stretch=NO)
+        self.recordsTree.column('files', minwidth=80, width=80, stretch=NO)
+        self.recordsTree.column('title', minwidth=200,width=250)
         self.recordsTree.column('xml_file', width=300)
-        self.recordsTree.pack(fill=BOTH, expand=True)
+        self.recordsTree.column('status', minwidth=100, width=100, stretch=NO)
+        self.recordsTree.pack(side=LEFT, fill=BOTH, expand=True)
+        # self.recordsTree.grid(row=0, column=0, sticky=N+W+S+E)
+        # Right hand vertical scroll bar
 
+        self.recordsTreeScrollBar = ttk.Scrollbar(self.recordsFrame, orient=VERTICAL, command=self.recordsTree.yview)
+        self.recordsTree.config(yscrollcommand=self.recordsTreeScrollBar.set)
+        # self.recordsTreeScrollBar.grid(row=0, column=1, sticky=N+S)
+        # self.recordsFrame.grid_rowconfigure(0, weight=1)
+        # self.recordsFrame.grid_columnconfigure(0, weight=1)
+        self.recordsTreeScrollBar.pack(side=RIGHT, fill=Y, expand=False)
+        self.recordsTreeScrollBar.lift()
+
+
+        # To bind the mouse right click to the pop-up menu
         if system() == 'Darwin':
-            self.recordsTree.bind("<Button-2>", self._popup)
+            self.recordsTree.bind("<Button-2>", self._popup)  # OSX uses button 2 as a right click
         else:
-            self.recordsTree.bind("<Button-3>", self._popup)
+            self.recordsTree.bind("<Button-3>", self._popup)  # All other OS use button 3 as a right click
         self.recordsTree.bind("<Double-Button-1>", lambda e: self.view_item_details(self.recordsTree.selection()))
 
         # --------------------  Feedback  --------------------
@@ -183,7 +201,8 @@ class MainWindow():
                                        padding=(30, 15),
                                        relief=SUNKEN)
         # self.feedbackFrame.grid(row=3, column=1, sticky=W)
-        self.panel.add(self.feedbackFrame)
+        # self.panel.add(self.feedbackFrame)
+        self.feedbackFrame.pack(fill=X, expand=False)
         self.total_progress_label = ttk.Label(self.feedbackFrame, text="Total:")
         self.total_progress_label.grid(row=0, column=0, sticky=E)
         self.total_progress_value_label = ttk.Label(self.feedbackFrame, text="(0/0)")
@@ -222,6 +241,12 @@ class MainWindow():
 
         self.propertyMenu = Menu(self.recordsTree, tearoff=0)
         self.propertyMenu.add_command(label="Change Export Name...", command=lambda: self.change_export(self.recordsTree.selection()))
+
+        self.changeStatusMenu = Menu(self.recordsTree, tearoff=0)
+        self.changeStatusMenu.add_command(label="Build", command=lambda: self.change_item_status(self.recordsTree.selection(), "To Build"))
+        self.changeStatusMenu.add_command(label="Ignore", command=lambda: self.change_item_status(self.recordsTree.selection(), "Ignore"))
+        self.propertyMenu.add_cascade(label="Change Status To", menu=self.changeStatusMenu)
+
         self.propertyMenu.add_command(label="Edit...", command=lambda: self.view_item_details(self.recordsTree.selection()))
 
 
@@ -237,11 +262,14 @@ class MainWindow():
 
         if input_file:
             self.startButton.config(state=NORMAL)
+
     def _popup(self, event):
-        # self.propertyMenu.post()
         if self.recordsTree.selection():
-            # print "gotcha", self.recordsTree.selection()
             self.propertyMenu.post(event.x_root, event.y_root)
+
+    def change_item_status(self, items, new_status):
+        for item in items:
+            self.recordsTree.set(item, column='status', value=new_status)
 
 
     def view_item_details(self, record):
@@ -417,7 +445,11 @@ class MainWindow():
             self.recordsTree.insert('', index, outIndex, text=index+1)
             self.recordsTree.set(outIndex, 'title', record['Main or Supplied Title'])
             self.recordsTree.set(outIndex, 'project', record['Project Identifier'])
-            self.recordsTree.set(outIndex, 'files', str(len(media_files)) + " Files Found")
+            self.recordsTree.set(outIndex, 'status', "To Build")
+            self.recordsTree.set(outIndex, 'files', str(len(media_files)))
+
+
+            # self.recordsTree.set(outIndex, 'files', str(len(media_files)) + " Files Found")
 
             self.recordsTree.set(outIndex, 'xml_file', (fileName + "_PBCore.xml"))
 
@@ -450,18 +482,25 @@ class MainWindow():
         if self.running is False:
             self.display_records = []
             self.display_records = self.get_records(self.csv_filename_entry.get())
-            self.set_total_progress(progress=0, total=10)
 
+            self.set_total_progress(progress=0, total=10)
             # if self.validate_file(self.csv_filename_entry.get()):
             xml_content = pbcoreBuilder(self.csv_filename_entry.get(), settings=self.settings)
             xml_content.load_records()
+            total_count = 0
             for record in self.recordsTree.get_children():
-                output = self.recordsTree.set(record)
-                savefile = os.path.dirname(self.csv_filename_entry.get())
-                savefile = os.path.join(savefile, output['xml_file'])
+                if self.recordsTree.set(record)['status'] == "To Build":
+                    output = self.recordsTree.set(record)
+                    savefile = os.path.dirname(self.csv_filename_entry.get())
+                    savefile = os.path.join(savefile, output['xml_file'])
 
-                foo = xml_content.get_record(output['project'])
-                xml_content.add_job(foo, savefile)
+                    foo = xml_content.get_record(output['project'])
+
+                    xml_content.add_job(foo, savefile)
+                    total_count += 1
+                elif self.recordsTree.set(record)['status'] == "Ignore":
+                    pass
+            self.set_total_progress(progress=0, total=total_count)
             self.generate = observer(xml_content)
             self.generate.daemon = True
             self.generate.start()
@@ -519,7 +558,7 @@ class MainWindow():
         self.item_progress.set(progress)
 
         self.total_progress_value_label.config(text="(" + str(progress) + "/" + str(self.item_total.get()) + ")")
-        self.total_progress_pbar.config(maximum=total, value=progress)
+        self.total_progress_pbar.config(maximum=self.item_total.get(), value=progress)
 
     def set_part_progress(self, progress, total=None):
         if total:
@@ -751,6 +790,8 @@ def start_gui(settings, csvfile=None):
     else:
         app = MainWindow(root, settings=settings)
     # root.option_add('*tearOff', False)
+    root.update()
+    root.minsize(root.winfo_width(), root.winfo_height())
     root.mainloop()
 
 class RecordDetailsWindow():

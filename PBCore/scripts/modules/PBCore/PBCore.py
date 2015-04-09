@@ -897,7 +897,7 @@ class pbcoreDescriptionDocument(XML_PBCore):
             for node in self.pbcoreDescription:
                 branch.append(node.get_etree_element())
         else:
-            branch.append(PB_Element(tag="pbcoreDescription", value="").get_etree_element())
+            branch.append(PB_Element(['annotation','Content Summary'], tag="pbcoreDescription", value="").get_etree_element())
 
         if self.pbcoreGenre:
             for node in self.pbcoreGenre:
@@ -1577,7 +1577,7 @@ class CAVPP_Part(XML_PBCore):
 
         self.pbcoreDescription = []
         if description and description != "":
-            self.pbcoreDescription.append(PB_Element(tag='pbcoreDescription', value=description))
+            self.pbcoreDescription.append(PB_Element(['annotation','Content Summary'], tag='pbcoreDescription', value=description))
 
         self.pbcoreInstantiation = []
 
@@ -1678,7 +1678,7 @@ class CAVPP_Part(XML_PBCore):
             for node in self.pbcoreDescription:
                 branch.append(node.get_etree_element())
         else:
-            branch.append(PB_Element(tag="pbcoreDescription", value="").get_etree_element())
+            branch.append(PB_Element(['annotation','Content Summary'], tag="pbcoreDescription", value="").get_etree_element())
 
         if self.pbcoreInstantiation:
             for node in self.pbcoreInstantiation:
@@ -3381,6 +3381,7 @@ class pbcoreExtension(XML_PBCore):
         self.extensionAuthorityUsed = None
         if exAuthority and exAuthority != "":
             self.extensionAuthorityUsed = PB_Element(tag="extensionAuthorityUsed", value=exAuthority)
+
 
         self.extensionEmbedded = None
 
