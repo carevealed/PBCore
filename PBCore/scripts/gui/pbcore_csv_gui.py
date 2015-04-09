@@ -61,8 +61,13 @@ class MainWindow():
         self.menu_bar.add_cascade(menu=self.helpMenu, label="Help")
 
         self.recordMenu.add_command(label="Change Export Name...")
-        self.recordMenu.add_command(label="More Info...")
 
+        self.recordMenuchangeStatusMenu = Menu(self.recordMenu, tearoff=0)
+        self.recordMenuchangeStatusMenu.add_command(label="Build", command=lambda: self.change_item_status(self.recordsTree.selection(), "To Build"))
+        self.recordMenuchangeStatusMenu.add_command(label="Ignore", command=lambda: self.change_item_status(self.recordsTree.selection(), "Ignore"))
+        self.recordMenu.add_cascade(label="Change Status To", menu=self.recordMenuchangeStatusMenu)
+
+        self.recordMenu.add_command(label="More Info...")
 
         self.fileMenu.add_command(label="Open...", command=self.load_csv)
         self.fileMenu.entryconfig('Open...', accelerator='Ctrl + O')
@@ -501,7 +506,7 @@ class MainWindow():
                 elif self.recordsTree.set(record)['status'] == "Ignore":
                     pass
             self.set_total_progress(progress=0, total=total_count)
-            self.generate = observer(xml_content)
+            self.generate = bridge(xml_content)
             self.generate.daemon = True
             self.generate.start()
             self.update_progress()
@@ -515,6 +520,7 @@ class MainWindow():
 
     def update_progress(self):
             # print str(self.generate.item_progress) + "/" + str(self.generate.record_total)
+        self.startButton.config(state=DISABLED)
         record_total = self.generate.record_total
         record_progress = self.generate.record_progress
         part_total = self.generate.part_total
@@ -534,6 +540,7 @@ class MainWindow():
         else:
         # self.master.after(200)
             self.generate.join()
+            self.startButton.config(state=NORMAL)
             # print self.generate.calulation_progress
             self.set_total_progress(record_progress, record_total)
             self.set_part_progress(part_progress, part_total)
@@ -657,7 +664,7 @@ class SettingsWindow():
 
         self.settingsText.config(state=DISABLED)
 
-class observer(threading.Thread):
+class bridge(threading.Thread):
     def __init__(self, records):
         threading.Thread.__init__(self)
         if not isinstance(records, pbcoreBuilder):
@@ -695,26 +702,7 @@ class observer(threading.Thread):
 
         sleep(1)
 
-        # print "\ndone"
-        # for index, record in enumerate(self.records.records):
-        #     print "Record: " + str(index)
-        #     print self.records.source
-        #     temp = self.records.generate_pbcore(record)
-        #     self._record_progress = index + 1
-        #     # for p_index, part in enumerate(self.records.records):
-        #     #     print p_index
-        #     # temp = self.records.generate_pbcore(record)
-        #     # print "parts" + str(self.records.parts_total)
-        #     # for part_index in range(1, self.records.parts_total):
-        #     #     print "part" + part_index
-        #     #     sleep(.01)
-        #     #     self._part_progress = part_index + 1
-        #     # for i in range(0, 100, 1):
-        #     #     # print i
-        #     #     self._md5_progress = i
-        #     #     sleep(.01)
-        #     # sleep(.25)
-        # self._isRunning = False
+
 
     @property
     def status(self):
@@ -825,7 +813,7 @@ class RecordDetailsWindow():
         self._init_writer = self.current_record['Writer']
         self._init_institution_URL = self.current_record['Institution URL']
         self._init_project_identifier = self.current_record['Project Identifier']
-        self._init_quality_control_notes = self.current_record['Quality Control Notes']
+        self._init_quality_control_notes = self.current_record['Quality Control Notes'].decode("UTF-8")
         self._init_silent_or_sound = self.current_record['Silent or Sound']
         self._init_camera = self.current_record['Camera']
         self._init_music = self.current_record['Music']
@@ -847,7 +835,7 @@ class RecordDetailsWindow():
         self._init_internet_archive_url = self.current_record['Internet Archive URL']
         self._init_relationship_type = self.current_record['Relationship Type']
         self._init_director = self.current_record['Director']
-        self._init_copyright_statement = self.current_record['Copyright Statement']
+        self._init_copyright_statement = self.current_record['Copyright Statement'].decode("utf-8")
         self._init_genre = self.current_record['Genre']
         self._init_cataloger_notes = self.current_record['Cataloger Notes']
         self._init_collection_guide_url = self.current_record['Collection Guide URL']
@@ -1090,8 +1078,8 @@ class RecordDetailsWindow():
 
         self._copyright_statement_label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Copyright Statement:")
         self._copyright_statement_label.grid(row=29, column=0, stick=N+W)
-        self._copyright_statement_entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self._copyright_statement_entry.grid(row=29, column=1, columnspan=2, sticky=N+E+W)
+        self._copyright_statement_text = Text(self.dataFrame, width=40, height=15, wrap=WORD)
+        self._copyright_statement_text.grid(row=29, column=1, columnspan=2, sticky=N+E+W)
 
         self._gauge_and_format_label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Gauge and Format:")
         self._gauge_and_format_label.grid(row=30, column=0, stick=N+W)
@@ -1450,7 +1438,7 @@ class RecordDetailsWindow():
                 self.newRecord.update({'Writer': self._writer_entry.get()})
                 self.newRecord.update({'Institution URL': self._institution_URL_entry.get()})
                 self.newRecord.update({'Project Identifier': self._project_identifier_entry.get()})
-                self.newRecord.update({'Quality Control Notes': str(self._quality_control_notes_entry.get("0.0", END).replace('\n', ''))})
+                self.newRecord.update({'Quality Control Notes': str(self._quality_control_notes_entry.get("0.0", END).replace('\n', '').encode('utf-8'))})
                 self.newRecord.update({'Silent or Sound': self._silent_or_sound_entry.get()})
                 self.newRecord.update({'Camera': self._camera_entry.get()})
                 self.newRecord.update({'Music': self._music_entry.get()})
@@ -1466,18 +1454,18 @@ class RecordDetailsWindow():
                 self.newRecord.update({'Copyright Holder Info': self._copyright_holder_info_entry.get()})
                 self.newRecord.update({'Running Speed': self._running_speed_entry.get()})
                 self.newRecord.update({'Subject Entity Authority Source': self._subject_entity_authority_source_entry.get()})
-                self.newRecord.update({'Additional Technical Notes for Overall Work': str(self._additional_technical_notes_for_overall_work_entry.get("0.0", END).replace('\n', ''))})
+                self.newRecord.update({'Additional Technical Notes for Overall Work': str(self._additional_technical_notes_for_overall_work_entry.get("0.0", END).replace('\n', '').encode('utf-8'))})
                 self.newRecord.update({'Musician': self._musician_entry.get()})
                 self.newRecord.update({'Main or Supplied Title': self._main_or_supplied_title_entry.get()})
                 self.newRecord.update({'Internet Archive URL': self._internet_archive_URL_entry.get()})
                 self.newRecord.update({'Relationship Type': self._relationship_type_entry.get()})
                 self.newRecord.update({'Director': self._director_entry.get()})
-                self.newRecord.update({'Copyright Statement': self._copyright_statement_entry.get()})
+                self.newRecord.update({'Copyright Statement': self._copyright_statement_text.get("0.0", END).replace('\n', '').encode('utf-8')})
                 self.newRecord.update({'Genre': self._genre_entry.get()})
                 self.newRecord.update({'Cataloger Notes': self._cataloger_notes_entry.get()})
                 self.newRecord.update({'Collection Guide URL': self._collection_guide_url_entry.get()})
                 self.newRecord.update({'Interviewer': self._interviewer_entry.get()})
-                self.newRecord.update({'Description or Content Summary': str(self._description_or_content_summary_entry.get("0.0", END).replace('\n', ''))})
+                self.newRecord.update({'Description or Content Summary': str(self._description_or_content_summary_entry.get("0.0", END).replace('\n', '').encode('utf-8'))})
                 self.newRecord.update({'Institution': self._institution_entry.get()})
                 self.newRecord.update({'Stock Manufacturer': self._stock_manufacturer_entry.get()})
                 self.newRecord.update({'Sound': self._sound_entry.get()})
@@ -1491,10 +1479,10 @@ class RecordDetailsWindow():
                 self.newRecord.update({'Institution ARK': self._institution_ark_entry.get()})
                 self.newRecord.update({'CONTENTdm file name': self._CONTENTdm_file_name_entry.get()})
                 self.newRecord.update({'OCLC number': self._OCLC_number_entry.get()})
-                self.newRecord.update({'Why the recording is significant to California/local history': str(self._why_significant_CA_entry.get("0.0", END).replace('\n', ''))})
+                self.newRecord.update({'Why the recording is significant to California/local history': str(self._why_significant_CA_entry.get("0.0", END).replace('\n', '').encode('utf-8'))})
                 self.newRecord.update({'Subject Entity': self._subject_entity_entry.get()})
                 self.newRecord.update({'Gauge and Format': self._gauge_and_format_entry.get()})
-                self.newRecord.update({'Additional Descriptive Notes for Overall Work': str(self._additional_descrpt_nts_overall_wrk_entry.get("0.0", END).replace('\n', ''))})
+                self.newRecord.update({'Additional Descriptive Notes for Overall Work': str(self._additional_descrpt_nts_overall_wrk_entry.get("0.0", END).replace('\n', '').encode('utf-8'))})
                 self.newRecord.update({'Genre Authority Source': self._genre_authority_source_entry.get()})
                 self.newRecord.update({'Date Published': self._date_published_entry.get()})
                 self.newRecord.update({'Country of Creation': self._country_of_creation_entry.get()})
@@ -1580,7 +1568,7 @@ class RecordDetailsWindow():
         self._institution_URL_entry.insert(0, self._init_institution_URL)
         self._project_identifier_entry.insert(0, self._init_project_identifier)
         self._project_identifier_entry.config(state='disabled')
-        self._quality_control_notes_entry.insert('1.0', self._init_quality_control_notes)
+        self._quality_control_notes_entry.insert('0.0', self._init_quality_control_notes)
         self._silent_or_sound_entry.insert(0, self._init_silent_or_sound)
         self._camera_entry.insert(0, self._init_camera)
         self._music_entry.insert(0, self._init_music)
@@ -1596,18 +1584,18 @@ class RecordDetailsWindow():
         self._copyright_holder_info_entry.insert(0, self._init_copyright_holder_info)
         self._running_speed_entry.insert(0, self._init_running_speed)
         self._subject_entity_authority_source_entry.insert(0, self._init_subject_entity_authority_source)
-        self._additional_technical_notes_for_overall_work_entry.insert('1.0', self._init_additional_technical_notes_for_overall_work)
+        self._additional_technical_notes_for_overall_work_entry.insert('0.0', self._init_additional_technical_notes_for_overall_work)
         self._musician_entry.insert(0, self._init_musician)
         self._main_or_supplied_title_entry.insert(0, self._init_main_or_supplied_title)
         self._internet_archive_URL_entry.insert(0, self._init_internet_archive_url)
         self._relationship_type_entry.insert(0, self._init_relationship_type)
         self._director_entry.insert(0, self._init_director)
-        self._copyright_statement_entry.insert(0, self._init_copyright_statement)
+        self._copyright_statement_text.insert('0.0', self._init_copyright_statement)
         self._genre_entry.insert(0, self._init_genre)
         self._cataloger_notes_entry.insert(0, self._init_cataloger_notes)
         self._collection_guide_url_entry.insert(0, self._init_collection_guide_url)
         self._interviewer_entry.insert(0, self._init_interviewer)
-        self._description_or_content_summary_entry.insert('1.0', self._init_description_or_content_summary)
+        self._description_or_content_summary_entry.insert('0.0', self._init_description_or_content_summary)
         self._institution_entry.insert(0, self._init_institution)
         self._stock_manufacturer_entry.insert(0, self._init_stock_manufacturer)
         self._sound_entry.insert(0, self._init_sound)
@@ -1621,10 +1609,10 @@ class RecordDetailsWindow():
         self._institution_ark_entry.insert(0, self._init_institution_ark)
         self._CONTENTdm_file_name_entry.insert(0, self._init_contentdm_file_name)
         self._OCLC_number_entry.insert(0, self._init_OCLC_number)
-        self._why_significant_CA_entry.insert('1.0', self._init_why_significant_CA)
+        self._why_significant_CA_entry.insert('0.0', self._init_why_significant_CA)
         # self._subject_topic_authority_source_entry.insert(0, self._init_subject_topic_authority_source)
         self._gauge_and_format_entry.insert(0, self._init_gauge_and_format)
-        self._additional_descrpt_nts_overall_wrk_entry.insert('1.0', self._init_addit_descrpt_nts_overall_wrk)
+        self._additional_descrpt_nts_overall_wrk_entry.insert('0.0', self._init_addit_descrpt_nts_overall_wrk)
         self._genre_authority_source_entry.insert(0, self._init_genre_authority_source)
         self._date_published_entry.insert(0, self._init_date_published)
         self._country_of_creation_entry.insert(0, self._init_country_of_creation)
@@ -1723,8 +1711,8 @@ class RecordDetailsWindow():
         if self._copyright_notice_entry.get() != self._init_copyright_notice:
             changes.append(('Copyright Notice', self._copyright_notice_entry.get()))
 
-        if self._copyright_statement_entry.get().encode('UTF-8') != self._init_copyright_statement:
-            changes.append(('Copyright Statement', self._copyright_statement_entry.get()))
+        if self._copyright_statement_text.get('1.0', END).replace('\n', '') != self._init_copyright_statement:
+            changes.append(('Copyright Statement', self._copyright_statement_text.get('0.0', END).replace('\n', '').encode('utf-8')))
 
         if self._country_of_creation_entry.get() != self._init_country_of_creation:
             changes.append(('Country of Creation', self._country_of_creation_entry.get()))
@@ -1741,8 +1729,8 @@ class RecordDetailsWindow():
         if self._date_published_entry.get() != self._init_date_published:
             changes.append(('Date Published', self._date_published_entry.get()))
 
-        if self._description_or_content_summary_entry.get('0.0', END).encode('UTF-8').replace('\n', '') != self._init_description_or_content_summary:
-            changes.append(('Description or Content Summary', self._description_or_content_summary_entry.get('0.0', END).replace('\n', '')))
+        if self._description_or_content_summary_entry.get('1.0', END).replace('\n', '').encode('utf-8') != self._init_description_or_content_summary:
+            changes.append(('Description or Content Summary', self._description_or_content_summary_entry.get('1.0', END).replace('\n', '')).encode('utf-8'))
 
         if self._director_entry.get() != self._init_director:
             changes.append(('Director', self._director_entry.get()))
@@ -1828,7 +1816,7 @@ class RecordDetailsWindow():
         if self._publisher_entry.get() != self._init_publisher:
             changes.append(('Publisher', self._publisher_entry.get()))
 
-        if self._quality_control_notes_entry.get('0.0', END).encode('UTF-8').replace('\n', '') != self._init_quality_control_notes:
+        if self._quality_control_notes_entry.get('0.0', END).replace('\n', '') != self._init_quality_control_notes:
             changes.append(('Quality Control Notes', self._quality_control_notes_entry.get('0.0', END).replace('\n', '')))
 
         if self._reference_URL_entry.get() != self._init_reference_url:
