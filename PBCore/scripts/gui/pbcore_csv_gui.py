@@ -1961,4 +1961,4 @@ if __name__ == '__main__':
     sys.stderr.write("Not a standalone program. Please run pbcore-csv.py -g to run the GUI")
 
 else:
-    from pbcore.scripts.pbcore_csv import *
+    from PBCore.scripts.pbcore_csv import *
