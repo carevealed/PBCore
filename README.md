@@ -1,4 +1,4 @@
-# CAVPP PBCore Generator Script
+# CAVPP PBCore Tools
 
 Description
 ===========
@@ -8,7 +8,8 @@ that are located in the same folder.
 To Install
 ==========
 
-You have two options:
+You have two options. You most likely want to use the standard as it is the most up to date version. 
+However, if you want to use an older version of the script, you can use the Pip method for install a specific version.
 
 
 Option 1: Standard
@@ -27,11 +28,11 @@ Option 1: Standard
 Option 2: pip
 -------------
 
-1. Download the latest version in the dist folder to your Download folder
+1. Download the latest version (or eariler) in the dist folder to your Download folder
 2. In a terminal window, type:
 
         cd Downloads
-        sudo pip install CAVPP_Audio_Convert-0.1.1.tar.gz
+        sudo pip install CAVPP PBCore Tools-0.1.tar.gz
 
 3. Enter your computer password and the script will install along with all the dependencies. 
 
