@@ -1,4 +1,0 @@
-[console_scripts]
-makepbcore = pbcore.scripts.pbcore_csv:main
-tvs2csv = pbcore.scripts.tsv2csv:main
-
