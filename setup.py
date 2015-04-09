@@ -1,8 +1,8 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='CAVPP PBCore Tools',
-    version='0.1',
+    name='CAVPP_PBCore_Tools',
+    version='0.1.1',
     packages=find_packages(),
     url='https://github.com/cavpp/PBCore',
     install_requires=['OneSheet == 0.1.3.26'],
