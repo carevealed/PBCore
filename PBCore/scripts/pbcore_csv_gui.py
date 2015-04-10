@@ -592,7 +592,6 @@ class AboutWindow():
     def __init__(self, master):
         image = os.path.join(os.path.dirname(__file__),'images')
         image = os.path.join(image, 'CAVPPcolor.gif')
-        print image
         self.master = master
         self.master.resizable(width=None, height=None)
         self.background = ttk.Frame(self.master, width=20, padding=10)

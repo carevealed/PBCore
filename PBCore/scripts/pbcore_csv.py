@@ -2212,7 +2212,7 @@ def main():
     global settingsFileName
     # settingsFileName = os.path.join(os.path.dirname(__file__), '../settings/pbcore-csv-settings.ini')
     # settingsFileName = os.path.join(os.path.dirname(__file__),'settings/pbcore-csv-settings.ini')
-    print __file__
+    # print __file__
     settingsFileName = os.path.join(os.path.dirname(__file__),'pbcore-csv-settings.ini')
 
     global SETTINGS
