@@ -108,14 +108,9 @@ class MainWindow():
         self.allInfoFrame.pack(fill=BOTH, expand=True)
 
 
-        # self.panel = ttk.Panedwindow(self.allInfoFrame, orient=VERTICAL)
         self.panel = ttk.Frame(self.allInfoFrame)
         self.panel.pack(fill=BOTH, expand=True)
 
-        # self.panel.grid(row=2, column=0, sticky=W+E+S+N)
-        #
-        # self.testButton = ttk.Button(self.background, text='test', command=self.test)
-        # self.testButton.pack()
 
 
         # -------------------- Input Information --------------------
@@ -1949,4 +1944,6 @@ if __name__ == '__main__':
     sys.stderr.write("Not a standalone program. Please run pbcore-csv.py -g to run the GUI")
 
 else:
-    from PBCore.scripts.pbcore_csv import *
+    # print os.path.dirname(__name__)
+    # from PBCore.scripts.pbcore_csv import *
+    pass
