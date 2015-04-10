@@ -965,8 +965,8 @@ class pbcoreBuilder(threading.Thread):
                 access_copy.add_instantiationIdentifier(
                     PB_Element(['source', self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
                                tag="instantiationIdentifier",
-                               value=obj_ID+"_access"))
-                access_copy.add_instantiationRelation(InstantiationRelation(derived_from=obj_ID+"_prsv"))
+                               value=obj_ID.split("_a")[0]+"_access"))
+                access_copy.add_instantiationRelation(InstantiationRelation(derived_from=obj_ID.split("_a")[0]+"_prsv"))
                 for access_file in access_files:
                     f = AudioObject(access_file)
                     newAudioFile = InstantiationPart(objectID=f.file_name,
@@ -1407,7 +1407,8 @@ class pbcoreBuilder(threading.Thread):
                                         exAuthority='CAVPP')
             else:  # I don't know if this will be anything other than "California Audiovisual Preservation Project"
                 exten = pbcoreExtension(exElement="projectNote",
-                                        exValue=record['Project Note'])
+                                        exValue=record['Project Note'],
+                                        exAuthority='CAPS')
             descriptive.add_pbcore_extension(exten)
         elif self.settings.getboolean('EXTRA','UseDefaultProjectNote'):
             exten = pbcoreExtension(exElement="projectNote",
