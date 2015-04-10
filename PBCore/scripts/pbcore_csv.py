@@ -1,6 +1,5 @@
 #!/usr/local/bin/python
 from Queue import Queue
-import copy
 
 __author__ = 'California Audio Visual Preservation Project'
 __copyright__ = "Copyright 2015, California Audiovisual Preservation Project"
@@ -14,13 +13,9 @@ import threading
 from onesheet.VideoObject import *
 from onesheet.AudioObject import *
 
-
-import string
 from time import sleep
 from os.path import isfile
 from xml.dom.minidom import parseString
-from xml.etree import ElementTree
-import re
 from modules.PBCore.PBCore import *
 FILE_NAME_PATTERN = re.compile("[A-Z,a-z]+_\d+")
 
@@ -2216,8 +2211,9 @@ def generate_pbcore(record_file):
 def main():
     global settingsFileName
     # settingsFileName = os.path.join(os.path.dirname(__file__), '../settings/pbcore-csv-settings.ini')
-    # settingsFileName = os.path.join(os.path.dirname(__file__),'PBCore/settings/pbcore-csv-settings.ini')
-    settingsFileName = 'PBCore/settings/pbcore-csv-settings.ini'
+    # settingsFileName = os.path.join(os.path.dirname(__file__),'settings/pbcore-csv-settings.ini')
+    print __file__
+    settingsFileName = os.path.join(os.path.dirname(__file__),'pbcore-csv-settings.ini')
 
     global SETTINGS
     global logger
@@ -2245,7 +2241,7 @@ def main():
     if args.csv == "" and not args.gui:
         parser.print_help()
     elif args.gui:
-        from gui.pbcore_csv_gui import start_gui
+        from pbcore_csv_gui import start_gui
         if args.csv:
             print("Loading graphical user interface with: "+args.csv)
             start_gui(settings=os.path.abspath(settingsFileName), csvfile=args.csv)

@@ -15,12 +15,14 @@ import os
 from time import sleep
 from tkFileDialog import askopenfilename
 from tkMessageBox import showerror
-
+import re
 import threading
 from Tkinter import *
 import ttk
-
+from pbcore_csv import pbcoreBuilder
 FILE_NAME_PATTERN = re.compile("[A-Z,a-z]+_\d+")
+
+
 
 # DEFAULT_PATH = None
 
@@ -588,6 +590,9 @@ class MainWindow():
 
 class AboutWindow():
     def __init__(self, master):
+        image = os.path.join(os.path.dirname(__file__),'images')
+        image = os.path.join(image, 'CAVPPcolor.gif')
+        print image
         self.master = master
         self.master.resizable(width=None, height=None)
         self.background = ttk.Frame(self.master, width=20, padding=10)
@@ -597,7 +602,7 @@ class AboutWindow():
         self.titleFrame = ttk.Frame(self.background, width=20, padding=10, relief=RIDGE)
         self.titleFrame.pack()
         # print os.path.join(os.path.dirname(os.path.realpath(__file__)), 'images/CAVPPcolor.gif')
-        self.logo = PhotoImage(file=os.path.join(os.path.dirname(os.path.realpath(__file__)), 'images/CAVPPcolor.gif'))
+        self.logo = PhotoImage(file=image)
         self.titleLabel = ttk.Label(self.titleFrame, text="CAVPP PBCore Builder", image=self.logo, compound=TOP)
         self.titleLabel.pack()
         self.versionLabel = ttk.Label(self.titleFrame, text="Version: " + __version__)
