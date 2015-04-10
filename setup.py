@@ -13,5 +13,5 @@ setup(
     entry_points={'console_scripts': ['makepbcore = pbcore.scripts.pbcore_csv:main', 'tsv2csv = pbcore.scripts.tsv2csv:main']},
     include_package_data=True,
     zip_safe=True,
-    package_data={"": ['pbcore/scripts/gui/images/CAVPPcolor.gif', 'pbcore/settings/pbcore-csv-settings.ini']}
+    package_data={"PBCore/scripts/gui/images/": ['CAVPPcolor.gif'], "PBCore/settings/pbcore-csv-settings.ini": ['settings/pbcore-csv-settings.ini']}
 )
