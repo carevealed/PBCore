@@ -2215,7 +2215,9 @@ def generate_pbcore(record_file):
 
 def main():
     global settingsFileName
-    settingsFileName = os.path.join(os.path.dirname(__file__), '../settings/pbcore-csv-settings.ini')
+    # settingsFileName = os.path.join(os.path.dirname(__file__), '../settings/pbcore-csv-settings.ini')
+    # settingsFileName = os.path.join(os.path.dirname(__file__),'PBCore/settings/pbcore-csv-settings.ini')
+    settingsFileName = 'PBCore/settings/pbcore-csv-settings.ini'
 
     global SETTINGS
     global logger
@@ -2227,7 +2229,7 @@ def main():
         f.close()
         SETTINGS.read(settingsFileName)
     except IOError:
-        sys.stderr.write('Error: Cannot find ' + settingsFileName + '. Quiting')
+        sys.stderr.write('Error: Cannot find ' + settingsFileName + '. Quiting\n')
         quit()
 
     logger = logging.getLogger()
