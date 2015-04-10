@@ -12,6 +12,6 @@ setup(
     description='Tool for building PBCore from data exported from CONTENTdm.',
     entry_points={'console_scripts': ['makepbcore = pbcore.scripts.pbcore_csv:main', 'tsv2csv = pbcore.scripts.tsv2csv:main']},
     include_package_data=True,
-    zip_safe=True,
-    package_data={"PBCore/scripts/gui/images/": ['CAVPPcolor.gif'], "PBCore/settings/pbcore-csv-settings.ini": ['settings/pbcore-csv-settings.ini']}
+    zip_safe=False,
+    package_data={"PBCore/scripts/images": ['CAVPPcolor.gif'], "PBCore": ['settings/pbcore-csv-settings.ini']}
 )
