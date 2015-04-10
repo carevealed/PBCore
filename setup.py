@@ -10,7 +10,7 @@ setup(
     author='California Audio Visual Preservation Project',
     author_email='hborcher@berkeley.edu',
     description='Tool for building PBCore from data exported from CONTENTdm.',
-    entry_points={'console_scripts': ['makepbcore = pbcore.scripts.pbcore_csv:main', 'tvs2csv = pbcore.scripts.tsv2csv:main']},
+    entry_points={'console_scripts': ['makepbcore = pbcore.scripts.pbcore_csv:main', 'tsv2csv = pbcore.scripts.tsv2csv:main']},
     include_package_data=True,
     zip_safe=True,
     package_data={"": ['pbcore/scripts/gui/images/CAVPPcolor.gif', 'pbcore/settings/pbcore-csv-settings.ini']}
