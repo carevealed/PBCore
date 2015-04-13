@@ -8,21 +8,26 @@ that are located in the same folder.
 To Install
 ==========
 
-You have two options. You most likely want to use the standard as it is the most up to date version. 
-However, if you want to use an older version of the script, you can use the Pip method for install a specific version.
+You have a few options. You most likely want to use the first one as it is the easiest. 
 
 
-Option 1: Standard
-------------------
+Option 1: Install binary (Wheel)
+--------------------------------
 
-1. Open a terminal window and type:
-
+1. Download the latest version from the releases section of the project's Github page https://github.com/cavpp/PBCore/releases and save it to your Downloads folder.
+2. Open a terminal and type:
+    
         cd Downloads
-        git clone https://github.com/cavpp/PBCore.git
-        cd PBCore
-        sudo python setup.py install 
-        
-2. Enter your computer password and the script will install along with all the dependencies.
+        sudo pip install CAVPP_PBCore_Tools-0.1.2-py2.py3-none-any.whl
+
+### Notes: 
+
+
+The actual name of the file will change with each version.
+
+If you have a problem that pip isn't installed, you can install it with the following command.
+ 
+        sudo easy_install pip
 
 
 Option 2: pip
@@ -36,11 +41,19 @@ Option 2: pip
 
 3. Enter your computer password and the script will install along with all the dependencies. 
 
-**Note:** If you have a problem that pip isn't installed, you can install it with 
- the following command.
- 
-        sudo easy_install pip
 
+
+Option 3: From source using Setuptools
+--------------------------------------
+
+1. Open a terminal window and type:
+
+        cd Downloads
+        git clone https://github.com/cavpp/PBCore.git
+        cd PBCore
+        sudo python setup.py install 
+        
+2. Enter your computer password and the script will install along with all the dependencies.
 
 To Use
 ======
