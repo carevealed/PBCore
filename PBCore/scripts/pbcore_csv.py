@@ -12,7 +12,7 @@ from ConfigParser import ConfigParser
 import threading
 from onesheet.VideoObject import *
 from onesheet.AudioObject import *
-from PBCore.scripts.modules.PBCore.patch import trt, audio_sample_rate, audio_long_name
+from PBCore.scripts.modules.PBCore.patch import trt
 
 from time import sleep
 from os.path import isfile
@@ -830,29 +830,30 @@ class pbcoreBuilder(threading.Thread):
                                                                          tag="instantiationIdentifier",
                                                                          value=md5))
                     sleep(.5)
-                newfile = InstantiationEssenceTrack(type="Audio")
-                newfile.set_essenceTrackBitDepth(PB_Element(tag="essenceTrackBitDepth",
-                                                            value=str(f.audioBitDepth)))
-                newfile.set_essenceTrackSamplingRate(PB_Element(["unitsOfMeasure", "kHz"],
-                                                                tag="essenceTrackSamplingRate",
-                                                                # value=self._samplerate_cleanup(f.audioSampleRate)))               # not working so...
-                                                                value=self._samplerate_cleanup(audio_sample_rate(master_part))))    # replaces with this line as a patch
-                datarate = f.audioBitRateH.split(" ")
-                newfile.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
-                                                                tag="essenceTrackDataRate",
-                                                                value=datarate[0]))
-                if f.file_extension.lower() == '.wav':
-                    pres_master.set_instantiationDigital(PB_Element(['source', 'PRONOM Technical Registry'],
-                                                                    tag='instantiationDigital',
-                                                                    value='audio/x-wav'))  # This is really ugly code I don't know a better way
-                    newfile.set_essenceTrackEncoding(PB_Element(tag='essenceTrackEncoding', value='WAV'))
+                if f.audioCodec and f.audioCodecLongName:
+                    newfile = InstantiationEssenceTrack(type="Audio")
+                    newfile.set_essenceTrackBitDepth(PB_Element(tag="essenceTrackBitDepth",
+                                                                value=str(f.audioBitDepth)))
+                    newfile.set_essenceTrackSamplingRate(PB_Element(["unitsOfMeasure", "kHz"],
+                                                                    tag="essenceTrackSamplingRate",
+                                                                    # value=self._samplerate_cleanup(f.audioSampleRate)))               # not working so...
+                                                                    value=self._samplerate_cleanup(audio_sample_rate(master_part))))    # replaces with this line as a patch
+                    datarate = f.audioBitRateH.split(" ")
+                    newfile.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
+                                                                    tag="essenceTrackDataRate",
+                                                                    value=datarate[0]))
+                    if f.file_extension.lower() == '.wav':
+                        pres_master.set_instantiationDigital(PB_Element(['source', 'PRONOM Technical Registry'],
+                                                                        tag='instantiationDigital',
+                                                                        value='audio/x-wav'))  # This is really ugly code I don't know a better way
+                        newfile.set_essenceTrackEncoding(PB_Element(tag='essenceTrackEncoding', value='WAV'))
 
-                # audio_codec = f.audioCodec + ": " + f.audioCodecLongName      # not working so...
-                audio_codec = audio_long_name(f.file_name)                      # replaces with this line as a patch
-                pres_master.set_instantiationStandard(PB_Element(tag='instantiationStandard',
-                                                                 value=audio_codec))
+                    # audio_codec = f.audioCodec + ": " + f.audioCodecLongName      # not working so...
+                    audio_codec = audio_long_name(f.file_name)                      # replaces with this line as a patch
+                    pres_master.set_instantiationStandard(PB_Element(tag='instantiationStandard',
+                                                                     value=audio_codec))
 
-                new_mast_part.add_instantiationEssenceTrack(newfile)
+                    new_mast_part.add_instantiationEssenceTrack(newfile)
 
                 pres_master.add_instantiationPart(new_mast_part)
                 self._parts_progress += 1
@@ -927,19 +928,21 @@ class pbcoreBuilder(threading.Thread):
 
             # ---------- Audio essence track ----------
 
-            newfile = InstantiationEssenceTrack(type='Audio',
-                                                # samplingRate=f.audioSampleRate/1000,                      # isn't working currently so...
-                                                samplingRate=audio_sample_rate(preservation_file_set[0]),   # replaces with this line as a patch
-                                                bitDepth=f.audioBitDepth)
-            # audio_codec = f.audioCodec + ": " + f.audioCodecLongName  # isn't working currently so...
-            audio_codec = audio_long_name(f.file_name)                  # replaces with this line as a patch
-            newfile.set_essenceTrackStandard(PB_Element(tag='essenceTrackStandard',
-                                                        value=audio_codec))
-            datarate = f.audioBitRateH.split(" ")
-            newfile.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
-                                                                tag="essenceTrackDataRate",
-                                                                value=datarate[0]))
-            pres_master.add_instantiationEssenceTrack(newfile)
+            if f.audioCodec and f.audioCodecLongName:
+                newfile = InstantiationEssenceTrack(type='Audio',
+                                                    # samplingRate=f.audioSampleRate/1000,                      # isn't working currently so...
+                                                    samplingRate=audio_sample_rate(preservation_file_set[0]),   # replaces with this line as a patch
+                                                    bitDepth=f.audioBitDepth)
+                # audio_codec = f.audioCodec + ": " + f.audioCodecLongName  # isn't working currently so...
+
+                audio_codec = audio_long_name(f.file_name)                  # replaces with this line as a patch
+                newfile.set_essenceTrackStandard(PB_Element(tag='essenceTrackStandard',
+                                                            value=audio_codec))
+                datarate = f.audioBitRateH.split(" ")
+                newfile.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
+                                                                    tag="essenceTrackDataRate",
+                                                                    value=datarate[0]))
+                pres_master.add_instantiationEssenceTrack(newfile)
             self._parts_progress += 1
 
 
@@ -1117,21 +1120,23 @@ class pbcoreBuilder(threading.Thread):
                 access_copy.add_instantiationEssenceTrack(newEssTrack)
 
                 # ------------------ Audio track ------------------
-                # audio_codec = f.audioCodec + ": " + f.audioCodecLongName      # not currently Working
-                audio_codec = audio_long_name(f.file_name)                      # Used as a patch for ^^
-                newEssTrack = InstantiationEssenceTrack(type='Audio',
-                                                        standard=audio_codec,
-                                                        # samplingRate=f.audioSampleRate/1000)          # not currently Working
-                                                        samplingRate=audio_sample_rate(access_files))   # Used as a patch for ^^
-                datarate = f.audioBitRateH.split(" ")
-                newEssTrack.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
-                                                                tag="essenceTrackDataRate",
-                                                                value=datarate[0]))
-                bitdepth = f.audioBitDepth
-                if bitdepth == 32:
-                    bitdepth = "32-Bit Float"
-                newEssTrack.set_essenceTrackBitDepth(PB_Element(tag='essenceTrackBitDepth', value=bitdepth))
-                access_copy.add_instantiationEssenceTrack(newEssTrack)
+                if f.audioCodecLongName and f.audioCodec:
+                    audio_codec = f.audioCodec + ": " + f.audioCodecLongName
+
+                    # audio_codec = audio_long_name(f.file_name)
+                    newEssTrack = InstantiationEssenceTrack(type='Audio',
+                                                            standard=audio_codec,
+                                                            samplingRate=f.audioSampleRate/1000)          # not currently Working
+                                                            # samplingRate=audio_sample_rate(access_files))   # Used as a patch for ^^
+                    datarate = f.audioBitRateH.split(" ")
+                    newEssTrack.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
+                                                                    tag="essenceTrackDataRate",
+                                                                    value=datarate[0]))
+                    bitdepth = f.audioBitDepth
+                    if bitdepth == 32:
+                        bitdepth = "32-Bit Float"
+                    newEssTrack.set_essenceTrackBitDepth(PB_Element(tag='essenceTrackBitDepth', value=bitdepth))
+                    access_copy.add_instantiationEssenceTrack(newEssTrack)
                 self._parts_progress += 1
         return access_copy
 
