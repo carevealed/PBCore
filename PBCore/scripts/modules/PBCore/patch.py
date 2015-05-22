@@ -22,32 +22,32 @@ def trt(file_name):
             hours = (miliseconds/1000)/60/60
             trt = str(hours).zfill(2) + ":" + str(minutes).zfill(2) + ":" + str(seconds).zfill(2)
             return trt
-
-def audio_sample_rate(file_name):
-    _check_exists(file_name)
-
-    media_info = MediaInfo.parse(file_name)
-    for track in media_info.tracks:
-        if track.track_type == 'Audio':
-            sample_rate = track.sampling_rate
-            if not isinstance(sample_rate, int):
-                raise Exception(("Unable to calculate sample rate for" + file_name))
-            return sample_rate
-
-def audio_long_name(file_name):
-    _check_exists(file_name)
-
-    media_info = MediaInfo.parse(file_name)
-    for track in media_info.tracks:
-        if track.track_type == 'Audio':
-            codec_long_name = track.format
-            profile = track.format_profile
-            if profile:
-                codec_long_name += " " + profile
-            # print codec_long_name
-            if not isinstance(codec_long_name, str):
-                raise Exception(("Unable to unable to find the codec name for " + file_name))
-            # return sample_rate
+#
+# def audio_sample_rate(file_name):
+#     _check_exists(file_name)
+#
+#     media_info = MediaInfo.parse(file_name)
+#     for track in media_info.tracks:
+#         if track.track_type == 'Audio':
+#             sample_rate = track.sampling_rate
+#             if not isinstance(sample_rate, int):
+#                 raise Exception(("Unable to calculate sample rate for" + file_name))
+#             return sample_rate
+#
+# def audio_long_name(file_name):
+#     _check_exists(file_name)
+#
+#     media_info = MediaInfo.parse(file_name)
+#     for track in media_info.tracks:
+#         if track.track_type == 'Audio':
+#             codec_long_name = track.format
+#             profile = track.format_profile
+#             if profile:
+#                 codec_long_name += " " + profile
+#             # print codec_long_name
+#             if not isinstance(codec_long_name, str):
+#                 raise Exception(("Unable to unable to find the codec name for " + file_name))
+#             # return sample_rate
 
 
 # test_files = "/Volumes/CAVPP_DPLA/renamed/csfpal_000024 - needs new pbcore/csfpal_000024_t1_a_access.mp3"
