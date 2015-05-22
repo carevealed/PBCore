@@ -7,7 +7,7 @@ except(ImportError):
 
 setup(
     name='CAVPP_PBCore_Tools',
-    version='0.1.3.4',
+    version='0.1.3.6',
     packages=find_packages(),
     url='https://github.com/cavpp/PBCore',
     install_requires=['OneSheet >= 0.1.3.26', 'lxml >= 3.4.2', 'pymediainfo >=1.4.0'],
