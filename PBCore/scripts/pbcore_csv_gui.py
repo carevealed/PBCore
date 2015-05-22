@@ -255,10 +255,13 @@ class MainWindow():
 # ============================= Load the data into tree =============================
         if input_file:
             self.csv_filename_entry.insert(0, input_file)
-            if self.validate_file(input_file):
-                self.file_records = pbcoreBuilder(input_file, self.settings)
-                self.file_records.load_records()
-                self.load_records_list(self.file_records.records)
+            try:
+                if self.validate_file(input_file):
+                    self.file_records = pbcoreBuilder(input_file, self.settings)
+                    self.file_records.load_records()
+                    self.load_records_list(self.file_records.records)
+            except CSVDataError as em:
+                print em
 
         self.running = False
 
@@ -279,16 +282,12 @@ class MainWindow():
         project_id = self.recordsTree.set(item_record)['project']
         xml = self.recordsTree.set(item_record)['xml_file']
 
-        # print(project_id)
         itemsRoot = Toplevel(self.master)
         itemsRoot.wm_title("Details: " + project_id)
         view_record = self.file_records.get_record(project_id)
-        # print view_record
-        item = RecordDetailsWindow(itemsRoot, view_record, path=os.path.dirname(self.file_records.source), xml=xml)
-        # print self.recordsTree.set(item_record)['xml_file']
+        item = RecordDetailsWindow(itemsRoot, view_record, path=self.csv_filename_entry.get(), xml=xml)
         itemsRoot.wait_window()
         if item.shouldUpdate:
-            # print self.recordsTree.set(item_record)['xml_file']
             self.recordsTree.set(item_record, column="xml_file", value=item.xml_file)
 
             self.file_records.update_record(project_id, item.newRecord)
@@ -308,7 +307,6 @@ class MainWindow():
                                            initialfile=os.path.basename(self.recordsTree.set(record[0], column="xml_file")),
                                            filetypes=[("XML", "*.xml")])
         if f:
-            # print "changing to " + f
             self.recordsTree.set(record[0], column="xml_file", value=f)
 
     def load_about_window(self):
@@ -327,16 +325,25 @@ class MainWindow():
             self.default_path = os.path.dirname(fileName)
             self.csv_filename_entry.delete(0, END)
             self.csv_filename_entry.insert(0, fileName)
-            if self.validate_file(fileName):
-                self.file_records = pbcoreBuilder(fileName, settings=self.settings)
-                self.file_records.load_records()
-                self.load_records_list(self.file_records.records)
+            try:
+                if self.validate_file(fileName):
+                    self.file_records = pbcoreBuilder(fileName, settings=self.settings)
+                    self.file_records.load_records()
+                    self.load_records_list(self.file_records.records)
 
-            else:
-                for i in self.recordsTree.get_children():
-                    self.recordsTree.delete(i)
-            self.records_edited = False
-            self.startButton.config(state=NORMAL)
+                else:
+                    for i in self.recordsTree.get_children():
+                        self.recordsTree.delete(i)
+                self.records_edited = False
+                self.startButton.config(state=NORMAL)
+            except CSVDataError as em:
+                for item in em.value:
+                    message = "Found an error in: " + item['record'] + " at " + item['location'] + ".\n"
+                    message += "Data found: " + item['received'] + "\n"
+                    message += item['message']
+
+                    tkMessageBox.showerror("Error with CSV", message)
+
         else:
             self.startButton.config(state=DISABLED)
 
@@ -355,7 +362,6 @@ class MainWindow():
         self.alertRoot = Toplevel(self.master)
         self.alertRoot.wm_title(alert_type)
         alerts = AlertWindow(self.alertRoot, messages, self.csv_filename_entry.get())
-        # alertRoot.wait_window()
 
 
     def validate_records(self, records):
@@ -401,12 +407,10 @@ class MainWindow():
 
 
                 warnings, errors = self.validate_records(testFile)
-
+                if errors:
+                    raise CSVDataError(errors)
                 self.update_messages(warnings)
                 return True
-
-                # for error in total_errors:
-                #     print error
 
             else:
                 self.validate_entry.config(state=NORMAL)
@@ -436,7 +440,8 @@ class MainWindow():
             self.recordsTree.delete(i)
         for index, record in enumerate(records):
 
-            fileName = re.search(FILE_NAME_PATTERN, record['Object Identifier']).group(0)
+            search_result = re.search(FILE_NAME_PATTERN, record['Object Identifier'])
+            fileName = search_result.group(0)
             parts = record['Object Identifier'].split(';')
 
             media_files = locate_files(root=os.path.dirname(self.csv_filename_entry.get()), fileName=fileName)
@@ -450,9 +455,6 @@ class MainWindow():
             self.recordsTree.set(outIndex, 'status', "To Build")
             self.recordsTree.set(outIndex, 'files', str(len(media_files)))
 
-
-            # self.recordsTree.set(outIndex, 'files', str(len(media_files)) + " Files Found")
-
             self.recordsTree.set(outIndex, 'xml_file', (fileName + "_PBCore.xml"))
 
             if self.default_path:
@@ -461,10 +463,6 @@ class MainWindow():
                 xml_file_name = (fileName + "_PBCore.xml")
             self.recordsTree.set(outIndex, 'xml_file', xml_file_name)
 
-            # for a_index, media_file in enumerate(media_files):
-            #     inIndex = str(a_index)+outIndex
-            #     self.recordsTree.insert(outIndex, a_index, inIndex)
-            #     self.recordsTree.set(inIndex, 'files', os.path.basename(media_file.strip()))
 
 
     def get_records(self, file_name):
@@ -545,13 +543,7 @@ class MainWindow():
             self.set_calculation_progress(calulation_percent)
 
     def test(self):
-        # foo = pbcore_csv.pbcoreBuilder(self.csv_filename_entry.get())
-        # foo.load_records()
-        # # print foo.source
-        # for record in self.recordsTree.get_children():
-        #     print(self.recordsTree.set(record))
-        # # foo.get_record("adfa")
-        # for test in self.file_records.records:
+
         test_record = {'Date Created': '6/26/58', 'Object ARK': 'ark:/13030/c8m61n3r', 'Timecode Content Begins': '', 'Media Type': 'Sound', 'Interviewee': '', 'Series Title': '', 'Temporal Coverage': '', 'Writer': '', 'Institution URL': 'http://www.cityofsacramento.org/ccl/history/', 'Project Identifier': 'cavpp002554', 'Quality Control Notes': 'Vendor Tech Notes:  Clicks and Pops on Tape; very little content on side b. seems to be an outtake with  fluctuating volume. Speed: 33 1/3 RPM. Direction: Outside In    CAVPP QC Notes:  a: *psrv file includes markers with annotations on the waveform in Wavelab. Is this from MP QC? Crackle, pops and clicks.  b: Crackle, pops and clicks. Distorted in last 20 seconds. *Duplicate segment do not keep. Remove _a from name. Re-embed.    ', 'Silent or Sound': 'Sound', 'Camera': '', 'Music': '', 'Editor': '', 'Track Standard': '', 'CONTENTdm number': '57', 'Subtitles/Intertitles/Closed Captions': '', 'Distributor': '', 'Date modified': '1/28/15', 'Subject Topic Authority Source': '', 'Aspect Ratio': '', 'Total Number of Reels or Tapes': '1 disc of 1', 'Copyright Holder Info': '', 'Running Speed': '', 'Subject Entity Authority Source': '', 'Additional Technical Notes for Overall Work': '', 'Musician': '', 'Main or Supplied Title': 'Max and Buddy Baer Interview with Regis Philbin', 'Internet Archive URL': 'https://archive.org/details/casacsh_000048', 'Relationship Type': '', 'Director': '', 'Copyright Statement': 'Copyright status unknown. This work may be protected by the U.S. Copyright Law (Title 17, U.S.C.). In addition, its reproduction may be restricted by terms of gift or purchase agreements, donor restrictions, privacy and publicity rights, licensing and trademarks. This work is accessible for purposes of education and research. Transmission or reproduction of works protected by copyright beyond that allowed by fair use requires the written permission of the copyright owners. Works not in the public domain cannot be commercially exploited without permission of the copyright owner. Responsibility for any use rests exclusively with the user. Center for Sacramento History attempted to find rights owners without success but is eager to hear from them so that we may obtain permission, if needed. Upon request to csh@cityofsacramento.org, digitized works can be removed from public view if there are rights issues that need to be resolved.', 'Genre': '', 'Cataloger Notes': '', 'Collection Guide URL': '', 'Interviewer': '', 'Description or Content Summary': 'An interview on a 78 rpm record of the Baer brothers - heavyweight boxers (Max being a former world champion) and Sacramento residents with a young Regis Philbin of KSON radio in San Diego.', 'Institution': 'Center for Sacramento History', 'Stock Manufacturer': '', 'Sound': '', 'Publisher': '', 'Asset Type': 'Media Object', 'Object Identifier': 'casacsh_000048', 'Copyright Date': '', 'Copyright Holder': '', 'Language': '', 'Color and/or Black and White': '', 'Institution ARK': 'ark:/13030/tf7779p65f', 'CONTENTdm file name': 'http://archive.org/details/', 'OCLC number': '', 'Why the recording is significant to California/local history': 'An interview on a 78 rpm record of the Baer brothers - heavyweight boxers (Max being a former world champion) and Sacramento residents with a young Regis Philbin of KSON radio in San Diego.', 'Subject Entity': '', 'Gauge and Format': '[LP Record]', 'Additional Descriptive Notes for Overall Work': '', 'Genre Authority Source': '', 'Date Published': '', 'Country of Creation': 'US', 'Project Note': 'California Audiovisual Preservation Project (CAVPP)', 'Institutional Rights Statement (URL)': '', 'Spatial Coverage': '', 'Copyright Notice': '', 'Subject Topic': '', 'Performer': '', 'Relationship': '', 'Producer': '', 'Cast': '', 'Generation': 'Copy', 'Transcript': '', 'Channel Configuration': '', 'Date created': '3/17/14', 'Reference URL': 'http://cdm15972.contentdm.oclc.org:80/cdm/ref/collection/p15972coll52/id/57', 'Call Number': '2000/189', 'Base Thickness': '', 'Base Type': '', 'Additional Title': '', 'CONTENTdm file path': 'http://archive.org/details/', 'Duration': '', 'Speaker': '', 'Collection Guide Title': ''}
         self.file_records.update_record("cavpp002554", test_record)
 
@@ -600,7 +592,7 @@ class AboutWindow():
 # ----------------- Title
         self.titleFrame = ttk.Frame(self.background, width=20, padding=10, relief=RIDGE)
         self.titleFrame.pack()
-        # print os.path.join(os.path.dirname(os.path.realpath(__file__)), 'images/CAVPPcolor.gif')
+
         self.logo = PhotoImage(file=image)
         self.titleLabel = ttk.Label(self.titleFrame, text="CAVPP PBCore Builder", image=self.logo, compound=TOP)
         self.titleLabel.pack()
@@ -739,18 +731,19 @@ def locate_files(root, fileName):
     found_directory = None
     results = []
     # check if a directory matches the file name
-    for roots, dirs, files in os.walk(os.path.dirname(root)):
-        for dir in dirs:
-            if fileName == dir:
-                found_directory = os.path.join(roots, dir)
-
+    # for roots, dirs, files in os.walk(root):
+    for dir in os.listdir(root):
+        if not dir.startswith('.'):
+            if re.search((fileName+"\D"), dir):
+                found_directory = os.path.join(root, dir)
                 break
     # see of a file in that folder has a file with that name in it
     if found_directory:
         for roots, dirs, files, in os.walk(found_directory):
             for file in files:
-                if fileName in file:
-                    results.append(os.path.join(roots, file))
+                if not file.startswith('.'):
+                    if fileName in file:
+                        results.append(os.path.join(roots, file))
     return results
 
 def sep_pres_access(digital_files):
@@ -1951,3 +1944,10 @@ else:
     # print os.path.dirname(__name__)
     # from PBCore.scripts.pbcore_csv import *
     pass
+
+class CSVDataError(Exception):
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return repr(self.value)

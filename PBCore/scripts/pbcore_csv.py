@@ -12,12 +12,15 @@ from ConfigParser import ConfigParser
 import threading
 from onesheet.VideoObject import *
 from onesheet.AudioObject import *
+from PBCore.scripts.modules.PBCore.patch import trt, audio_sample_rate, audio_long_name
 
 from time import sleep
 from os.path import isfile
 from xml.dom.minidom import parseString
 from modules.PBCore.PBCore import *
 FILE_NAME_PATTERN = re.compile("[A-Z,a-z]+_\d+")
+# VALID_OBJECT_PATTERN = re.compile('[a-z]*_\d{5,6}?((?=_)(_[t,r,d]\d)+[\s,;]|\b)', re.I)
+VALID_OBJECT_PATTERN = re.compile('([a-z]*_\d{5,6})((_(t|r|d)\d+)?)(\s|;|\b|\>|\Z)')
 
 LARGEFILE = 1065832230
 import csv
@@ -30,6 +33,8 @@ officialList = ['Internet Archive URL',
                 'Institution',
                 'Asset Type',
                 'Media Type',
+                'Creator',
+                'Contributor',
                 'Generation',
                 'Main or Supplied Title',
                 'Additional Title',
@@ -112,6 +117,16 @@ class RemoveErrorsFilter(logging.Filter):
             # return not record.getMessage().startswith('WARNING')
 
 
+def valid_object_id(data):
+
+    results = re.findall(VALID_OBJECT_PATTERN, data)
+    if len(results) > 0:
+        return True
+    else:
+        return False
+
+
+    pass
 
 
 class pbcoreBuilder(threading.Thread):
@@ -741,6 +756,7 @@ class pbcoreBuilder(threading.Thread):
             # print new_xml.toprettyxml(encoding='utf-8')
 
         elif media_type.lower() == 'moving image':
+            physical.add_instantiationIdentifier(PB_Element(['source', "CAVPP"], tag="instantiationIdentifier", value=parts))
             newEss = InstantiationEssenceTrack(objectID=parts,
                                                frameRate=run_speed,
                                                aspectRatio=aspect_ratio,
@@ -783,7 +799,7 @@ class pbcoreBuilder(threading.Thread):
 
             for master_part in preservation_file_set:
                 f = AudioObject(master_part)
-                new_mast_part = InstantiationPart(location=self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource'), duration=f.totalRunningTimeSMPTE)
+                new_mast_part = InstantiationPart(location=self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource'), duration=trt(master_part))
                 file_size, file_units = self.sizeofHuman(f.file_size)
                 new_mast_part.set_instantiationFileSize(PB_Element(['unitsOfMeasure',file_units],
                                                                    tag="instantiationFileSize",
@@ -819,7 +835,8 @@ class pbcoreBuilder(threading.Thread):
                                                             value=str(f.audioBitDepth)))
                 newfile.set_essenceTrackSamplingRate(PB_Element(["unitsOfMeasure", "kHz"],
                                                                 tag="essenceTrackSamplingRate",
-                                                                value=self._samplerate_cleanup(f.audioSampleRate)))
+                                                                # value=self._samplerate_cleanup(f.audioSampleRate)))               # not working so...
+                                                                value=self._samplerate_cleanup(audio_sample_rate(master_part))))    # replaces with this line as a patch
                 datarate = f.audioBitRateH.split(" ")
                 newfile.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
                                                                 tag="essenceTrackDataRate",
@@ -830,7 +847,8 @@ class pbcoreBuilder(threading.Thread):
                                                                     value='audio/x-wav'))  # This is really ugly code I don't know a better way
                     newfile.set_essenceTrackEncoding(PB_Element(tag='essenceTrackEncoding', value='WAV'))
 
-                audio_codec = f.audioCodec + ": " + f.audioCodecLongName
+                # audio_codec = f.audioCodec + ": " + f.audioCodecLongName      # not working so...
+                audio_codec = audio_long_name(f.file_name)                      # replaces with this line as a patch
                 pres_master.set_instantiationStandard(PB_Element(tag='instantiationStandard',
                                                                  value=audio_codec))
 
@@ -887,7 +905,7 @@ class pbcoreBuilder(threading.Thread):
             # ---------- Video essence track ----------
             newfile = InstantiationEssenceTrack(type='Video',
                                                 frameRate=str(f.videoFrameRate),
-                                                duration=f.totalRunningTimeSMPTE,
+                                                duration=trt(preservation_file_set[0]),
                                                 aspectRatio=str(f.videoAspectRatio))
             datarate = f.videoBitRateH.split(" ")
             newfile.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
@@ -910,9 +928,11 @@ class pbcoreBuilder(threading.Thread):
             # ---------- Audio essence track ----------
 
             newfile = InstantiationEssenceTrack(type='Audio',
-                                                samplingRate=f.audioSampleRate/1000,
+                                                # samplingRate=f.audioSampleRate/1000,                      # isn't working currently so...
+                                                samplingRate=audio_sample_rate(preservation_file_set[0]),   # replaces with this line as a patch
                                                 bitDepth=f.audioBitDepth)
-            audio_codec = f.audioCodec + ": " + f.audioCodecLongName
+            # audio_codec = f.audioCodec + ": " + f.audioCodecLongName  # isn't working currently so...
+            audio_codec = audio_long_name(f.file_name)                  # replaces with this line as a patch
             newfile.set_essenceTrackStandard(PB_Element(tag='essenceTrackStandard',
                                                         value=audio_codec))
             datarate = f.audioBitRateH.split(" ")
@@ -966,7 +986,7 @@ class pbcoreBuilder(threading.Thread):
                     f = AudioObject(access_file)
                     newAudioFile = InstantiationPart(objectID=f.file_name,
                                                      location=self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource'),
-                                                     duration=f.totalRunningTimeSMPTE)
+                                                     duration=trt(access_file))
 
 
 
@@ -1008,7 +1028,7 @@ class pbcoreBuilder(threading.Thread):
                     newEssTrack = InstantiationEssenceTrack(type="Audio", bitDepth=f.audioBitDepth)
                     newEssTrack.set_essenceTrackSamplingRate(PB_Element(["unitsOfMeasure", "kHz"],
                                                                         tag="essenceTrackSamplingRate",
-                                                                        value=self._samplerate_cleanup(f.audioSampleRate)))
+                                                                        value=self._samplerate_cleanup(audio_sample_rate(access_file))))
                     if f.file_extension.lower() == '.mp3':
                         newEssTrack.set_essenceTrackEncoding(PB_Element(tag='essenceTrackEncoding', value='MP3'))
                     datarate = f.audioBitRateH.split(" ")
@@ -1032,7 +1052,8 @@ class pbcoreBuilder(threading.Thread):
                                                                    value=f.file_name))
                 access_copy.set_instantiationMediaType(PB_Element(tag='instantiationMediaType', value='Moving Image'))
                 access_copy.set_instantiationDuration(PB_Element(tag="instantiationDuration",
-                                                                 value=f.totalRunningTimeSMPTE))
+                                                                 # value=f.totalRunningTimeSMPTE))  # Not working currently
+                                                                 value=trt(access_files)))          # Used as a patch for ^^
                 video_codec = str(f.videoCodec + ": " + f.videoCodecLongName)
                 access_copy.set_instantiationStandard(PB_Element(tag='instantiationStandard', value=video_codec))
                 size, units = self.sizeofHuman(f.file_size)
@@ -1075,7 +1096,8 @@ class pbcoreBuilder(threading.Thread):
                 newEssTrack = InstantiationEssenceTrack(type='Video',
                                                         frameRate=("%.2f" % f.videoFrameRate),
                                                         aspectRatio=str(f.videoAspectRatio),
-                                                        duration=f.totalRunningTimeSMPTE)
+                                                        # duration=f.totalRunningTimeSMPTE)     # Not currently working
+                                                        duration=trt(access_files))             # Used as a patch for ^^
                 datarate = f.videoBitRateH.split(" ")
                 newEssTrack.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
                                                         tag="essenceTrackDataRate",
@@ -1095,10 +1117,12 @@ class pbcoreBuilder(threading.Thread):
                 access_copy.add_instantiationEssenceTrack(newEssTrack)
 
                 # ------------------ Audio track ------------------
-                audio_codec = f.audioCodec + ": " + f.audioCodecLongName
+                # audio_codec = f.audioCodec + ": " + f.audioCodecLongName      # not currently Working
+                audio_codec = audio_long_name(f.file_name)                      # Used as a patch for ^^
                 newEssTrack = InstantiationEssenceTrack(type='Audio',
                                                         standard=audio_codec,
-                                                        samplingRate=f.audioSampleRate/1000)
+                                                        # samplingRate=f.audioSampleRate/1000)          # not currently Working
+                                                        samplingRate=audio_sample_rate(access_files))   # Used as a patch for ^^
                 datarate = f.audioBitRateH.split(" ")
                 newEssTrack.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
                                                                 tag="essenceTrackDataRate",
@@ -1450,19 +1474,18 @@ class pbcoreBuilder(threading.Thread):
         test_file = open(self.source, 'rU')
         mismatched = []
         valid = True
-        for index, heading in enumerate(csv.reader(test_file).next()):
-            if heading != officialList[index]:
+
+        for heading in csv.reader(test_file).next():
+            if not any(heading in s for s in officialList):
                 valid = False
-                mismatched.append("CSV title mismatch. At column "
-                                  + str(index + 1)
-                                  + ", recived: ["
-                                  + heading
-                                  + "]. Expected: ["
-                                  + officialList[index]
-                                  + "]")
+                mismatched.append("CSV title missing "
+                                  + heading)
+                print(heading)
         test_file.close()
         return valid, mismatched
 
+
+        pass
 
     def valid_date(self, date):
         date_re = '(19||20)\d\d-(0[1-9]|1[012])-(0[1-9]|[1|2][0-9]|3[0-1])'
@@ -1778,7 +1801,7 @@ class pbcoreBuilder(threading.Thread):
                         warning['record'] = test_record['Project Identifier']
                         warning['received'] = item[1]
                         warning['location'] = item[0]
-                        warning['type'] = 'Incorrect Date Format'
+                        warning['type'] = 'Incorrect Format'
                         warning['message'] = 'Expected YYYY-MM-DD.'
                         # warnings.append("\""
                         #                 + item[1]
@@ -1786,14 +1809,14 @@ class pbcoreBuilder(threading.Thread):
                         #                 + item[0]
                         #                 + "\' column is not in the correct date format. Expected YYYY-MM-DD.")
                         warnings.append(warning)
-            warning = dict()
             # check that there is a description
             if test_record['Description or Content Summary'] == '':
+                warning = dict()
                 warning['record'] = test_record['Project Identifier']
                 warning['received'] = "No data"
                 warning['location'] = "Description or Content Summary"
                 warning['type'] = 'Missing Required Data'
-                warning['message'] = 'This is a required field for PBCore to validate.'
+                warning['message'] = 'There is no data for Description or Content Summary.'
                 warnings.append(warning)
             #     warnings.append("Missing required \"Description or Content Summary\" field")
 
@@ -1802,26 +1825,37 @@ class pbcoreBuilder(threading.Thread):
             # for warning in warnings:
             #     print warning['record'] + ": Recieved \"" + warning['received'] + "\" at " + warning['location'] + ". " + warning['message']
 
+            if not valid_object_id(test_record['Object Identifier']):
+                error = dict()
+                error['record'] = test_record['Project Identifier']
+                error['received'] = test_record['Object Identifier']
+                error['location'] = "Object Identifier"
+                error['type'] = 'Incorrect Format'
+                error['message'] = 'Expected \'[MARC Code]_[identifier]\'.'
+                errors.append(error)
         return warnings, errors
 
 
     def locate_files(self, root, fileName):
         # search for file with fileName in it
+
+        # search for file with fileName in it
         found_directory = None
         results = []
         # check if a directory matches the file name
-        for roots, dirs, files in os.walk(os.path.dirname(root)):
-            for dir in dirs:
-                if fileName == dir:
-                    found_directory = os.path.join(roots, dir)
-
+        # for roots, dirs, files in os.walk(root):
+        for dir in os.listdir(root):
+            if not dir.startswith('.'):
+                if fileName in dir:
+                    found_directory = os.path.join(root, dir)
                     break
         # see of a file in that folder has a file with that name in it
         if found_directory:
             for roots, dirs, files, in os.walk(found_directory):
                 for file in files:
-                    if fileName in file:
-                        results.append(os.path.join(roots, file))
+                    if not file.startswith('.'):
+                        if fileName in file:
+                            results.append(os.path.join(roots, file))
         return results
 
     def load_records(self):
@@ -2102,12 +2136,14 @@ def Validate_csv_file():
     logger.debug("Validating files column titles.")
     valid, errors = record_file.validate_col_titles()
     if valid:
-        logger.debug(args.csv + " has valid columns.")
+        logger.debug(args.csv + " has valid columns headers.")
     else:
         sys.stdout.flush()
         for error in errors:
             logger.critical(error)
         quit()
+
+    logger.debug("Validating files data.")
 
     return record_file
 
