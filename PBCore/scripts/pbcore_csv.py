@@ -17,10 +17,20 @@ from PBCore.scripts.modules.PBCore.patch import trt
 from time import sleep
 from os.path import isfile
 from xml.dom.minidom import parseString
+
 from modules.PBCore.PBCore import *
 FILE_NAME_PATTERN = re.compile("[A-Z,a-z]+_\d+")
-# VALID_OBJECT_PATTERN = re.compile('[a-z]*_\d{5,6}?((?=_)(_[t,r,d]\d)+[\s,;]|\b)', re.I)
-VALID_OBJECT_PATTERN = re.compile('([a-z]*_\d{5,6})((_(t|r|d)\d+)?)(\s|;|\b|\>|\Z)')
+
+
+# a series of letters that is lowercase from a through z,
+# followed an underscore
+# followed by a number 5 or 6 digits long,
+# optionally followed another underscore
+# optionally followed the letters a or b
+# optionally followed an underscore and the letters t, r, or d and a number of 1 or more digits
+# optionally followed another underscore and the letters a or b
+# followed by a semicolon, an end-of-line character, end of word, or end of string
+VALID_OBJECT_PATTERN = re.compile('([a-z]*_\d{5,6})_?[a,b]?(_(t|r|d)\d+)?(_(a|b))?(\s|;|\b|\>|\Z)')
 
 LARGEFILE = 1065832230
 import csv
@@ -836,8 +846,8 @@ class pbcoreBuilder(threading.Thread):
                                                                 value=str(f.audioBitDepth)))
                     newfile.set_essenceTrackSamplingRate(PB_Element(["unitsOfMeasure", "kHz"],
                                                                     tag="essenceTrackSamplingRate",
-                                                                    # value=self._samplerate_cleanup(f.audioSampleRate)))               # not working so...
-                                                                    value=self._samplerate_cleanup(audio_sample_rate(master_part))))    # replaces with this line as a patch
+                                                                    value=self._samplerate_cleanup(f.audioSampleRate)))
+
                     datarate = f.audioBitRateH.split(" ")
                     newfile.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
                                                                     tag="essenceTrackDataRate",
@@ -848,8 +858,7 @@ class pbcoreBuilder(threading.Thread):
                                                                         value='audio/x-wav'))  # This is really ugly code I don't know a better way
                         newfile.set_essenceTrackEncoding(PB_Element(tag='essenceTrackEncoding', value='WAV'))
 
-                    # audio_codec = f.audioCodec + ": " + f.audioCodecLongName      # not working so...
-                    audio_codec = audio_long_name(f.file_name)                      # replaces with this line as a patch
+                    audio_codec = f.audioCodec + ": " + f.audioCodecLongName
                     pres_master.set_instantiationStandard(PB_Element(tag='instantiationStandard',
                                                                      value=audio_codec))
 
@@ -1031,7 +1040,7 @@ class pbcoreBuilder(threading.Thread):
                     newEssTrack = InstantiationEssenceTrack(type="Audio", bitDepth=f.audioBitDepth)
                     newEssTrack.set_essenceTrackSamplingRate(PB_Element(["unitsOfMeasure", "kHz"],
                                                                         tag="essenceTrackSamplingRate",
-                                                                        value=self._samplerate_cleanup(audio_sample_rate(access_file))))
+                                                                        value=self._samplerate_cleanup(f.audioSampleRate)))
                     if f.file_extension.lower() == '.mp3':
                         newEssTrack.set_essenceTrackEncoding(PB_Element(tag='essenceTrackEncoding', value='MP3'))
                     datarate = f.audioBitRateH.split(" ")
@@ -1352,23 +1361,24 @@ class pbcoreBuilder(threading.Thread):
             #           Preservation Master
             # -----------------------------------------------------
 
-            if files:
-                if preservation_file_sets:
-                    for preservation_file_set in preservation_file_sets:
-                        # print preservation_file_set
-                        pres_master = self._build_preservation_master(record, preservation_file_set)
-                        new_part.add_pbcoreInstantiation(pres_master)
+                if files:
+                    if preservation_file_sets:
+                        for preservation_file_set in preservation_file_sets:
+                            # print preservation_file_set
+                            pres_master = self._build_preservation_master(record, preservation_file_set)
+                            new_part.add_pbcoreInstantiation(pres_master)
 
-    #
-    #
-    # # -----------------------------------------------------
-    # #           access copy
-    # # -----------------------------------------------------
-
-                access_copy = self._build_access_copy(record, access_files_sets)
-                new_part.add_pbcoreInstantiation(access_copy)
-    #
-                descriptive.add_pbcore_part(new_part)
+        #
+        #
+        # # -----------------------------------------------------
+        # #           access copy
+        # # -----------------------------------------------------
+                    if access_files_sets:
+                        for access_files_set in access_files_sets:
+                            access_copy = self._build_access_copy(record, access_files_set)
+                            new_part.add_pbcoreInstantiation(access_copy)
+        #
+                            descriptive.add_pbcore_part(new_part)
 
 
     # =================

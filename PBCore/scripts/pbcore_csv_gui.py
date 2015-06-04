@@ -21,7 +21,7 @@ from Tkinter import *
 import ttk
 from pbcore_csv import pbcoreBuilder
 FILE_NAME_PATTERN = re.compile("[A-Z,a-z]+_\d+")
-
+DOC_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)),"html/index.html")
 
 
 # DEFAULT_PATH = None
@@ -77,7 +77,9 @@ class MainWindow():
         self.fileMenu.add_command(label="Exit", command=lambda: quit())
 
         self.settingsMenu.add_command(label="View Settings File...", command=self.view_settings)
-
+        self.helpMenu.add_command(label="Documentation",
+                                  command=lambda: webbrowser.open("file:" + DOC_PATH))
+        self.helpMenu.add_separator()
         self.helpMenu.add_command(label="PBCore Website",
                                   command=lambda: webbrowser.open_new("http://pbcore.org/"))
         self.helpMenu.add_separator()
@@ -734,7 +736,7 @@ def locate_files(root, fileName):
     # for roots, dirs, files in os.walk(root):
     for dir in os.listdir(root):
         if not dir.startswith('.'):
-            if re.search((fileName+"\D"), dir):
+            if re.search((fileName+"(\D|\Z)"), dir):
                 found_directory = os.path.join(root, dir)
                 break
     # see of a file in that folder has a file with that name in it
