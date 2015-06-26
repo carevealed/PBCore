@@ -1,5 +1,11 @@
 #!/usr/local/bin/python
-from Queue import Queue
+import sys
+if sys.version_info >= (3, 0):
+    from queue import Queue
+    from configparser import ConfigParser
+else:
+    from Queue import Queue
+    from ConfigParser import ConfigParser
 
 __author__ = 'California Audio Visual Preservation Project'
 __copyright__ = "Copyright 2015, California Audiovisual Preservation Project"
@@ -8,7 +14,7 @@ import os
 import sys
 import logging
 import argparse
-from ConfigParser import ConfigParser
+import re
 import threading
 from onesheet.VideoObject import *
 from onesheet.AudioObject import *
@@ -256,12 +262,12 @@ class pbcoreBuilder(threading.Thread):
             xml = item['xml']
             record = item['record']
             replacement.put(item)
-            print record['Object Identifier']
-            print dirname
-            print xml
+            print(record['Object Identifier'])
+            print(dirname)
+            print(xml)
             for file in files:
-                print file
-            print ""
+                print(file)
+            print("")
         self._queue = replacement
 
     def update_record(self, project_id, new_record):
@@ -820,13 +826,14 @@ class pbcoreBuilder(threading.Thread):
                                                                      value=os.path.basename(master_part)))
                 if self.calculate_checksums is True:
                 # if not args.nochecksum and self.settings.getboolean('CHECKSUM','CalculateChecksums') is True:
+
                     self._working_status = "Calculating MD5 checksum for " + f.file_name + " (" + f.file_size_human + ")"
                     if self.verbose:
                         print("\t"),
-                        print "Part " + str(self._parts_progress+1) + " of " + str(self._parts_total) + ": ",
+                        print("Part " + str(self._parts_progress+1) + " of " + str(self._parts_total) + ": ",)
                         logger.info("Calculating MD5 checksum for " + f.file_name + ".")
                         if f.file_size > LARGEFILE:
-                            print "\tNote: " + f.file_name + " is " + f.file_size_human + " and might take some times to calculate."
+                            print("\tNote: " + f.file_name + " is " + f.file_size_human + " and might take some times to calculate.")
                         md5 = f.calculate_MD5(progress=True)
                     else:
                         f.calculate_MD5(threaded=True)
@@ -868,7 +875,7 @@ class pbcoreBuilder(threading.Thread):
                 self._parts_progress += 1
 
 
-            pass
+
 
         # ============================================================ #
         # ======================= Moving Image ======================= #
@@ -894,10 +901,10 @@ class pbcoreBuilder(threading.Thread):
                 self._working_status = "Calculating MD5 checksum for " + f.file_name + " (" + f.file_size_human + ")"
                 if self.verbose:
                     print("\t"),
-                    print "Part " + str(self._parts_progress + 1) + " of " + str(self._parts_total) + ": ",
+                    print("Part " + str(self._parts_progress + 1) + " of " + str(self._parts_total) + ": ",)
                     logger.info("Calculating MD5 checksum for " + f.file_name + ".")
                     if f.file_size > LARGEFILE:
-                        print "\tNote: This file is " + f.file_size_human + " and might take some times to calculate."
+                        print("\tNote: This file is " + f.file_size_human + " and might take some times to calculate.")
                     md5 = f.calculate_MD5(progress=True)
                 else:
                     f.calculate_MD5(threaded=True)
@@ -955,7 +962,7 @@ class pbcoreBuilder(threading.Thread):
             self._parts_progress += 1
 
 
-            pass
+
 
 
         if record['Quality Control Notes']:
@@ -977,13 +984,16 @@ class pbcoreBuilder(threading.Thread):
         media_type = ''
         if record['Media Type']:
             media_type = record['Media Type']
+        access_copy = pbcoreInstantiation(type="Access Copy",
+                                          location=self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource'),
+                                          language=lang,
+                                          generations="Access Copy")
 
-        for access_files in access_files_sets:
+
+        for access_part in access_files_sets:
+
             # print access_files_sets
-            access_copy = pbcoreInstantiation(type="Access Copy",
-                                              location=self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource'),
-                                              language=lang,
-                                              generations="Access Copy")
+
 
         # ============================================================ #
         # =========================== Audio ========================== #
@@ -994,69 +1004,68 @@ class pbcoreBuilder(threading.Thread):
                                tag="instantiationIdentifier",
                                value=obj_ID.split("_a")[0]+"_access"))
                 access_copy.add_instantiationRelation(InstantiationRelation(derived_from=obj_ID.split("_a")[0]+"_prsv"))
-                for access_file in access_files:
-                    f = AudioObject(access_file)
-                    newAudioFile = InstantiationPart(objectID=f.file_name,
-                                                     location=self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource'),
-                                                     duration=trt(access_file))
+                f = AudioObject(access_part)
+                newAudioFile = InstantiationPart(objectID=f.file_name,
+                                                 location=self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource'),
+                                                 duration=trt(access_part))
 
 
 
-                    size, units = self.sizeofHuman(f.file_size)
-                    newAudioFile.set_instantiationFileSize(PB_Element(['unitsOfMeasure', units],
-                                                                      tag="instantiationFileSize",
-                                                                      value=size))
-                    if self.calculate_checksums is True:
-                    # if not args.nochecksum and self.settings.getboolean('CHECKSUM','CalculateChecksums') is True:
-                        self._working_status = "Calculating MD5 checksum for " + f.file_name + " (" + f.file_size_human + ")"
-                        if self.verbose:
-                            print("\t"),
-                            print "Part " + str(self._parts_progress + 1) + " of " + str(self._parts_total) + ": ",
-                            logger.info("Calculating MD5 checksum for " + f.file_name + ".")
-                            if f.file_size > LARGEFILE:
-                                print "\tNote: This file is " + f.file_size_human + " and might take some times to calculate."
-                            md5 = f.calculate_MD5(progress=True)
-                        else:
-                            f.calculate_MD5(threaded=True)
-                            while f.isMD5Calculating:
-                                self._calculation_percent = f.calulation_progresss
-                                sleep(.1)
-                            md5 = f.MD5_hash
-                        newAudioFile.add_instantiationIdentifier(
-                            PB_Element(['source', self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
-                                       ['version', 'MD5'],
-                                       ['annotation', 'checksum'],
-                                       tag="instantiationIdentifier",
-                                       value=md5))
-                        sleep(.5)
-                    if f.audioChannels == 1:
-                        access_copy.set_instantiationTracks(PB_Element(tag="instantiationTracks", value='Sound'))
-                        access_copy.set_instantiationChannelConfiguration(PB_Element(tag="instantiationChannelConfiguration",
-                                                                                     value='Mono'))
-                    elif f.audioChannels == 2:
-                        access_copy.set_instantiationTracks(PB_Element(tag="instantiationTracks", value='Sound'))
-                        access_copy.set_instantiationChannelConfiguration(PB_Element(tag="instantiationChannelConfiguration",
-                                                                                     value='Stereo'))
-                    newEssTrack = InstantiationEssenceTrack(type="Audio", bitDepth=f.audioBitDepth)
-                    newEssTrack.set_essenceTrackSamplingRate(PB_Element(["unitsOfMeasure", "kHz"],
-                                                                        tag="essenceTrackSamplingRate",
-                                                                        value=self._samplerate_cleanup(f.audioSampleRate)))
-                    if f.file_extension.lower() == '.mp3':
-                        newEssTrack.set_essenceTrackEncoding(PB_Element(tag='essenceTrackEncoding', value='MP3'))
-                    datarate = f.audioBitRateH.split(" ")
-                    newEssTrack.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
-                                                                    tag="essenceTrackDataRate",
-                                                                    value=datarate[0]))
-                    newAudioFile.add_instantiationEssenceTrack(newEssTrack)
-                    access_copy.add_instantiationPart(newAudioFile)
-                    self._parts_progress += 1
+                size, units = self.sizeofHuman(f.file_size)
+                newAudioFile.set_instantiationFileSize(PB_Element(['unitsOfMeasure', units],
+                                                                  tag="instantiationFileSize",
+                                                                  value=size))
+                if self.calculate_checksums is True:
+                # if not args.nochecksum and self.settings.getboolean('CHECKSUM','CalculateChecksums') is True:
+                    self._working_status = "Calculating MD5 checksum for " + f.file_name + " (" + f.file_size_human + ")"
+                    if self.verbose:
+                        print("\t"),
+                        print("Part " + str(self._parts_progress + 1) + " of " + str(self._parts_total) + ": ",)
+                        logger.info("Calculating MD5 checksum for " + f.file_name + ".")
+                        if f.file_size > LARGEFILE:
+                            print("\tNote: This file is " + f.file_size_human + " and might take some times to calculate.")
+                        md5 = f.calculate_MD5(progress=True)
+                    else:
+                        f.calculate_MD5(threaded=True)
+                        while f.isMD5Calculating:
+                            self._calculation_percent = f.calulation_progresss
+                            sleep(.1)
+                        md5 = f.MD5_hash
+                    newAudioFile.add_instantiationIdentifier(
+                        PB_Element(['source', self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
+                                   ['version', 'MD5'],
+                                   ['annotation', 'checksum'],
+                                   tag="instantiationIdentifier",
+                                   value=md5))
+                    sleep(.5)
+                if f.audioChannels == 1:
+                    access_copy.set_instantiationTracks(PB_Element(tag="instantiationTracks", value='Sound'))
+                    access_copy.set_instantiationChannelConfiguration(PB_Element(tag="instantiationChannelConfiguration",
+                                                                                 value='Mono'))
+                elif f.audioChannels == 2:
+                    access_copy.set_instantiationTracks(PB_Element(tag="instantiationTracks", value='Sound'))
+                    access_copy.set_instantiationChannelConfiguration(PB_Element(tag="instantiationChannelConfiguration",
+                                                                                 value='Stereo'))
+                newEssTrack = InstantiationEssenceTrack(type="Audio", bitDepth=f.audioBitDepth)
+                newEssTrack.set_essenceTrackSamplingRate(PB_Element(["unitsOfMeasure", "kHz"],
+                                                                    tag="essenceTrackSamplingRate",
+                                                                    value=self._samplerate_cleanup(f.audioSampleRate)))
+                if f.file_extension.lower() == '.mp3':
+                    newEssTrack.set_essenceTrackEncoding(PB_Element(tag='essenceTrackEncoding', value='MP3'))
+                datarate = f.audioBitRateH.split(" ")
+                newEssTrack.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
+                                                                tag="essenceTrackDataRate",
+                                                                value=datarate[0]))
+                newAudioFile.add_instantiationEssenceTrack(newEssTrack)
+                access_copy.add_instantiationPart(newAudioFile)
+                self._parts_progress += 1
 
 
         # ============================================================ #
         # ======================= Moving Image ======================= #
         # ============================================================ #
             elif media_type.lower() == 'moving image':
-                f = VideoObject(access_files)
+                f = VideoObject(access_part)
                 # print "audio", f.file_name
                 access_copy.add_instantiationIdentifier(PB_Element(['source', self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
                                                                    ['annotation', 'File Name'],
@@ -1065,7 +1074,7 @@ class pbcoreBuilder(threading.Thread):
                 access_copy.set_instantiationMediaType(PB_Element(tag='instantiationMediaType', value='Moving Image'))
                 access_copy.set_instantiationDuration(PB_Element(tag="instantiationDuration",
                                                                  # value=f.totalRunningTimeSMPTE))  # Not working currently
-                                                                 value=trt(access_files)))          # Used as a patch for ^^
+                                                                 value=trt(access_part)))          # Used as a patch for ^^
                 video_codec = str(f.videoCodec + ": " + f.videoCodecLongName)
                 access_copy.set_instantiationStandard(PB_Element(tag='instantiationStandard', value=video_codec))
                 size, units = self.sizeofHuman(f.file_size)
@@ -1077,10 +1086,10 @@ class pbcoreBuilder(threading.Thread):
                     self._working_status = "Calculating MD5 checksum for " + f.file_name + " (" + f.file_size_human + ")"
                     if self.verbose:
                         print("\t"),
-                        print "Part " + str(self._parts_progress + 1) + " of " + str(self._parts_total) + ": ",
+                        print("Part " + str(self._parts_progress + 1) + " of " + str(self._parts_total) + ": ",)
                         logger.info("Calculating MD5 checksum for " + f.file_name + ".")
                         if f.file_size > LARGEFILE:
-                            print "\tNote: This file is " + f.file_size_human + " and might take some times to calculate."
+                            print("\tNote: This file is " + f.file_size_human + " and might take some times to calculate.")
                         md5 = f.calculate_MD5(progress=True)
                     else:
                         f.calculate_MD5(threaded=True)
@@ -1109,7 +1118,7 @@ class pbcoreBuilder(threading.Thread):
                                                         frameRate=("%.2f" % f.videoFrameRate),
                                                         aspectRatio=str(f.videoAspectRatio),
                                                         # duration=f.totalRunningTimeSMPTE)     # Not currently working
-                                                        duration=trt(access_files))             # Used as a patch for ^^
+                                                        duration=trt(access_part))             # Used as a patch for ^^
                 datarate = f.videoBitRateH.split(" ")
                 newEssTrack.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
                                                         tag="essenceTrackDataRate",
@@ -1147,6 +1156,8 @@ class pbcoreBuilder(threading.Thread):
                     newEssTrack.set_essenceTrackBitDepth(PB_Element(tag='essenceTrackBitDepth', value=bitdepth))
                     access_copy.add_instantiationEssenceTrack(newEssTrack)
                 self._parts_progress += 1
+            else:
+                raise ValueError("Media Type expected Audio, Sound, or Moving Image, recieved " + media_type)
         return access_copy
 
     def save_csv(self, filename):
@@ -1332,6 +1343,8 @@ class pbcoreBuilder(threading.Thread):
             tapes = self._group_tapes(tapes)
 
             for tape in tapes:
+                print(tape)
+
                 ob_id = tape[0]
                 # print ob_id
                 ob_id = ob_id.split("_a")[0]
@@ -1362,11 +1375,15 @@ class pbcoreBuilder(threading.Thread):
             # -----------------------------------------------------
 
                 if files:
+                    print("preservation_file_sets " + str(preservation_file_sets))
+                    print("access_files_sets " + str(preservation_file_sets))
+
                     if preservation_file_sets:
                         for preservation_file_set in preservation_file_sets:
-                            # print preservation_file_set
+                            print(preservation_file_set)
                             pres_master = self._build_preservation_master(record, preservation_file_set)
                             new_part.add_pbcoreInstantiation(pres_master)
+
 
         #
         #
@@ -1375,7 +1392,9 @@ class pbcoreBuilder(threading.Thread):
         # # -----------------------------------------------------
                     if access_files_sets:
                         for access_files_set in access_files_sets:
+                            print(access_files_set)
                             access_copy = self._build_access_copy(record, access_files_set)
+
                             new_part.add_pbcoreInstantiation(access_copy)
         #
                             descriptive.add_pbcore_part(new_part)
@@ -1927,7 +1946,7 @@ class pbcoreBuilder(threading.Thread):
                 pass
         return warnings
 
-    def _group_tapes(self, parts):
+    def _group_tapes(self, parts, files=None):
         # print "parts: " + str(parts)
         organized = []
         multi = []
@@ -1991,18 +2010,18 @@ def report(files_created, number_of_new_records, number_of_records, number_of_re
     print("\n\tNew Records:")
     print("\t------------")
     for index, file_created in enumerate(files_created):
-        print str(index + 1) + ")\t" + file_created
-    print "\n"
+        print(str(index + 1) + ")\t" + file_created)
+    print("\n")
 
 
 def proceed(message, warnings=None):
         key = ""
-        print ""
+        print ("")
         while True:
 
             if warnings:
-                print "\tWarnings:"
-                print "\n\t**************************************************************\n"
+                print("\tWarnings:")
+                print("\n\t**************************************************************\n")
                 for index, warning in enumerate(warnings):
                     # print warning
                     # print str(index + 1) + ")\t" + warning + "\n"
@@ -2021,18 +2040,18 @@ def proceed(message, warnings=None):
                     if 'message' in warning:
                         warning_message += warning['message']
 
-                    print warning_message
+                    print(warning_message)
                     # print str(index + 1) + ")\t" +warning['record'] + ": Recieved \"" + warning['received'] + "\" at " + warning['location'] + ". " + warning['message']
-            print "\t**************************************************************"
+            print("\t**************************************************************")
             print("\n\t" + message)
-            print "\n\tDo you wish to continue?",
+            print("\n\tDo you wish to continue?",)
             key = raw_input("[y/n]:")
             if key.lower() == "yes":
                 key = 'y'
             if key.lower() == "no":
                 key = 'n'
             if key.lower() != 'y' and key.lower() != 'n':
-                print "Not a valid option.\n"
+                print("Not a valid option.\n")
             else:
                 break
 
@@ -2064,7 +2083,7 @@ def group_sides(digital_files):
                 set.append(part)
                 part = []
     else:
-        print digital_files
+        print(digital_files)
         raise TypeError("WHY????")
     # print "Set: " + str(set)
     return set
@@ -2103,14 +2122,14 @@ def setup_logs():
     ch.addFilter(log_filter)  # logger.addFilter(NoParsingFilter())
     if args.debug or SETTINGS.getboolean('EXTRA', 'DebugMode') is True:
         mode = 'debug'
-        print "ENTERING DEBUG MODE!"
+        print("ENTERING DEBUG MODE!")
         if SETTINGS.getboolean('LOGS', 'UseLogs'):
             fh.setLevel(logging.DEBUG)
     else:
         if SETTINGS.getboolean('LOGS', 'UseLogs'):
             fh.setLevel(logging.INFO)
     if args.nochecksum or SETTINGS.getboolean('CHECKSUM', 'CalculateChecksums') is False:
-        print "Bypassing MD5 checksum generation."
+        print("Bypassing MD5 checksum generation.")
     error_formatter = logging.Formatter(
         '%(asctime)s - %(name)s - %(levelname)s - %(message)s')  # DATE - USERNAME - Message
     stderr_formatter = logging.Formatter('%(levelname)s - %(message)s')  # USERNAME - Message
@@ -2136,17 +2155,17 @@ def Validate_csv_file():
         logger.debug(args.csv + " successfully opened.")
         pass
     else:
-        print "FAILED"
+        print("FAILED")
         logger.critical(error_message)
-        print "Quiting"
+        print("Quiting")
         quit()
     logger.debug("Validating file is a csv.")
     if record_file.is_valid_csv():
         logger.debug(args.csv + " successfully validated as a CSV.")
     else:
         logger.critical("Error, cannot load file as a CSV.")
-        print "FAILED"
-        print "Quitting."
+        print("FAILED")
+        print("Quitting.")
         quit()
     logger.debug("Validating files column titles.")
     valid, errors = record_file.validate_col_titles()
@@ -2178,11 +2197,11 @@ def validate_csv_data(record_file):
     sys.stdout.flush()
     if total_errors:
         for error in total_errors:
-            print "Error found: " + error
+            print("Error found: " + error)
         if total_warnings:
             for warning in total_warnings:
-                print "WARNINGS: " + warning
-        print "Quitting"
+                print("WARNINGS: " + warning)
+        print("Quitting")
         quit()
 
     return total_errors, total_warnings
@@ -2192,11 +2211,11 @@ def report_warnings(mode, total_errors, total_warnings):
     sys.stdout.flush()
     if total_errors:
         for error in total_errors:
-            print "Error found: " + error
+            print("Error found: " + error)
         if total_warnings:
             for warning in total_warnings:
-                print "Warning: " + warning
-        print "Quitting"
+                print("Warning: " + warning)
+        print("Quitting")
         quit()
     if mode != 'debug':
         if total_warnings:
@@ -2205,7 +2224,7 @@ def report_warnings(mode, total_errors, total_warnings):
                 logger.warning(warning)
             if proceed("Possible problems with the data found.", total_warnings) is False:
                 logger.info("Script terminated by user.")
-                print "Quitting"
+                print("Quitting")
                 quit()
             else:
                 print("\t"),

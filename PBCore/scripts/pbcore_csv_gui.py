@@ -1,7 +1,11 @@
+import sys
 from collections import OrderedDict
 from platform import system
-import tkFileDialog
-import tkMessageBox
+if sys.version_info >= (3, 0):
+    from tkinter import filedialog as tkFileDialog
+else:
+    import tkFileDialog
+    import tkMessageBox
 import webbrowser
 
 __author__ = 'California Audio Visual Preservation Project'
@@ -13,12 +17,18 @@ __license__ = 'GPL'
 import csv
 import os
 from time import sleep
-from tkFileDialog import askopenfilename
-from tkMessageBox import showerror
+if sys.version_info >= (3, 0):
+    from tkinter.filedialog import askopenfile
+    from tkinter.messagebox import showerror
+    from tkinter import ttk
+    from tkinter import *
+else:
+    from tkFileDialog import askopenfilename
+    from tkMessageBox import showerror
+    from Tkinter import *
+    import ttk
 import re
 import threading
-from Tkinter import *
-import ttk
 from pbcore_csv import pbcoreBuilder
 FILE_NAME_PATTERN = re.compile("[A-Z,a-z]+_\d+")
 DOC_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)),"html/index.html")
@@ -263,7 +273,7 @@ class MainWindow():
                     self.file_records.load_records()
                     self.load_records_list(self.file_records.records)
             except CSVDataError as em:
-                print em
+                print(em)
 
         self.running = False
 
