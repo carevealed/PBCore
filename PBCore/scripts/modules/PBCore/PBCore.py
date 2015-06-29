@@ -3766,4 +3766,4 @@ class PB_Element():
             for key in self.attributes:
                 element.set(key, self.attributes[key])
 
-        print etree.tostring(element, encoding="UTF-8")
+        print(etree.tostring(element, encoding="UTF-8"))

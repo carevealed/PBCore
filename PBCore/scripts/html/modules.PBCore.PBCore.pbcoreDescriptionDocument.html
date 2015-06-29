@@ -1,0 +1,725 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>modules.PBCore.PBCore.pbcoreDescriptionDocument &mdash; PBCore 0.1.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="PBCore 0.1.1 documentation" href="index.html" />
+    <link rel="up" title="PBCore Code" href="Code.html" />
+    <link rel="next" title="modules.PBCore.PBCore.pbcoreRelation" href="modules.PBCore.PBCore.pbcoreRelation.html" />
+    <link rel="prev" title="modules.PBCore.PBCore.PBCore" href="modules.PBCore.PBCore.PBCore.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head>
+  <body>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="modules.PBCore.PBCore.pbcoreRelation.html" title="modules.PBCore.PBCore.pbcoreRelation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="modules.PBCore.PBCore.PBCore.html" title="modules.PBCore.PBCore.PBCore"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">PBCore 0.1.1 documentation</a> &raquo;</li>
+          <li><a href="Code.html" accesskey="U">PBCore Code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="modules-pbcore-pbcore-pbcoredescriptiondocument">
+<h1>modules.PBCore.PBCore.pbcoreDescriptionDocument<a class="headerlink" href="#modules-pbcore-pbcore-pbcoredescriptiondocument" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="modules.PBCore.PBCore.pbcoreDescriptionDocument">
+<em class="property">class </em><tt class="descclassname">modules.PBCore.PBCore.</tt><tt class="descname">pbcoreDescriptionDocument</tt><big>(</big><em>assetType='Media Object'</em>, <em>mainTitle=None</em>, <em>parentObjectID=None</em>, <em>projectID=None</em>, <em>addTitle=None</em>, <em>seriesTitle=None</em>, <em>description=None</em>, <em>objectARK=None</em>, <em>institutionName=None</em>, <em>institutionARK=None</em>, <em>institutionURL=None</em>, <em>producer=None</em>, <em>director=None</em>, <em>writer=None</em>, <em>interviewer=None</em>, <em>performer=None</em>, <em>camera=None</em>, <em>editor=None</em>, <em>sound=None</em>, <em>music=None</em>, <em>cast=None</em>, <em>interviewee=None</em>, <em>speaker=None</em>, <em>musician=None</em>, <em>publisher=None</em>, <em>distributor=None</em>, <em>genre=[]</em><big>)</big><a class="headerlink" href="#modules.PBCore.PBCore.pbcoreDescriptionDocument" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Description:</th><td class="field-body"><p class="first">This class produces the following style XML:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;pbcoreDescriptionDocument&gt;
+    &lt;pbcoreAssetType&gt;Media Object&lt;/pbcoreAssetType&gt;
+    &lt;pbcoreAssetDate dateType=&quot;created&quot;&gt;1965&lt;/pbcoreAssetDate&gt;
+    &lt;pbcoreAssetDate dateType=&quot;published&quot;&gt;1965&lt;/pbcoreAssetDate&gt;
+    &lt;pbcoreIdentifier annotation=&quot;Object Identifier&quot; source=&quot;CAVPP&quot;&gt;cbpf_00001&lt;/pbcoreIdentifier&gt;
+    &lt;pbcoreIdentifier annotation=&quot;Project Identifier&quot; source=&quot;CAVPP&quot;&gt;cavpp000041&lt;/pbcoreIdentifier&gt;
+    &lt;pbcoreIdentifier annotation=&quot;Institution URL&quot; source=&quot;University of California, Berkeley Art Museum and Pacific Film Archive&quot;&gt;http://www.bampfa.berkeley.edu/collection/filmcollection&lt;/pbcoreIdentifier&gt;
+    &lt;pbcoreIdentifier annotation=&quot;Institution ARK&quot; source=&quot;CDL&quot;&gt;ark:/13030/tf2580094t&lt;/pbcoreIdentifier&gt;
+    &lt;pbcoreIdentifier annotation=&quot;Object ARK&quot; source=&quot;CDL&quot;&gt;ark:/13030/kt6j49r9s3&lt;/pbcoreIdentifier&gt;
+    &lt;pbcoreTitle titleType=&quot;Main&quot;&gt;Vietnam Day Berkeley&lt;/pbcoreTitle&gt;
+    &lt;pbcoreSubject source=&quot;Library of Congress Subject Headings&quot; subjectType=&quot;Topic&quot;&gt;Vietnam War, 1961-1975--Protest movements--California--Berkeley&lt;/pbcoreSubject&gt;
+    &lt;pbcoreSubject source=&quot;Library of Congress Subject Headings&quot; subjectType=&quot;Topic&quot;&gt;Demonstrations--California--Berkeley&lt;/pbcoreSubject&gt;
+    &lt;pbcoreDescription&gt;This film documents the two day anti-Vietnam War rally held in Sproul Plaza at the University of California. There are many scenes of students gathering, activities, carrying signs, collecting money, etc. Identified speakers include Robert Scheer, Dr. Benjamin Spock, Mario Savio, Norman Thomas, Dick Gregory, Norman Mailer. There are many unidentified speakers. The Committee performs a comedy skit and Phil Ochs sings Love me, I&#39;m a liberal. The film concludes with hanging Lyndon Johnson in effigy and burning draft cards.&lt;/pbcoreDescription&gt;
+    &lt;pbcoreGenre&gt;Documentary&lt;/pbcoreGenre&gt;
+    &lt;pbcoreRelation&gt;
+    &lt;/pbcoreRelation&gt;
+    &lt;pbcoreCoverage&gt;
+    &lt;/pbcoreCoverage&gt;
+    &lt;pbcoreCreator&gt;
+    &lt;/pbcoreCreator&gt;
+    &lt;pbcoreContributor&gt;
+    &lt;/pbcoreContributor&gt;
+    &lt;pbcoreRightsSummary&gt;
+    &lt;/pbcoreRightsSummary&gt;
+    &lt;pbcorePart&gt;
+    &lt;/pbcorePart&gt;
+    &lt;pbcoreExtension&gt;
+    &lt;/pbcoreExtension&gt;
+&lt;/pbcoreDescriptionDocument&gt;
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">URL:</th><td class="field-body"><p class="first"><a class="reference external" href="http://pbcore.org/elements/">http://pbcore.org/elements/</a></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>assetType</strong> (<em>str</em>) &#8211; </li>
+<li><strong>mainTitle</strong> (<em>str</em>) &#8211; </li>
+<li><strong>parentObjectID</strong> (<em>str</em>) &#8211; </li>
+<li><strong>projectID</strong> (<em>str</em>) &#8211; </li>
+<li><strong>addTitle</strong> (<em>str</em>) &#8211; </li>
+<li><strong>seriesTitle</strong> (<em>str</em>) &#8211; </li>
+<li><strong>description</strong> (<em>str</em>) &#8211; </li>
+<li><strong>objectARK</strong> (<em>str</em>) &#8211; </li>
+<li><strong>institutionName</strong> (<em>str</em>) &#8211; </li>
+<li><strong>institutionARK</strong> (<em>str</em>) &#8211; </li>
+<li><strong>institutionURL</strong> (<em>str</em>) &#8211; </li>
+<li><strong>producer</strong> (<em>str</em>) &#8211; </li>
+<li><strong>director</strong> (<em>str</em>) &#8211; </li>
+<li><strong>writer</strong> (<em>str</em>) &#8211; </li>
+<li><strong>interviewer</strong> (<em>str</em>) &#8211; </li>
+<li><strong>performer</strong> (<em>str</em>) &#8211; </li>
+<li><strong>camera</strong> (<em>str</em>) &#8211; </li>
+<li><strong>editor</strong> (<em>str</em>) &#8211; </li>
+<li><strong>sound</strong> (<em>str</em>) &#8211; </li>
+<li><strong>music</strong> (<em>str</em>) &#8211; </li>
+<li><strong>cast</strong> (<em>str</em>) &#8211; </li>
+<li><strong>interviewee</strong> (<em>str</em>) &#8211; </li>
+<li><strong>speaker</strong> (<em>str</em>) &#8211; </li>
+<li><strong>musician</strong> (<em>str</em>) &#8211; </li>
+<li><strong>publisher</strong> (<em>str</em>) &#8211; </li>
+<li><strong>distributor</strong> (<em>str</em>) &#8211; </li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="modules.PBCore.PBCore.pbcoreDescriptionDocument.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>assetType='Media Object'</em>, <em>mainTitle=None</em>, <em>parentObjectID=None</em>, <em>projectID=None</em>, <em>addTitle=None</em>, <em>seriesTitle=None</em>, <em>description=None</em>, <em>objectARK=None</em>, <em>institutionName=None</em>, <em>institutionARK=None</em>, <em>institutionURL=None</em>, <em>producer=None</em>, <em>director=None</em>, <em>writer=None</em>, <em>interviewer=None</em>, <em>performer=None</em>, <em>camera=None</em>, <em>editor=None</em>, <em>sound=None</em>, <em>music=None</em>, <em>cast=None</em>, <em>interviewee=None</em>, <em>speaker=None</em>, <em>musician=None</em>, <em>publisher=None</em>, <em>distributor=None</em>, <em>genre=[]</em><big>)</big><a class="headerlink" href="#modules.PBCore.PBCore.pbcoreDescriptionDocument.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div>&#64;type           self.pbcoreAssetType:           PB_Element
+&#64;type           self.pbcoreAssetDate:           PB_Element
+&#64;type           self.pbcoreIdentifier:          PB_Element
+&#64;type           self.pbcoreTitle:               PB_Element
+&#64;type           self.pbcoreSubject:             PB_Element
+&#64;type           self.pbcoreDescription:         PB_Element
+&#64;type           self.pbcoreGenre:               PB_Element
+&#64;type           self.pbcoreRelation:            PB_Element
+&#64;type           self.pbcoreCoverage:            PB_Element
+&#64;type           self.pbcoreAudienceLevel:       PB_Element
+&#64;type           self.pbcoreAudienceRating:      PB_Element
+&#64;type           self.pbcoreAnnotation:          PB_Element
+&#64;type           self.pbcoreCreator:             pbcoreCreator
+&#64;type           self.pbcoreContributor:         pbcoreContributor
+&#64;type           self.pbcorePublisher:           pbcorePublisher
+&#64;type           self.pbcoreRightsSummary:       pbcoreRightsSummary
+&#64;type           self.pbcoreExtension:           PB_Element
+&#64;type           self.pbcorePart:                PB_Element</div></blockquote>
+<dl class="docutils">
+<dt>def getpbcoreAssetType</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#modules.PBCore.PBCore.pbcoreDescriptionDocument.__init__" title="modules.PBCore.PBCore.pbcoreDescriptionDocument.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>([assetType,&nbsp;mainTitle,&nbsp;...])</td>
+<td>&#64;type           self.pbcoreAssetType:           PB_Element</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">add_pbcoreAssetDate</span></tt>(data)</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">param          data:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">add_pbcoreContributor</span></tt>(data)</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">param          data:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">add_pbcoreCoverage</span></tt>(data)</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">param          data:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">add_pbcoreCreator</span></tt>(data)</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">param          data:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">add_pbcoreDescription</span></tt>(data)</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">param          data:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">add_pbcoreGenre</span></tt>(data)</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">param          data:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">add_pbcoreIdentifier</span></tt>(data)</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">param          data:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">add_pbcorePublisher</span></tt>(data)</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">param          data:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">add_pbcoreRelation</span></tt>(data)</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">param          data:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">add_pbcoreRightsSummary</span></tt>(data)</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">param          data:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">add_pbcoreSubject</span></tt>(data)</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">param          data:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">add_pbcoreTitle</span></tt>(data)</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">param          data:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">add_pbcore_extension</span></tt>(data)</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">param          data:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">add_pbcore_part</span></tt>(data)</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">param          data:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_pbcoreAnnotation</span></tt>()</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_pbcoreAnnotationElement</span></tt>()</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body">xml.etree.ElementTree.Element</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_pbcoreAssetDate</span></tt>()</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_pbcoreAssetDateElement</span></tt>()</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body">xml.etree.ElementTree.Element</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_pbcoreAssetType</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_pbcoreAssetTypeElement</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_pbcoreAudienceLevel</span></tt>()</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_pbcoreAudienceLevelElement</span></tt>()</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body">xml.etree.ElementTree.Element</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_pbcoreAudienceRating</span></tt>()</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_pbcoreAudienceRatingElement</span></tt>()</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body">xml.etree.ElementTree.Element</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_pbcoreContributor</span></tt>()</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_pbcoreCoverage</span></tt>()</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_pbcoreCreator</span></tt>()</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_pbcoreDescription</span></tt>()</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_pbcoreGenre</span></tt>()</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_pbcoreGenreElement</span></tt>()</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body">xml.etree.ElementTree.Element</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_pbcoreIdentifier</span></tt>()</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_pbcorePublisher</span></tt>()</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_pbcoreRelation</span></tt>()</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_pbcoreRightsSummary</span></tt>()</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_pbcoreSubject</span></tt>()</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_pbcoreTitle</span></tt>()</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_pbcore_extension</span></tt>()</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_pbcore_part</span></tt>()</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">set_pbcoreAnnotation</span></tt>(data)</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">param          data:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">set_pbcoreAssetType</span></tt>(data)</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">param          data:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">set_pbcoreAudienceLevel</span></tt>(data)</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">param          data:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">set_pbcoreAudienceRating</span></tt>(data)</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">param          data:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">valid_entry</span></tt>(entry,&nbsp;options)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">valid_file_size</span></tt>(fileSize)</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param fileSize:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">xml</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">xmlString</span></tt>()</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="modules.PBCore.PBCore.PBCore.html"
+                        title="previous chapter">modules.PBCore.PBCore.PBCore</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="modules.PBCore.PBCore.pbcoreRelation.html"
+                        title="next chapter">modules.PBCore.PBCore.pbcoreRelation</a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="modules.PBCore.PBCore.pbcoreRelation.html" title="modules.PBCore.PBCore.pbcoreRelation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="modules.PBCore.PBCore.PBCore.html" title="modules.PBCore.PBCore.PBCore"
+             >previous</a> |</li>
+        <li><a href="index.html">PBCore 0.1.1 documentation</a> &raquo;</li>
+          <li><a href="Code.html" >PBCore Code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2015, California Audio Visual Preservation Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

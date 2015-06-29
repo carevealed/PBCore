@@ -1,8 +1,6 @@
 PBCore Code
 ===========
-
 .. currentmodule:: modules.PBCore.PBCore
-
 
 .. autosummary::
     :toctree:

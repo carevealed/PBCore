@@ -1,22 +1,9 @@
 import sys
-from collections import OrderedDict
-from platform import system
 if sys.version_info >= (3, 0):
     from tkinter import filedialog as tkFileDialog
 else:
     import tkFileDialog
     import tkMessageBox
-import webbrowser
-
-__author__ = 'California Audio Visual Preservation Project'
-__copyright__ = "California Audiovisual Preservation Project. 2015"
-__credits__ = ["Henry Borchers"]
-__version__ = "0.1.1"
-__license__ = 'GPL'
-
-import csv
-import os
-from time import sleep
 if sys.version_info >= (3, 0):
     from tkinter.filedialog import askopenfile
     from tkinter.messagebox import showerror
@@ -27,9 +14,24 @@ else:
     from tkMessageBox import showerror
     from Tkinter import *
     import ttk
-import re
+from time import sleep
+from collections import OrderedDict
+from platform import system
 import threading
+import re
+import webbrowser
+import csv
+import os
+
 from pbcore_csv import pbcoreBuilder
+
+__author__ = 'California Audio Visual Preservation Project'
+__copyright__ = "California Audiovisual Preservation Project. 2015"
+__credits__ = ["Henry Borchers"]
+__version__ = "0.1.1"
+__license__ = 'GPL'
+
+
 FILE_NAME_PATTERN = re.compile("[A-Z,a-z]+_\d+")
 DOC_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)),"html/index.html")
 

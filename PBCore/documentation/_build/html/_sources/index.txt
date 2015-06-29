@@ -15,7 +15,11 @@ Contents:
    Install
    PBCore_Generator
    tsv2csv
-   Code
+
+.. only:: html
+
+    .. toctree::
+            Code
 
 
 
