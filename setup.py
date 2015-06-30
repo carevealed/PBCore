@@ -7,7 +7,7 @@ long_description = open('README.md').read()
 
 setup(
     name='CAVPP_PBCore_Tools',
-    version='0.1.4b3',
+    version='0.1.4b4',
     packages=find_packages(),
     url='https://github.com/cavpp/PBCore',
     install_requires=['OneSheet >= 0.1.4.1', 'lxml >= 3.4.2', 'pymediainfo >=1.4.0'],
