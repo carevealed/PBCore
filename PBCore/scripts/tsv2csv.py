@@ -20,7 +20,7 @@ def banner():
     print(__date__)
     print("\nCredits:")
     for credit in __credits__:
-        print "  " + credit
+        print("  " + credit)
     print("**************************************************")
     print("")
     sys.stdout.flush()
@@ -49,7 +49,7 @@ def main():
 
             for n in tsv_file:
                 a.writerow(n)
-                print "  " + n[3]
+                print("  " + n[3])
             print("\nDone\n")
 
 
