@@ -1,9 +1,9 @@
 from setuptools import setup, find_packages
-try:
-    import pypandoc
-    long_description = pypandoc.convert('README.md', 'rst')
-except(ImportError):
-    long_description = open('README.md').read()
+# try:
+#     import pypandoc
+#     long_description = pypandoc.convert('README.md', 'rst')
+# except(ImportError):
+long_description = open('README.md').read()
 
 setup(
     name='CAVPP_PBCore_Tools',
