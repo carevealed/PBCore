@@ -23,7 +23,7 @@ import webbrowser
 import csv
 import os
 
-from pbcore_csv import pbcoreBuilder
+from PBCore.scripts.pbcore_csv import pbcoreBuilder
 
 __author__ = 'California Audio Visual Preservation Project'
 __copyright__ = "California Audiovisual Preservation Project. 2015"
