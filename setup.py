@@ -2,6 +2,7 @@ from setuptools import setup, find_packages
 # try:
 #     import pypandoc
 #     long_description = pypandoc.convert('README.md', 'rst')
+#
 # except(ImportError):
 long_description = open('README.md').read()
 
