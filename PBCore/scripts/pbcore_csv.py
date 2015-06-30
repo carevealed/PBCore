@@ -24,7 +24,7 @@ from time import sleep
 from os.path import isfile
 from xml.dom.minidom import parseString
 
-from modules.PBCore.PBCore import *
+from PBCore.scripts.modules.PBCore.PBCore import *
 FILE_NAME_PATTERN = re.compile("[A-Z,a-z]+_\d+")
 
 
