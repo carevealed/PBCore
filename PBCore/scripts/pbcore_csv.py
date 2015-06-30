@@ -1522,12 +1522,22 @@ class pbcoreBuilder(threading.Thread):
         mismatched = []
         valid = True
 
-        for heading in csv.reader(test_file).next():
-            if not any(heading in s for s in officialList):
-                valid = False
-                mismatched.append("CSV title missing "
-                                  + heading)
-                print(heading)
+## Python 3
+        if sys.version_info >= (3, 0):
+            for heading in csv.reader(test_file).__next__():
+                if not any(heading in s for s in officialList):
+                    valid = False
+                    mismatched.append("CSV title missing "
+                                      + heading)
+                    print(heading)
+## Python 2
+        else:
+            for heading in csv.reader(test_file).next():
+                if not any(heading in s for s in officialList):
+                    valid = False
+                    mismatched.append("CSV title missing "
+                                      + heading)
+                    print(heading)
         test_file.close()
         return valid, mismatched
 
@@ -1912,7 +1922,12 @@ class pbcoreBuilder(threading.Thread):
         self._records = []
         for record in records:
             record = OrderedDict(record)
-            record['Object Identifier'] = record['Object Identifier'].translate(None, '[]')
+            # Python 3
+            if sys.version_info >= (3, 0):
+                pass
+            # Python 2
+            else:
+                record['Object Identifier'] = record['Object Identifier'].translate('[]')
             self._records.append(record)
 
         f.close()
@@ -2002,7 +2017,11 @@ class pbcoreBuilder(threading.Thread):
             self._working_status = "Saving: " + queue['xml']
             # print "saving xml file " + queue['xml']
             save_file = open(queue['xml'], 'w')
-            save_file.write(new_xml.toprettyxml(encoding='utf-8'))
+            if sys.version_info >= (3, 0):
+                save_file.write(new_xml.toprettyxml())
+            else:
+                save_file.write(new_xml.toprettyxml(encoding='utf-8'))
+
             save_file.close()
             self._job_progress += 1
         self._working_file = ""

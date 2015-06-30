@@ -2,14 +2,14 @@ import sys
 if sys.version_info >= (3, 0):
     from tkinter import filedialog as tkFileDialog
     from tkinter.filedialog import askopenfilename
-    from tkinter.messagebox import showerror
+    from tkinter.messagebox import showerror, askokcancel
     from tkinter import ttk
     from tkinter import *
 else:
     import tkFileDialog
     import tkMessageBox
     from tkFileDialog import askopenfilename
-    from tkMessageBox import showerror
+    from tkMessageBox import showerror, askokcancel
     import ttk
     from Tkinter import *
 
@@ -44,6 +44,7 @@ class MainWindow():
         else:
             self.default_path = None
         self.master = master
+        self.remarks = []
         self.settings = settings
         self.updated = False
         self.csv_status = ""
@@ -382,7 +383,7 @@ class MainWindow():
         return warnings, errors
 
     def update_messages(self, messages):
-        self.remarks = []
+
         self.remarks += messages
         if self.remarks:
             self.alerts(self.remarks, alert_type="Warnings")
@@ -818,7 +819,10 @@ class RecordDetailsWindow():
         self._init_writer = self.current_record['Writer']
         self._init_institution_URL = self.current_record['Institution URL']
         self._init_project_identifier = self.current_record['Project Identifier']
-        self._init_quality_control_notes = self.current_record['Quality Control Notes'].decode("UTF-8")
+        if sys.version_info >= (3, 0):
+            self._init_quality_control_notes = self.current_record['Quality Control Notes']
+        else:
+            self._init_quality_control_notes = self.current_record['Quality Control Notes'].decode("UTF-8")
         self._init_silent_or_sound = self.current_record['Silent or Sound']
         self._init_camera = self.current_record['Camera']
         self._init_music = self.current_record['Music']
@@ -840,7 +844,10 @@ class RecordDetailsWindow():
         self._init_internet_archive_url = self.current_record['Internet Archive URL']
         self._init_relationship_type = self.current_record['Relationship Type']
         self._init_director = self.current_record['Director']
-        self._init_copyright_statement = self.current_record['Copyright Statement'].decode("utf-8")
+        if sys.version_info >= (3, 0):
+            self._init_copyright_statement = self.current_record['Copyright Statement']
+        else:
+            self._init_copyright_statement = self.current_record['Copyright Statement'].decode("utf-8")
         self._init_genre = self.current_record['Genre']
         self._init_cataloger_notes = self.current_record['Cataloger Notes']
         self._init_collection_guide_url = self.current_record['Collection Guide URL']
@@ -1426,7 +1433,7 @@ class RecordDetailsWindow():
             else:
                 message = "There are "+ str(len(changes))+" changes with this record. " \
                                                           "\nAre you sure you want to change them?\n\n"
-            ask = tkMessageBox.askokcancel("Are You Sure?", message)
+            ask = askokcancel("Are You Sure?", message)
             if ask:
                 self.shouldUpdate = True
 
@@ -1734,8 +1741,12 @@ class RecordDetailsWindow():
         if self._date_published_entry.get() != self._init_date_published:
             changes.append(('Date Published', self._date_published_entry.get()))
 
-        if self._description_or_content_summary_entry.get('1.0', END).replace('\n', '').encode('utf-8') != self._init_description_or_content_summary:
-            changes.append(('Description or Content Summary', self._description_or_content_summary_entry.get('1.0', END).replace('\n', '')).encode('utf-8'))
+        if sys.version_info >= (3, 0):
+            if self._description_or_content_summary_entry.get('1.0', END).replace('\n', '') != self._init_description_or_content_summary:
+                changes.append(('Description or Content Summary', self._description_or_content_summary_entry.get('1.0', END).replace('\n', '')))
+        else:
+            if self._description_or_content_summary_entry.get('1.0', END).replace('\n', '').encode('utf-8') != self._init_description_or_content_summary:
+                changes.append(('Description or Content Summary', self._description_or_content_summary_entry.get('1.0', END).replace('\n', '')).encode('utf-8'))
 
         if self._director_entry.get() != self._init_director:
             changes.append(('Director', self._director_entry.get()))
