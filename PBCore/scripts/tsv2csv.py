@@ -34,7 +34,7 @@ def main():
         quit()
 
     newname = os.path.splitext(sys.argv[1])[0] + ".csv"
-    print "Saving a new csv files as: " + newname
+    print("Saving a new csv files as: " + newname)
 
     # quit()
     with open(newname, 'w') as output_file:
