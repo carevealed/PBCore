@@ -2321,7 +2321,7 @@ def main():
     if args.csv == "" and not args.gui:
         parser.print_help()
     elif args.gui:
-        from pbcore_csv_gui import start_gui
+        from PBCore.scripts.pbcore_csv_gui import start_gui
         if args.csv:
             print("Loading graphical user interface with: "+args.csv)
             start_gui(settings=os.path.abspath(settingsFileName), csvfile=args.csv)
