@@ -1,2 +1,2 @@
-include pbcore/scripts/gui/images/CAVPPcolor.gif
-include pbcore/settings/pbcore-csv-settings.ini
+include PBCore/scripts/images/CAVPPcolor.gif
+include PBCore/scripts/pbcore-csv-settings.ini

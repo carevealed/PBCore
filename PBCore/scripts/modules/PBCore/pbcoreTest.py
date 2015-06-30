@@ -158,6 +158,6 @@ base.set_IntellectualContent(IC1)
 
 dom = minidom.parseString(base.xmlString())
 # dom = minidom.parseString(IC1.xml_string())
-print dom.toprettyxml()
+print(dom.toprettyxml())
 
 

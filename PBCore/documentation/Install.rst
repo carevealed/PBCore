@@ -21,7 +21,7 @@ Standard
 Pip
 ---
 
-    1. Download the latest version in the dist folder to your Download folder.
+    1. Download the latest version in the dist folder to your Downloads folder.
     2. In a terminal window, type::
 
         cd Downloads

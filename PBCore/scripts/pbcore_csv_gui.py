@@ -1,8 +1,29 @@
+import sys
+if sys.version_info >= (3, 0):
+    from tkinter import filedialog as tkFileDialog
+else:
+    import tkFileDialog
+    import tkMessageBox
+if sys.version_info >= (3, 0):
+    from tkinter.filedialog import askopenfile
+    from tkinter.messagebox import showerror
+    from tkinter import ttk
+    from tkinter import *
+else:
+    from tkFileDialog import askopenfilename
+    from tkMessageBox import showerror
+    from Tkinter import *
+    import ttk
+from time import sleep
 from collections import OrderedDict
 from platform import system
-import tkFileDialog
-import tkMessageBox
+import threading
+import re
 import webbrowser
+import csv
+import os
+
+from pbcore_csv import pbcoreBuilder
 
 __author__ = 'California Audio Visual Preservation Project'
 __copyright__ = "California Audiovisual Preservation Project. 2015"
@@ -10,17 +31,10 @@ __credits__ = ["Henry Borchers"]
 __version__ = "0.1.1"
 __license__ = 'GPL'
 
-import csv
-import os
-from time import sleep
-from tkFileDialog import askopenfilename
-from tkMessageBox import showerror
-
-import threading
-from Tkinter import *
-import ttk
 
 FILE_NAME_PATTERN = re.compile("[A-Z,a-z]+_\d+")
+DOC_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)),"html/index.html")
+
 
 # DEFAULT_PATH = None
 
@@ -61,8 +75,13 @@ class MainWindow():
         self.menu_bar.add_cascade(menu=self.helpMenu, label="Help")
 
         self.recordMenu.add_command(label="Change Export Name...")
-        self.recordMenu.add_command(label="More Info...")
 
+        self.recordMenuchangeStatusMenu = Menu(self.recordMenu, tearoff=0)
+        self.recordMenuchangeStatusMenu.add_command(label="Build", command=lambda: self.change_item_status(self.recordsTree.selection(), "To Build"))
+        self.recordMenuchangeStatusMenu.add_command(label="Ignore", command=lambda: self.change_item_status(self.recordsTree.selection(), "Ignore"))
+        self.recordMenu.add_cascade(label="Change Status To", menu=self.recordMenuchangeStatusMenu)
+
+        self.recordMenu.add_command(label="More Info...")
 
         self.fileMenu.add_command(label="Open...", command=self.load_csv)
         self.fileMenu.entryconfig('Open...', accelerator='Ctrl + O')
@@ -70,7 +89,9 @@ class MainWindow():
         self.fileMenu.add_command(label="Exit", command=lambda: quit())
 
         self.settingsMenu.add_command(label="View Settings File...", command=self.view_settings)
-
+        self.helpMenu.add_command(label="Documentation",
+                                  command=lambda: webbrowser.open("file:" + DOC_PATH))
+        self.helpMenu.add_separator()
         self.helpMenu.add_command(label="PBCore Website",
                                   command=lambda: webbrowser.open_new("http://pbcore.org/"))
         self.helpMenu.add_separator()
@@ -103,14 +124,9 @@ class MainWindow():
         self.allInfoFrame.pack(fill=BOTH, expand=True)
 
 
-        # self.panel = ttk.Panedwindow(self.allInfoFrame, orient=VERTICAL)
         self.panel = ttk.Frame(self.allInfoFrame)
         self.panel.pack(fill=BOTH, expand=True)
 
-        # self.panel.grid(row=2, column=0, sticky=W+E+S+N)
-        #
-        # self.testButton = ttk.Button(self.background, text='test', command=self.test)
-        # self.testButton.pack()
 
 
         # -------------------- Input Information --------------------
@@ -253,10 +269,13 @@ class MainWindow():
 # ============================= Load the data into tree =============================
         if input_file:
             self.csv_filename_entry.insert(0, input_file)
-            if self.validate_file(input_file):
-                self.file_records = pbcoreBuilder(input_file, self.settings)
-                self.file_records.load_records()
-                self.load_records_list(self.file_records.records)
+            try:
+                if self.validate_file(input_file):
+                    self.file_records = pbcoreBuilder(input_file, self.settings)
+                    self.file_records.load_records()
+                    self.load_records_list(self.file_records.records)
+            except CSVDataError as em:
+                print(em)
 
         self.running = False
 
@@ -277,16 +296,12 @@ class MainWindow():
         project_id = self.recordsTree.set(item_record)['project']
         xml = self.recordsTree.set(item_record)['xml_file']
 
-        # print(project_id)
         itemsRoot = Toplevel(self.master)
         itemsRoot.wm_title("Details: " + project_id)
         view_record = self.file_records.get_record(project_id)
-        # print view_record
-        item = RecordDetailsWindow(itemsRoot, view_record, path=os.path.dirname(self.file_records.source), xml=xml)
-        # print self.recordsTree.set(item_record)['xml_file']
+        item = RecordDetailsWindow(itemsRoot, view_record, path=self.csv_filename_entry.get(), xml=xml)
         itemsRoot.wait_window()
         if item.shouldUpdate:
-            # print self.recordsTree.set(item_record)['xml_file']
             self.recordsTree.set(item_record, column="xml_file", value=item.xml_file)
 
             self.file_records.update_record(project_id, item.newRecord)
@@ -306,7 +321,6 @@ class MainWindow():
                                            initialfile=os.path.basename(self.recordsTree.set(record[0], column="xml_file")),
                                            filetypes=[("XML", "*.xml")])
         if f:
-            # print "changing to " + f
             self.recordsTree.set(record[0], column="xml_file", value=f)
 
     def load_about_window(self):
@@ -325,16 +339,25 @@ class MainWindow():
             self.default_path = os.path.dirname(fileName)
             self.csv_filename_entry.delete(0, END)
             self.csv_filename_entry.insert(0, fileName)
-            if self.validate_file(fileName):
-                self.file_records = pbcoreBuilder(fileName, settings=self.settings)
-                self.file_records.load_records()
-                self.load_records_list(self.file_records.records)
+            try:
+                if self.validate_file(fileName):
+                    self.file_records = pbcoreBuilder(fileName, settings=self.settings)
+                    self.file_records.load_records()
+                    self.load_records_list(self.file_records.records)
 
-            else:
-                for i in self.recordsTree.get_children():
-                    self.recordsTree.delete(i)
-            self.records_edited = False
-            self.startButton.config(state=NORMAL)
+                else:
+                    for i in self.recordsTree.get_children():
+                        self.recordsTree.delete(i)
+                self.records_edited = False
+                self.startButton.config(state=NORMAL)
+            except CSVDataError as em:
+                for item in em.value:
+                    message = "Found an error in: " + item['record'] + " at " + item['location'] + ".\n"
+                    message += "Data found: " + item['received'] + "\n"
+                    message += item['message']
+
+                    tkMessageBox.showerror("Error with CSV", message)
+
         else:
             self.startButton.config(state=DISABLED)
 
@@ -353,7 +376,6 @@ class MainWindow():
         self.alertRoot = Toplevel(self.master)
         self.alertRoot.wm_title(alert_type)
         alerts = AlertWindow(self.alertRoot, messages, self.csv_filename_entry.get())
-        # alertRoot.wait_window()
 
 
     def validate_records(self, records):
@@ -399,12 +421,10 @@ class MainWindow():
 
 
                 warnings, errors = self.validate_records(testFile)
-
+                if errors:
+                    raise CSVDataError(errors)
                 self.update_messages(warnings)
                 return True
-
-                # for error in total_errors:
-                #     print error
 
             else:
                 self.validate_entry.config(state=NORMAL)
@@ -434,7 +454,8 @@ class MainWindow():
             self.recordsTree.delete(i)
         for index, record in enumerate(records):
 
-            fileName = re.search(FILE_NAME_PATTERN, record['Object Identifier']).group(0)
+            search_result = re.search(FILE_NAME_PATTERN, record['Object Identifier'])
+            fileName = search_result.group(0)
             parts = record['Object Identifier'].split(';')
 
             media_files = locate_files(root=os.path.dirname(self.csv_filename_entry.get()), fileName=fileName)
@@ -448,9 +469,6 @@ class MainWindow():
             self.recordsTree.set(outIndex, 'status', "To Build")
             self.recordsTree.set(outIndex, 'files', str(len(media_files)))
 
-
-            # self.recordsTree.set(outIndex, 'files', str(len(media_files)) + " Files Found")
-
             self.recordsTree.set(outIndex, 'xml_file', (fileName + "_PBCore.xml"))
 
             if self.default_path:
@@ -459,10 +477,6 @@ class MainWindow():
                 xml_file_name = (fileName + "_PBCore.xml")
             self.recordsTree.set(outIndex, 'xml_file', xml_file_name)
 
-            # for a_index, media_file in enumerate(media_files):
-            #     inIndex = str(a_index)+outIndex
-            #     self.recordsTree.insert(outIndex, a_index, inIndex)
-            #     self.recordsTree.set(inIndex, 'files', os.path.basename(media_file.strip()))
 
 
     def get_records(self, file_name):
@@ -501,7 +515,7 @@ class MainWindow():
                 elif self.recordsTree.set(record)['status'] == "Ignore":
                     pass
             self.set_total_progress(progress=0, total=total_count)
-            self.generate = observer(xml_content)
+            self.generate = bridge(xml_content)
             self.generate.daemon = True
             self.generate.start()
             self.update_progress()
@@ -515,6 +529,7 @@ class MainWindow():
 
     def update_progress(self):
             # print str(self.generate.item_progress) + "/" + str(self.generate.record_total)
+        self.startButton.config(state=DISABLED)
         record_total = self.generate.record_total
         record_progress = self.generate.record_progress
         part_total = self.generate.part_total
@@ -534,6 +549,7 @@ class MainWindow():
         else:
         # self.master.after(200)
             self.generate.join()
+            self.startButton.config(state=NORMAL)
             # print self.generate.calulation_progress
             self.set_total_progress(record_progress, record_total)
             self.set_part_progress(part_progress, part_total)
@@ -541,13 +557,7 @@ class MainWindow():
             self.set_calculation_progress(calulation_percent)
 
     def test(self):
-        # foo = pbcore_csv.pbcoreBuilder(self.csv_filename_entry.get())
-        # foo.load_records()
-        # # print foo.source
-        # for record in self.recordsTree.get_children():
-        #     print(self.recordsTree.set(record))
-        # # foo.get_record("adfa")
-        # for test in self.file_records.records:
+
         test_record = {'Date Created': '6/26/58', 'Object ARK': 'ark:/13030/c8m61n3r', 'Timecode Content Begins': '', 'Media Type': 'Sound', 'Interviewee': '', 'Series Title': '', 'Temporal Coverage': '', 'Writer': '', 'Institution URL': 'http://www.cityofsacramento.org/ccl/history/', 'Project Identifier': 'cavpp002554', 'Quality Control Notes': 'Vendor Tech Notes:  Clicks and Pops on Tape; very little content on side b. seems to be an outtake with  fluctuating volume. Speed: 33 1/3 RPM. Direction: Outside In    CAVPP QC Notes:  a: *psrv file includes markers with annotations on the waveform in Wavelab. Is this from MP QC? Crackle, pops and clicks.  b: Crackle, pops and clicks. Distorted in last 20 seconds. *Duplicate segment do not keep. Remove _a from name. Re-embed.    ', 'Silent or Sound': 'Sound', 'Camera': '', 'Music': '', 'Editor': '', 'Track Standard': '', 'CONTENTdm number': '57', 'Subtitles/Intertitles/Closed Captions': '', 'Distributor': '', 'Date modified': '1/28/15', 'Subject Topic Authority Source': '', 'Aspect Ratio': '', 'Total Number of Reels or Tapes': '1 disc of 1', 'Copyright Holder Info': '', 'Running Speed': '', 'Subject Entity Authority Source': '', 'Additional Technical Notes for Overall Work': '', 'Musician': '', 'Main or Supplied Title': 'Max and Buddy Baer Interview with Regis Philbin', 'Internet Archive URL': 'https://archive.org/details/casacsh_000048', 'Relationship Type': '', 'Director': '', 'Copyright Statement': 'Copyright status unknown. This work may be protected by the U.S. Copyright Law (Title 17, U.S.C.). In addition, its reproduction may be restricted by terms of gift or purchase agreements, donor restrictions, privacy and publicity rights, licensing and trademarks. This work is accessible for purposes of education and research. Transmission or reproduction of works protected by copyright beyond that allowed by fair use requires the written permission of the copyright owners. Works not in the public domain cannot be commercially exploited without permission of the copyright owner. Responsibility for any use rests exclusively with the user. Center for Sacramento History attempted to find rights owners without success but is eager to hear from them so that we may obtain permission, if needed. Upon request to csh@cityofsacramento.org, digitized works can be removed from public view if there are rights issues that need to be resolved.', 'Genre': '', 'Cataloger Notes': '', 'Collection Guide URL': '', 'Interviewer': '', 'Description or Content Summary': 'An interview on a 78 rpm record of the Baer brothers - heavyweight boxers (Max being a former world champion) and Sacramento residents with a young Regis Philbin of KSON radio in San Diego.', 'Institution': 'Center for Sacramento History', 'Stock Manufacturer': '', 'Sound': '', 'Publisher': '', 'Asset Type': 'Media Object', 'Object Identifier': 'casacsh_000048', 'Copyright Date': '', 'Copyright Holder': '', 'Language': '', 'Color and/or Black and White': '', 'Institution ARK': 'ark:/13030/tf7779p65f', 'CONTENTdm file name': 'http://archive.org/details/', 'OCLC number': '', 'Why the recording is significant to California/local history': 'An interview on a 78 rpm record of the Baer brothers - heavyweight boxers (Max being a former world champion) and Sacramento residents with a young Regis Philbin of KSON radio in San Diego.', 'Subject Entity': '', 'Gauge and Format': '[LP Record]', 'Additional Descriptive Notes for Overall Work': '', 'Genre Authority Source': '', 'Date Published': '', 'Country of Creation': 'US', 'Project Note': 'California Audiovisual Preservation Project (CAVPP)', 'Institutional Rights Statement (URL)': '', 'Spatial Coverage': '', 'Copyright Notice': '', 'Subject Topic': '', 'Performer': '', 'Relationship': '', 'Producer': '', 'Cast': '', 'Generation': 'Copy', 'Transcript': '', 'Channel Configuration': '', 'Date created': '3/17/14', 'Reference URL': 'http://cdm15972.contentdm.oclc.org:80/cdm/ref/collection/p15972coll52/id/57', 'Call Number': '2000/189', 'Base Thickness': '', 'Base Type': '', 'Additional Title': '', 'CONTENTdm file path': 'http://archive.org/details/', 'Duration': '', 'Speaker': '', 'Collection Guide Title': ''}
         self.file_records.update_record("cavpp002554", test_record)
 
@@ -586,6 +596,8 @@ class MainWindow():
 
 class AboutWindow():
     def __init__(self, master):
+        image = os.path.join(os.path.dirname(__file__),'images')
+        image = os.path.join(image, 'CAVPPcolor.gif')
         self.master = master
         self.master.resizable(width=None, height=None)
         self.background = ttk.Frame(self.master, width=20, padding=10)
@@ -594,8 +606,8 @@ class AboutWindow():
 # ----------------- Title
         self.titleFrame = ttk.Frame(self.background, width=20, padding=10, relief=RIDGE)
         self.titleFrame.pack()
-        # print os.path.join(os.path.dirname(os.path.realpath(__file__)), 'images/CAVPPcolor.gif')
-        self.logo = PhotoImage(file=os.path.join(os.path.dirname(os.path.realpath(__file__)), 'images/CAVPPcolor.gif'))
+
+        self.logo = PhotoImage(file=image)
         self.titleLabel = ttk.Label(self.titleFrame, text="CAVPP PBCore Builder", image=self.logo, compound=TOP)
         self.titleLabel.pack()
         self.versionLabel = ttk.Label(self.titleFrame, text="Version: " + __version__)
@@ -657,7 +669,7 @@ class SettingsWindow():
 
         self.settingsText.config(state=DISABLED)
 
-class observer(threading.Thread):
+class bridge(threading.Thread):
     def __init__(self, records):
         threading.Thread.__init__(self)
         if not isinstance(records, pbcoreBuilder):
@@ -695,26 +707,7 @@ class observer(threading.Thread):
 
         sleep(1)
 
-        # print "\ndone"
-        # for index, record in enumerate(self.records.records):
-        #     print "Record: " + str(index)
-        #     print self.records.source
-        #     temp = self.records.generate_pbcore(record)
-        #     self._record_progress = index + 1
-        #     # for p_index, part in enumerate(self.records.records):
-        #     #     print p_index
-        #     # temp = self.records.generate_pbcore(record)
-        #     # print "parts" + str(self.records.parts_total)
-        #     # for part_index in range(1, self.records.parts_total):
-        #     #     print "part" + part_index
-        #     #     sleep(.01)
-        #     #     self._part_progress = part_index + 1
-        #     # for i in range(0, 100, 1):
-        #     #     # print i
-        #     #     self._md5_progress = i
-        #     #     sleep(.01)
-        #     # sleep(.25)
-        # self._isRunning = False
+
 
     @property
     def status(self):
@@ -752,18 +745,19 @@ def locate_files(root, fileName):
     found_directory = None
     results = []
     # check if a directory matches the file name
-    for roots, dirs, files in os.walk(os.path.dirname(root)):
-        for dir in dirs:
-            if fileName == dir:
-                found_directory = os.path.join(roots, dir)
-
+    # for roots, dirs, files in os.walk(root):
+    for dir in os.listdir(root):
+        if not dir.startswith('.'):
+            if re.search((fileName+"(\D|\Z)"), dir):
+                found_directory = os.path.join(root, dir)
                 break
     # see of a file in that folder has a file with that name in it
     if found_directory:
         for roots, dirs, files, in os.walk(found_directory):
             for file in files:
-                if fileName in file:
-                    results.append(os.path.join(roots, file))
+                if not file.startswith('.'):
+                    if fileName in file:
+                        results.append(os.path.join(roots, file))
     return results
 
 def sep_pres_access(digital_files):
@@ -825,7 +819,7 @@ class RecordDetailsWindow():
         self._init_writer = self.current_record['Writer']
         self._init_institution_URL = self.current_record['Institution URL']
         self._init_project_identifier = self.current_record['Project Identifier']
-        self._init_quality_control_notes = self.current_record['Quality Control Notes']
+        self._init_quality_control_notes = self.current_record['Quality Control Notes'].decode("UTF-8")
         self._init_silent_or_sound = self.current_record['Silent or Sound']
         self._init_camera = self.current_record['Camera']
         self._init_music = self.current_record['Music']
@@ -847,7 +841,7 @@ class RecordDetailsWindow():
         self._init_internet_archive_url = self.current_record['Internet Archive URL']
         self._init_relationship_type = self.current_record['Relationship Type']
         self._init_director = self.current_record['Director']
-        self._init_copyright_statement = self.current_record['Copyright Statement']
+        self._init_copyright_statement = self.current_record['Copyright Statement'].decode("utf-8")
         self._init_genre = self.current_record['Genre']
         self._init_cataloger_notes = self.current_record['Cataloger Notes']
         self._init_collection_guide_url = self.current_record['Collection Guide URL']
@@ -1090,8 +1084,8 @@ class RecordDetailsWindow():
 
         self._copyright_statement_label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Copyright Statement:")
         self._copyright_statement_label.grid(row=29, column=0, stick=N+W)
-        self._copyright_statement_entry = ttk.Entry(self.dataFrame, style='labels.TEntry')
-        self._copyright_statement_entry.grid(row=29, column=1, columnspan=2, sticky=N+E+W)
+        self._copyright_statement_text = Text(self.dataFrame, width=40, height=15, wrap=WORD)
+        self._copyright_statement_text.grid(row=29, column=1, columnspan=2, sticky=N+E+W)
 
         self._gauge_and_format_label = ttk.Label(self.dataFrame, style='labels.TLabel', text="Gauge and Format:")
         self._gauge_and_format_label.grid(row=30, column=0, stick=N+W)
@@ -1450,7 +1444,7 @@ class RecordDetailsWindow():
                 self.newRecord.update({'Writer': self._writer_entry.get()})
                 self.newRecord.update({'Institution URL': self._institution_URL_entry.get()})
                 self.newRecord.update({'Project Identifier': self._project_identifier_entry.get()})
-                self.newRecord.update({'Quality Control Notes': str(self._quality_control_notes_entry.get("0.0", END).replace('\n', ''))})
+                self.newRecord.update({'Quality Control Notes': str(self._quality_control_notes_entry.get("0.0", END).replace('\n', '').encode('utf-8'))})
                 self.newRecord.update({'Silent or Sound': self._silent_or_sound_entry.get()})
                 self.newRecord.update({'Camera': self._camera_entry.get()})
                 self.newRecord.update({'Music': self._music_entry.get()})
@@ -1466,18 +1460,18 @@ class RecordDetailsWindow():
                 self.newRecord.update({'Copyright Holder Info': self._copyright_holder_info_entry.get()})
                 self.newRecord.update({'Running Speed': self._running_speed_entry.get()})
                 self.newRecord.update({'Subject Entity Authority Source': self._subject_entity_authority_source_entry.get()})
-                self.newRecord.update({'Additional Technical Notes for Overall Work': str(self._additional_technical_notes_for_overall_work_entry.get("0.0", END).replace('\n', ''))})
+                self.newRecord.update({'Additional Technical Notes for Overall Work': str(self._additional_technical_notes_for_overall_work_entry.get("0.0", END).replace('\n', '').encode('utf-8'))})
                 self.newRecord.update({'Musician': self._musician_entry.get()})
                 self.newRecord.update({'Main or Supplied Title': self._main_or_supplied_title_entry.get()})
                 self.newRecord.update({'Internet Archive URL': self._internet_archive_URL_entry.get()})
                 self.newRecord.update({'Relationship Type': self._relationship_type_entry.get()})
                 self.newRecord.update({'Director': self._director_entry.get()})
-                self.newRecord.update({'Copyright Statement': self._copyright_statement_entry.get()})
+                self.newRecord.update({'Copyright Statement': self._copyright_statement_text.get("0.0", END).replace('\n', '').encode('utf-8')})
                 self.newRecord.update({'Genre': self._genre_entry.get()})
                 self.newRecord.update({'Cataloger Notes': self._cataloger_notes_entry.get()})
                 self.newRecord.update({'Collection Guide URL': self._collection_guide_url_entry.get()})
                 self.newRecord.update({'Interviewer': self._interviewer_entry.get()})
-                self.newRecord.update({'Description or Content Summary': str(self._description_or_content_summary_entry.get("0.0", END).replace('\n', ''))})
+                self.newRecord.update({'Description or Content Summary': str(self._description_or_content_summary_entry.get("0.0", END).replace('\n', '').encode('utf-8'))})
                 self.newRecord.update({'Institution': self._institution_entry.get()})
                 self.newRecord.update({'Stock Manufacturer': self._stock_manufacturer_entry.get()})
                 self.newRecord.update({'Sound': self._sound_entry.get()})
@@ -1491,10 +1485,10 @@ class RecordDetailsWindow():
                 self.newRecord.update({'Institution ARK': self._institution_ark_entry.get()})
                 self.newRecord.update({'CONTENTdm file name': self._CONTENTdm_file_name_entry.get()})
                 self.newRecord.update({'OCLC number': self._OCLC_number_entry.get()})
-                self.newRecord.update({'Why the recording is significant to California/local history': str(self._why_significant_CA_entry.get("0.0", END).replace('\n', ''))})
+                self.newRecord.update({'Why the recording is significant to California/local history': str(self._why_significant_CA_entry.get("0.0", END).replace('\n', '').encode('utf-8'))})
                 self.newRecord.update({'Subject Entity': self._subject_entity_entry.get()})
                 self.newRecord.update({'Gauge and Format': self._gauge_and_format_entry.get()})
-                self.newRecord.update({'Additional Descriptive Notes for Overall Work': str(self._additional_descrpt_nts_overall_wrk_entry.get("0.0", END).replace('\n', ''))})
+                self.newRecord.update({'Additional Descriptive Notes for Overall Work': str(self._additional_descrpt_nts_overall_wrk_entry.get("0.0", END).replace('\n', '').encode('utf-8'))})
                 self.newRecord.update({'Genre Authority Source': self._genre_authority_source_entry.get()})
                 self.newRecord.update({'Date Published': self._date_published_entry.get()})
                 self.newRecord.update({'Country of Creation': self._country_of_creation_entry.get()})
@@ -1580,7 +1574,7 @@ class RecordDetailsWindow():
         self._institution_URL_entry.insert(0, self._init_institution_URL)
         self._project_identifier_entry.insert(0, self._init_project_identifier)
         self._project_identifier_entry.config(state='disabled')
-        self._quality_control_notes_entry.insert('1.0', self._init_quality_control_notes)
+        self._quality_control_notes_entry.insert('0.0', self._init_quality_control_notes)
         self._silent_or_sound_entry.insert(0, self._init_silent_or_sound)
         self._camera_entry.insert(0, self._init_camera)
         self._music_entry.insert(0, self._init_music)
@@ -1596,18 +1590,18 @@ class RecordDetailsWindow():
         self._copyright_holder_info_entry.insert(0, self._init_copyright_holder_info)
         self._running_speed_entry.insert(0, self._init_running_speed)
         self._subject_entity_authority_source_entry.insert(0, self._init_subject_entity_authority_source)
-        self._additional_technical_notes_for_overall_work_entry.insert('1.0', self._init_additional_technical_notes_for_overall_work)
+        self._additional_technical_notes_for_overall_work_entry.insert('0.0', self._init_additional_technical_notes_for_overall_work)
         self._musician_entry.insert(0, self._init_musician)
         self._main_or_supplied_title_entry.insert(0, self._init_main_or_supplied_title)
         self._internet_archive_URL_entry.insert(0, self._init_internet_archive_url)
         self._relationship_type_entry.insert(0, self._init_relationship_type)
         self._director_entry.insert(0, self._init_director)
-        self._copyright_statement_entry.insert(0, self._init_copyright_statement)
+        self._copyright_statement_text.insert('0.0', self._init_copyright_statement)
         self._genre_entry.insert(0, self._init_genre)
         self._cataloger_notes_entry.insert(0, self._init_cataloger_notes)
         self._collection_guide_url_entry.insert(0, self._init_collection_guide_url)
         self._interviewer_entry.insert(0, self._init_interviewer)
-        self._description_or_content_summary_entry.insert('1.0', self._init_description_or_content_summary)
+        self._description_or_content_summary_entry.insert('0.0', self._init_description_or_content_summary)
         self._institution_entry.insert(0, self._init_institution)
         self._stock_manufacturer_entry.insert(0, self._init_stock_manufacturer)
         self._sound_entry.insert(0, self._init_sound)
@@ -1621,10 +1615,10 @@ class RecordDetailsWindow():
         self._institution_ark_entry.insert(0, self._init_institution_ark)
         self._CONTENTdm_file_name_entry.insert(0, self._init_contentdm_file_name)
         self._OCLC_number_entry.insert(0, self._init_OCLC_number)
-        self._why_significant_CA_entry.insert('1.0', self._init_why_significant_CA)
+        self._why_significant_CA_entry.insert('0.0', self._init_why_significant_CA)
         # self._subject_topic_authority_source_entry.insert(0, self._init_subject_topic_authority_source)
         self._gauge_and_format_entry.insert(0, self._init_gauge_and_format)
-        self._additional_descrpt_nts_overall_wrk_entry.insert('1.0', self._init_addit_descrpt_nts_overall_wrk)
+        self._additional_descrpt_nts_overall_wrk_entry.insert('0.0', self._init_addit_descrpt_nts_overall_wrk)
         self._genre_authority_source_entry.insert(0, self._init_genre_authority_source)
         self._date_published_entry.insert(0, self._init_date_published)
         self._country_of_creation_entry.insert(0, self._init_country_of_creation)
@@ -1723,8 +1717,8 @@ class RecordDetailsWindow():
         if self._copyright_notice_entry.get() != self._init_copyright_notice:
             changes.append(('Copyright Notice', self._copyright_notice_entry.get()))
 
-        if self._copyright_statement_entry.get().encode('UTF-8') != self._init_copyright_statement:
-            changes.append(('Copyright Statement', self._copyright_statement_entry.get()))
+        if self._copyright_statement_text.get('1.0', END).replace('\n', '') != self._init_copyright_statement:
+            changes.append(('Copyright Statement', self._copyright_statement_text.get('0.0', END).replace('\n', '').encode('utf-8')))
 
         if self._country_of_creation_entry.get() != self._init_country_of_creation:
             changes.append(('Country of Creation', self._country_of_creation_entry.get()))
@@ -1741,8 +1735,8 @@ class RecordDetailsWindow():
         if self._date_published_entry.get() != self._init_date_published:
             changes.append(('Date Published', self._date_published_entry.get()))
 
-        if self._description_or_content_summary_entry.get('0.0', END).encode('UTF-8').replace('\n', '') != self._init_description_or_content_summary:
-            changes.append(('Description or Content Summary', self._description_or_content_summary_entry.get('0.0', END).replace('\n', '')))
+        if self._description_or_content_summary_entry.get('1.0', END).replace('\n', '').encode('utf-8') != self._init_description_or_content_summary:
+            changes.append(('Description or Content Summary', self._description_or_content_summary_entry.get('1.0', END).replace('\n', '')).encode('utf-8'))
 
         if self._director_entry.get() != self._init_director:
             changes.append(('Director', self._director_entry.get()))
@@ -1828,7 +1822,7 @@ class RecordDetailsWindow():
         if self._publisher_entry.get() != self._init_publisher:
             changes.append(('Publisher', self._publisher_entry.get()))
 
-        if self._quality_control_notes_entry.get('0.0', END).encode('UTF-8').replace('\n', '') != self._init_quality_control_notes:
+        if self._quality_control_notes_entry.get('0.0', END).replace('\n', '') != self._init_quality_control_notes:
             changes.append(('Quality Control Notes', self._quality_control_notes_entry.get('0.0', END).replace('\n', '')))
 
         if self._reference_URL_entry.get() != self._init_reference_url:
@@ -1961,4 +1955,13 @@ if __name__ == '__main__':
     sys.stderr.write("Not a standalone program. Please run pbcore-csv.py -g to run the GUI")
 
 else:
-    from pbcore.scripts.pbcore_csv import *
+    # print os.path.dirname(__name__)
+    # from PBCore.scripts.pbcore_csv import *
+    pass
+
+class CSVDataError(Exception):
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return repr(self.value)

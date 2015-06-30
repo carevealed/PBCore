@@ -1,6 +1,11 @@
 #!/usr/local/bin/python
-from Queue import Queue
-import copy
+import sys
+if sys.version_info >= (3, 0):
+    from queue import Queue
+    from configparser import ConfigParser
+else:
+    from Queue import Queue
+    from ConfigParser import ConfigParser
 
 __author__ = 'California Audio Visual Preservation Project'
 __copyright__ = "Copyright 2015, California Audiovisual Preservation Project"
@@ -9,20 +14,29 @@ import os
 import sys
 import logging
 import argparse
-from ConfigParser import ConfigParser
+import re
 import threading
 from onesheet.VideoObject import *
 from onesheet.AudioObject import *
+from PBCore.scripts.modules.PBCore.patch import trt
 
-
-import string
 from time import sleep
 from os.path import isfile
 from xml.dom.minidom import parseString
-from xml.etree import ElementTree
-import re
+
 from modules.PBCore.PBCore import *
 FILE_NAME_PATTERN = re.compile("[A-Z,a-z]+_\d+")
+
+
+# a series of letters that is lowercase from a through z,
+# followed an underscore
+# followed by a number 5 or 6 digits long,
+# optionally followed another underscore
+# optionally followed the letters a or b
+# optionally followed an underscore and the letters t, r, or d and a number of 1 or more digits
+# optionally followed another underscore and the letters a or b
+# followed by a semicolon, an end-of-line character, end of word, or end of string
+VALID_OBJECT_PATTERN = re.compile('([a-z]*_\d{5,6})_?[a,b]?(_(t|r|d)\d+)?(_(a|b))?(\s|;|\b|\>|\Z)')
 
 LARGEFILE = 1065832230
 import csv
@@ -35,6 +49,8 @@ officialList = ['Internet Archive URL',
                 'Institution',
                 'Asset Type',
                 'Media Type',
+                'Creator',
+                'Contributor',
                 'Generation',
                 'Main or Supplied Title',
                 'Additional Title',
@@ -117,6 +133,22 @@ class RemoveErrorsFilter(logging.Filter):
             # return not record.getMessage().startswith('WARNING')
 
 
+def valid_object_id(data):
+
+    results = re.findall(VALID_OBJECT_PATTERN, data)
+    if len(results) > 0:
+        return True
+    else:
+        return False
+
+
+    pass
+
+
+class MediaTypeException(Exception):
+    def __init__(self, message):
+        super(MediaTypeException, self).__init__(message)
+    pass
 
 
 class pbcoreBuilder(threading.Thread):
@@ -236,12 +268,12 @@ class pbcoreBuilder(threading.Thread):
             xml = item['xml']
             record = item['record']
             replacement.put(item)
-            print record['Object Identifier']
-            print dirname
-            print xml
+            print(record['Object Identifier'])
+            print(dirname)
+            print(xml)
             for file in files:
-                print file
-            print ""
+                print(file)
+            print("")
         self._queue = replacement
 
     def update_record(self, project_id, new_record):
@@ -354,6 +386,7 @@ class pbcoreBuilder(threading.Thread):
         ser_title = ''
         inst_name = ''
         inst_URL = ''
+
         if record['Object Identifier']:
             obj_ID = record['Object Identifier'].split(';')[0].split('_t')[0].split('_r')[0].split('_a')[0]
 
@@ -746,6 +779,7 @@ class pbcoreBuilder(threading.Thread):
             # print new_xml.toprettyxml(encoding='utf-8')
 
         elif media_type.lower() == 'moving image':
+            physical.add_instantiationIdentifier(PB_Element(['source', "CAVPP"], tag="instantiationIdentifier", value=parts))
             newEss = InstantiationEssenceTrack(objectID=parts,
                                                frameRate=run_speed,
                                                aspectRatio=aspect_ratio,
@@ -788,7 +822,7 @@ class pbcoreBuilder(threading.Thread):
 
             for master_part in preservation_file_set:
                 f = AudioObject(master_part)
-                new_mast_part = InstantiationPart(location=self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource'), duration=f.totalRunningTimeSMPTE)
+                new_mast_part = InstantiationPart(location=self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource'), duration=trt(master_part))
                 file_size, file_units = self.sizeofHuman(f.file_size)
                 new_mast_part.set_instantiationFileSize(PB_Element(['unitsOfMeasure',file_units],
                                                                    tag="instantiationFileSize",
@@ -799,13 +833,14 @@ class pbcoreBuilder(threading.Thread):
                                                                      value=os.path.basename(master_part)))
                 if self.calculate_checksums is True:
                 # if not args.nochecksum and self.settings.getboolean('CHECKSUM','CalculateChecksums') is True:
+
                     self._working_status = "Calculating MD5 checksum for " + f.file_name + " (" + f.file_size_human + ")"
                     if self.verbose:
                         print("\t"),
-                        print "Part " + str(self._parts_progress+1) + " of " + str(self._parts_total) + ": ",
+                        print("Part " + str(self._parts_progress+1) + " of " + str(self._parts_total) + ": ",)
                         logger.info("Calculating MD5 checksum for " + f.file_name + ".")
                         if f.file_size > LARGEFILE:
-                            print "\tNote: " + f.file_name + " is " + f.file_size_human + " and might take some times to calculate."
+                            print("\tNote: " + f.file_name + " is " + f.file_size_human + " and might take some times to calculate.")
                         md5 = f.calculate_MD5(progress=True)
                     else:
                         f.calculate_MD5(threaded=True)
@@ -819,33 +854,35 @@ class pbcoreBuilder(threading.Thread):
                                                                          tag="instantiationIdentifier",
                                                                          value=md5))
                     sleep(.5)
-                newfile = InstantiationEssenceTrack(type="Audio")
-                newfile.set_essenceTrackBitDepth(PB_Element(tag="essenceTrackBitDepth",
-                                                            value=str(f.audioBitDepth)))
-                newfile.set_essenceTrackSamplingRate(PB_Element(["unitsOfMeasure", "kHz"],
-                                                                tag="essenceTrackSamplingRate",
-                                                                value=self._samplerate_cleanup(f.audioSampleRate)))
-                datarate = f.audioBitRateH.split(" ")
-                newfile.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
-                                                                tag="essenceTrackDataRate",
-                                                                value=datarate[0]))
-                if f.file_extension.lower() == '.wav':
-                    pres_master.set_instantiationDigital(PB_Element(['source', 'PRONOM Technical Registry'],
-                                                                    tag='instantiationDigital',
-                                                                    value='audio/x-wav'))  # This is really ugly code I don't know a better way
-                    newfile.set_essenceTrackEncoding(PB_Element(tag='essenceTrackEncoding', value='WAV'))
+                if f.audioCodec and f.audioCodecLongName:
+                    newfile = InstantiationEssenceTrack(type="Audio")
+                    newfile.set_essenceTrackBitDepth(PB_Element(tag="essenceTrackBitDepth",
+                                                                value=str(f.audioBitDepth)))
+                    newfile.set_essenceTrackSamplingRate(PB_Element(["unitsOfMeasure", "kHz"],
+                                                                    tag="essenceTrackSamplingRate",
+                                                                    value=self._samplerate_cleanup(f.audioSampleRate)))
 
-                audio_codec = f.audioCodec + ": " + f.audioCodecLongName
-                pres_master.set_instantiationStandard(PB_Element(tag='instantiationStandard',
-                                                                 value=audio_codec))
+                    datarate = f.audioBitRateH.split(" ")
+                    newfile.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
+                                                                    tag="essenceTrackDataRate",
+                                                                    value=datarate[0]))
+                    if f.file_extension.lower() == '.wav':
+                        pres_master.set_instantiationDigital(PB_Element(['source', 'PRONOM Technical Registry'],
+                                                                        tag='instantiationDigital',
+                                                                        value='audio/x-wav'))  # This is really ugly code I don't know a better way
+                        newfile.set_essenceTrackEncoding(PB_Element(tag='essenceTrackEncoding', value='WAV'))
 
-                new_mast_part.add_instantiationEssenceTrack(newfile)
+                    audio_codec = f.audioCodec + ": " + f.audioCodecLongName
+                    pres_master.set_instantiationStandard(PB_Element(tag='instantiationStandard',
+                                                                     value=audio_codec))
+
+                    new_mast_part.add_instantiationEssenceTrack(newfile)
 
                 pres_master.add_instantiationPart(new_mast_part)
                 self._parts_progress += 1
 
 
-            pass
+
 
         # ============================================================ #
         # ======================= Moving Image ======================= #
@@ -871,10 +908,10 @@ class pbcoreBuilder(threading.Thread):
                 self._working_status = "Calculating MD5 checksum for " + f.file_name + " (" + f.file_size_human + ")"
                 if self.verbose:
                     print("\t"),
-                    print "Part " + str(self._parts_progress + 1) + " of " + str(self._parts_total) + ": ",
+                    print("Part " + str(self._parts_progress + 1) + " of " + str(self._parts_total) + ": ",)
                     logger.info("Calculating MD5 checksum for " + f.file_name + ".")
                     if f.file_size > LARGEFILE:
-                        print "\tNote: This file is " + f.file_size_human + " and might take some times to calculate."
+                        print("\tNote: This file is " + f.file_size_human + " and might take some times to calculate.")
                     md5 = f.calculate_MD5(progress=True)
                 else:
                     f.calculate_MD5(threaded=True)
@@ -892,7 +929,7 @@ class pbcoreBuilder(threading.Thread):
             # ---------- Video essence track ----------
             newfile = InstantiationEssenceTrack(type='Video',
                                                 frameRate=str(f.videoFrameRate),
-                                                duration=f.totalRunningTimeSMPTE,
+                                                duration=trt(preservation_file_set[0]),
                                                 aspectRatio=str(f.videoAspectRatio))
             datarate = f.videoBitRateH.split(" ")
             newfile.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
@@ -914,21 +951,25 @@ class pbcoreBuilder(threading.Thread):
 
             # ---------- Audio essence track ----------
 
-            newfile = InstantiationEssenceTrack(type='Audio',
-                                                samplingRate=f.audioSampleRate/1000,
-                                                bitDepth=f.audioBitDepth)
-            audio_codec = f.audioCodec + ": " + f.audioCodecLongName
-            newfile.set_essenceTrackStandard(PB_Element(tag='essenceTrackStandard',
-                                                        value=audio_codec))
-            datarate = f.audioBitRateH.split(" ")
-            newfile.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
-                                                                tag="essenceTrackDataRate",
-                                                                value=datarate[0]))
-            pres_master.add_instantiationEssenceTrack(newfile)
+            if f.audioCodec and f.audioCodecLongName:
+                newfile = InstantiationEssenceTrack(type='Audio',
+                                                    # samplingRate=f.audioSampleRate/1000,                      # isn't working currently so...
+                                                    samplingRate=audio_sample_rate(preservation_file_set[0]),   # replaces with this line as a patch
+                                                    bitDepth=f.audioBitDepth)
+                # audio_codec = f.audioCodec + ": " + f.audioCodecLongName  # isn't working currently so...
+
+                audio_codec = audio_long_name(f.file_name)                  # replaces with this line as a patch
+                newfile.set_essenceTrackStandard(PB_Element(tag='essenceTrackStandard',
+                                                            value=audio_codec))
+                datarate = f.audioBitRateH.split(" ")
+                newfile.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
+                                                                    tag="essenceTrackDataRate",
+                                                                    value=datarate[0]))
+                pres_master.add_instantiationEssenceTrack(newfile)
             self._parts_progress += 1
 
 
-            pass
+
 
 
         if record['Quality Control Notes']:
@@ -950,86 +991,89 @@ class pbcoreBuilder(threading.Thread):
         media_type = ''
         if record['Media Type']:
             media_type = record['Media Type']
+        access_copy = pbcoreInstantiation(type="Access Copy",
+                                          location=self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource'),
+                                          language=lang,
+                                          objectID=obj_ID.split("_a")[0]+"_access",
+                                          generations="Access Copy")
 
-        for access_files in access_files_sets:
+
+        for access_part in access_files_sets:
+
             # print access_files_sets
-            access_copy = pbcoreInstantiation(type="Access Copy",
-                                              location=self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource'),
-                                              language=lang,
-                                              generations="Access Copy")
+
 
         # ============================================================ #
         # =========================== Audio ========================== #
         # ============================================================ #
             if media_type.lower() == 'audio' or media_type.lower() == 'sound':
-                access_copy.add_instantiationIdentifier(
-                    PB_Element(['source', self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
-                               tag="instantiationIdentifier",
-                               value=obj_ID+"_access"))
-                access_copy.add_instantiationRelation(InstantiationRelation(derived_from=obj_ID+"_prsv"))
-                for access_file in access_files:
-                    f = AudioObject(access_file)
-                    newAudioFile = InstantiationPart(objectID=f.file_name,
-                                                     location=self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource'),
-                                                     duration=f.totalRunningTimeSMPTE)
+                # access_copy.add_instantiationIdentifier(
+                #     PB_Element(['source', self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
+                #                tag="instantiationIdentifier",
+                #                value=obj_ID.split("_a")[0]+"_access"))
+                access_copy.add_instantiationRelation(InstantiationRelation(derived_from=obj_ID.split("_a")[0]+"_prsv"))
+                f = AudioObject(access_part)
+                newAudioFile = InstantiationPart(objectID=f.file_name,
+                                                 location=self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource'),
+                                                 duration=trt(access_part))
 
 
 
-                    size, units = self.sizeofHuman(f.file_size)
-                    newAudioFile.set_instantiationFileSize(PB_Element(['unitsOfMeasure', units],
-                                                                      tag="instantiationFileSize",
-                                                                      value=size))
-                    if self.calculate_checksums is True:
-                    # if not args.nochecksum and self.settings.getboolean('CHECKSUM','CalculateChecksums') is True:
-                        self._working_status = "Calculating MD5 checksum for " + f.file_name + " (" + f.file_size_human + ")"
-                        if self.verbose:
-                            print("\t"),
-                            print "Part " + str(self._parts_progress + 1) + " of " + str(self._parts_total) + ": ",
-                            logger.info("Calculating MD5 checksum for " + f.file_name + ".")
-                            if f.file_size > LARGEFILE:
-                                print "\tNote: This file is " + f.file_size_human + " and might take some times to calculate."
-                            md5 = f.calculate_MD5(progress=True)
-                        else:
-                            f.calculate_MD5(threaded=True)
-                            while f.isMD5Calculating:
-                                self._calculation_percent = f.calulation_progresss
-                                sleep(.1)
-                            md5 = f.MD5_hash
-                        newAudioFile.add_instantiationIdentifier(
-                            PB_Element(['source', self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
-                                       ['version', 'MD5'],
-                                       ['annotation', 'checksum'],
-                                       tag="instantiationIdentifier",
-                                       value=md5))
-                        sleep(.5)
-                    if f.audioChannels == 1:
-                        access_copy.set_instantiationTracks(PB_Element(tag="instantiationTracks", value='Sound'))
-                        access_copy.set_instantiationChannelConfiguration(PB_Element(tag="instantiationChannelConfiguration",
-                                                                                     value='Mono'))
-                    elif f.audioChannels == 2:
-                        access_copy.set_instantiationTracks(PB_Element(tag="instantiationTracks", value='Sound'))
-                        access_copy.set_instantiationChannelConfiguration(PB_Element(tag="instantiationChannelConfiguration",
-                                                                                     value='Stereo'))
-                    newEssTrack = InstantiationEssenceTrack(type="Audio", bitDepth=f.audioBitDepth)
-                    newEssTrack.set_essenceTrackSamplingRate(PB_Element(["unitsOfMeasure", "kHz"],
-                                                                        tag="essenceTrackSamplingRate",
-                                                                        value=self._samplerate_cleanup(f.audioSampleRate)))
-                    if f.file_extension.lower() == '.mp3':
-                        newEssTrack.set_essenceTrackEncoding(PB_Element(tag='essenceTrackEncoding', value='MP3'))
-                    datarate = f.audioBitRateH.split(" ")
-                    newEssTrack.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
-                                                                    tag="essenceTrackDataRate",
-                                                                    value=datarate[0]))
-                    newAudioFile.add_instantiationEssenceTrack(newEssTrack)
-                    access_copy.add_instantiationPart(newAudioFile)
-                    self._parts_progress += 1
+                size, units = self.sizeofHuman(f.file_size)
+                newAudioFile.set_instantiationFileSize(PB_Element(['unitsOfMeasure', units],
+                                                                  tag="instantiationFileSize",
+                                                                  value=size))
+                if self.calculate_checksums is True:
+                # if not args.nochecksum and self.settings.getboolean('CHECKSUM','CalculateChecksums') is True:
+                    self._working_status = "Calculating MD5 checksum for " + f.file_name + " (" + f.file_size_human + ")"
+                    if self.verbose:
+                        print("\t"),
+                        print("Part " + str(self._parts_progress + 1) + " of " + str(self._parts_total) + ": ",)
+                        logger.info("Calculating MD5 checksum for " + f.file_name + ".")
+                        if f.file_size > LARGEFILE:
+                            print("\tNote: This file is " + f.file_size_human + " and might take some times to calculate.")
+                        md5 = f.calculate_MD5(progress=True)
+                    else:
+                        f.calculate_MD5(threaded=True)
+                        while f.isMD5Calculating:
+                            self._calculation_percent = f.calulation_progresss
+                            sleep(.1)
+                        md5 = f.MD5_hash
+                    newAudioFile.add_instantiationIdentifier(
+                        PB_Element(['source', self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
+                                   ['version', 'MD5'],
+                                   ['annotation', 'checksum'],
+                                   tag="instantiationIdentifier",
+                                   value=md5))
+                    sleep(.5)
+                if f.audioChannels == 1:
+                    access_copy.set_instantiationTracks(PB_Element(tag="instantiationTracks", value='Sound'))
+                    access_copy.set_instantiationChannelConfiguration(PB_Element(tag="instantiationChannelConfiguration",
+                                                                                 value='Mono'))
+                elif f.audioChannels == 2:
+                    access_copy.set_instantiationTracks(PB_Element(tag="instantiationTracks", value='Sound'))
+                    access_copy.set_instantiationChannelConfiguration(PB_Element(tag="instantiationChannelConfiguration",
+                                                                                 value='Stereo'))
+                newEssTrack = InstantiationEssenceTrack(type="Audio", bitDepth=f.audioBitDepth)
+                newEssTrack.set_essenceTrackSamplingRate(PB_Element(["unitsOfMeasure", "kHz"],
+                                                                    tag="essenceTrackSamplingRate",
+                                                                    value=self._samplerate_cleanup(f.audioSampleRate)))
+                if f.file_extension.lower() == '.mp3':
+                    newEssTrack.set_essenceTrackEncoding(PB_Element(tag='essenceTrackEncoding', value='MP3'))
+                datarate = f.audioBitRateH.split(" ")
+                newEssTrack.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
+                                                                tag="essenceTrackDataRate",
+                                                                value=datarate[0]))
+                newAudioFile.add_instantiationEssenceTrack(newEssTrack)
+                access_copy.add_instantiationPart(newAudioFile)
+                self._parts_progress += 1
 
 
         # ============================================================ #
         # ======================= Moving Image ======================= #
         # ============================================================ #
             elif media_type.lower() == 'moving image':
-                f = VideoObject(access_files)
+                f = VideoObject(access_part)
                 # print "audio", f.file_name
                 access_copy.add_instantiationIdentifier(PB_Element(['source', self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
                                                                    ['annotation', 'File Name'],
@@ -1037,7 +1081,8 @@ class pbcoreBuilder(threading.Thread):
                                                                    value=f.file_name))
                 access_copy.set_instantiationMediaType(PB_Element(tag='instantiationMediaType', value='Moving Image'))
                 access_copy.set_instantiationDuration(PB_Element(tag="instantiationDuration",
-                                                                 value=f.totalRunningTimeSMPTE))
+                                                                 # value=f.totalRunningTimeSMPTE))  # Not working currently
+                                                                 value=trt(access_part)))          # Used as a patch for ^^
                 video_codec = str(f.videoCodec + ": " + f.videoCodecLongName)
                 access_copy.set_instantiationStandard(PB_Element(tag='instantiationStandard', value=video_codec))
                 size, units = self.sizeofHuman(f.file_size)
@@ -1049,10 +1094,10 @@ class pbcoreBuilder(threading.Thread):
                     self._working_status = "Calculating MD5 checksum for " + f.file_name + " (" + f.file_size_human + ")"
                     if self.verbose:
                         print("\t"),
-                        print "Part " + str(self._parts_progress + 1) + " of " + str(self._parts_total) + ": ",
+                        print("Part " + str(self._parts_progress + 1) + " of " + str(self._parts_total) + ": ",)
                         logger.info("Calculating MD5 checksum for " + f.file_name + ".")
                         if f.file_size > LARGEFILE:
-                            print "\tNote: This file is " + f.file_size_human + " and might take some times to calculate."
+                            print("\tNote: This file is " + f.file_size_human + " and might take some times to calculate.")
                         md5 = f.calculate_MD5(progress=True)
                     else:
                         f.calculate_MD5(threaded=True)
@@ -1080,7 +1125,8 @@ class pbcoreBuilder(threading.Thread):
                 newEssTrack = InstantiationEssenceTrack(type='Video',
                                                         frameRate=("%.2f" % f.videoFrameRate),
                                                         aspectRatio=str(f.videoAspectRatio),
-                                                        duration=f.totalRunningTimeSMPTE)
+                                                        # duration=f.totalRunningTimeSMPTE)     # Not currently working
+                                                        duration=trt(access_part))             # Used as a patch for ^^
                 datarate = f.videoBitRateH.split(" ")
                 newEssTrack.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
                                                         tag="essenceTrackDataRate",
@@ -1100,20 +1146,26 @@ class pbcoreBuilder(threading.Thread):
                 access_copy.add_instantiationEssenceTrack(newEssTrack)
 
                 # ------------------ Audio track ------------------
-                audio_codec = f.audioCodec + ": " + f.audioCodecLongName
-                newEssTrack = InstantiationEssenceTrack(type='Audio',
-                                                        standard=audio_codec,
-                                                        samplingRate=f.audioSampleRate/1000)
-                datarate = f.audioBitRateH.split(" ")
-                newEssTrack.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
-                                                                tag="essenceTrackDataRate",
-                                                                value=datarate[0]))
-                bitdepth = f.audioBitDepth
-                if bitdepth == 32:
-                    bitdepth = "32-Bit Float"
-                newEssTrack.set_essenceTrackBitDepth(PB_Element(tag='essenceTrackBitDepth', value=bitdepth))
-                access_copy.add_instantiationEssenceTrack(newEssTrack)
+                if f.audioCodecLongName and f.audioCodec:
+                    audio_codec = f.audioCodec + ": " + f.audioCodecLongName
+
+                    # audio_codec = audio_long_name(f.file_name)
+                    newEssTrack = InstantiationEssenceTrack(type='Audio',
+                                                            standard=audio_codec,
+                                                            samplingRate=f.audioSampleRate/1000)          # not currently Working
+                                                            # samplingRate=audio_sample_rate(access_files))   # Used as a patch for ^^
+                    datarate = f.audioBitRateH.split(" ")
+                    newEssTrack.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
+                                                                    tag="essenceTrackDataRate",
+                                                                    value=datarate[0]))
+                    bitdepth = f.audioBitDepth
+                    if bitdepth == 32:
+                        bitdepth = "32-Bit Float"
+                    newEssTrack.set_essenceTrackBitDepth(PB_Element(tag='essenceTrackBitDepth', value=bitdepth))
+                    access_copy.add_instantiationEssenceTrack(newEssTrack)
                 self._parts_progress += 1
+            else:
+                raise ValueError("Media Type expected Audio, Sound, or Moving Image, recieved " + media_type)
         return access_copy
 
     def save_csv(self, filename):
@@ -1216,70 +1268,70 @@ class pbcoreBuilder(threading.Thread):
         XML = ""
         new_XML_file = PBCore(collectionSource=record['Institution'],
                               collectionTitle=record['Collection Guide Title'])
-        if files:
-            preservation_file_sets, access_files_sets = sep_pres_access(files)
-            self._parts_total = len(preservation_file_sets) + len(access_files_sets)
-            preservation_file_sets = group_sides(preservation_file_sets)
-            access_files_sets = group_sides(access_files_sets)
-        else:
+        if not files:
             # file_name_pattern = re.compile("[A-Z,a-z]+_\d+")
             fileName = re.search(FILE_NAME_PATTERN, record['Object Identifier']).group(0)
-            newfiles = self.locate_files(os.path.abspath(self.source), fileName)
-            preservation_file_sets, access_files_sets = sep_pres_access(newfiles)
+            files = self.locate_files(os.path.abspath(self.source), fileName)
 
+        preservation_file_sets, access_files_sets = sep_pres_access(files)
+        self._parts_total = len(preservation_file_sets) + len(access_files_sets)
+        preservation_file_sets = group_sides(preservation_file_sets)
+        access_files_sets = group_sides(access_files_sets)
 
 
         # pbcoreDescriptionDocument
-        obj_ID = ""
-        proj_ID = ""
-        asset_type = ""
+        # obj_ID = ""
+        # proj_ID = ""
+        # asset_type = ""
         main_title = ""
-        add_title = ""
-        ser_title = ""
-        descrp = ""
-        obj_ARK = ""
+        # add_title = ""
+        # ser_title = ""
+        # descrp = ""
+        # obj_ARK = ""
         inst_name = ""
-        inst_ARK = ""
-        inst_URL = ""
-        creationDates = []
-        subjectTops = ""
-        genre = ""
-        genre_autority = ""
-        IA_URL = ""
-        QC_notes_list = ""
-        transcript = ""
+        # inst_ARK = ""
+        # inst_URL = ""
+        # creationDates = []
+        # subjectTops = ""
+        # genre = ""
+        # genre_autority = ""
+        # IA_URL = ""
+        # QC_notes_list = ""
+        # transcript = ""
 
-        tapes = record['Object Identifier'].split(';')
+        ungrouped_tapes = record['Object Identifier'].split(';')
 
         # preservation, access = sep_pres_access()
 
-        if record['Object Identifier']:
-            obj_ID = record['Object Identifier'].split(';')[0].split('_t')[0]
-
-        if record['Project Identifier']:
-            # pbcoreInstantiation.instantiationIdentifier is part of CAVPP_Part class
-            proj_ID = record['Project Identifier']
-
-        if record['Asset Type']:
-            # pbcoreDescriptionDocument.pbcoreAssetType is in pbcoreDescriptionDocument()
-            # pbcoreInstantiation.pbcoreAssetType is in pbcoreDescriptionDocument()
-            asset_type = record['Asset Type']
-
+        # if record['Object Identifier']:
+        #     obj_ID = record['Object Identifier'].split(';')[0].split('_t')[0]
+        #
+        # if record['Project Identifier']:
+        #     # pbcoreInstantiation.instantiationIdentifier is part of CAVPP_Part class
+        #     proj_ID = record['Project Identifier']
+        #
+        # if record['Asset Type']:
+        #     # pbcoreDescriptionDocument.pbcoreAssetType is in pbcoreDescriptionDocument()
+        #     # pbcoreInstantiation.pbcoreAssetType is in pbcoreDescriptionDocument()
+        #     asset_type = record['Asset Type']
+        #
         if record['Main or Supplied Title']:
             main_title = record['Main or Supplied Title']
 
-        if record['Additional Title']:
-            add_title = record['Additional Title']
-
-        if record['Series Title']:
-            ser_title = record['Series Title']
-
+        # if record['Additional Title']:
+        #     add_title = record['Additional Title']
+        #
+        # if record['Series Title']:
+        #     ser_title = record['Series Title']
+        #
         if record['Institution']:
             inst_name = record['Institution']
+        #
+        # if record['Institution URL']:
+        #     inst_URL = record['Institution URL']
 
-        if record['Institution URL']:
-            inst_URL = record['Institution URL']
 
+        # Build descriptive
         descriptive = self._build_descriptive(record)
 
         # PARTS
@@ -1290,26 +1342,32 @@ class pbcoreBuilder(threading.Thread):
     # =================
     # AUDIO ONLY
     # =================
-
+        self._parts_progress = 0
 
         if record['Media Type'].lower() == 'audio' or record['Media Type'].lower() == 'sound':
         # PBcore Parts
-            self._parts_progress = 0
 
-            tapes = self._group_tapes(tapes)
 
-            for tape in tapes:
-                ob_id = tape[0]
-                # print ob_id
+            grouped_tapes = self._group_tapes(ungrouped_tapes)
+            print("Grouped tapes size: " + str(len(grouped_tapes)))
+            print("preservation_file_sets size: " + str(len(preservation_file_sets)))
+
+
+            for tape_sides, preservation_file_set, access_files_set in zip(grouped_tapes, preservation_file_sets, access_files_sets):
+                print(tape_sides)
+
+                ob_id = tape_sides[0]
                 ob_id = ob_id.split("_a")[0]
+
+                # create the header of the PBCorePart
                 if not record['Description or Content Summary'] == "":
                     new_part = CAVPP_Part(objectID=ob_id.strip(),
-                                              mainTitle=main_title.strip(),
-                                              description=record['Description or Content Summary'])
+                                          mainTitle=main_title.strip(),
+                                          description=record['Description or Content Summary'])
                 else:
                     new_part = CAVPP_Part(objectID=ob_id.strip(),
-                                              mainTitle=main_title.strip(),
-                                              description="")
+                                          mainTitle=main_title.strip(),
+                                          description="")
 
                 for call_number in call_numbers:
                     new_part.add_pbcoreIdentifier(
@@ -1320,7 +1378,7 @@ class pbcoreBuilder(threading.Thread):
         #           physical
         # -----------------------------------------------------
         #         print str(tape) + "tape"
-                physical = self._build_physical(tape, record)
+                physical = self._build_physical(tape_sides, record)
                 physical.add_instantiationIdentifier(PB_Element(['source', 'CAVPP'], tag='instantiationIdentifier', value=ob_id))
                 new_part.add_pbcoreInstantiation(physical)
 
@@ -1328,23 +1386,30 @@ class pbcoreBuilder(threading.Thread):
             #           Preservation Master
             # -----------------------------------------------------
 
-            if files:
-                if preservation_file_sets:
-                    for preservation_file_set in preservation_file_sets:
-                        # print preservation_file_set
-                        pres_master = self._build_preservation_master(record, preservation_file_set)
-                        new_part.add_pbcoreInstantiation(pres_master)
+                if files:
+                #     print("preservation_file_sets " + str(preservation_file_sets))
+                #     print("access_files_sets " + str(preservation_file_sets))
+                #
+                #     if preservation_file_sets:
+                #     for preservation_file_set in preservation_file_sets:
+                    print(preservation_file_set)
+                    pres_master = self._build_preservation_master(record, preservation_file_set)
+                    new_part.add_pbcoreInstantiation(pres_master)
 
-    #
-    #
-    # # -----------------------------------------------------
-    # #           access copy
-    # # -----------------------------------------------------
 
-                access_copy = self._build_access_copy(record, access_files_sets)
-                new_part.add_pbcoreInstantiation(access_copy)
-    #
-                descriptive.add_pbcore_part(new_part)
+        #
+        #
+        # # -----------------------------------------------------
+        # #           access copy
+        # # -----------------------------------------------------
+        #             if access_files_sets:
+        #                 for access_files_set in access_files_sets:
+                    print(access_files_set)
+                    access_copy = self._build_access_copy(record, access_files_set)
+
+                    new_part.add_pbcoreInstantiation(access_copy)
+#
+                    descriptive.add_pbcore_part(new_part)
 
 
     # =================
@@ -1353,14 +1418,13 @@ class pbcoreBuilder(threading.Thread):
 
         elif record['Media Type'].lower() == 'moving image':
             # print "moving image"
-            self._parts_progress = 0
-            for index, tape in enumerate(tapes):
+            for index, tape_sides in enumerate(ungrouped_tapes):
                 if not record['Description or Content Summary'] == "":
-                    new_part = CAVPP_Part(objectID=tape.strip(),
+                    new_part = CAVPP_Part(objectID=tape_sides.strip(),
                                          mainTitle=main_title.strip(),
                                          description=record['Description or Content Summary'])
                 else:
-                    new_part = CAVPP_Part(objectID=tape.strip(),
+                    new_part = CAVPP_Part(objectID=tape_sides.strip(),
                                          mainTitle=main_title.strip(),
                                          description="")
                 for call_number in call_numbers:
@@ -1370,7 +1434,7 @@ class pbcoreBuilder(threading.Thread):
         # -----------------------------------------------------
         #           physical
         # -----------------------------------------------------
-                physical = self._build_physical(tape, record)
+                physical = self._build_physical(tape_sides, record)
                 new_part.add_pbcoreInstantiation(physical)
                 # descriptive.add_pbcore_part(newPart)
 
@@ -1392,6 +1456,8 @@ class pbcoreBuilder(threading.Thread):
                     access_copy = self._build_access_copy(record, access_files_sets[index])
                     new_part.add_pbcoreInstantiation(access_copy)
                     descriptive.add_pbcore_part(new_part)
+        else:
+            raise MediaTypeException(record['Project Identifier'])
 
         # Extension
         if record['Country of Creation']:
@@ -1407,7 +1473,8 @@ class pbcoreBuilder(threading.Thread):
                                         exAuthority='CAVPP')
             else:  # I don't know if this will be anything other than "California Audiovisual Preservation Project"
                 exten = pbcoreExtension(exElement="projectNote",
-                                        exValue=record['Project Note'])
+                                        exValue=record['Project Note'],
+                                        exAuthority='CAPS')
             descriptive.add_pbcore_extension(exten)
         elif self.settings.getboolean('EXTRA','UseDefaultProjectNote'):
             exten = pbcoreExtension(exElement="projectNote",
@@ -1415,9 +1482,9 @@ class pbcoreBuilder(threading.Thread):
                                     exAuthority=self.settings.get('EXTRA', 'DefaultProjectNoteAuthority'))
             descriptive.add_pbcore_extension(exten)
 
-        if len(tapes) > 1:
-            for tape in record['Object Identifier'].split(';'):
-                newRelation = pbcoreRelation(reID=tape.strip(), reType="Has Part")
+        if len(grouped_tapes) > 1:
+            for tape_sides in record['Object Identifier'].split(';'):
+                newRelation = pbcoreRelation(reID=tape_sides.strip(), reType="Has Part")
                 descriptive.add_pbcoreRelation(newRelation)
         new_XML_file.set_IntellectualContent(descriptive)
         self._running = False
@@ -1454,19 +1521,18 @@ class pbcoreBuilder(threading.Thread):
         test_file = open(self.source, 'rU')
         mismatched = []
         valid = True
-        for index, heading in enumerate(csv.reader(test_file).next()):
-            if heading != officialList[index]:
+
+        for heading in csv.reader(test_file).next():
+            if not any(heading in s for s in officialList):
                 valid = False
-                mismatched.append("CSV title mismatch. At column "
-                                  + str(index + 1)
-                                  + ", recived: ["
-                                  + heading
-                                  + "]. Expected: ["
-                                  + officialList[index]
-                                  + "]")
+                mismatched.append("CSV title missing "
+                                  + heading)
+                print(heading)
         test_file.close()
         return valid, mismatched
 
+
+        pass
 
     def valid_date(self, date):
         date_re = '(19||20)\d\d-(0[1-9]|1[012])-(0[1-9]|[1|2][0-9]|3[0-1])'
@@ -1782,7 +1848,7 @@ class pbcoreBuilder(threading.Thread):
                         warning['record'] = test_record['Project Identifier']
                         warning['received'] = item[1]
                         warning['location'] = item[0]
-                        warning['type'] = 'Incorrect Date Format'
+                        warning['type'] = 'Incorrect Format'
                         warning['message'] = 'Expected YYYY-MM-DD.'
                         # warnings.append("\""
                         #                 + item[1]
@@ -1790,14 +1856,14 @@ class pbcoreBuilder(threading.Thread):
                         #                 + item[0]
                         #                 + "\' column is not in the correct date format. Expected YYYY-MM-DD.")
                         warnings.append(warning)
-            warning = dict()
             # check that there is a description
             if test_record['Description or Content Summary'] == '':
+                warning = dict()
                 warning['record'] = test_record['Project Identifier']
                 warning['received'] = "No data"
                 warning['location'] = "Description or Content Summary"
                 warning['type'] = 'Missing Required Data'
-                warning['message'] = 'This is a required field for PBCore to validate.'
+                warning['message'] = 'There is no data for Description or Content Summary.'
                 warnings.append(warning)
             #     warnings.append("Missing required \"Description or Content Summary\" field")
 
@@ -1806,26 +1872,37 @@ class pbcoreBuilder(threading.Thread):
             # for warning in warnings:
             #     print warning['record'] + ": Recieved \"" + warning['received'] + "\" at " + warning['location'] + ". " + warning['message']
 
+            if not valid_object_id(test_record['Object Identifier']):
+                error = dict()
+                error['record'] = test_record['Project Identifier']
+                error['received'] = test_record['Object Identifier']
+                error['location'] = "Object Identifier"
+                error['type'] = 'Incorrect Format'
+                error['message'] = 'Expected \'[MARC Code]_[identifier]\'.'
+                errors.append(error)
         return warnings, errors
 
 
     def locate_files(self, root, fileName):
         # search for file with fileName in it
+
+        # search for file with fileName in it
         found_directory = None
         results = []
         # check if a directory matches the file name
-        for roots, dirs, files in os.walk(os.path.dirname(root)):
-            for dir in dirs:
-                if fileName == dir:
-                    found_directory = os.path.join(roots, dir)
-
+        # for roots, dirs, files in os.walk(root):
+        for dir in os.listdir(root):
+            if not dir.startswith('.'):
+                if fileName in dir:
+                    found_directory = os.path.join(root, dir)
                     break
         # see of a file in that folder has a file with that name in it
         if found_directory:
             for roots, dirs, files, in os.walk(found_directory):
                 for file in files:
-                    if fileName in file:
-                        results.append(os.path.join(roots, file))
+                    if not file.startswith('.'):
+                        if fileName in file:
+                            results.append(os.path.join(roots, file))
         return results
 
     def load_records(self):
@@ -1882,7 +1959,7 @@ class pbcoreBuilder(threading.Thread):
                 pass
         return warnings
 
-    def _group_tapes(self, parts):
+    def _group_tapes(self, parts, files=None):
         # print "parts: " + str(parts)
         organized = []
         multi = []
@@ -1928,11 +2005,8 @@ class pbcoreBuilder(threading.Thread):
             save_file.write(new_xml.toprettyxml(encoding='utf-8'))
             save_file.close()
             self._job_progress += 1
-
-
-
-            # print self.generate_pbcore(record, files)
-        # self.build_all_records()
+        self._working_file = ""
+        self._working_status = "Done"
         self._running = False
 
 
@@ -1946,18 +2020,18 @@ def report(files_created, number_of_new_records, number_of_records, number_of_re
     print("\n\tNew Records:")
     print("\t------------")
     for index, file_created in enumerate(files_created):
-        print str(index + 1) + ")\t" + file_created
-    print "\n"
+        print(str(index + 1) + ")\t" + file_created)
+    print("\n")
 
 
 def proceed(message, warnings=None):
         key = ""
-        print ""
+        print ("")
         while True:
 
             if warnings:
-                print "\tWarnings:"
-                print "\n\t**************************************************************\n"
+                print("\tWarnings:")
+                print("\n\t**************************************************************\n")
                 for index, warning in enumerate(warnings):
                     # print warning
                     # print str(index + 1) + ")\t" + warning + "\n"
@@ -1976,18 +2050,18 @@ def proceed(message, warnings=None):
                     if 'message' in warning:
                         warning_message += warning['message']
 
-                    print warning_message
+                    print(warning_message)
                     # print str(index + 1) + ")\t" +warning['record'] + ": Recieved \"" + warning['received'] + "\" at " + warning['location'] + ". " + warning['message']
-            print "\t**************************************************************"
+            print("\t**************************************************************")
             print("\n\t" + message)
-            print "\n\tDo you wish to continue?",
+            print("\n\tDo you wish to continue?",)
             key = raw_input("[y/n]:")
             if key.lower() == "yes":
                 key = 'y'
             if key.lower() == "no":
                 key = 'n'
             if key.lower() != 'y' and key.lower() != 'n':
-                print "Not a valid option.\n"
+                print("Not a valid option.\n")
             else:
                 break
 
@@ -2019,7 +2093,7 @@ def group_sides(digital_files):
                 set.append(part)
                 part = []
     else:
-        print digital_files
+        print(digital_files)
         raise TypeError("WHY????")
     # print "Set: " + str(set)
     return set
@@ -2058,14 +2132,14 @@ def setup_logs():
     ch.addFilter(log_filter)  # logger.addFilter(NoParsingFilter())
     if args.debug or SETTINGS.getboolean('EXTRA', 'DebugMode') is True:
         mode = 'debug'
-        print "ENTERING DEBUG MODE!"
+        print("ENTERING DEBUG MODE!")
         if SETTINGS.getboolean('LOGS', 'UseLogs'):
             fh.setLevel(logging.DEBUG)
     else:
         if SETTINGS.getboolean('LOGS', 'UseLogs'):
             fh.setLevel(logging.INFO)
     if args.nochecksum or SETTINGS.getboolean('CHECKSUM', 'CalculateChecksums') is False:
-        print "Bypassing MD5 checksum generation."
+        print("Bypassing MD5 checksum generation.")
     error_formatter = logging.Formatter(
         '%(asctime)s - %(name)s - %(levelname)s - %(message)s')  # DATE - USERNAME - Message
     stderr_formatter = logging.Formatter('%(levelname)s - %(message)s')  # USERNAME - Message
@@ -2091,27 +2165,29 @@ def Validate_csv_file():
         logger.debug(args.csv + " successfully opened.")
         pass
     else:
-        print "FAILED"
+        print("FAILED")
         logger.critical(error_message)
-        print "Quiting"
+        print("Quiting")
         quit()
     logger.debug("Validating file is a csv.")
     if record_file.is_valid_csv():
         logger.debug(args.csv + " successfully validated as a CSV.")
     else:
         logger.critical("Error, cannot load file as a CSV.")
-        print "FAILED"
-        print "Quitting."
+        print("FAILED")
+        print("Quitting.")
         quit()
     logger.debug("Validating files column titles.")
     valid, errors = record_file.validate_col_titles()
     if valid:
-        logger.debug(args.csv + " has valid columns.")
+        logger.debug(args.csv + " has valid columns headers.")
     else:
         sys.stdout.flush()
         for error in errors:
             logger.critical(error)
         quit()
+
+    logger.debug("Validating files data.")
 
     return record_file
 
@@ -2131,11 +2207,11 @@ def validate_csv_data(record_file):
     sys.stdout.flush()
     if total_errors:
         for error in total_errors:
-            print "Error found: " + error
+            print("Error found: " + error)
         if total_warnings:
             for warning in total_warnings:
-                print "WARNINGS: " + warning
-        print "Quitting"
+                print("WARNINGS: " + warning)
+        print("Quitting")
         quit()
 
     return total_errors, total_warnings
@@ -2145,11 +2221,11 @@ def report_warnings(mode, total_errors, total_warnings):
     sys.stdout.flush()
     if total_errors:
         for error in total_errors:
-            print "Error found: " + error
+            print("Error found: " + error)
         if total_warnings:
             for warning in total_warnings:
-                print "Warning: " + warning
-        print "Quitting"
+                print("Warning: " + warning)
+        print("Quitting")
         quit()
     if mode != 'debug':
         if total_warnings:
@@ -2158,7 +2234,7 @@ def report_warnings(mode, total_errors, total_warnings):
                 logger.warning(warning)
             if proceed("Possible problems with the data found.", total_warnings) is False:
                 logger.info("Script terminated by user.")
-                print "Quitting"
+                print("Quitting")
                 quit()
             else:
                 print("\t"),
@@ -2214,7 +2290,10 @@ def generate_pbcore(record_file):
 
 def main():
     global settingsFileName
-    settingsFileName = os.path.join(os.path.dirname(__file__), '../settings/pbcore-csv-settings.ini')
+    # settingsFileName = os.path.join(os.path.dirname(__file__), '../settings/pbcore-csv-settings.ini')
+    # settingsFileName = os.path.join(os.path.dirname(__file__),'settings/pbcore-csv-settings.ini')
+    # print __file__
+    settingsFileName = os.path.join(os.path.dirname(__file__),'pbcore-csv-settings.ini')
 
     global SETTINGS
     global logger
@@ -2226,7 +2305,7 @@ def main():
         f.close()
         SETTINGS.read(settingsFileName)
     except IOError:
-        sys.stderr.write('Error: Cannot find ' + settingsFileName + '. Quiting')
+        sys.stderr.write('Error: Cannot find ' + settingsFileName + '. Quiting\n')
         quit()
 
     logger = logging.getLogger()
@@ -2242,7 +2321,7 @@ def main():
     if args.csv == "" and not args.gui:
         parser.print_help()
     elif args.gui:
-        from gui.pbcore_csv_gui import start_gui
+        from pbcore_csv_gui import start_gui
         if args.csv:
             print("Loading graphical user interface with: "+args.csv)
             start_gui(settings=os.path.abspath(settingsFileName), csvfile=args.csv)
