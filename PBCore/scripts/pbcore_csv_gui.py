@@ -1,19 +1,18 @@
 import sys
 if sys.version_info >= (3, 0):
     from tkinter import filedialog as tkFileDialog
-else:
-    import tkFileDialog
-    import tkMessageBox
-if sys.version_info >= (3, 0):
-    from tkinter.filedialog import askopenfile
+    from tkinter.filedialog import askopenfilename
     from tkinter.messagebox import showerror
     from tkinter import ttk
     from tkinter import *
 else:
+    import tkFileDialog
+    import tkMessageBox
     from tkFileDialog import askopenfilename
     from tkMessageBox import showerror
-    from Tkinter import *
     import ttk
+    from Tkinter import *
+
 from time import sleep
 from collections import OrderedDict
 from platform import system
