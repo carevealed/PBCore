@@ -1,4 +1,5 @@
 import string
+import sys
 
 __author__ = 'California Audiovisual Preservation Project'
 __copyright__ = "Copyright 2015, California Audiovisual Preservation Project"
@@ -3638,7 +3639,10 @@ class PB_Element():
             else:
                 raise TypeError("Expected string. Received: ", type(kwargs.get("tag")))
             if isinstance(kwargs.get("value"), str):  # checks if the value is a string
-                self.value = kwargs.get("value").decode('utf-8')
+                if sys.version_info >= (3, 0):
+                    self.value = kwargs.get("value")
+                else:
+                    self.value = kwargs.get("value").decode('utf-8')
 
             elif isinstance(kwargs.get("value"), int):  # checks if the value is a int
                 self.value = str(kwargs.get("value"))
