@@ -1904,8 +1904,9 @@ class pbcoreBuilder(threading.Thread):
         for dir in os.listdir(root):
             if not dir.startswith('.'):
                 if fileName in dir:
-                    found_directory = os.path.join(root, dir)
-                    break
+                    if os.path.isdir(os.path.join(root, dir)):
+                        found_directory = os.path.join(root, dir)
+                        break
         # see of a file in that folder has a file with that name in it
         if found_directory:
             for roots, dirs, files, in os.walk(found_directory):
