@@ -1901,19 +1901,20 @@ class pbcoreBuilder(threading.Thread):
         results = []
         # check if a directory matches the file name
         # for roots, dirs, files in os.walk(root):
-        for dir in os.listdir(root):
-            if not dir.startswith('.'):
-                if fileName in dir:
-                    if os.path.isdir(os.path.join(root, dir)):
-                        found_directory = os.path.join(root, dir)
-                        break
-        # see of a file in that folder has a file with that name in it
-        if found_directory:
-            for roots, dirs, files, in os.walk(found_directory):
-                for file in files:
-                    if not file.startswith('.'):
-                        if fileName in file:
-                            results.append(os.path.join(roots, file))
+        if os.path.isdir(root):
+            for dir in os.listdir(root):
+                if not dir.startswith('.'):
+                    if fileName in dir:
+                        if os.path.isdir(os.path.join(root, dir)):
+                            found_directory = os.path.join(root, dir)
+                            break
+            # see of a file in that folder has a file with that name in it
+            if found_directory:
+                for roots, dirs, files, in os.walk(found_directory):
+                    for file in files:
+                        if not file.startswith('.'):
+                            if fileName in file:
+                                results.append(os.path.join(roots, file))
         return results
 
     def load_records(self):
