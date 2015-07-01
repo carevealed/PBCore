@@ -4,6 +4,7 @@ import string
 from time import sleep
 import unicodedata
 
+
 __author__ = 'California Audio Visual Preservation Project'
 __module__ = 'TSV to CSV File Converter'
 __date__ = '2015'
@@ -38,18 +39,19 @@ def main():
 
     # quit()
     with open(newname, 'w') as output_file:
-        with codecs.open(sys.argv[1], 'r', 'UTF-8') as input_file:
+        with open(sys.argv[1], 'rU', encoding='utf-8') as input_file:
             cleanstring = input_file.read()
-            cleanstring = cleanstring.encode('UTF-8', errors='ignore')
+            # cleanstring = cleanstring.encode('UTF-8', errors='ignore')
             cleanFile = csv.StringIO(cleanstring)
             #
             tsv_file = csv.reader(cleanFile, dialect=csv.excel_tab)
+            # tsv_file = csv.reader(cleanFile, dialect=csv.excel_tab)
             a = csv.writer(output_file)
 
 
             for n in tsv_file:
                 a.writerow(n)
-                print("  " + n[3])
+                print("  " +  str(n))
             print("\nDone\n")
 
 

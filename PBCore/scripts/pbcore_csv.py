@@ -1254,7 +1254,7 @@ class pbcoreBuilder(threading.Thread):
                           'CONTENTdm number',
                           'CONTENTdm file name',
                           'CONTENTdm file path']
-            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer = csv.DictWriter(csvfile, fieldnames=officialList)
             writer.writeheader()
             for record in self._records:
                 writer.writerow(record)

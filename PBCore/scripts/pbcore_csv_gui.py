@@ -5,6 +5,7 @@ if sys.version_info >= (3, 0):
     from tkinter.messagebox import showerror, askokcancel
     from tkinter import ttk
     from tkinter import *
+    import tkinter as tk
 else:
     import tkFileDialog
     import tkMessageBox
@@ -12,6 +13,7 @@ else:
     from tkMessageBox import showerror, askokcancel
     import ttk
     from Tkinter import *
+    import Tkinter as tk
 
 from time import sleep
 from collections import OrderedDict
@@ -21,6 +23,7 @@ import re
 import webbrowser
 import csv
 import os
+import traceback
 
 from PBCore.scripts.pbcore_csv import pbcoreBuilder
 
@@ -773,19 +776,23 @@ def sep_pres_access(digital_files):
         return preservation, access
 
 def start_gui(settings, csvfile=None):
-    root = Tk()
+
+    root = tk.Tk()
     root.wm_title('PBCore Generator')
     # global settingsFile
     # # if settings:
     # # settingsFile = settings
     # self.settings = settings
+    # tk.CallWrapper = Catcher
     if csvfile:
         app = MainWindow(root, input_file=csvfile, settings=settings)
     else:
         app = MainWindow(root, settings=settings)
+
     # root.option_add('*tearOff', False)
     root.update()
     root.minsize(root.winfo_width(), root.winfo_height())
+
     root.mainloop()
 
 class RecordDetailsWindow():
@@ -1968,6 +1975,31 @@ else:
     # print os.path.dirname(__name__)
     # from PBCore.scripts.pbcore_csv import *
     pass
+
+class Catcher(object):
+    def __init__(self, func, subst, widget):
+        self.func = func
+        self.subst = subst
+        self.widget = widget
+
+
+    def __call__(self, *args):
+        try:
+            # args = function(self.subst, args)
+            # args = self.func(args)
+            # print(type(args))
+            if self.subst:
+                args = self.subst(args)
+            if self.func:
+                # print(self.func(args))
+                return self.func(*args)
+        except SystemExit as msg:
+            raise SystemExit(msg)
+
+        except Exception as e:
+            # print(traceback.print_exc())
+            showerror("PBCore Builder experience an error", str(e))
+            quit(-1)
 
 class CSVDataError(Exception):
     def __init__(self, value):
