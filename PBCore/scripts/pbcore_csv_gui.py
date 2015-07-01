@@ -2,7 +2,7 @@ import sys
 if sys.version_info >= (3, 0):
     from tkinter import filedialog as tkFileDialog
     from tkinter.filedialog import askopenfilename
-    from tkinter.messagebox import showerror, askokcancel
+    from tkinter.messagebox import showerror, askokcancel, showinfo
     from tkinter import ttk
     from tkinter import *
     import tkinter as tk
@@ -10,7 +10,7 @@ else:
     import tkFileDialog
     import tkMessageBox
     from tkFileDialog import askopenfilename
-    from tkMessageBox import showerror, askokcancel
+    from tkMessageBox import showerror, askokcancel, showinfo
     import ttk
     from Tkinter import *
     import Tkinter as tk
@@ -558,6 +558,7 @@ class MainWindow():
             self.set_part_progress(part_progress, part_total)
             self.set_calculation_progress(self.generate.calulation_progress)
             self.set_calculation_progress(calulation_percent)
+            showinfo("Status", "Job done")
 
     def test(self):
 
@@ -783,7 +784,7 @@ def start_gui(settings, csvfile=None):
     # # if settings:
     # # settingsFile = settings
     # self.settings = settings
-    # tk.CallWrapper = Catcher
+    tk.CallWrapper = Catcher
     if csvfile:
         app = MainWindow(root, input_file=csvfile, settings=settings)
     else:
@@ -1998,7 +1999,9 @@ class Catcher(object):
 
         except Exception as e:
             # print(traceback.print_exc())
-            showerror("PBCore Builder experience an error", str(e))
+            showerror("PBCore Builder experience an error", "Error message: " + str(e) +
+                      "\nSaving error info to PBCore_error.log")
+            traceback.print_exc(file=open('PBCore_error.log', 'e'))
             quit(-1)
 
 class CSVDataError(Exception):
