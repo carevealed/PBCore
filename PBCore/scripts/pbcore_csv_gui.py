@@ -2001,7 +2001,7 @@ class Catcher(object):
             # print(traceback.print_exc())
             showerror("PBCore Builder experience an error", "Error message: " + str(e) +
                       "\nSaving error info to PBCore_error.log")
-            traceback.print_exc(file=open('PBCore_error.log', 'e'))
+            traceback.print_exc(file=open('PBCore_error.log', 'a'))
             quit(-1)
 
 class CSVDataError(Exception):
