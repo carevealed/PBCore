@@ -489,7 +489,7 @@ class MainWindow():
         return records
 
     def save_csv(self):
-        if tkMessageBox.askokcancel("Are You Sure?", "Are you sure you want to save changes to " + os.path.basename(self.csv_filename_entry.get()) + "?"):
+        if askokcancel("Are You Sure?", "Are you sure you want to save changes to " + os.path.basename(self.csv_filename_entry.get()) + "?"):
             self.file_records.save_csv(self.csv_filename_entry.get())
     def start(self):
 
@@ -1429,7 +1429,7 @@ class RecordDetailsWindow():
             if len(changes) < 5:
                 message = "Are you sure you want to make the following changes?"
                 for change in changes:
-                    message += ("\n" + change[0] + ": " + change[1] +"\n")
+                    message += ("\n" + str(change[0]) + ": " + str(change[1]) +"\n")
             else:
                 message = "There are "+ str(len(changes))+" changes with this record. " \
                                                           "\nAre you sure you want to change them?\n\n"
