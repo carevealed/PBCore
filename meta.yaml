@@ -9,6 +9,7 @@ source:
 build:
   number: 2
   string: b
+  osx_is_app: False
   entry_points:
     -  makepbcore = PBCore.scripts.pbcore_csv:main
 
