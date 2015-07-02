@@ -10,18 +10,21 @@ def _check_exists(file_name):
 def trt(file_name):
     _check_exists(file_name)
     media_info = MediaInfo.parse(file_name)
-    for track in media_info.tracks:
-        if track.track_type == 'General':
-            miliseconds = track.duration
+    try:
+        for track in media_info.tracks:
+            if track.track_type == 'General':
+                miliseconds = track.duration
 
-            if not isinstance(miliseconds , int):
-                raise Exception(("Unable to calculate total running time on " + file_name))
+                if not isinstance(miliseconds , int):
+                    raise Exception(("Unable to calculate total running time on " + file_name))
 
-            seconds = (miliseconds/1000)% 60
-            minutes = (miliseconds/1000)/60%60
-            hours = (miliseconds/1000)/60/60
-            trt = str(hours).zfill(2) + ":" + str(minutes).zfill(2) + ":" + str(seconds).zfill(2)
-            return trt
+                seconds = (miliseconds/1000)% 60
+                minutes = (miliseconds/1000)/60%60
+                hours = (miliseconds/1000)/60/60
+                trt = str(hours).zfill(2) + ":" + str(minutes).zfill(2) + ":" + str(seconds).zfill(2)
+                return trt
+    except AttributeError:
+        return "NA"
 #
 # def audio_sample_rate(file_name):
 #     _check_exists(file_name)
