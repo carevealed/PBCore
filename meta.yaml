@@ -8,7 +8,7 @@ source:
 
 build:
   number: 9
-  string: c
+  string: d
   entry_points:
     -  makepbcore = PBCore.scripts.pbcore_csv:main
 
