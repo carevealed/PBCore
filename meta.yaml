@@ -8,7 +8,7 @@ source:
 
 build:
   number: 2
-  string: b
+  string: c
   entry_points:
     -  makepbcore = PBCore.scripts.pbcore_csv:main
 
@@ -22,7 +22,6 @@ requirements:
 
   run:
     - python
-    - lame
     - lxml
     - pymediainfo
     - onesheet >=0.1.5
