@@ -1,35 +1,42 @@
 package:
   name: cavpp_pbcore_tools
-  version: 0.1.4b1
+  version: 0.1.4b16
 
 source:
-  git_tag: 0.1.4b1	
+  git_tag: 0.1.4b16	
   git_url: https://github.com/cavpp/PBCore.git
 
 build:
-  number: 1
-  string: a
+  number: 9
+  string: c
   entry_points:
-    -  makemp3 = audio_convert.scripts.audioConvert:installed_start
+    -  makepbcore = PBCore.scripts.pbcore_csv:main
 
 requirements:
   build:
     - python
     - setuptools
-    - onesheet >=0.1.4
+    - pymediainfo
+    - lxml
+    - onesheet >=0.1.5
 
   run:
-    - python <3.0
-    - onesheet >=0.1.4
+    - python
+    - lxml
+    - pymediainfo
+    - onesheet >=0.1.5
 
 test:
   imports:
-    - audio_convert
-    - modules.PBCore.PBCore
+    - PBCore.scripts.modules.PBCore
+    - pymediainfo
 
   commands:
     - makepbcore -h
     - ffprobe -L
+
+
+
 
 about:
   home: https://github.com/cavpp/audio_convert
