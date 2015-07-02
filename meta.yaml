@@ -1,15 +1,14 @@
 package:
   name: cavpp_pbcore_tools
-  version: 0.1.4b19
+  version: 0.1.4b20
 
 source:
-  git_tag: 0.1.4b19
+  git_tag: 0.1.4b20
   git_url: https://github.com/cavpp/PBCore.git
 
 build:
   number: 2
   string: b
-  osx_is_app: False
   entry_points:
     -  makepbcore = PBCore.scripts.pbcore_csv:main
 
@@ -23,6 +22,7 @@ requirements:
 
   run:
     - python
+    - lame
     - lxml
     - pymediainfo
     - onesheet >=0.1.5
