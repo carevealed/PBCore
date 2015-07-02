@@ -1,9 +1,9 @@
 package:
   name: cavpp_pbcore_tools
-  version: 0.1.4b17
+  version: 0.1.4b18
 
 source:
-  git_tag: 0.1.4b17
+  git_tag: 0.1.4b18
   git_url: https://github.com/cavpp/PBCore.git
 
 build:
