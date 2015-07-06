@@ -854,7 +854,7 @@ class pbcoreBuilder(threading.Thread):
                                                                          tag="instantiationIdentifier",
                                                                          value=md5))
                     sleep(.5)
-                if f.audioCodec and f.audioCodecLongName:
+                if f.audioCodec:
                     newfile = InstantiationEssenceTrack(type="Audio")
                     newfile.set_essenceTrackBitDepth(PB_Element(tag="essenceTrackBitDepth",
                                                                 value=str(f.audioBitDepth)))
@@ -871,8 +871,11 @@ class pbcoreBuilder(threading.Thread):
                                                                         tag='instantiationDigital',
                                                                         value='audio/x-wav'))  # This is really ugly code I don't know a better way
                         newfile.set_essenceTrackEncoding(PB_Element(tag='essenceTrackEncoding', value='WAV'))
+                    try:
+                        audio_codec = f.audioCodec + ": " + f.audioCodecLongName
+                    except NoDataException:
+                        audio_codec = f.audioCodec
 
-                    audio_codec = f.audioCodec + ": " + f.audioCodecLongName
                     pres_master.set_instantiationStandard(PB_Element(tag='instantiationStandard',
                                                                      value=audio_codec))
 
@@ -891,7 +894,11 @@ class pbcoreBuilder(threading.Thread):
 
             f = VideoObject(preservation_file_set[0])
             pres_master.set_instantiationMediaType(PB_Element(tag='instantiationMediaType', value='Moving Image'))
-            video_codec = str(f.videoCodec + ": " + f.videoCodecLongName)
+            try:
+                video_codec = str(f.videoCodec + ": " + f.videoCodecLongName)
+            except NoDataException:
+                video_codec = str(f.videoCodec)
+
             pres_master.set_instantiationStandard(PB_Element(tag='instantiationStandard', value=video_codec))
             pres_master.add_instantiationIdentifier(PB_Element(['source', self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
                                                                ['annotation', 'File Name'],
@@ -951,14 +958,18 @@ class pbcoreBuilder(threading.Thread):
 
             # ---------- Audio essence track ----------
 
-            if f.audioCodec and f.audioCodecLongName:
+            if f.audioCodec:
                 newfile = InstantiationEssenceTrack(type='Audio',
-                                                    # samplingRate=f.audioSampleRate/1000,                      # isn't working currently so...
-                                                    samplingRate=audio_sample_rate(preservation_file_set[0]),   # replaces with this line as a patch
+                                                    samplingRate=f.audioSampleRate/1000,                      # isn't working currently so...
+                                                    # samplingRate=audio_sample_rate(preservation_file_set[0]),   # replaces with this line as a patch
                                                     bitDepth=f.audioBitDepth)
-                # audio_codec = f.audioCodec + ": " + f.audioCodecLongName  # isn't working currently so...
+                try:
+                    audio_codec = f.audioCodec + ": " + f.audioCodecLongName
+                except NoDataException:
+                    audio_codec = f.audioCodec
 
-                audio_codec = audio_long_name(f.file_name)                  # replaces with this line as a patch
+
+                # audio_codec = audio_long_name(f.file_name)                  # replaces with this line as a patch
                 newfile.set_essenceTrackStandard(PB_Element(tag='essenceTrackStandard',
                                                             value=audio_codec))
                 datarate = f.audioBitRateH.split(" ")
@@ -1083,7 +1094,11 @@ class pbcoreBuilder(threading.Thread):
                 access_copy.set_instantiationDuration(PB_Element(tag="instantiationDuration",
                                                                  # value=f.totalRunningTimeSMPTE))  # Not working currently
                                                                  value=trt(access_part)))          # Used as a patch for ^^
-                video_codec = str(f.videoCodec + ": " + f.videoCodecLongName)
+                try:
+                    video_codec = str(f.videoCodec + ": " + f.videoCodecLongName)
+                except NoDataException:
+                    video_codec = str(f.videoCodec)
+
                 access_copy.set_instantiationStandard(PB_Element(tag='instantiationStandard', value=video_codec))
                 size, units = self.sizeofHuman(f.file_size)
                 access_copy.set_instantiationFileSize(PB_Element(['unitsOfMeasure', units],
@@ -1146,10 +1161,12 @@ class pbcoreBuilder(threading.Thread):
                 access_copy.add_instantiationEssenceTrack(newEssTrack)
 
                 # ------------------ Audio track ------------------
-                if f.audioCodecLongName and f.audioCodec:
-                    audio_codec = f.audioCodec + ": " + f.audioCodecLongName
+                if f.audioCodec:
+                    try:
+                        audio_codec = f.audioCodec + ": " + f.audioCodecLongName
+                    except NoDataException:
+                        audio_codec = f.audioCodec
 
-                    # audio_codec = audio_long_name(f.file_name)
                     newEssTrack = InstantiationEssenceTrack(type='Audio',
                                                             standard=audio_codec,
                                                             samplingRate=f.audioSampleRate/1000)          # not currently Working
