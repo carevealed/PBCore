@@ -1,15 +1,21 @@
 #!/usr/local/bin/python
 import sys
+from datetime import date
+
 if sys.version_info >= (3, 0):
+    from tkinter.filedialog import asksaveasfilename
     from queue import Queue
     from configparser import ConfigParser
+    from tkinter.messagebox import showerror, askyesno
 else:
     from Queue import Queue
     from ConfigParser import ConfigParser
-
+    from tkMessageBox import showerror, askyesno
+    from tkFileDialog import asksaveasfilename
 __author__ = 'California Audio Visual Preservation Project'
 __copyright__ = "Copyright 2015, California Audiovisual Preservation Project"
 __credits__ = "Henry Borchers"
+import traceback
 import os
 import sys
 import logging
@@ -17,8 +23,10 @@ import argparse
 import re
 import threading
 from onesheet.VideoObject import *
+from onesheet.FileObject import *
 from onesheet.AudioObject import *
-from PBCore.scripts.modules.PBCore.patch import trt
+from onesheet import OExceptions
+# from PBCore.scripts.modules.PBCore.patch import trt
 
 from time import sleep
 from os.path import isfile
@@ -26,7 +34,7 @@ from xml.dom.minidom import parseString
 
 from PBCore.scripts.modules.PBCore.PBCore import *
 FILE_NAME_PATTERN = re.compile("[A-Z,a-z]+_\d+")
-
+use_gui = True
 
 # a series of letters that is lowercase from a through z,
 # followed an underscore
@@ -807,6 +815,8 @@ class pbcoreBuilder(threading.Thread):
                                           generations="Preservation Master",
                                           language=lang)
 
+
+
         # ============================================================ #
         # ======================== Audio only ======================== #
         # ============================================================ #
@@ -821,8 +831,38 @@ class pbcoreBuilder(threading.Thread):
             pres_master.add_instantiationRelation(InstantiationRelation(derived_from=top_id))
 
             for master_part in preservation_file_set:
-                f = AudioObject(master_part)
-                new_mast_part = InstantiationPart(location=self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource'), duration=trt(master_part))
+                if os.path.splitext(master_part)[1] == ".iso":
+                    f = FileObject(master_part)
+                    new_mast_part = InstantiationPart(location=self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource'))
+                else:
+                    f = AudioObject(master_part)
+                    new_mast_part = InstantiationPart(location=self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource'), duration=f.totalRunningTimeSMPTE)
+                    if f.audioCodec:
+                        newfile = InstantiationEssenceTrack(type="Audio")
+                        newfile.set_essenceTrackBitDepth(PB_Element(tag="essenceTrackBitDepth",
+                                                                    value=str(f.audioBitDepth)))
+                        newfile.set_essenceTrackSamplingRate(PB_Element(["unitsOfMeasure", "kHz"],
+                                                                        tag="essenceTrackSamplingRate",
+                                                                        value=self._samplerate_cleanup(f.audioSampleRate)))
+
+                        datarate = f.audioBitRateH.split(" ")
+                        newfile.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
+                                                                        tag="essenceTrackDataRate",
+                                                                        value=datarate[0]))
+                        if f.file_extension.lower() == '.wav':
+                            pres_master.set_instantiationDigital(PB_Element(['source', 'PRONOM Technical Registry'],
+                                                                            tag='instantiationDigital',
+                                                                            value='audio/x-wav'))  # This is really ugly code I don't know a better way
+                            newfile.set_essenceTrackEncoding(PB_Element(tag='essenceTrackEncoding', value='WAV'))
+                        try:
+                            audio_codec = f.audioCodec + ": " + f.audioCodecLongName
+                        except NoDataException:
+                            audio_codec = f.audioCodec
+
+                        pres_master.set_instantiationStandard(PB_Element(tag='instantiationStandard',
+                                                                         value=audio_codec))
+
+                        new_mast_part.add_instantiationEssenceTrack(newfile)
                 file_size, file_units = self.sizeofHuman(f.file_size)
                 new_mast_part.set_instantiationFileSize(PB_Element(['unitsOfMeasure',file_units],
                                                                    tag="instantiationFileSize",
@@ -831,8 +871,8 @@ class pbcoreBuilder(threading.Thread):
                                                                      ['annotation', 'File Name'],
                                                                      tag="instantiationIdentifier",
                                                                      value=os.path.basename(master_part)))
+
                 if self.calculate_checksums is True:
-                # if not args.nochecksum and self.settings.getboolean('CHECKSUM','CalculateChecksums') is True:
 
                     self._working_status = "Calculating MD5 checksum for " + f.file_name + " (" + f.file_size_human + ")"
                     if self.verbose:
@@ -854,32 +894,7 @@ class pbcoreBuilder(threading.Thread):
                                                                          tag="instantiationIdentifier",
                                                                          value=md5))
                     sleep(.5)
-                if f.audioCodec:
-                    newfile = InstantiationEssenceTrack(type="Audio")
-                    newfile.set_essenceTrackBitDepth(PB_Element(tag="essenceTrackBitDepth",
-                                                                value=str(f.audioBitDepth)))
-                    newfile.set_essenceTrackSamplingRate(PB_Element(["unitsOfMeasure", "kHz"],
-                                                                    tag="essenceTrackSamplingRate",
-                                                                    value=self._samplerate_cleanup(f.audioSampleRate)))
 
-                    datarate = f.audioBitRateH.split(" ")
-                    newfile.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
-                                                                    tag="essenceTrackDataRate",
-                                                                    value=datarate[0]))
-                    if f.file_extension.lower() == '.wav':
-                        pres_master.set_instantiationDigital(PB_Element(['source', 'PRONOM Technical Registry'],
-                                                                        tag='instantiationDigital',
-                                                                        value='audio/x-wav'))  # This is really ugly code I don't know a better way
-                        newfile.set_essenceTrackEncoding(PB_Element(tag='essenceTrackEncoding', value='WAV'))
-                    try:
-                        audio_codec = f.audioCodec + ": " + f.audioCodecLongName
-                    except NoDataException:
-                        audio_codec = f.audioCodec
-
-                    pres_master.set_instantiationStandard(PB_Element(tag='instantiationStandard',
-                                                                     value=audio_codec))
-
-                    new_mast_part.add_instantiationEssenceTrack(newfile)
 
                 pres_master.add_instantiationPart(new_mast_part)
                 self._parts_progress += 1
@@ -891,20 +906,66 @@ class pbcoreBuilder(threading.Thread):
         # ======================= Moving Image ======================= #
         # ============================================================ #
         elif media_type.lower() == 'moving image':
+            if os.path.splitext(preservation_file_set[0])[1] == ".iso":
+                f = FileObject(preservation_file_set[0])
+            else:
+                f = VideoObject(preservation_file_set[0])
+                try:
+                    video_codec = str(f.videoCodec + ": " + f.videoCodecLongName)
+                except NoDataException:
+                    video_codec = str(f.videoCodec)
 
-            f = VideoObject(preservation_file_set[0])
+                pres_master.set_instantiationStandard(PB_Element(tag='instantiationStandard', value=video_codec))
+
+                    # ---------- Video essence track ----------
+                newfile = InstantiationEssenceTrack(type='Video',
+                                                    frameRate=str(f.videoFrameRate),
+                                                    duration=str(f.totalRunningTimeSMPTE),
+                                                    # duration=trt(preservation_file_set[0]),
+                                                    aspectRatio=str(f.videoAspectRatio))
+                datarate = f.videoBitRateH.split(" ")
+                newfile.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
+                                                            tag="essenceTrackDataRate",
+                                                            value=datarate[0]))
+                newfile.set_essenceTrackBitDepth(PB_Element(tag='essenceTrackBitDepth', value=f.videoColorDepth))
+                colorspace = f.videoColorSpace
+                if colorspace:
+                    newfile.add_essenceTrackAnnotation(PB_Element(['annotationType', 'Color Space'],
+                                                                  tag="essenceTrackAnnotation",
+                                                                  value=colorspace))
+                newfile.add_essenceTrackAnnotation(PB_Element(['annotationType', 'Frame Size Vertical'],
+                                                              tag="essenceTrackAnnotation",
+                                                              value=f.videoResolutionHeight))
+                newfile.add_essenceTrackAnnotation(PB_Element(['annotationType', 'Frame Size Horizontal'],
+                                                              tag="essenceTrackAnnotation",
+                                                              value=f.videoResolutionWidth))
+                pres_master.add_instantiationEssenceTrack(newfile)
+
+                # ---------- Audio essence track ----------
+
+                if f.audioCodec:
+                    newfile = InstantiationEssenceTrack(type='Audio',
+                                                        samplingRate=f.audioSampleRate/1000,                      # isn't working currently so...
+                                                        bitDepth=f.audioBitDepth)
+                    try:
+                        audio_codec = f.audioCodec + ": " + f.audioCodecLongName
+                    except NoDataException:
+                        audio_codec = f.audioCodec
+
+                    newfile.set_essenceTrackStandard(PB_Element(tag='essenceTrackStandard',
+                                                                value=audio_codec))
+                    datarate = f.audioBitRateH.split(" ")
+                    newfile.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
+                                                                        tag="essenceTrackDataRate",
+                                                                        value=datarate[0]))
+                    pres_master.add_instantiationEssenceTrack(newfile)
+
             pres_master.set_instantiationMediaType(PB_Element(tag='instantiationMediaType', value='Moving Image'))
-            try:
-                video_codec = str(f.videoCodec + ": " + f.videoCodecLongName)
-            except NoDataException:
-                video_codec = str(f.videoCodec)
 
-            pres_master.set_instantiationStandard(PB_Element(tag='instantiationStandard', value=video_codec))
             pres_master.add_instantiationIdentifier(PB_Element(['source', self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
-                                                               ['annotation', 'File Name'],
-                                                               tag="instantiationIdentifier",
-                                                               value=os.path.basename(preservation_file_set[0])))
-
+                                                                   ['annotation', 'File Name'],
+                                                                   tag="instantiationIdentifier",
+                                                                   value=os.path.basename(preservation_file_set[0])))
             file_size, file_units = self.sizeofHuman(f.file_size)
             pres_master.set_instantiationFileSize(PB_Element(['unitsOfMeasure', file_units],
                                                              tag="instantiationFileSize",
@@ -933,50 +994,6 @@ class pbcoreBuilder(threading.Thread):
                                                                    value=md5))
                 sleep(.5)
 
-            # ---------- Video essence track ----------
-            newfile = InstantiationEssenceTrack(type='Video',
-                                                frameRate=str(f.videoFrameRate),
-                                                duration=trt(preservation_file_set[0]),
-                                                aspectRatio=str(f.videoAspectRatio))
-            datarate = f.videoBitRateH.split(" ")
-            newfile.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
-                                                        tag="essenceTrackDataRate",
-                                                        value=datarate[0]))
-            newfile.set_essenceTrackBitDepth(PB_Element(tag='essenceTrackBitDepth', value=f.videoColorDepth))
-            colorspace = f.videoColorSpace
-            if colorspace:
-                newfile.add_essenceTrackAnnotation(PB_Element(['annotationType', 'Color Space'],
-                                                              tag="essenceTrackAnnotation",
-                                                              value=colorspace))
-            newfile.add_essenceTrackAnnotation(PB_Element(['annotationType', 'Frame Size Vertical'],
-                                                          tag="essenceTrackAnnotation",
-                                                          value=f.videoResolutionHeight))
-            newfile.add_essenceTrackAnnotation(PB_Element(['annotationType', 'Frame Size Horizontal'],
-                                                          tag="essenceTrackAnnotation",
-                                                          value=f.videoResolutionWidth))
-            pres_master.add_instantiationEssenceTrack(newfile)
-
-            # ---------- Audio essence track ----------
-
-            if f.audioCodec:
-                newfile = InstantiationEssenceTrack(type='Audio',
-                                                    samplingRate=f.audioSampleRate/1000,                      # isn't working currently so...
-                                                    # samplingRate=audio_sample_rate(preservation_file_set[0]),   # replaces with this line as a patch
-                                                    bitDepth=f.audioBitDepth)
-                try:
-                    audio_codec = f.audioCodec + ": " + f.audioCodecLongName
-                except NoDataException:
-                    audio_codec = f.audioCodec
-
-
-                # audio_codec = audio_long_name(f.file_name)                  # replaces with this line as a patch
-                newfile.set_essenceTrackStandard(PB_Element(tag='essenceTrackStandard',
-                                                            value=audio_codec))
-                datarate = f.audioBitRateH.split(" ")
-                newfile.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
-                                                                    tag="essenceTrackDataRate",
-                                                                    value=datarate[0]))
-                pres_master.add_instantiationEssenceTrack(newfile)
             self._parts_progress += 1
 
 
@@ -1026,7 +1043,8 @@ class pbcoreBuilder(threading.Thread):
                 f = AudioObject(access_part)
                 newAudioFile = InstantiationPart(objectID=f.file_name,
                                                  location=self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource'),
-                                                 duration=trt(access_part))
+                                                 duration=f.totalRunningTimeSMPTE)
+                                                 # duration=trt(access_part))
 
 
 
@@ -1092,8 +1110,8 @@ class pbcoreBuilder(threading.Thread):
                                                                    value=f.file_name))
                 access_copy.set_instantiationMediaType(PB_Element(tag='instantiationMediaType', value='Moving Image'))
                 access_copy.set_instantiationDuration(PB_Element(tag="instantiationDuration",
-                                                                 # value=f.totalRunningTimeSMPTE))  # Not working currently
-                                                                 value=trt(access_part)))          # Used as a patch for ^^
+                                                                 value=f.totalRunningTimeSMPTE))  # Not working currently
+                                                                 # value=trt(access_part)))          # Used as a patch for ^^
                 try:
                     video_codec = str(f.videoCodec + ": " + f.videoCodecLongName)
                 except NoDataException:
@@ -1140,8 +1158,8 @@ class pbcoreBuilder(threading.Thread):
                 newEssTrack = InstantiationEssenceTrack(type='Video',
                                                         frameRate=("%.2f" % f.videoFrameRate),
                                                         aspectRatio=str(f.videoAspectRatio),
-                                                        # duration=f.totalRunningTimeSMPTE)     # Not currently working
-                                                        duration=trt(access_part))             # Used as a patch for ^^
+                                                        duration=f.totalRunningTimeSMPTE)     # Not currently working
+                                                        # duration=trt(access_part))             # Used as a patch for ^^
                 datarate = f.videoBitRateH.split(" ")
                 newEssTrack.set_essenceTrackDataRate(PB_Element(['unitsOfMeasure', datarate[1]],
                                                         tag="essenceTrackDataRate",
@@ -1462,8 +1480,35 @@ class pbcoreBuilder(threading.Thread):
         #         for preservation_file_set in preservation_file_sets:
         #             # print preservation_file_set
                 if files:
-                    pres_master = self._build_preservation_master(record, preservation_file_sets[index])
-                    new_part.add_pbcoreInstantiation(pres_master)
+                    global use_gui
+                    dir_op = options = {}
+                    options['defaultextension'] = "*.log"
+                    options['initialfile'] = "PBCore_error_log_" + str(date.today().toordinal())
+
+                    try:
+                        pres_master = self._build_preservation_master(record, preservation_file_sets[index])
+                        new_part.add_pbcoreInstantiation(pres_master)
+                    except OExceptions.FormatException as error:
+
+
+                        if use_gui:
+                            save_error = askyesno("One Sheet Critical Error", str(error) +
+                                                  "\nDo you wish to save the error information as a file?")
+                            if save_error:
+                                error_file = asksaveasfilename(**dir_op)
+                                if error_file:
+                                    traceback.print_exc(file=open(error_file, 'a'))
+                            self._working_status = "critical_error"
+                        print("One Sheet Format error: " + str(error))
+
+                        return False
+                    except OExceptions.NoDataException as error:
+                        print("One Sheet No Data error: " + str(error))
+                        if use_gui:
+                            save_error = askyesno("One Sheet Critical Error", str(error) + "\nDo you wish to save the error information as a file?")
+
+                            self._working_status = "critical_error"
+                        return False
 
 
         # -----------------------------------------------------
@@ -1499,7 +1544,7 @@ class pbcoreBuilder(threading.Thread):
                                     exAuthority=self.settings.get('EXTRA', 'DefaultProjectNoteAuthority'))
             descriptive.add_pbcore_extension(exten)
 
-        if len(grouped_tapes) > 1:
+        if len(ungrouped_tapes) > 1:
             for tape_sides in record['Object Identifier'].split(';'):
                 newRelation = pbcoreRelation(reID=tape_sides.strip(), reType="Has Part")
                 descriptive.add_pbcoreRelation(newRelation)
@@ -2032,7 +2077,14 @@ class pbcoreBuilder(threading.Thread):
             # print record
             self._working_file = record['Project Identifier']
             self._working_status = 'Building'
-            new_xml = minidom.parseString(self.generate_pbcore(record, files))
+            raw_xml = self.generate_pbcore(record, files)
+            if not raw_xml:
+                self._running = False
+                return False
+            new_xml = minidom.parseString(raw_xml)
+            if not new_xml:
+                self._running = False
+                return False
             self._working_status = "Saving: " + queue['xml']
             # print "saving xml file " + queue['xml']
             save_file = open(queue['xml'], 'w')
@@ -2336,6 +2388,7 @@ def main():
     global SETTINGS
     global logger
     global args
+    global use_gui
     SETTINGS = ConfigParser()
     try:
         isfile(settingsFileName)
@@ -2360,8 +2413,9 @@ def main():
         parser.print_help()
     elif args.gui:
         from PBCore.scripts.pbcore_csv_gui import start_gui
+        use_gui = True
         if args.csv:
-            print("Loading graphical user interface with: "+args.csv)
+            print("Loading graphical user interface with: " + args.csv)
             start_gui(settings=os.path.abspath(settingsFileName), csvfile=args.csv)
         else:
             print("Loading graphical user interface")
@@ -2385,6 +2439,7 @@ def main():
 
         logger.debug("Locating files")
         total_warnings += record_file.check_files_exist()
+        use_gui = False
 
 
 

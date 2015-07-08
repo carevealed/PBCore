@@ -11,7 +11,7 @@ setup(
     version='0.1.4b22',
     packages=find_packages(),
     url='https://github.com/cavpp/PBCore',
-    install_requires=['OneSheet >= 0.1.4.1', 'lxml >= 3.4.2', 'pymediainfo >=1.4.0'],
+    install_requires=['OneSheet >= 0.1.5.3'],
     license='GPL',
     author='California Audio Visual Preservation Project',
     author_email='hborcher@berkeley.edu',

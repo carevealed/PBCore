@@ -1,16 +1,18 @@
 import sys
+from datetime import date
+
 if sys.version_info >= (3, 0):
     from tkinter import filedialog as tkFileDialog
-    from tkinter.filedialog import askopenfilename
-    from tkinter.messagebox import showerror, askokcancel, showinfo
+    from tkinter.filedialog import askopenfilename, asksaveasfilename
+    from tkinter.messagebox import showerror, askokcancel, showinfo, askyesno
     from tkinter import ttk
     from tkinter import *
     import tkinter as tk
 else:
     import tkFileDialog
     import tkMessageBox
-    from tkFileDialog import askopenfilename
-    from tkMessageBox import showerror, askokcancel, showinfo
+    from tkFileDialog import askopenfilename, asksaveasfilename
+    from tkMessageBox import showerror, askokcancel, showinfo, askyesno
     import ttk
     from Tkinter import *
     import Tkinter as tk
@@ -36,7 +38,7 @@ __license__ = 'GPL'
 
 FILE_NAME_PATTERN = re.compile("[A-Z,a-z]+_\d+")
 DOC_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)),"html/index.html")
-
+root = tk.Tk()
 
 # DEFAULT_PATH = None
 
@@ -695,6 +697,10 @@ class bridge(threading.Thread):
         # self.records.build_all_records()
         while self.records.isAlive():
             sleep(.1)
+            if self.records._working_status == "critical_error":
+                print("Critical Error. Exiting")
+                global root
+                root.quit()
             self._md5_progress = self.records.calculation_percent
             self._part_progress = self.records.parts_progress
             self._part_total = self.records.parts_total
@@ -777,8 +783,7 @@ def sep_pres_access(digital_files):
         return preservation, access
 
 def start_gui(settings, csvfile=None):
-
-    root = tk.Tk()
+    global root
     root.wm_title('PBCore Generator')
     # global settingsFile
     # # if settings:
@@ -1999,9 +2004,15 @@ class Catcher(object):
 
         except Exception as e:
             # print(traceback.print_exc())
-            showerror("PBCore Builder experience an error", "Error message: " + str(e) +
-                      "\nSaving error info to PBCore_error.log")
-            traceback.print_exc(file=open('PBCore_error.log', 'a'))
+            save_error = askyesno("PBCore Builder experience a critical error", "Error message: " + str(e) +
+                                  "\nDo you wish to save the error information as a file?")
+            if save_error:
+                dir_op = options = {}
+                options['defaultextension'] = "*.log"
+                options['initialfile'] = "PBCore_error_log_" + str(date.today().toordinal())
+                error_file = asksaveasfilename(**dir_op)
+                if error_file:
+                    traceback.print_exc(file=open(error_file, 'a'))
             quit(-1)
 
 class CSVDataError(Exception):
