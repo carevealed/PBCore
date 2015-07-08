@@ -8,14 +8,51 @@ source:
 
 build:
   number: 1
-  string: b
+  string: x
   entry_points:
     -  makepbcore = PBCore.scripts.pbcore_csv:main
+#  detect_binary_files_with_prefix: True
+#  binary_has_prefix_files:
+#    - bin/ffprobe
+
+  no_link:
+    - bin/ffprobe
+#    - lib/libav*.dylib
+#  rpaths:
+#    - lib/
+
+  always_include_files:
+    - bin/ffprobe
+#    - lib/libavcodec.55.52.102.dylib
+#    - lib/libavcodec.55.dylib
+#    - lib/libavcodec.a
+#    - lib/libavcodec.dylib
+#    - lib/libavdevice.55.10.100.dylib
+#    - lib/libavdevice.55.dylib
+#    - lib/libavdevice.a
+#    - lib/libavdevice.dylib
+#    - lib/libavfilter.4.2.100.dylib
+#    - lib/libavfilter.4.dylib
+#    - lib/libavfilter.a
+#    - lib/libavfilter.dylib
+#    - lib/libavformat.55.33.100.dylib
+#    - lib/libavformat.55.dylib
+#    - lib/libavformat.a
+#    - lib/libavformat.dylib
+#    - lib/libavutil.52.66.100.dylib
+#    - lib/libavutil.52.dylib
+#    - lib/libavutil.a
+#    - lib/libavutil.dylib
+
+
+#  binary_relocation: False
+
 
 requirements:
   build:
     - python
     - setuptools
+    - ffmpeg
     - pymediainfo
     - lxml
     - onesheet >=0.1.5
@@ -23,6 +60,7 @@ requirements:
   run:
     - python
     - lxml
+    - ffmpeg
     - pymediainfo
     - onesheet >=0.1.5
 
@@ -30,10 +68,11 @@ test:
   imports:
     - PBCore.scripts.modules.PBCore
     - pymediainfo
+    - onesheet
 
   commands:
+    - ffprobe -version
     - makepbcore -h
-    - ffprobe -L
 
 
 
