@@ -1022,7 +1022,7 @@ class pbcoreBuilder(threading.Thread):
         access_copy = pbcoreInstantiation(type="Access Copy",
                                           location=self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource'),
                                           language=lang,
-                                          objectID=obj_ID.split("_a")[0]+"_access",
+                                          # objectID=obj_ID.split("_a")[0]+"_access",
                                           generations="Access Copy")
 
 
@@ -1103,7 +1103,6 @@ class pbcoreBuilder(threading.Thread):
         # ============================================================ #
             elif media_type.lower() == 'moving image':
                 f = VideoObject(access_part)
-                # print "audio", f.file_name
                 access_copy.add_instantiationIdentifier(PB_Element(['source', self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
                                                                    ['annotation', 'File Name'],
                                                                    tag="instantiationIdentifier",
