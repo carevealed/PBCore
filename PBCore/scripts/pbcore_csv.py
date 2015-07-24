@@ -1499,6 +1499,7 @@ class pbcoreBuilder(threading.Thread):
                                 error_file = asksaveasfilename(**dir_op)
                                 if error_file:
                                     traceback.print_exc(file=open(error_file, 'a'))
+                                    print("Saved Error log to " + error_file)
                             self._working_status = "critical_error"
                         print("One Sheet Format error: " + str(error))
 
@@ -1507,8 +1508,12 @@ class pbcoreBuilder(threading.Thread):
                         print("One Sheet No Data error: " + str(error))
                         if use_gui:
                             save_error = askyesno("One Sheet Critical Error", str(error) + "\nDo you wish to save the error information as a file?")
-
-                            self._working_status = "critical_error"
+                            if save_error:
+                                error_file = asksaveasfilename(**dir_op)
+                                if error_file:
+                                    traceback.print_exc(file=open(error_file, 'a'))
+                                    print("Saved Error log to " + error_file)
+                                self._working_status = "critical_error"
                         return False
 
 
@@ -2202,7 +2207,8 @@ def sep_pres_access(digital_files):
 
         elif "_access" in file and ".md5" not in file:
             access.append(file)
-    return preservation, access
+
+    return sorted(preservation), sorted(access)
 
 
 def setup_logs():

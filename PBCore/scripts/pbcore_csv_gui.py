@@ -289,7 +289,10 @@ class MainWindow():
 
     def _popup(self, event):
         if self.recordsTree.selection():
-            self.propertyMenu.post(event.x_root, event.y_root)
+            x = self.master.winfo_pointerx()
+            y = self.master.winfo_pointery()
+            # self.propertyMenu.post(event.x_root, event.y_root)
+            self.propertyMenu.post(x, y)
 
     def change_item_status(self, items, new_status):
         for item in items:
@@ -2013,6 +2016,7 @@ class Catcher(object):
                 error_file = asksaveasfilename(**dir_op)
                 if error_file:
                     traceback.print_exc(file=open(error_file, 'a'))
+                    print("Saved Error log to " + error_file)
             quit(-1)
 
 class CSVDataError(Exception):
