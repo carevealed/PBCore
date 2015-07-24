@@ -888,6 +888,7 @@ class pbcoreBuilder(threading.Thread):
                         f.calculate_MD5(threaded=True)
                         while f.isMD5Calculating:
                             self._calculation_percent = f.calulation_progresss
+
                             sleep(.1)
                         md5 = f.MD5_hash
                     new_mast_part.add_instantiationIdentifier(PB_Element(['source', self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
@@ -895,7 +896,7 @@ class pbcoreBuilder(threading.Thread):
                                                                          ['annotation', 'checksum'],
                                                                          tag="instantiationIdentifier",
                                                                          value=md5))
-                    sleep(.5)
+                    sleep(1)
 
 
                 pres_master.add_instantiationPart(new_mast_part)
@@ -1559,12 +1560,10 @@ class pbcoreBuilder(threading.Thread):
         return new_XML_file.xmlString()
 
 
-
+    @DeprecationWarning
     def build_all_records(self):
-        raise DeprecationWarning
         # file_name_pattern = re.compile("[A-Z,a-z]+_\d+")
         self._job_total = len(self._records)
-
         self._job_progress = 0
         for record in self._records:
             fileName = re.search(FILE_NAME_PATTERN, record['Object Identifier']).group(0)
@@ -2076,6 +2075,7 @@ class pbcoreBuilder(threading.Thread):
         # print "starting thread"
         self._running = True
         self._job_progress = 0
+        self._job_total = self._queue.qsize()
         while not self._queue.empty():
             queue = self._queue.get()
             record = queue['record']

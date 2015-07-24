@@ -40,9 +40,12 @@ FILE_NAME_PATTERN = re.compile("[A-Z,a-z]+_\d+")
 DOC_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)),"html/index.html")
 root = tk.Tk()
 
+
+
 # DEFAULT_PATH = None
 
 class MainWindow():
+    progress_lock = threading.Lock()
     def __init__(self, master, settings, input_file=None):
         if input_file:
             self.default_path = os.path.dirname(input_file)
@@ -522,8 +525,8 @@ class MainWindow():
                     total_count += 1
                 elif self.recordsTree.set(record)['status'] == "Ignore":
                     pass
-            self.set_total_progress(progress=0, total=total_count)
             self.generate = bridge(xml_content)
+            self.set_total_progress(progress=0, total=self.generate.record_total)
             self.generate.daemon = True
             self.generate.start()
             self.update_progress()
@@ -536,33 +539,34 @@ class MainWindow():
         self.statusBar.config(text=message)
 
     def update_progress(self):
+        with self.progress_lock:
             # print str(self.generate.item_progress) + "/" + str(self.generate.record_total)
-        self.startButton.config(state=DISABLED)
-        record_total = self.generate.record_total
-        record_progress = self.generate.record_progress
-        part_total = self.generate.part_total
-        part_progress = self.generate.part_progress
-        calulation_percent = self.generate.calulation_progress
-
-        self.set_total_progress(record_progress, record_total)
-        self.set_part_progress(part_progress, part_total)
-        self.set_calculation_progress(self.generate.calulation_progress)
-        self.set_calculation_progress(calulation_percent)
-        self.update_status_bar(self.generate.status)
-        # parts = str(part_progress) + " : " + str(part_total)
-        # total = str(record_progress) + " : " + str(record_total)
-        # print(parts, total)
-        if self.generate.is_alive():
-            self.master.after(100, self.update_progress)
-        else:
-        # self.master.after(200)
-            self.generate.join()
-            self.startButton.config(state=NORMAL)
-            # print self.generate.calulation_progress
+            self.startButton.config(state=DISABLED)
+            record_total = self.generate.record_total
+            record_progress = self.generate.record_progress
+            part_total = self.generate.part_total
+            part_progress = self.generate.part_progress
+            calulation_percent = self.generate.calulation_progress
             self.set_total_progress(record_progress, record_total)
             self.set_part_progress(part_progress, part_total)
             self.set_calculation_progress(self.generate.calulation_progress)
             self.set_calculation_progress(calulation_percent)
+            self.update_status_bar(self.generate.status)
+            # parts = str(part_progress) + " : " + str(part_total)
+            # total = str(record_progress) + " : " + str(record_total)
+            # print(parts, total)
+        if self.generate.is_alive():
+            self.master.after(10, self.update_progress)
+        else:
+        # self.master.after(200)
+            self.generate.join()
+            with self.progress_lock:
+                self.startButton.config(state=NORMAL)
+                # print self.generate.calulation_progress
+                self.set_total_progress(record_total, record_total)
+                self.set_part_progress(part_total, part_total)
+                # self.set_calculation_progress(self.generate.calulation_progress)
+                self.set_calculation_progress(100)
             showinfo("Status", "Job done")
 
     def test(self):
@@ -700,6 +704,8 @@ class bridge(threading.Thread):
         # self.records.build_all_records()
         while self.records.isAlive():
             sleep(.1)
+
+            self._record_total = self.records.job_total
             if self.records._working_status == "critical_error":
                 print("Critical Error. Exiting")
                 global root
@@ -714,7 +720,7 @@ class bridge(threading.Thread):
         self._md5_progress = self.records.calculation_percent
         self._part_progress = self.records.parts_progress
         self._part_total = self.records.parts_total
-        self._record_progress = self.records.job_progress
+        self._record_progress = 100
         self._status = "Done"
 
 
