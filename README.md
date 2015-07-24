@@ -5,6 +5,12 @@ Description
 Generates PBCore xml files from data exported from CONTENTdm and derives technical metadata from any data files 
 that are located in the same folder.
 
+Documentation
+=============
+
+*   [CAVPP PBCore Tools User Documentation](http://cavpp.github.io/PBCore/)
+
+
 To Install
 ==========
 
