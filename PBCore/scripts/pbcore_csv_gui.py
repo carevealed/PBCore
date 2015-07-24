@@ -32,7 +32,7 @@ from PBCore.scripts.pbcore_csv import pbcoreBuilder
 __author__ = 'California Audio Visual Preservation Project'
 __copyright__ = "California Audiovisual Preservation Project. 2015"
 __credits__ = ["Henry Borchers"]
-__version__ = "0.1.1"
+__version__ = "0.1.6"
 __license__ = 'GPL'
 
 

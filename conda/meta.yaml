@@ -8,7 +8,7 @@ source:
 
 build:
   number: 1
-  string: c
+  string: a
   entry_points:
     -  makepbcore = PBCore.scripts.pbcore_csv:main
 
@@ -40,7 +40,7 @@ test:
 
 about:
   home: https://github.com/cavpp/audio_convert
-  license: GLP
+  license: GPL
   summary: "Generates PBCore xml files from data exported from CONTENTdm and derives technical metadata from any data files that are located in the same folder."
 
 app:

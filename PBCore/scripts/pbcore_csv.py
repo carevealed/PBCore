@@ -1,4 +1,6 @@
 #!/usr/local/bin/python
+__version__ = "0.1.6"
+
 import sys
 from datetime import date
 
@@ -1035,10 +1037,10 @@ class pbcoreBuilder(threading.Thread):
         # =========================== Audio ========================== #
         # ============================================================ #
             if media_type.lower() == 'audio' or media_type.lower() == 'sound':
-                # access_copy.add_instantiationIdentifier(
-                #     PB_Element(['source', self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
-                #                tag="instantiationIdentifier",
-                #                value=obj_ID.split("_a")[0]+"_access"))
+                access_copy.add_instantiationIdentifier(
+                    PB_Element(['source', self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
+                               tag="instantiationIdentifier",
+                               value=obj_ID.split("_a")[0]+"_access"))
                 access_copy.add_instantiationRelation(InstantiationRelation(derived_from=obj_ID.split("_a")[0]+"_prsv"))
                 f = AudioObject(access_part)
                 newAudioFile = InstantiationPart(objectID=f.file_name,
@@ -1980,7 +1982,7 @@ class pbcoreBuilder(threading.Thread):
 
     def load_records(self):
 
-        f = open(self.source, 'rU')
+        f = open(self.source, 'rU', errors='ignore')
         records = csv.DictReader(f)
         self._records = []
         for record in records:

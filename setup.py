@@ -1,14 +1,9 @@
 from setuptools import setup, find_packages
-# try:
-#     import pypandoc
-#     long_description = pypandoc.convert('README.md', 'rst')
-#
-# except(ImportError):
 long_description = open('README.md').read()
 
 setup(
     name='CAVPP_PBCore_Tools',
-    version='0.1.6',
+    version='0.1.6.1',
     packages=find_packages(),
     url='https://github.com/cavpp/PBCore',
     install_requires=['OneSheet >= 0.1.5.3'],
