@@ -891,6 +891,7 @@ class pbcoreBuilder(threading.Thread):
 
                             sleep(.1)
                         md5 = f.MD5_hash
+                        self._calculation_percent = 100
                     new_mast_part.add_instantiationIdentifier(PB_Element(['source', self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
                                                                          ['version', 'MD5'],
                                                                          ['annotation', 'checksum'],
@@ -989,6 +990,7 @@ class pbcoreBuilder(threading.Thread):
                     while f.isMD5Calculating:
                         self._calculation_percent = f._calculation_progress
                         sleep(.1)
+                    self._calculation_percent = 100
                     md5 = f.MD5_hash
                 pres_master.add_instantiationIdentifier(PB_Element(['source', self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
                                                                    ['version', 'MD5'],
@@ -1070,6 +1072,7 @@ class pbcoreBuilder(threading.Thread):
                         while f.isMD5Calculating:
                             self._calculation_percent = f.calulation_progresss
                             sleep(.1)
+                        self._calculation_percent = 100
                         md5 = f.MD5_hash
                     newAudioFile.add_instantiationIdentifier(
                         PB_Element(['source', self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],

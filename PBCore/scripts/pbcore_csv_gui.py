@@ -547,16 +547,16 @@ class MainWindow():
             part_total = self.generate.part_total
             part_progress = self.generate.part_progress
             calulation_percent = self.generate.calulation_progress
-            self.set_total_progress(record_progress, record_total)
-            self.set_part_progress(part_progress, part_total)
+            self.set_total_progress(record_progress + 1, record_total)
+            self.set_part_progress(part_progress + 1, part_total)
             self.set_calculation_progress(self.generate.calulation_progress)
-            self.set_calculation_progress(calulation_percent)
+            self.set_calculation_progress(int(calulation_percent))
             self.update_status_bar(self.generate.status)
             # parts = str(part_progress) + " : " + str(part_total)
             # total = str(record_progress) + " : " + str(record_total)
             # print(parts, total)
         if self.generate.is_alive():
-            self.master.after(10, self.update_progress)
+            self.master.after(100, self.update_progress)
         else:
         # self.master.after(200)
             self.generate.join()
@@ -703,7 +703,7 @@ class bridge(threading.Thread):
         self.records.start()
         # self.records.build_all_records()
         while self.records.isAlive():
-            sleep(.1)
+            sleep(.01)
 
             self._record_total = self.records.job_total
             if self.records._working_status == "critical_error":
@@ -720,7 +720,7 @@ class bridge(threading.Thread):
         self._md5_progress = self.records.calculation_percent
         self._part_progress = self.records.parts_progress
         self._part_total = self.records.parts_total
-        self._record_progress = 100
+        self._record_progress = self._record_total
         self._status = "Done"
 
 
