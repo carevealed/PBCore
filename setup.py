@@ -6,7 +6,7 @@ setup(
     version='0.1.6.3',
     packages=find_packages(),
     url='https://github.com/cavpp/PBCore',
-    install_requires=['OneSheet >= 0.1.5.3'],
+    install_requires=['OneSheet >= 0.1.5.7'],
     license='GPL',
     author='California Audio Visual Preservation Project',
     author_email='hborcher@berkeley.edu',

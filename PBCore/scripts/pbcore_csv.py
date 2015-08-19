@@ -1030,7 +1030,12 @@ class pbcoreBuilder(threading.Thread):
                                           # objectID=obj_ID.split("_a")[0]+"_access",
                                           generations="Access Copy")
 
-
+        if media_type.lower() == 'audio' or media_type.lower() == 'sound':
+            access_copy.add_instantiationIdentifier(
+                    PB_Element(['source', self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
+                               tag="instantiationIdentifier",
+                               value=obj_ID.split("_a")[0]+"_access"))
+            access_copy.add_instantiationRelation(InstantiationRelation(derived_from=obj_ID.split("_a")[0]+"_prsv"))
         for access_part in access_files_sets:
 
             # print access_files_sets
@@ -1040,11 +1045,11 @@ class pbcoreBuilder(threading.Thread):
         # =========================== Audio ========================== #
         # ============================================================ #
             if media_type.lower() == 'audio' or media_type.lower() == 'sound':
-                access_copy.add_instantiationIdentifier(
-                    PB_Element(['source', self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
-                               tag="instantiationIdentifier",
-                               value=obj_ID.split("_a")[0]+"_access"))
-                access_copy.add_instantiationRelation(InstantiationRelation(derived_from=obj_ID.split("_a")[0]+"_prsv"))
+                # access_copy.add_instantiationIdentifier(
+                #     PB_Element(['source', self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource')],
+                #                tag="instantiationIdentifier",
+                #                value=obj_ID.split("_a")[0]+"_access"))
+                # access_copy.add_instantiationRelation(InstantiationRelation(derived_from=obj_ID.split("_a")[0]+"_prsv"))
                 f = AudioObject(access_part)
                 newAudioFile = InstantiationPart(objectID=f.file_name,
                                                  location=self.settings.get('PBCOREINSTANTIATION','InstantiationIdentifierSource'),
@@ -1432,7 +1437,8 @@ class pbcoreBuilder(threading.Thread):
                 #
                 #     if preservation_file_sets:
                 #     for preservation_file_set in preservation_file_sets:
-                    print(preservation_file_set)
+                #     print(preservation_file_set)
+                    print("preservation_file_set: {}".format(preservation_file_set))
                     pres_master = self._build_preservation_master(record, preservation_file_set)
                     new_part.add_pbcoreInstantiation(pres_master)
 
@@ -1444,12 +1450,12 @@ class pbcoreBuilder(threading.Thread):
         # # -----------------------------------------------------
         #             if access_files_sets:
         #                 for access_files_set in access_files_sets:
-                    print(access_files_set)
+                    print("access file set: {}".format(access_files_set))
                     access_copy = self._build_access_copy(record, access_files_set)
 
                     new_part.add_pbcoreInstantiation(access_copy)
 #
-                    descriptive.add_pbcore_part(new_part)
+                descriptive.add_pbcore_part(new_part)
 
 
     # =================
