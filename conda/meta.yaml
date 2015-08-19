@@ -18,13 +18,13 @@ requirements:
     - setuptools
     - pymediainfo
     - lxml
-    - onesheet >=0.1.5
+    - onesheet >=0.1.5.7
 
   run:
     - python
     - lxml
     - pymediainfo
-    - onesheet >=0.1.5
+    - onesheet >=0.1.5.7
 
 test:
   imports:
