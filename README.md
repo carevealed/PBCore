@@ -30,11 +30,16 @@ If you are setting up Conda/Anaconda for the first time, please look at the read
 Option 2: Install binary (Wheel)
 --------------------------------
 
-1. Download the latest version from the releases section of the project's Github page https://github.com/cavpp/PBCore/releases and save it to your Downloads folder.
+1. Download the latest version from the releases section of the project's Github page https://github.com/cavpp/PBCore/releases and copy the URL of the most current version.
 2. Open a terminal and type:
+
+    ```
+    sudo pip3 install #paste the URL here
     
-        cd Downloads
-        sudo pip install CAVPP_PBCore_Tools-0.1.2-py2.py3-none-any.whl
+    ```
+    
+        
+         
 
 #### Notes: 
 
