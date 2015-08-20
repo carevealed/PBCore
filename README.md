@@ -17,7 +17,17 @@ To Install
 You have a few options. You most likely want to use the first one as it is the easiest. 
 
 
-Option 1: Install binary (Wheel)
+Option 1: Install using Conda (recommended)
+-------------------------------------------
+
+If you are setting up Conda/Anaconda for the first time, please look at the readme document 
+[here](https://github.com/cavpp/conda_recipes/tree/master#setting-up-conda) first 
+
+1. In the launcher program, open a Python 3.4 environment or higher.
+2. Click on the install button for this script
+
+
+Option 2: Install binary (Wheel)
 --------------------------------
 
 1. Download the latest version from the releases section of the project's Github page https://github.com/cavpp/PBCore/releases and save it to your Downloads folder.
@@ -36,7 +46,7 @@ If you have a problem that pip isn't installed, you can install it with the foll
         sudo easy_install pip
 
 
-Option 2: pip
+Option 3: pip
 -------------
 
 1. Download the latest version (or eariler) in the dist folder to your Download folder
@@ -49,7 +59,7 @@ Option 2: pip
 
 
 
-Option 3: From source using Setuptools
+Option 4: From source using Setuptools
 --------------------------------------
 
 1. Open a terminal window and type:
@@ -68,8 +78,22 @@ To Use
 CONTENTdm. In order to use this files you must convert them first. See below instructions on how to convert the this 
 file into a properly-formatted csv files.
 
-To use with the command line:
------------------------------
+## Anaconda Launcher:
+
+Note: Only works with the Conda installation method. 
+
+1. In a terminal window type:
+
+   ```
+   launcher
+   ```
+  
+2. Click Environment and select the correct evironment. 
+3. Click on the launch button next to the script name
+
+
+## To use with the command line:
+
 In a terminal, simply type "makepbcore" followed by a csv files containing the data from a CONTENTdm export.
 
     
@@ -80,8 +104,8 @@ In a terminal, simply type "makepbcore" followed by a csv files containing the d
             
   
   
-To use the graphical user interface:
-------------------------------------
+## To use the graphical user interface:
+
 In a terminal windows, simple type the following command::
   
     makepbcore -g
