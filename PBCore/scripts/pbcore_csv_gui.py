@@ -1,14 +1,16 @@
 import sys
 from datetime import date
 
-if sys.version_info >= (3, 0):
+# if sys.version_info >= (3, 0):
+try:
     from tkinter import filedialog as tkFileDialog
     from tkinter.filedialog import askopenfilename, asksaveasfilename
     from tkinter.messagebox import showerror, askokcancel, showinfo, askyesno
     from tkinter import ttk
     from tkinter import *
     import tkinter as tk
-else:
+except ImportError:
+# else:
     import tkFileDialog
     import tkMessageBox
     from tkFileDialog import askopenfilename, asksaveasfilename
@@ -446,7 +448,7 @@ class MainWindow():
                 self.startButton.config(state=DISABLED)
                 self.validate_details_button.config(state=NORMAL)
                 self.validate_entry.config(state=DISABLED)
-                self.alerts(self.remarks, type="Error")
+                self.alerts(self.remarks, alert_type="Error")
                 showerror('Error', errorMessage)
 
                 # self.warningMessageWindow.lift(self.master)
