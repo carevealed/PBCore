@@ -1,5 +1,8 @@
 #!/usr/local/bin/python
 __version__ = "0.1.6"
+__author__ = 'California Audio Visual Preservation Project'
+__copyright__ = "Copyright 2015, California Audiovisual Preservation Project"
+__credits__ = "Henry Borchers"
 
 import sys
 from datetime import date
@@ -14,9 +17,6 @@ else:
     from ConfigParser import ConfigParser
     from tkMessageBox import showerror, askyesno
     from tkFileDialog import asksaveasfilename
-__author__ = 'California Audio Visual Preservation Project'
-__copyright__ = "Copyright 2015, California Audiovisual Preservation Project"
-__credits__ = "Henry Borchers"
 import traceback
 import os
 import sys
@@ -1902,7 +1902,8 @@ class pbcoreBuilder(threading.Thread):
             csv.DictReader(f)
             f.close()
             return True
-        except ValueError:
+        except ValueError as f:
+            print(f, file=sys.stderr)
             return False
         except csv.Error:
             return False
@@ -2413,7 +2414,7 @@ def main():
         SETTINGS.read(settingsFileName)
     except IOError:
         sys.stderr.write('Error: Cannot find ' + settingsFileName + '. Quiting\n')
-        quit()
+        quit(1)
 
     logger = logging.getLogger()
     parser = argparse.ArgumentParser()
@@ -2421,7 +2422,7 @@ def main():
     parser.add_argument("-d", "--debug", help="Debug mode. Writes all messages to debug log.", action='store_true')
     parser.add_argument("-nc", "--nochecksum", help="Bypasses md5 checksum generation for files.", action='store_true')
     parser.add_argument("-np", "--noprogress", help="hides the percentage completed of the md5 checksum calculation.", action='store_true')
-    parser.add_argument("-g", "--gui", help="EXPERIMENTAL: Loads the graphical user interface.", action='store_true')
+    parser.add_argument("-g", "--gui", help="Loads the graphical user interface.", action='store_true')
     # TODO: add argument that lets you create pbcore without the files present
     args = parser.parse_args()
 
